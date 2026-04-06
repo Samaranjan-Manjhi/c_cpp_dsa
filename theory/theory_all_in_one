@@ -1,0 +1,17 @@
+Q.1] What is the difference between compiler and interpreter? Asked at: TCS, Wipro, Infosys
+Compiler:
+    • Translates the entire program into machine code before execution 
+    • Execution is fast after compilation 
+    • Errors are shown after compiling the whole code 
+    • Example: GCC (used for C++) 
+Interpreter:
+    • Translates and executes code line by line 
+    • Execution is slower 
+    • Errors are shown immediately, line by line 
+Key Difference:
+Compiler -> whole program first, then execution
+Interpreter -> line-by-line execution immediately
+Note:
+C++ is a compiled language, so it uses a compiler.
+
+
