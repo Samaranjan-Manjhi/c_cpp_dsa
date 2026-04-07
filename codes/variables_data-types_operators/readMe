@@ -309,7 +309,7 @@ SECTION 3 — CODING QUESTIONS
 3B. MEDIUM CODING (from all_in_one_question — Part 1)
 --------------------------------------------------------------------------------
 
-  [C][ ] (M) Given an integer, find the highest power of 2 less than or equal to it
+  [C][x] (M) Given an integer, find the highest power of 2 less than or equal to it
              Asked at: Samsung
 
   [C][x] (M) Without using multiplication, divide or mod, check if n is divisible by 4
@@ -336,14 +336,14 @@ SECTION 3 — CODING QUESTIONS
              Hint: use XOR on sign bits — (a < 0) ^ (b < 0)
              Asked at: Dolat Capital, Samsung
 
-  [C][ ] (E) Check if a number is divisible by both 3 and 7 simultaneously
+  [C][x] (E) Check if a number is divisible by both 3 and 7 simultaneously
              Asked at: TCS, Capgemini
 
 --------------------------------------------------------------------------------
 3D. MEDIUM CODING (from all_in_one_question_2 — Part 3)
 --------------------------------------------------------------------------------
 
-  [C][ ] (M) Multiply a number by 7 using only bitwise operators and addition
+  [C][x] (M) Multiply a number by 7 using only bitwise operators and addition
              Hint: x*7 = (x << 3) - x
              Asked at: Samsung, Dolat Capital
 
@@ -365,23 +365,23 @@ SECTION 3 — CODING QUESTIONS
 3E. EASY CODING (from all_in_one_question_3 — Part 4)
 --------------------------------------------------------------------------------
 
-  [C][ ] (E) Without any if/else/ternary, print 1 if a > b, -1 if a < b, 0 if equal.
+  [C][x] (E) Without any if/else/ternary, print 1 if a > b, -1 if a < b, 0 if equal.
              Hint: (a > b) - (a < b)
              Asked at: Samsung, Dolat Capital
 
-  [C][ ] (E) Check if two floats are equal up to 6 decimal places.
+  [C][x] (E) Check if two floats are equal up to 6 decimal places.
              Use: fabs(a - b) < 1e-6
              Asked at: Zoho, Dolat Capital
 
-  [C][ ] (E) Without any loop, find the absolute value of an integer without abs().
+  [C][x] (E) Without any loop, find the absolute value of an integer without abs().
              Use: (x < 0) ? -x : x  OR  (x ^ (x >> 31)) - (x >> 31)
              Asked at: Samsung, Sasken
 
-  [C][ ] (E) Read two integers a and b. Print their average WITHOUT overflow.
+  [C][x] (E) Read two integers a and b. Print their average WITHOUT overflow.
              Hint: a/2 + b/2 + (a%2 + b%2)/2
              Asked at: Amazon, Google
 
-  [C][ ] (E) Given 3 bits x, y, z, compute the majority bit (1 if at least 2 are 1).
+  [C][x] (E) Given 3 bits x, y, z, compute the majority bit (1 if at least 2 are 1).
              Hint: (x & y) | (y & z) | (x & z)
              Asked at: Dolat Capital, competitive programming
 

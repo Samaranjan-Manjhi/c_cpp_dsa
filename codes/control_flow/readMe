@@ -161,22 +161,22 @@ SECTION 3 — CODING QUESTIONS — CONDITIONALS
 3A. EASY — CONDITIONALS (from all_in_one — Roadmap)
 --------------------------------------------------------------------------------
 
-  [C][ ] (E) Grade calculator — read marks and print grade
+  [C][x] (E) Grade calculator — read marks and print grade
              (90+ = A, 80+ = B, 70+ = C, 60+ = D, below = F)
              Asked at: TCS, Wipro, Infosys, Capgemini
 
-  [C][ ] (E) Calculator: read two numbers and an operator (+, -, *, /)
+  [C][x] (E) Calculator: read two numbers and an operator (+, -, *, /)
              using switch statement
              Asked at: TCS, Wipro, Zoho
 
-  [C][ ] (E) Check if a triangle is valid given 3 sides
+  [C][x] (E) Check if a triangle is valid given 3 sides
              (sum of any two sides must be greater than the third)
              Asked at: TCS, Wipro, Infosys
 
-  [C][ ] (E) Check if a character is vowel or consonant using switch
+  [C][x] (E) Check if a character is vowel or consonant using switch
              Asked at: TCS, Wipro, Infosys
 
-  [C][ ] (E) Find the largest of three numbers using if-else
+  [C][x] (E) Find the largest of three numbers using if-else
              Asked at: TCS, Wipro, Infosys, Capgemini
 
 ================================================================================
@@ -187,36 +187,36 @@ SECTION 4 — CODING QUESTIONS — LOOPS & PATTERNS
 4A. EASY — LOOPS & PATTERNS (from all_in_one_question — Part 1)
 --------------------------------------------------------------------------------
 
-  [C][ ] (E) Print Fibonacci series up to N terms
+  [C][x] (E) Print Fibonacci series up to N terms
              Asked at: TCS, Wipro, Infosys, Capgemini
 
-  [C][ ] (E) Check if a number is prime
+  [C][x] (E) Check if a number is prime
              Asked at: TCS, Zoho, Capgemini, Wipro
 
-  [C][ ] (E) Find all prime numbers up to N using nested loops (brute force first)
+  [C][x] (E) Find all prime numbers up to N using nested loops (brute force first)
              Asked at: TCS, Wipro, Infosys
 
-  [C][ ] (E) Find all prime numbers up to N — Sieve of Eratosthenes
+  [C][~] (E) Find all prime numbers up to N — Sieve of Eratosthenes
              Asked at: Amazon, Microsoft, Google
 
-  [C][ ] (E) Find factorial of N using a loop (iterative)
+  [C][x] (E) Find factorial of N using a loop (iterative)
              Asked at: TCS, Infosys, Cognizant
 
-  [C][ ] (E) Print the following pattern for N=4:
+  [C][x] (E) Print the following pattern for N=4:
              *
              **
              ***
              ****
              Asked at: TCS, Wipro, Capgemini, Zoho
 
-  [C][ ] (E) Print the inverted triangle pattern for N=4:
+  [C][x] (E) Print the inverted triangle pattern for N=4:
              ****
              ***
              **
              *
              Asked at: TCS, Wipro, Capgemini
 
-  [C][ ] (E) Print the right-aligned triangle pattern for N=4:
+  [C][x] (E) Print the right-aligned triangle pattern for N=4:
                 *
                **
               ***

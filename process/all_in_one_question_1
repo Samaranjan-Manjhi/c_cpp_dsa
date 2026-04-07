@@ -1,11 +1,8 @@
 ================================================================================
-     C++ + DSA — EXTENDED INTERVIEW QUESTIONS (PART 2)
-     Additional questions for: C/C++ Developer roles, Quant Developer roles,
-     Lower-tier & Mid-tier companies: Dolat Capital, Edelweiss, ICICI Securities,
-     Sharekhan, Angel Broking, HDFC Securities, Kotak Securities, Motilal Oswal,
-     iGate, Mphasis, Hexaware, L&T Infotech, Mindtree, NIIT Technologies,
-     Persistent Systems, Cyient, Sasken, Nagarro, Birlasoft, Mastech,
-     Sonata Software, Zensar, Kellton Tech, and similar.
+       C++ + DSA — TOPIC-WISE INTERVIEW QUESTIONS
+       Real questions asked at: Google, Amazon, Microsoft, Flipkart,
+       Paytm, TCS, Infosys, Wipro, Zoho, Capgemini, Swiggy, Zomato,
+       Samsung, Adobe, Atlassian, Goldman Sachs, JP Morgan & more.
 ================================================================================
 
 HOW TO USE:
@@ -14,1595 +11,1632 @@ HOW TO USE:
   [x] = solved and understood
 
   Difficulty: (E) = Easy   (M) = Medium   (H) = Hard
-  [T] = Theory/Verbal   [C] = Coding problem
+  Companies listed where known.
 
 ================================================================================
-SECTION A — C/C++ DEVELOPER DEEP THEORY
-(These are asked verbally in almost every C/C++ developer interview)
+PHASE 1-2 — C++ BASICS & SYNTAX
 ================================================================================
 
---------------------------------------------------------------------------------
-A1. MEMORY MODEL & STORAGE
---------------------------------------------------------------------------------
-
-  [T][ ] What are the different memory segments in a C++ program?
-          (Text/Code, Data, BSS, Heap, Stack)
-          Asked at: Sasken, L&T Infotech, Persistent, Nagarro
-
-  [T][ ] What is stored in the stack vs heap?
-          Asked at: Most C++ developer roles
-
-  [T][ ] What is the BSS segment? What variables go there?
-          (Uninitialized global and static variables)
-          Asked at: Sasken, Samsung, Embedded roles
-
-  [T][ ] What is the data segment? What variables go there?
-          (Initialized global and static variables)
-          Asked at: Sasken, L&T Infotech
-
-  [T][ ] What happens to local variables when a function returns?
-          Asked at: TCS, Wipro, L&T Infotech
-
-  [T][ ] What is memory alignment? Why does the CPU care about it?
-          Asked at: Sasken, Samsung, Qualcomm, Dolat Capital
-
-  [T][ ] What is struct padding? Why does it happen? How to minimize it?
-          Example: struct { char a; int b; char c; } — what is sizeof?
-          Asked at: Samsung, Sasken, Qualcomm, Persistent
-
-  [T][ ] What is the difference between malloc/free and new/delete?
-          Asked at: L&T Infotech, Persistent, Nagarro, Mphasis
-
-  [T][ ] What does malloc return if allocation fails? What does new do?
-          (malloc returns NULL, new throws std::bad_alloc)
-          Asked at: L&T Infotech, Persistent
-
-  [T][ ] What is placement new? When would you use it?
-          Asked at: Sasken, Google, advanced C++ roles
-
-  [T][ ] What is a memory pool? Why is it used in trading/finance systems?
-          Asked at: Dolat Capital, ICICI Securities, HFT firms
-
-  [T][ ] What is the difference between stack overflow and heap overflow?
-          Asked at: L&T Infotech, Persistent, Mphasis
-
-  [T][ ] What is a core dump? How do you analyze it?
-          Asked at: Sasken, L&T Infotech, Linux developer roles
-
-  [T][ ] What is valgrind? What does AddressSanitizer (ASan) do?
-          Asked at: Persistent, Nagarro, Adobe
-
-  [T][ ] What is the difference between calloc and malloc?
-          (calloc zero-initializes, malloc does not)
-          Asked at: L&T Infotech, Mphasis, Hexaware
-
-  [T][ ] What is realloc? What happens if the new block cannot be grown in place?
-          Asked at: L&T Infotech, Persistent
-
-  [T][ ] What is a wild pointer? How is it different from a dangling pointer?
-          Asked at: L&T Infotech, Mphasis, Hexaware
-
-  [T][ ] What is a fat pointer?
-          Asked at: Advanced C++ / Rust developer interviews
-
-  [T][ ] What is the difference between deep copy and shallow copy?
-          Specifically in context of copy constructor.
-          Asked at: Zoho, TCS, Wipro, Persistent, L&T Infotech
-
---------------------------------------------------------------------------------
-A2. COMPILATION & LINKING
---------------------------------------------------------------------------------
-
-  [T][ ] Explain the 4 stages of compilation in C/C++.
-          (Preprocessing -> Compilation -> Assembly -> Linking)
-          Asked at: L&T Infotech, Sasken, Persistent, Mphasis
-
-  [T][ ] What is a preprocessor directive? Give examples.
-          (#include, #define, #ifdef, #pragma, #ifndef)
-          Asked at: L&T Infotech, Mphasis, Hexaware
-
-  [T][ ] What is the difference between #include <> and #include ""?
-          Asked at: TCS, Wipro, L&T Infotech
-
-  [T][ ] What is a macro? What are the dangers of macros?
-          Asked at: L&T Infotech, Persistent, Sasken
-
-  [T][ ] What is the difference between a macro and an inline function?
-          Asked at: L&T Infotech, Persistent, Nagarro
-
-  [T][ ] What is an object file? What is a library file (.a vs .so)?
-          Asked at: L&T Infotech, Sasken, Linux developer roles
-
-  [T][ ] What is static linking vs dynamic linking?
-          Asked at: Sasken, L&T Infotech, Persistent
-
-  [T][ ] What is a symbol table? What is name mangling in C++?
-          Asked at: Sasken, advanced C++ roles
-
-  [T][ ] What is extern "C"? Why is it needed?
-          Asked at: Sasken, L&T Infotech, embedded roles
-
-  [T][ ] What is a translation unit in C++?
-          Asked at: Sasken, advanced C++ roles
-
-  [T][ ] What is the One Definition Rule (ODR)?
-          Asked at: Advanced C++ roles
-
-  [T][ ] What is a linker error vs a compiler error? Give examples.
-          Asked at: L&T Infotech, Persistent, Mphasis
-
-  [T][ ] What is -O2 flag in g++? What optimizations does it enable?
-          Asked at: Dolat Capital, HFT firms, Sasken
-
-  [T][ ] What is Profile-Guided Optimization (PGO)?
-          Asked at: HFT firms, Dolat Capital, Quant roles
-
-  [T][ ] What is the difference between -g and -O2? Can you use both?
-          Asked at: Sasken, L&T Infotech
-
-  [T][ ] What is LTO (Link Time Optimization)?
-          Asked at: HFT firms, Dolat Capital
-
-  [T][ ] What is a shared library (.so on Linux)? How is it loaded at runtime?
-          Asked at: L&T Infotech, Sasken, Linux roles
-
-  [T][ ] What is LD_LIBRARY_PATH?
-          Asked at: Linux developer roles, Sasken
-
---------------------------------------------------------------------------------
-A3. STORAGE CLASSES & SCOPE
---------------------------------------------------------------------------------
-
-  [T][ ] What are the storage classes in C/C++? Explain each.
-          (auto, register, static, extern, mutable)
-          Asked at: TCS, Wipro, Infosys, L&T Infotech, Mphasis
-
-  [T][ ] What does static mean for a local variable?
-          (retains value between calls, lives in data segment)
-          Asked at: TCS, Wipro, L&T Infotech, Persistent
-
-  [T][ ] What does static mean for a global variable?
-          (limits visibility to that translation unit)
-          Asked at: L&T Infotech, Sasken
-
-  [T][ ] What does static mean for a class member?
-          (shared across all instances, accessed via ClassName::)
-          Asked at: TCS, Wipro, Zoho, Persistent
-
-  [T][ ] What is extern? When do you need it?
-          Asked at: L&T Infotech, Mphasis, Hexaware
-
-  [T][ ] What is the register keyword? Is it still useful in modern C++?
-          Asked at: L&T Infotech, Embedded roles
-
-  [T][ ] What is variable shadowing? Give an example.
-          Asked at: Zoho, Persistent
-
-  [T][ ] What is the difference between global scope and file scope?
-          Asked at: L&T Infotech, Sasken
-
-  [T][ ] What is a namespace? How does it help avoid name collisions?
-          Asked at: L&T Infotech, Persistent, Nagarro
-
-  [T][ ] What is an anonymous namespace? How is it different from static?
-          Asked at: Advanced C++ roles, Sasken
-
---------------------------------------------------------------------------------
-A4. TYPE SYSTEM & CONVERSIONS
---------------------------------------------------------------------------------
-
-  [T][ ] What are the 4 types of casts in C++?
-          (static_cast, dynamic_cast, const_cast, reinterpret_cast)
-          Asked at: L&T Infotech, Persistent, Nagarro, Zoho
-
-  [T][ ] When would you use static_cast vs reinterpret_cast?
-          Asked at: Persistent, Nagarro, Samsung
-
-  [T][ ] What is dynamic_cast? What is RTTI? What is its cost?
-          Asked at: Persistent, Nagarro, advanced C++ roles
-
-  [T][ ] What is const_cast? When is it safe to use?
-          Asked at: Persistent, Nagarro
-
-  [T][ ] What is implicit type conversion? What is explicit?
-          Asked at: TCS, Wipro, L&T Infotech
-
-  [T][ ] What is the explicit keyword on constructors? Why use it?
-          Asked at: Zoho, Persistent, Nagarro
-
-  [T][ ] What is integer promotion in C?
-          Asked at: Sasken, Embedded roles
-
-  [T][ ] What is the difference between signed and unsigned arithmetic?
-          Asked at: Dolat Capital, Samsung, Sasken
-
-  [T][ ] What happens when you compare signed and unsigned integers?
-          (Dangerous implicit conversion — signed becomes unsigned)
-          Asked at: Dolat Capital, Sasken, HFT firms
-
-  [T][ ] What is narrowing conversion? How does C++11 handle it?
-          Asked at: Persistent, Nagarro
-
-  [T][ ] What is std::numeric_limits? When would you use it?
-          Asked at: Dolat Capital, Goldman Sachs, Quant roles
-
-  [T][ ] What is NaN and Inf in floating point? How do you check for them?
-          (std::isnan, std::isinf from <cmath>)
-          Asked at: Dolat Capital, ICICI Securities, Quant roles
-
-  [T][ ] What is the difference between float and double precision?
-          How many decimal digits each can represent?
-          Asked at: Dolat Capital, Edelweiss, Quant roles
-
-  [T][ ] What is epsilon comparison for floats? Why not use == for floats?
-          Asked at: Dolat Capital, Goldman Sachs, Quant roles
-
-  [T][ ] What is endianness? What is little-endian vs big-endian?
-          Asked at: Sasken, Samsung, Networking roles
-
-  [T][ ] How do you check endianness of a machine in C?
-          Asked at: Sasken, Samsung
-
---------------------------------------------------------------------------------
-A5. FUNCTIONS — ADVANCED
---------------------------------------------------------------------------------
-
-  [T][ ] What is a function pointer? Show syntax.
-          int (*fp)(int, int);
-          Asked at: L&T Infotech, Persistent, Sasken
-
-  [T][ ] What is a callback function? Give a real-world example.
-          Asked at: L&T Infotech, Persistent, Nagarro
-
-  [T][ ] What is std::function? How is it different from a function pointer?
-          Asked at: Persistent, Nagarro, Adobe
-
-  [T][ ] What is std::bind? Give an example.
-          Asked at: Persistent, Nagarro
-
-  [T][ ] What is a functor (function object)? Why use it?
-          Asked at: L&T Infotech, Persistent, Sasken
-
-  [T][ ] What is a lambda? How does the capture clause work?
-          Explain [=], [&], [x], [&x], [this]
-          Asked at: Persistent, Nagarro, Adobe, Amazon
-
-  [T][ ] What is the difference between [=] and [&] in lambda capture?
-          Asked at: Persistent, Nagarro
-
-  [T][ ] Can a lambda be recursive? How?
-          Asked at: Advanced C++ roles
-
-  [T][ ] What is memoization in C++ lambdas?
-          Asked at: Dolat Capital, Goldman Sachs
-
-  [T][ ] What is the return type deduction for functions in C++14?
-          (auto keyword for return type)
-          Asked at: Persistent, Nagarro
-
-  [T][ ] What is a virtual function? How does the vtable work?
-          Asked at: L&T Infotech, Persistent, Zoho, Nagarro
-
-  [T][ ] What is the overhead of a virtual function call?
-          Asked at: Dolat Capital, HFT firms, Sasken
-
-  [T][ ] What is devirtualization? When can the compiler do it?
-          Asked at: Dolat Capital, HFT firms
-
-  [T][ ] What is CRTP (Curiously Recurring Template Pattern)?
-          Asked at: Dolat Capital, HFT firms, Advanced C++ roles
-
-  [T][ ] What is the difference between override and final keywords?
-          Asked at: Persistent, Nagarro, L&T Infotech
-
---------------------------------------------------------------------------------
-A6. TEMPLATES & GENERIC PROGRAMMING
---------------------------------------------------------------------------------
-
-  [T][ ] What is a template? What is template instantiation?
-          Asked at: L&T Infotech, Persistent, Nagarro
-
-  [T][ ] What is template specialization vs partial specialization?
-          Asked at: Persistent, Nagarro, advanced C++ roles
-
-  [T][ ] What is a variadic template? Give an example.
-          Asked at: Persistent, Nagarro, Adobe
-
-  [T][ ] What is SFINAE? Give a real use case.
-          (Substitution Failure Is Not An Error)
-          Asked at: Advanced C++ roles, Dolat Capital
-
-  [T][ ] What are concepts in C++20? How do they replace SFINAE?
-          Asked at: Nagarro, Adobe, advanced C++ roles
-
-  [T][ ] What is template metaprogramming? Give an example.
-          (compile-time factorial, type traits)
-          Asked at: Advanced C++ roles, Dolat Capital
-
-  [T][ ] What is std::enable_if? When would you use it?
-          Asked at: Persistent, Nagarro, advanced C++ roles
-
-  [T][ ] What is a type trait? Name some from <type_traits>.
-          (std::is_integral, std::is_pointer, std::remove_const, etc.)
-          Asked at: Persistent, Nagarro
-
-  [T][ ] What is constexpr if (C++17)? How does it help with templates?
-          Asked at: Nagarro, advanced C++ roles
-
-  [T][ ] What is the difference between typename and class in templates?
-          Asked at: Persistent, L&T Infotech
-
---------------------------------------------------------------------------------
-A7. MODERN C++ (C++11/14/17/20) THEORY
---------------------------------------------------------------------------------
-
-  [T][ ] What are the major features introduced in C++11?
-          (auto, nullptr, range-for, lambdas, move semantics, smart pointers,
-           initializer lists, variadic templates, constexpr, override, final)
-          Asked at: Persistent, Nagarro, L&T Infotech, Adobe
-
-  [T][ ] What is an rvalue reference? What is an lvalue vs rvalue?
-          Asked at: Persistent, Nagarro, Adobe, Dolat Capital
-
-  [T][ ] What is move semantics? Why was it introduced?
-          Asked at: Persistent, Nagarro, Adobe, Dolat Capital
-
-  [T][ ] What is std::move? Does it actually move anything?
-          (It's just a cast to rvalue reference — actual move happens in move ctor)
-          Asked at: Persistent, Nagarro, Adobe
-
-  [T][ ] What is a move constructor? When is it called automatically?
-          Asked at: Persistent, Nagarro, Adobe
-
-  [T][ ] What is the Rule of Five in modern C++?
-          (destructor, copy ctor, copy=, move ctor, move=)
-          Asked at: Persistent, Nagarro, Adobe, advanced roles
-
-  [T][ ] What is the Rule of Zero?
-          (if you don't manage resources, don't write any of the five)
-          Asked at: Advanced C++ roles, Dolat Capital
-
-  [T][ ] What is perfect forwarding? What is std::forward?
-          Asked at: Persistent, Nagarro, advanced C++ roles
-
-  [T][ ] What is a universal reference (forwarding reference)?
-          Asked at: Advanced C++ roles
-
-  [T][ ] What are structured bindings in C++17?
-          (auto [x, y] = pair;)
-          Asked at: Nagarro, Persistent
-
-  [T][ ] What is std::optional? When would you use it?
-          Asked at: Nagarro, Persistent, Adobe
-
-  [T][ ] What is std::variant? How is it different from union?
-          Asked at: Nagarro, advanced C++ roles
-
-  [T][ ] What is std::any? What is type erasure?
-          Asked at: Advanced C++ roles
-
-  [T][ ] What is std::string_view? Why is it more efficient than const string&?
-          Asked at: Dolat Capital, Persistent, Nagarro
-
-  [T][ ] What is if constexpr? (C++17)
-          Asked at: Nagarro, Persistent
-
-  [T][ ] What is a fold expression in C++17?
-          Asked at: Advanced C++ roles
-
-  [T][ ] What are coroutines in C++20? What are co_await, co_yield, co_return?
-          Asked at: Advanced C++ roles, Nagarro
-
-  [T][ ] What is std::span in C++20?
-          Asked at: Advanced C++ roles
-
---------------------------------------------------------------------------------
-A8. CONCURRENCY & MULTITHREADING (C++ Developer / Quant roles)
---------------------------------------------------------------------------------
-
-  [T][ ] What is a thread? What is a process? What is the difference?
-          Asked at: L&T Infotech, Persistent, Dolat Capital, Nagarro
-
-  [T][ ] What is a race condition? Give an example.
-          Asked at: L&T Infotech, Persistent, Dolat Capital, Nagarro, Adobe
-
-  [T][ ] What is a mutex? What is a deadlock?
-          Asked at: L&T Infotech, Persistent, Dolat Capital, Nagarro
-
-  [T][ ] What is a deadlock? How do you prevent it?
-          (4 conditions: mutual exclusion, hold-and-wait, no preemption, circular wait)
-          Asked at: Persistent, Nagarro, Dolat Capital, Adobe
-
-  [T][ ] What is a livelock? How is it different from a deadlock?
-          Asked at: Advanced roles, Dolat Capital
-
-  [T][ ] What is starvation in threading?
-          Asked at: Persistent, Nagarro
-
-  [T][ ] What is a condition variable? Give an example.
-          Asked at: Persistent, Nagarro, Dolat Capital
-
-  [T][ ] What is the difference between mutex and semaphore?
-          Asked at: L&T Infotech, Persistent, Dolat Capital
-
-  [T][ ] What is a spinlock? When is it better than a mutex?
-          Asked at: Dolat Capital, HFT firms, Sasken
-
-  [T][ ] What is a reader-writer lock? When would you use it?
-          Asked at: Dolat Capital, HFT firms
-
-  [T][ ] What is lock-free programming? What is compare-and-swap (CAS)?
-          Asked at: Dolat Capital, HFT firms, Goldman Sachs
-
-  [T][ ] What is std::atomic? What operations are atomic by default?
-          Asked at: Persistent, Nagarro, Dolat Capital
-
-  [T][ ] What is memory ordering in C++? Explain seq_cst, acquire, release.
-          Asked at: Dolat Capital, HFT firms, advanced roles
-
-  [T][ ] What is the difference between thread-safe and reentrant?
-          Asked at: Dolat Capital, L&T Infotech, Sasken
-
-  [T][ ] What is std::async? What is std::future and std::promise?
-          Asked at: Persistent, Nagarro
-
-  [T][ ] What is a thread pool? Why is it used?
-          Asked at: Dolat Capital, Persistent, Nagarro, L&T Infotech
-
-  [T][ ] What is false sharing in multithreaded programs? How do you prevent it?
-          Asked at: Dolat Capital, HFT firms
-
-  [T][ ] What is the MESI cache coherence protocol? (high level)
-          Asked at: Dolat Capital, HFT firms
-
-  [T][ ] What is a memory barrier / fence?
-          Asked at: Dolat Capital, HFT firms, Sasken
-
-  [T][ ] How do you implement a thread-safe singleton in C++?
-          (Use Meyers' singleton with local static, or double-checked locking)
-          Asked at: Amazon, Microsoft, Dolat Capital, Persistent
-
---------------------------------------------------------------------------------
-A9. PERFORMANCE & LOW LATENCY (Quant / HFT / C++ roles)
---------------------------------------------------------------------------------
-
-  [T][ ] What is cache hierarchy? What is L1, L2, L3 cache?
-          Asked at: Dolat Capital, HFT firms, Sasken, Samsung
-
-  [T][ ] What is a cache miss? What is a cache hit?
-          Asked at: Dolat Capital, HFT firms, Samsung
-
-  [T][ ] What is cache line size? (Typically 64 bytes)
-          Asked at: Dolat Capital, HFT firms
-
-  [T][ ] What is branch prediction? How can unpredictable branches hurt performance?
-          Asked at: Dolat Capital, HFT firms, Samsung, Sasken
-
-  [T][ ] What is the likely/unlikely hint? (__builtin_expect)
-          Asked at: Dolat Capital, HFT firms
-
-  [T][ ] What is SIMD? What is AVX/SSE?
-          Asked at: Dolat Capital, HFT firms, Samsung
-
-  [T][ ] What is loop unrolling? When does the compiler do it?
-          Asked at: Dolat Capital, Sasken, Samsung
-
-  [T][ ] What is inlining? When does the compiler inline? When not?
-          Asked at: Dolat Capital, Sasken, L&T Infotech
-
-  [T][ ] What is the cost of a virtual function call vs a direct call?
-          Asked at: Dolat Capital, HFT firms
-
-  [T][ ] What is the cost of memory allocation (new/delete) in hot paths?
-          Asked at: Dolat Capital, HFT firms
-
-  [T][ ] What is object pooling? Why is it used in low-latency systems?
-          Asked at: Dolat Capital, HFT firms, ICICI Securities
-
-  [T][ ] What is copy elision and RVO (Return Value Optimization)?
-          Asked at: Persistent, Nagarro, Dolat Capital
-
-  [T][ ] What is NRVO (Named RVO)?
-          Asked at: Dolat Capital, advanced C++ roles
-
-  [T][ ] What is the as-if rule in C++?
-          Asked at: Advanced C++ roles, Dolat Capital
-
-  [T][ ] What is CPU pipelining? What is instruction-level parallelism?
-          Asked at: Dolat Capital, HFT firms, Samsung
-
-  [T][ ] What is a cache-oblivious algorithm?
-          Asked at: Dolat Capital, advanced roles
-
-  [T][ ] How do you profile a C++ program on Linux?
-          (gprof, perf, Valgrind/Callgrind, flamegraphs)
-          Asked at: Dolat Capital, Persistent, L&T Infotech
-
-  [T][ ] What is perf on Linux? What is a flamegraph?
-          Asked at: Dolat Capital, HFT firms, L&T Infotech
-
-  [T][ ] What is the difference between latency and throughput?
-          Asked at: Dolat Capital, ICICI Securities, all quant roles
-
-  [T][ ] What is tail latency? Why does it matter in finance?
-          Asked at: Dolat Capital, HFT firms
-
---------------------------------------------------------------------------------
-A10. LINUX / SYSTEM PROGRAMMING (asked for C++ developer roles on Linux)
---------------------------------------------------------------------------------
-
-  [T][ ] What is a process? What is a thread? What is the difference?
-          Asked at: L&T Infotech, Sasken, Persistent
-
-  [T][ ] What is a fork? What does it return in parent vs child?
-          Asked at: Sasken, L&T Infotech, Linux developer roles
-
-  [T][ ] What is exec? What is the difference between fork and exec?
-          Asked at: Sasken, Linux developer roles
-
-  [T][ ] What is a zombie process? How do you prevent it?
-          Asked at: Sasken, L&T Infotech
-
-  [T][ ] What is a signal in Linux? Name some common signals.
-          (SIGINT, SIGTERM, SIGKILL, SIGSEGV, SIGCHLD)
-          Asked at: Sasken, L&T Infotech, Linux developer roles
-
-  [T][ ] What is the difference between SIGTERM and SIGKILL?
-          Asked at: L&T Infotech, Sasken
-
-  [T][ ] What is a pipe? What is IPC (Inter-Process Communication)?
-          Asked at: L&T Infotech, Sasken
-
-  [T][ ] What is a socket? What is the difference between TCP and UDP?
-          Asked at: L&T Infotech, Sasken, ICICI Securities, Dolat Capital
-
-  [T][ ] What is mmap? When would you use it?
-          Asked at: Sasken, Dolat Capital, HFT firms
-
-  [T][ ] What is shared memory in Linux?
-          Asked at: Sasken, L&T Infotech, Dolat Capital
-
-  [T][ ] What is a file descriptor? What are stdin, stdout, stderr?
-          Asked at: L&T Infotech, Sasken
-
-  [T][ ] What is epoll? How is it better than select/poll?
-          Asked at: Dolat Capital, HFT firms, networking roles
-
-  [T][ ] What is a context switch? What is its cost?
-          Asked at: Dolat Capital, HFT firms, L&T Infotech
-
-  [T][ ] What is CPU affinity? Why pin threads to cores in HFT?
-          Asked at: Dolat Capital, HFT firms
-
-  [T][ ] What is NUMA (Non-Uniform Memory Access)?
-          Asked at: Dolat Capital, HFT firms
-
-  [T][ ] What is huge pages? Why use them in low-latency systems?
-          Asked at: Dolat Capital, HFT firms
-
-  [T][ ] What is the difference between soft and hard real-time systems?
-          Asked at: Sasken, Embedded roles, Dolat Capital
+CONCEPTUAL / THEORY QUESTIONS (asked in interviews verbally)
+-------------------------------------------------------------
+  [ ] What is the difference between compiler and interpreter?
+  [ ] What happens during compilation of a C++ program step by step?
+  [ ] What is the difference between #include <file> and #include "file"?
+  [ ] What is a header guard? Why is it needed?
+  [ ] What is the difference between declaration and definition?
+  [ ] What does return 0 mean in main()?
+  [ ] What is undefined behavior in C++? Give an example.
+  [ ] What is the difference between i++ and ++i? Which is preferred and why?
+  [ ] What is short-circuit evaluation in logical operators?
+  [ ] What is the difference between = and == ? Most common bug for beginners.
+  [ ] Explain operator precedence with an example.
+  [ ] What is the difference between / and % operators?
+  [ ] What is integer overflow? How do you prevent it?
+  [ ] What is the difference between int, long, long long?
+  [ ] When would you use unsigned int over int?
+  [ ] What is the size of int on a 32-bit vs 64-bit system?
+  [ ] What is auto keyword in C++? When should you use it?
+  [ ] What is the difference between const int x and int const x?
+  [ ] What is constexpr? How is it different from const?
+  [ ] What is a magic number? Why should you avoid it?
 
 ================================================================================
-SECTION B — QUANT DEVELOPER / FINANCIAL ENGINEERING QUESTIONS
+PHASE 3 — DATA TYPES & OPERATORS
 ================================================================================
 
---------------------------------------------------------------------------------
-B1. MATHEMATICS & STATISTICS (core quant theory)
---------------------------------------------------------------------------------
+CODING QUESTIONS
+-----------------
+  [ ] (E) Check if a number is even or odd without using %
+        Hint: use bitwise AND: n & 1
+        Asked at: TCS, Wipro, Cognizant
 
-  [T][ ] What is the difference between mean, median, mode?
-          Asked at: Dolat Capital, Edelweiss, ICICI Securities, Sharekhan
+  [ ] (E) Swap two numbers without using a third variable
+        Methods: arithmetic (a=a+b; b=a-b; a=a-b) and XOR (a^=b; b^=a; a^=b)
+        Asked at: TCS, Infosys, Zoho
 
-  [T][ ] What is standard deviation? What is variance?
-          Asked at: Dolat Capital, Edelweiss, ICICI Securities
+  [ ] (E) Check if a number is a power of 2
+        Hint: n > 0 && (n & (n-1)) == 0
+        Asked at: Amazon, Adobe
 
-  [T][ ] What is normal distribution? What are its properties?
-          Asked at: Dolat Capital, Goldman Sachs, Edelweiss
+  [ ] (E) Count the number of set bits (1s) in an integer
+        Methods: Brian Kernighan's (while n: count++, n &= n-1)
+        Asked at: Microsoft, Samsung, Amazon
 
-  [T][ ] What is log-normal distribution? Why are stock prices modeled as log-normal?
-          Asked at: Dolat Capital, Goldman Sachs, Edelweiss
+  [ ] (E) Find the number of digits in an integer
+        Asked at: TCS, Infosys
 
-  [T][ ] What is correlation? What is covariance? What is the difference?
-          Asked at: Dolat Capital, Edelweiss, ICICI Securities
+  [ ] (E) Reverse the digits of a number (e.g. 1234 -> 4321)
+        Asked at: TCS, Wipro, Capgemini
 
-  [T][ ] What is the law of large numbers?
-          Asked at: Dolat Capital, Edelweiss
+  [ ] (E) Check if a number is a palindrome (without converting to string)
+        Asked at: Zoho, Infosys, Amazon
 
-  [T][ ] What is the central limit theorem? Why is it important in finance?
-          Asked at: Dolat Capital, Edelweiss, Goldman Sachs
+  [ ] (E) Find the largest of three numbers without if-else
+        Hint: use ternary operator
+        Asked at: Capgemini, Cognizant
 
-  [T][ ] What is a random walk? What is Brownian motion?
-          Asked at: Dolat Capital, Goldman Sachs, HFT firms
+  [ ] (M) Given an integer, find the highest power of 2 less than or equal to it
+        Asked at: Samsung
 
-  [T][ ] What is a Poisson process? Give a finance example.
-          Asked at: Dolat Capital, Edelweiss, Goldman Sachs
-
-  [T][ ] What is autocorrelation? What is a stationary time series?
-          Asked at: Dolat Capital, Edelweiss
-
-  [T][ ] What is Monte Carlo simulation? When is it used?
-          Asked at: Dolat Capital, ICICI Securities, Goldman Sachs
-
-  [T][ ] What is linear regression? What are its assumptions?
-          Asked at: Dolat Capital, Edelweiss, ICICI Securities
-
-  [T][ ] What is overfitting? What is regularization?
-          Asked at: Dolat Capital, Edelweiss, Goldman Sachs
-
-  [T][ ] What is a probability distribution? Name 5 important ones.
-          (Normal, Log-normal, Poisson, Binomial, Exponential)
-          Asked at: Dolat Capital, Edelweiss
-
-  [T][ ] What is Bayes' theorem? Give an example.
-          Asked at: Dolat Capital, Goldman Sachs, Edelweiss
-
-  [T][ ] What is expectation? What is conditional expectation?
-          Asked at: Dolat Capital, Goldman Sachs
-
-  [T][ ] What is a martingale?
-          Asked at: Dolat Capital, Goldman Sachs, HFT firms
-
-  [T][ ] What is risk-neutral pricing?
-          Asked at: Goldman Sachs, Edelweiss, Dolat Capital
-
-  [T][ ] What is the Black-Scholes model? What are its inputs?
-          Asked at: Dolat Capital, Goldman Sachs, Edelweiss, ICICI Securities
-
-  [T][ ] What are the Greeks in options? Explain Delta, Gamma, Theta, Vega.
-          Asked at: Dolat Capital, Goldman Sachs, ICICI Securities, Angel Broking
-
-  [T][ ] What is implied volatility? How is it different from historical volatility?
-          Asked at: Dolat Capital, ICICI Securities, Goldman Sachs
-
-  [T][ ] What is VaR (Value at Risk)? What are its limitations?
-          Asked at: Dolat Capital, ICICI Securities, Goldman Sachs, Edelweiss
-
-  [T][ ] What is Sharpe Ratio? What does it measure?
-          Asked at: Dolat Capital, ICICI Securities, Edelweiss, Goldman Sachs
-
-  [T][ ] What is drawdown? What is maximum drawdown?
-          Asked at: Dolat Capital, Edelweiss, Angel Broking
-
-  [T][ ] What is mean reversion? Give a trading strategy example.
-          Asked at: Dolat Capital, Edelweiss, HFT firms
-
-  [T][ ] What is momentum strategy? How does it differ from mean reversion?
-          Asked at: Dolat Capital, Edelweiss, Angel Broking
-
-  [T][ ] What is pairs trading? How is it implemented?
-          Asked at: Dolat Capital, Edelweiss
-
-  [T][ ] What is arbitrage? What is statistical arbitrage?
-          Asked at: Dolat Capital, Goldman Sachs, HFT firms
-
-  [T][ ] What is market microstructure? What is the bid-ask spread?
-          Asked at: Dolat Capital, HFT firms, Angel Broking
-
-  [T][ ] What is order book? What is Level 2 data?
-          Asked at: Dolat Capital, HFT firms, ICICI Securities
-
-  [T][ ] What is VWAP? What is TWAP?
-          Asked at: Dolat Capital, ICICI Securities, Goldman Sachs
-
-  [T][ ] What is a limit order vs a market order?
-          Asked at: Dolat Capital, ICICI Securities, Angel Broking
-
-  [T][ ] What is slippage? How do you minimize it?
-          Asked at: Dolat Capital, HFT firms
-
---------------------------------------------------------------------------------
-B2. DATA STRUCTURES FOR FINANCIAL SYSTEMS (quant + C++ coding)
---------------------------------------------------------------------------------
-
-  [C][ ] (M) Implement an Order Book that supports:
-               - Add limit order (buy/sell, price, qty)
-               - Cancel order by ID
-               - Match orders when buy price >= sell price
-               - Get best bid and best ask
-          Data structures: sorted map (price->qty) + hashmap (id->order)
-          Asked at: Dolat Capital, HFT firms, ICICI Securities
-
-  [C][ ] (M) Design a circular buffer (ring buffer) for streaming market data
-               - Fixed capacity, overwrites oldest when full
-               - push(), pop(), isFull(), isEmpty(), peek()
-          Asked at: Dolat Capital, HFT firms, Sasken, ICICI Securities
-
-  [C][ ] (M) Implement a fixed-size memory pool allocator
-               - Pre-allocate N objects of type T
-               - allocate() and deallocate() in O(1)
-          Asked at: Dolat Capital, HFT firms
-
-  [C][ ] (M) Implement a time-series store:
-               - insert(timestamp, price)
-               - getRange(start, end) — return all prices in range
-               - getLatest(N) — return last N prices
-          Asked at: Dolat Capital, ICICI Securities
-
-  [C][ ] (M) Implement a sliding window VWAP calculator
-               - Update with (price, volume) each tick
-               - Get current VWAP over last N seconds
-          Asked at: Dolat Capital, ICICI Securities
-
-  [C][ ] (M) Implement a rate limiter — allow at most K events per second
-               - Two approaches: token bucket, sliding window counter
-          Asked at: Dolat Capital, ICICI Securities, Amazon
-
-  [C][ ] (M) Implement a lock-free queue using std::atomic
-          Asked at: Dolat Capital, HFT firms
-
-  [C][ ] (M) Implement a thread-safe logger with minimal lock contention
-          Asked at: Dolat Capital, Persistent, L&T Infotech
-
---------------------------------------------------------------------------------
-B3. NUMERICAL & MATHEMATICAL CODING (quant developer)
---------------------------------------------------------------------------------
-
-  [C][ ] (E) Implement fast power (x^n mod m) using binary exponentiation
-          Asked at: Dolat Capital, Goldman Sachs, all quant roles
-
-  [C][ ] (E) Compute GCD of two numbers using Euclidean algorithm
-          Asked at: Dolat Capital, Goldman Sachs
-
-  [C][ ] (M) Implement matrix multiplication for N x N matrices
-          Also: optimize using cache-friendly access pattern
-          Asked at: Dolat Capital, Goldman Sachs, Samsung
-
-  [C][ ] (M) Implement Fibonacci using matrix exponentiation — O(log N)
-          Asked at: Goldman Sachs, Dolat Capital
-
-  [C][ ] (M) Monte Carlo: estimate value of Pi using random points
-          Asked at: Dolat Capital, Edelweiss, Goldman Sachs
-
-  [C][ ] (M) Monte Carlo: estimate expected value of a European call option
-          (simulate stock paths using GBM, average payoff, discount)
-          Asked at: Dolat Capital, Goldman Sachs, Edelweiss
-
-  [C][ ] (M) Implement linear regression (least squares) from scratch
-          Asked at: Dolat Capital, Edelweiss, Goldman Sachs
-
-  [C][ ] (M) Find median of a large stream of numbers efficiently
-          Asked at: Dolat Capital, Goldman Sachs, Amazon
-
-  [C][ ] (M) Moving average: simple (SMA) and exponential (EMA) of price series
-          Asked at: Dolat Capital, ICICI Securities, Angel Broking
-
-  [C][ ] (M) Given price series, compute RSI (Relative Strength Index)
-          Asked at: Dolat Capital, Angel Broking, Edelweiss
-
-  [C][ ] (M) Given price series, compute Bollinger Bands
-          Asked at: Dolat Capital, Edelweiss
-
-  [C][ ] (M) Implement Newton-Raphson method to find root of a function
-          Asked at: Dolat Capital, Goldman Sachs, mathematical roles
-
-  [C][ ] (M) Implement binary search to find implied volatility
-          (Given BS option price, find the vol that produces it)
-          Asked at: Dolat Capital, Goldman Sachs
-
-  [C][ ] (H) Implement a full Black-Scholes option pricer (call and put)
-          Inputs: S, K, T, r, sigma. Output: price and Greeks.
-          Asked at: Dolat Capital, Goldman Sachs, Edelweiss
-
-  [C][ ] (H) Implement trinomial tree for option pricing
-          Asked at: Goldman Sachs, Dolat Capital
-
-  [C][ ] (H) Implement a simple backtesting engine:
-               - Feed historical OHLCV data
-               - Apply moving average crossover strategy
-               - Compute PnL, Sharpe ratio, max drawdown
-          Asked at: Dolat Capital, Edelweiss, Angel Broking
+  [ ] (M) Without using multiplication, divide or mod, check if n is divisible by 4
+        Hint: (n & 3) == 0
+        Asked at: Google
 
 ================================================================================
-SECTION C — ADDITIONAL CODING PROBLEMS (Topic-wise extensions)
+PHASE 4 — LOOPS & PATTERNS
 ================================================================================
 
---------------------------------------------------------------------------------
-C1. ARRAYS — ADDITIONAL PROBLEMS
---------------------------------------------------------------------------------
+  [ ] (E) Print Fibonacci series up to N terms
+        Asked at: TCS, Wipro, Infosys, Capgemini
 
-  [C][ ] (E) Check if array is a permutation of 1 to N
-          Asked at: TCS, Wipro, Infosys
+  [ ] (E) Check if a number is prime
+        Asked at: TCS, Zoho, Capgemini, Wipro
 
-  [C][ ] (E) Find element that appears odd number of times (XOR trick)
-          Asked at: TCS, Wipro, Amazon
+  [ ] (E) Find all prime numbers up to N (Sieve of Eratosthenes)
+        Asked at: Amazon, Microsoft, Google
 
-  [C][ ] (E) Find the running maximum (prefix max array)
-          Asked at: TCS, Wipro, Capgemini
+  [ ] (E) Find factorial of N (iterative and recursive)
+        Asked at: TCS, Infosys, Cognizant
 
-  [C][ ] (E) Count elements smaller than current element to its right
-          Asked at: Flipkart, Amazon
+  [ ] (E) Print the following pattern for N=4:
+              *
+              **
+              ***
+              ****
+        Asked at: TCS, Wipro, Capgemini, Zoho
 
-  [C][ ] (M) Chocolate Distribution Problem
-               (Given N students and M packets, minimize diff between max and min)
-          Asked at: Flipkart, Paytm, Zoho
+  [ ] (E) Print diamond pattern, hollow square pattern, Pascal's triangle
+        Asked at: Wipro, Capgemini, Infosys
 
-  [C][ ] (M) Minimum swaps to sort an array
-          Asked at: Amazon, Flipkart, Goldman Sachs
+  [ ] (E) Check Armstrong number (e.g. 153 = 1^3 + 5^3 + 3^3)
+        Asked at: TCS, Capgemini
 
-  [C][ ] (M) Rearrange array: arr[i] = arr[arr[i]] without extra space
-          Asked at: Amazon, Microsoft, Google
+  [ ] (E) Find GCD of two numbers using Euclidean algorithm
+        Asked at: Amazon, Microsoft, Zoho
 
-  [C][ ] (M) Find the maximum circular subarray sum
-          Asked at: Amazon, Google
+  [ ] (E) Find LCM of two numbers
+        Asked at: TCS, Wipro
 
-  [C][ ] (M) Maximum sum of non-adjacent elements (same as house robber)
-          Asked at: Amazon, Flipkart, Paytm
+  [ ] (M) Print all prime factors of a number
+        Asked at: Amazon, Flipkart
 
-  [C][ ] (M) Find smallest positive missing integer (O(N), O(1) space)
-          Asked at: Amazon, Microsoft, Google, Flipkart
-
-  [C][ ] (M) Minimum number of jumps to reach end (O(N) greedy)
-          Asked at: Amazon, Microsoft, Google, Flipkart, Paytm
-
-  [C][ ] (M) Find all elements that appear more than N/3 times
-          Asked at: Amazon, Microsoft, Google
-
-  [C][ ] (M) Median of a sliding window of size K
-          Asked at: Amazon, Goldman Sachs, Google
-
-  [C][ ] (M) Maximum sum rectangle in 2D matrix
-          Asked at: Amazon, Microsoft, Google
-
-  [C][ ] (M) Minimum cost to make array equal (sort + prefix sum approach)
-          Asked at: Amazon, Google
-
-  [C][ ] (H) Minimum number of platforms required (sort arrival and departure)
-          Asked at: Amazon, Goldman Sachs, Flipkart, Paytm
-
-  [C][ ] (H) Count smaller elements after self using merge sort / BIT
-          Asked at: Google, Amazon, Goldman Sachs
-
-  [C][ ] (H) Maximum sum of K non-overlapping subarrays
-          Asked at: Google, Goldman Sachs
-
-  [C][ ] (H) Find the K-th smallest element in a sorted matrix
-          Asked at: Amazon, Google, Microsoft
-
-  [C][ ] (H) Maximum gap between sorted elements using bucket sort
-          Asked at: Google, Amazon
-
---------------------------------------------------------------------------------
-C2. STRINGS — ADDITIONAL PROBLEMS
---------------------------------------------------------------------------------
-
-  [C][ ] (E) Find the frequency of each character
-          Asked at: TCS, Wipro, Infosys
-
-  [C][ ] (E) Remove consecutive duplicates from string (aabbcc -> abc)
-          Asked at: TCS, Wipro, Zoho
-
-  [C][ ] (E) Check if string contains only digits
-          Asked at: TCS, Wipro, Capgemini
-
-  [C][ ] (E) Caesar cipher — shift characters by K
-          Asked at: TCS, Capgemini, Zoho
-
-  [C][ ] (M) Smallest window in string containing all distinct characters
-          Asked at: Amazon, Flipkart, Paytm
-
-  [C][ ] (M) Print all anagrams together from a list of strings
-          Asked at: Amazon, Microsoft, Adobe
-
-  [C][ ] (M) Minimum number of brackets to add to make string valid
-          Asked at: Amazon, Google, Microsoft
-
-  [C][ ] (M) Count occurrences of pattern in text using Z-algorithm
-          Asked at: Google, Amazon
-
-  [C][ ] (M) Rabin-Karp rolling hash — implement and use for pattern match
-          Asked at: Amazon, Google
-
-  [C][ ] (M) Longest substring with at most K distinct characters
-          Asked at: Amazon, Google, Microsoft, Adobe
-
-  [C][ ] (M) Minimum window containing all characters of pattern (with duplicates)
-          Asked at: Amazon, Google, Microsoft
-
-  [C][ ] (M) String to integer (implement stoi with full edge case handling)
-          Handle: leading spaces, +/-, overflow, invalid characters
-          Asked at: Amazon, Microsoft, Google
-
-  [C][ ] (M) Count distinct subsequences of string S in string T
-          Asked at: Amazon, Google
-
-  [C][ ] (M) Longest repeating subsequence
-          Asked at: Amazon, Microsoft
-
-  [C][ ] (H) Minimum insertions to make string palindrome
-          Asked at: Amazon, Flipkart, Goldman Sachs
-
-  [C][ ] (H) Interleaving strings — check if S3 is interleaving of S1 and S2
-          Asked at: Amazon, Google, Microsoft
-
-  [C][ ] (H) Shortest palindrome by adding characters at front
-          Asked at: Google, Amazon
-
---------------------------------------------------------------------------------
-C3. LINKED LISTS — ADDITIONAL PROBLEMS
---------------------------------------------------------------------------------
-
-  [C][ ] (E) Delete a node given only its pointer (not head)
-          Trick: copy next node's value and delete next node
-          Asked at: Amazon, Microsoft, Google
-
-  [C][ ] (E) Remove all occurrences of X from linked list
-          Asked at: Amazon, Flipkart
-
-  [C][ ] (E) Swap nodes in pairs
-          Asked at: Amazon, Microsoft
-
-  [C][ ] (M) Odd-Even Linked List (rearrange odd-indexed then even-indexed)
-          Asked at: Amazon, Microsoft, Flipkart
-
-  [C][ ] (M) Partition linked list around value X
-          (all < X before all >= X, maintaining relative order)
-          Asked at: Amazon, Microsoft
-
-  [C][ ] (M) Reorder linked list: L0->L1->...->Ln-2->Ln-1
-               becomes L0->Ln-1->L1->Ln-2->...
-          Asked at: Amazon, Microsoft, Google
-
-  [C][ ] (M) Find the node where cycle begins (Floyd + math)
-          Asked at: Amazon, Google, Microsoft
-
-  [C][ ] (M) Deep copy linked list with random pointer
-          Using hashmap, then without hashmap (interweaving trick)
-          Asked at: Amazon, Microsoft, Google, Adobe
-
-  [C][ ] (M) Merge K sorted linked lists (priority queue / divide & conquer)
-          Asked at: Amazon, Microsoft, Google, Goldman Sachs
-
-  [C][ ] (M) Reverse every alternate K nodes in linked list
-          Asked at: Amazon, Flipkart
-
-  [C][ ] (H) Design a skip list from scratch
-          Asked at: Google, Dolat Capital, advanced data structure roles
-
---------------------------------------------------------------------------------
-C4. STACKS & QUEUES — ADDITIONAL PROBLEMS
---------------------------------------------------------------------------------
-
-  [C][ ] (M) Asteroid Collision (stack simulation)
-          Asked at: Amazon, Google, Microsoft
-
-  [C][ ] (M) Remove duplicate letters (smallest result, no duplicates)
-          Asked at: Amazon, Google
-
-  [C][ ] (M) Remove K digits to form smallest number (monotonic stack)
-          Asked at: Amazon, Google, Microsoft
-
-  [C][ ] (M) Sum of subarray minimums (monotonic stack)
-          Asked at: Amazon, Google
-
-  [C][ ] (M) Number of visible people in queue (each person blocks shorter)
-          Asked at: Amazon, Google
-
-  [C][ ] (M) Online stock span (extend daily stock span problem)
-          Asked at: Amazon, Microsoft, Goldman Sachs
-
-  [C][ ] (M) Basic calculator — evaluate string with +, -, (, )
-          Asked at: Amazon, Google, Microsoft
-
-  [C][ ] (H) Basic calculator II — evaluate string with +, -, *, /
-          Asked at: Amazon, Google, Microsoft
-
-  [C][ ] (H) Trapping Rain Water using stack (alternate approach)
-          Asked at: Amazon, Google, Microsoft
-
-  [C][ ] (H) Maximum of all subarrays of size K (sliding window + deque)
-          Asked at: Amazon, Google, Goldman Sachs
-
---------------------------------------------------------------------------------
-C5. TREES — ADDITIONAL PROBLEMS
---------------------------------------------------------------------------------
-
-  [C][ ] (M) Boundary traversal of binary tree (left + leaves + right)
-          Asked at: Amazon, Flipkart, Adobe
-
-  [C][ ] (M) Connect nodes at same level (using BFS or O(1) space)
-          Asked at: Amazon, Microsoft, Google
-
-  [C][ ] (M) Find all nodes at distance K from a given node
-          Asked at: Amazon, Google, Microsoft
-
-  [C][ ] (M) Burn binary tree from a leaf node — find minimum time
-          Asked at: Amazon, Flipkart
-
-  [C][ ] (M) Count complete tree nodes in O(log^2 N)
-          Asked at: Google, Amazon
-
-  [C][ ] (M) Binary tree to doubly linked list (inorder)
-          Asked at: Amazon, Microsoft, Google
-
-  [C][ ] (M) Sum tree — replace each node with sum of its subtree
-          Asked at: Amazon, Flipkart
-
-  [C][ ] (M) Check if subtree of another tree
-          Asked at: Amazon, Microsoft
-
-  [C][ ] (M) Largest value in each level of binary tree
-          Asked at: Amazon, Microsoft
-
-  [C][ ] (M) Average of each level in binary tree
-          Asked at: Amazon, Microsoft
-
-  [C][ ] (M) Sum of nodes at Kth level
-          Asked at: Amazon, Flipkart, Paytm
-
-  [C][ ] (M) Minimum time to collect all apples in a tree (DFS)
-          Asked at: Amazon, Google
-
-  [C][ ] (M) Binary tree coloring game — who wins?
-          Asked at: Google, Amazon
-
-  [C][ ] (H) Serialize and deserialize N-ary tree
-          Asked at: Amazon, Google, Microsoft
-
-  [C][ ] (H) Find duplicate subtrees (serialize + hashmap)
-          Asked at: Amazon, Google
-
---------------------------------------------------------------------------------
-C6. GRAPHS — ADDITIONAL PROBLEMS
---------------------------------------------------------------------------------
-
-  [C][ ] (M) Surrounded regions — capture all 'O' regions surrounded by 'X'
-          Asked at: Amazon, Google, Microsoft
-
-  [C][ ] (M) Clone graph (deep copy)
-          Asked at: Amazon, Microsoft, Google
-
-  [C][ ] (M) Count the number of distinct islands (DFS + shape hashing)
-          Asked at: Amazon, Google
-
-  [C][ ] (M) Keys and rooms — can you visit all rooms?
-          Asked at: Amazon, Google
-
-  [C][ ] (M) Find the town judge (everyone trusts judge, judge trusts nobody)
-          Asked at: Amazon, Microsoft
-
-  [C][ ] (M) Minimum height trees (find roots of minimum height trees)
-          Asked at: Amazon, Google, Microsoft
-
-  [C][ ] (M) Reconstruct itinerary (Eulerian path with Hierholzer's)
-          Asked at: Amazon, Google, Microsoft
-
-  [C][ ] (M) Find if path exists in graph
-          Asked at: Amazon, Microsoft, Flipkart
-
-  [C][ ] (M) Path with minimum effort (Dijkstra variant)
-          Asked at: Amazon, Google
-
-  [C][ ] (M) Number of ways to arrive at destination (count paths with Dijkstra)
-          Asked at: Amazon, Google, Goldman Sachs
-
-  [C][ ] (M) Swim in rising water (binary search or Dijkstra)
-          Asked at: Google, Amazon
-
-  [C][ ] (H) Making a large island (flip one 0 to 1, maximize island)
-          Asked at: Amazon, Google
-
-  [C][ ] (H) Minimum cost to connect all points (Prim's / Kruskal's)
-          Asked at: Amazon, Google, Goldman Sachs
-
-  [C][ ] (H) Shortest path visiting all nodes (bitmask BFS)
-          Asked at: Google, Amazon
-
-  [C][ ] (H) Parallel courses — minimum semesters to complete all
-          Asked at: Amazon, Google
-
---------------------------------------------------------------------------------
-C7. DYNAMIC PROGRAMMING — ADDITIONAL PROBLEMS
---------------------------------------------------------------------------------
-
-  [C][ ] (M) Minimum cost to cut a stick (interval DP)
-          Asked at: Amazon, Google
-
-  [C][ ] (M) Count square submatrices with all 1s
-          Asked at: Amazon, Google, Microsoft
-
-  [C][ ] (M) Maximal square of 1s in binary matrix (DP)
-          Asked at: Amazon, Microsoft, Google, Goldman Sachs
-
-  [C][ ] (M) Triangle minimum path sum (bottom-up DP)
-          Asked at: Amazon, Microsoft, Google
-
-  [C][ ] (M) Dungeon game (reverse DP)
-          Asked at: Amazon, Microsoft, Google
-
-  [C][ ] (M) Number of dice rolls with target sum (DP)
-          Asked at: Amazon, Google
-
-  [C][ ] (M) Longest string chain (LIS variant on words)
-          Asked at: Amazon, Google
-
-  [C][ ] (M) Painting houses with K colors (minimize cost, no adjacent same)
-          Asked at: Amazon, Google, Microsoft
-
-  [C][ ] (M) Count paths from top-left to bottom-right with obstacles
-          Asked at: Amazon, Microsoft, Flipkart
-
-  [C][ ] (M) Number of times string appears as subsequence
-          Asked at: Amazon, Google
-
-  [C][ ] (M) Minimum falling path sum in matrix
-          Asked at: Amazon, Google, Microsoft
-
-  [C][ ] (M) Maximize score after N operations (bitmask DP + GCD)
-          Asked at: Google, Goldman Sachs
-
-  [C][ ] (M) Count number of increasing subsequences
-          Asked at: Amazon, Flipkart, Goldman Sachs
-
-  [C][ ] (H) Strange printer (interval DP)
-          Asked at: Google, Amazon
-
-  [C][ ] (H) Maximum profit in job scheduling (weighted interval scheduling)
-          Asked at: Amazon, Google, Goldman Sachs
-
-  [C][ ] (H) Minimum number of days to disconnect island
-          Asked at: Google, Amazon
-
-  [C][ ] (H) Minimum cost tree from leaf values (interval DP)
-          Asked at: Google, Amazon
-
-  [C][ ] (H) Allocate minimum number of pages (binary search on DP result)
-          Asked at: Amazon, Flipkart, Goldman Sachs, FAANG
-
-  [C][ ] (H) Paint fence with N posts and K colors (DP)
-          Asked at: Amazon, Google
-
---------------------------------------------------------------------------------
-C8. BACKTRACKING — ADDITIONAL PROBLEMS
---------------------------------------------------------------------------------
-
-  [C][ ] (M) All possible paths from top-left to bottom-right of grid
-          Asked at: Amazon, Microsoft, Flipkart
-
-  [C][ ] (M) Generate all strings of length N using given character set
-          Asked at: Amazon, Zoho
-
-  [C][ ] (M) Find all paths in a graph from source to destination
-          Asked at: Amazon, Microsoft
-
-  [C][ ] (M) Beautiful arrangement — count permutations satisfying constraint
-          Asked at: Amazon, Google
-
-  [C][ ] (M) Restore IP addresses (split string into 4 valid parts)
-          Asked at: Amazon, Microsoft, Google
-
-  [C][ ] (M) Partition to K equal subsets
-          Asked at: Amazon, Google, Microsoft
-
-  [C][ ] (M) Combination Sum III (K numbers summing to N, 1-9 only)
-          Asked at: Amazon, Microsoft
-
-  [C][ ] (H) Expression add operators (add +,-,* between digits to reach target)
-          Asked at: Google, Amazon, Facebook
-
-  [C][ ] (H) Remove invalid parentheses (remove minimum to make valid)
-          Asked at: Google, Amazon, Facebook
-
-  [C][ ] (H) Word search II (Trie + Backtracking)
-          Asked at: Amazon, Microsoft, Google
-
---------------------------------------------------------------------------------
-C9. GREEDY — ADDITIONAL PROBLEMS
---------------------------------------------------------------------------------
-
-  [C][ ] (M) Maximum units on truck (sort by units per box)
-          Asked at: Amazon, Google
-
-  [C][ ] (M) Two city scheduling (send N people to 2 cities, min cost)
-          Asked at: Amazon, Google
-
-  [C][ ] (M) Reduce array size to half (frequency greedy)
-          Asked at: Amazon, Google
-
-  [C][ ] (M) Minimum adjacent swaps to make string palindrome
-          Asked at: Amazon, Goldman Sachs
-
-  [C][ ] (M) Minimum cost to hire K workers
-          Asked at: Google, Goldman Sachs
-
-  [C][ ] (M) Advantage shuffle (match array A to B, maximize wins)
-          Asked at: Amazon, Google
-
-  [C][ ] (M) Broken calculator (reach Y from X using *2 or -1 on Y)
-          Asked at: Amazon, Google
-
-  [C][ ] (M) Minimum number of arrows to burst balloons
-          Asked at: Amazon, Google, Microsoft
-
-  [C][ ] (H) IPO — maximize capital by selecting projects
-          Asked at: Google, Goldman Sachs, Amazon
-
-  [C][ ] (H) Smallest range covering elements from K sorted lists
-          Asked at: Google, Amazon, Goldman Sachs
-
---------------------------------------------------------------------------------
-C10. BIT MANIPULATION — ADDITIONAL PROBLEMS
---------------------------------------------------------------------------------
-
-  [C][ ] (E) Check if two integers have opposite signs
-          Hint: (x ^ y) < 0
-          Asked at: Amazon, Samsung
-
-  [C][ ] (E) Find position of rightmost set bit
-          Hint: log2(n & -n)
-          Asked at: Amazon, Samsung
-
-  [C][ ] (E) Turn off rightmost set bit
-          Hint: n & (n-1)
-          Asked at: Amazon, Samsung, Dolat Capital
-
-  [C][ ] (M) XOR of numbers from L to R
-          (Use pattern: xorUpTo(R) ^ xorUpTo(L-1))
-          Asked at: Amazon, Competitive Programming
-
-  [C][ ] (M) Find the number that appears twice (array has n+1 numbers, 1 to n)
-          Using XOR or sum approach
-          Asked at: Amazon, Microsoft, Google
-
-  [C][ ] (M) Minimum XOR value of pair in array
-          Sort and XOR consecutive elements
-          Asked at: Amazon, Competitive Programming
-
-  [C][ ] (M) Find the longest sequence of 1s by flipping one bit
-          Asked at: Amazon, Microsoft
-
-  [C][ ] (M) Divide two integers without using / or * operators
-          Asked at: Amazon, Google, Microsoft
-
-  [C][ ] (M) Number of 1 bits (also: for every number 0 to N)
-          Asked at: Amazon, Microsoft, Google
-
-  [C][ ] (H) Maximum AND pair — find pair with max AND value
-          Asked at: Amazon, Competitive Programming
-
-  [C][ ] (H) Subarrays with XOR equal to K
-          Hint: prefix XOR + hashmap
-          Asked at: Amazon, Flipkart, Goldman Sachs
-
-  [C][ ] (H) All subsets XOR sum (sum of XOR of all subsets)
-          Asked at: Amazon, Google
-
---------------------------------------------------------------------------------
-C11. DESIGN — ADDITIONAL PROBLEMS
---------------------------------------------------------------------------------
-
-  [C][ ] (M) Implement a generic circular buffer templated class in C++
-          Asked at: Dolat Capital, Sasken, L&T Infotech
-
-  [C][ ] (M) Implement a thread-safe queue in C++
-          Asked at: Dolat Capital, Persistent, Nagarro
-
-  [C][ ] (M) Implement a Trie with delete operation
-          Asked at: Amazon, Google, Microsoft
-
-  [C][ ] (M) Design a Stock Price Feed system:
-               - Update price of a stock
-               - Get current price
-               - Get maximum price ever
-               - Get minimum price ever
-               - Get last 5 price changes
-          Asked at: Dolat Capital, ICICI Securities, Goldman Sachs
-
-  [C][ ] (M) Design an in-memory key-value store with TTL (expiry)
-          Asked at: Amazon, Google, Flipkart
-
-  [C][ ] (M) Design a leaderboard — top K scores, update score, rank query
-          Asked at: Amazon, Google, Flipkart
-
-  [C][ ] (M) Implement a generic observer pattern in C++
-          Asked at: Persistent, Nagarro, L&T Infotech
-
-  [C][ ] (M) Implement a thread-safe bounded blocking queue
-          (producer blocks when full, consumer blocks when empty)
-          Asked at: Dolat Capital, Persistent, Amazon, Microsoft
-
-  [C][ ] (H) Design a consistent hashing system
-          Asked at: Amazon, Google, Microsoft, Flipkart
-
-  [C][ ] (H) Implement a copy-on-write smart pointer
-          Asked at: Advanced C++ roles, Dolat Capital
-
-  [C][ ] (H) Design a high-frequency trading message bus (pub/sub)
-          Asked at: Dolat Capital, HFT firms
-
---------------------------------------------------------------------------------
-C12. NUMBER THEORY — ADDITIONAL PROBLEMS
---------------------------------------------------------------------------------
-
-  [C][ ] (E) Check if a number is a perfect square without sqrt()
-          Hint: binary search or Newton-Raphson
-          Asked at: Amazon, Google, Goldman Sachs
-
-  [C][ ] (E) Count prime numbers up to N (Sieve of Eratosthenes)
-          Asked at: Amazon, Google, Goldman Sachs, Dolat Capital
-
-  [C][ ] (E) Find all prime factors of N in O(sqrt(N))
-          Asked at: Amazon, Flipkart, Goldman Sachs
-
-  [C][ ] (M) Count numbers in [1, N] coprime to N (Euler's totient)
-          Asked at: Goldman Sachs, Dolat Capital, Google
-
-  [C][ ] (M) Find N-th Fibonacci number modulo M in O(log N)
-          Hint: matrix exponentiation
-          Asked at: Goldman Sachs, Google, Dolat Capital
-
-  [C][ ] (M) Minimum operations to reduce N to 1 (divide by factors or -1)
-          BFS or DP approach
-          Asked at: Amazon, Google
-
-  [C][ ] (M) Ugly numbers — Nth number whose prime factors are only 2, 3, 5
-          Asked at: Amazon, Microsoft, Google
-
-  [C][ ] (M) Super Ugly Number (prime factors from given set)
-          Asked at: Amazon, Google
-
-  [C][ ] (M) Smallest prime factor sieve (precompute for factorization queries)
-          Asked at: Competitive Programming, Goldman Sachs
-
-  [C][ ] (H) Count pairs (a, b) such that a^b > b^a
-          Asked at: Competitive Programming, Goldman Sachs
-
-  [C][ ] (H) Count numbers in [L, R] with digit sum divisible by K (Digit DP)
-          Asked at: Google, Goldman Sachs, Competitive Programming
-
-  [C][ ] (H) Maximum XOR subset — find subset with maximum XOR
-          Hint: Gaussian elimination / linear basis
-          Asked at: Competitive Programming, Google
+  [ ] (M) Find sum of series: 1 + 1/2 + 1/3 + ... + 1/N
+        Asked at: Capgemini, Wipro
 
 ================================================================================
-SECTION D — TRICKY / PUZZLE QUESTIONS (asked verbally in interviews)
+PHASE 5 — FUNCTIONS & RECURSION
 ================================================================================
 
-  [ ] You have 8 balls, one is heavier. You have a balance scale.
-      Minimum weighings to find the heavy ball? (Answer: 2)
-      Asked at: Goldman Sachs, Dolat Capital, Google, Microsoft
+THEORY
+-------
+  [ ] What is the difference between pass by value and pass by reference?
+  [ ] What is function overloading? Can you overload based on return type alone?
+  [ ] What is a default argument? Where must it appear in the parameter list?
+  [ ] What is an inline function? When does the compiler ignore inline hint?
+  [ ] What is recursion? What are its advantages and disadvantages vs iteration?
+  [ ] What is tail recursion? Why is it better? Does C++ optimize it?
+  [ ] What is stack overflow in context of recursion?
+  [ ] What is the difference between local and global variables?
+  [ ] What is a static local variable? How long does it live?
+  [ ] Can a function return multiple values in C++? How?
 
-  [ ] A frog wants to climb N stairs. Can jump 1 or 2 steps.
-      How many ways? Relate to Fibonacci.
-      Asked at: TCS, Wipro, Amazon, Goldman Sachs
+CODING
+-------
+  [ ] (E) Fibonacci using recursion
+        Asked at: TCS, Wipro, Amazon, Infosys
 
-  [ ] There are 100 doors, all closed. 100 people walk through.
-      Person i toggles every ith door. Which doors are open at end?
-      (Perfect squares: 1, 4, 9, 16, ...)
-      Asked at: Goldman Sachs, Google, Dolat Capital
+  [ ] (E) Factorial using recursion
+        Asked at: TCS, Wipro, Infosys
 
-  [ ] You have a 3L jug and 5L jug. Measure exactly 4L.
-      Asked at: Goldman Sachs, Google, Dolat Capital
+  [ ] (E) Sum of digits using recursion
+        Asked at: Wipro, Cognizant
 
-  [ ] What is 2^10? 2^20? 2^30? 2^32?
-      (1024, ~1M, ~1B, ~4B — must know for memory/CS)
-      Asked at: Dolat Capital, Goldman Sachs, HFT firms
+  [ ] (E) Power(x, n) using recursion
+        Asked at: Amazon, Microsoft
 
-  [ ] A stock goes from 100 to 110. What is % return?
-      If it then falls to 99, what is overall return?
-      (Returns are not additive — this is why log returns matter)
-      Asked at: Dolat Capital, Edelweiss, Goldman Sachs
+  [ ] (E) Check if string is palindrome using recursion
+        Asked at: Amazon, Zoho
 
-  [ ] You flip a coin until you get heads. You win 2^N where N is flips.
-      How much would you pay to play? (St. Petersburg Paradox)
-      Asked at: Goldman Sachs, Dolat Capital
+  [ ] (M) Tower of Hanoi — print the moves
+        Asked at: Amazon, Microsoft, Google
 
-  [ ] You have a biased coin. How do you generate a fair 50/50 outcome?
-      (Flip twice: HT=heads, TH=tails, HH/TT=retry)
-      Asked at: Goldman Sachs, Google, Dolat Capital
+  [ ] (M) Print all permutations of a string using recursion
+        Asked at: Amazon, Microsoft, Google, Flipkart
 
-  [ ] Given random number generator rand7(), implement rand5().
-      Given rand5(), implement rand7().
-      Asked at: Amazon, Google, Goldman Sachs
+  [ ] (M) Generate all subsets of a set {1,2,...,N} using recursion
+        Asked at: Amazon, Google, Atlassian
 
-  [ ] You are given a 100-story building and 2 eggs.
-      Find minimum drops to find the critical floor. Explain the strategy.
-      Asked at: Goldman Sachs, Amazon, Google, Dolat Capital
+  [ ] (M) Count ways to climb N stairs (1 or 2 steps at a time) — recursion then DP
+        Asked at: Amazon, Microsoft, Google, Flipkart
 
-  [ ] In a tournament with N players, how many matches to find winner?
-      (Always N-1 matches — each match eliminates one)
-      Asked at: Goldman Sachs, Dolat Capital
-
-  [ ] What is the expected number of coin flips to get 2 heads in a row?
-      Asked at: Goldman Sachs, Dolat Capital, quant roles
-
-  [ ] A room has N people. What is the probability two share a birthday?
-      At what N does probability exceed 50%? (Birthday problem, N=23)
-      Asked at: Goldman Sachs, Dolat Capital, Edelweiss
+  [ ] (H) Flatten a nested recursive structure
+        Asked at: Atlassian, Adobe
 
 ================================================================================
-SECTION E — SQL & DATABASE QUESTIONS (asked at lower/mid tier companies)
+PHASE 6 — ARRAYS
 ================================================================================
 
-  [T][ ] What is the difference between WHERE and HAVING?
-          Asked at: TCS, Wipro, Infosys, Capgemini, Mphasis
+THEORY
+-------
+  [ ] What is the time complexity of accessing, inserting, deleting in an array?
+  [ ] What is the difference between static and dynamic arrays?
+  [ ] How does vector<int> work internally? What happens when it resizes?
+  [ ] What is cache locality? Why are arrays cache-friendly?
+  [ ] What is the difference between array and pointer in C++?
+  [ ] What is a 2D array? How is it stored in memory (row-major)?
 
-  [T][ ] What is a JOIN? What are the types?
-          (INNER, LEFT, RIGHT, FULL OUTER, CROSS, SELF)
-          Asked at: TCS, Wipro, Infosys, L&T Infotech, Hexaware
+CODING — EASY
+--------------
+  [ ] (E) Find maximum and minimum in an array
+        Asked at: TCS, Wipro, Infosys, Capgemini
 
-  [T][ ] What is the difference between INNER JOIN and LEFT JOIN?
-          Asked at: TCS, Wipro, Infosys, Capgemini
+  [ ] (E) Reverse an array in-place
+        Asked at: TCS, Wipro, Infosys, Zoho
 
-  [T][ ] What is a subquery vs a JOIN? When to use each?
-          Asked at: Wipro, Infosys, L&T Infotech
+  [ ] (E) Check if array is sorted (ascending)
+        Asked at: Wipro, Capgemini
 
-  [T][ ] What is a primary key? What is a foreign key?
-          Asked at: TCS, Wipro, Infosys, Capgemini
+  [ ] (E) Find second largest element in array
+        Asked at: Amazon, Flipkart, TCS, Zoho
 
-  [T][ ] What is indexing? How does it speed up queries?
-          Asked at: L&T Infotech, Persistent, Mphasis, Nagarro
+  [ ] (E) Move all zeros to end (maintaining order of non-zero elements)
+        Asked at: Amazon, Microsoft, Google
 
-  [T][ ] What is a clustered vs non-clustered index?
-          Asked at: L&T Infotech, Persistent, Nagarro
+  [ ] (E) Find if array contains duplicate
+        Asked at: Amazon, Microsoft, Adobe
 
-  [T][ ] What are the ACID properties?
-          (Atomicity, Consistency, Isolation, Durability)
-          Asked at: L&T Infotech, Persistent, Nagarro, Mphasis
+  [ ] (E) Left rotate array by K positions
+        Asked at: Amazon, Flipkart, TCS
 
-  [T][ ] What is a transaction? What is a deadlock in databases?
-          Asked at: L&T Infotech, Persistent, Nagarro
+  [ ] (E) Find missing number in array [1 to N]
+        Hint: use XOR or sum formula N*(N+1)/2 - actual_sum
+        Asked at: Amazon, Microsoft, Google, Flipkart, TCS
 
-  [T][ ] What is normalization? What are 1NF, 2NF, 3NF?
-          Asked at: TCS, Wipro, Infosys, L&T Infotech
+  [ ] (E) Two Sum — find pair with given target sum (brute force then hashmap)
+        Asked at: Amazon, Microsoft, Google, Adobe, Flipkart
 
-  [T][ ] What is denormalization? When would you denormalize?
-          Asked at: L&T Infotech, Persistent
+  [ ] (E) Find all pairs with given difference
+        Asked at: Amazon, Zoho
 
-  [T][ ] What is the difference between DELETE, TRUNCATE, DROP?
-          Asked at: TCS, Wipro, Infosys, Capgemini, L&T Infotech
+CODING — MEDIUM
+----------------
+  [ ] (M) Best time to buy and sell stock (single transaction, max profit)
+        Asked at: Amazon, Microsoft, Google, Goldman Sachs
 
-  SQL CODING:
-  [ ] (E) Find second highest salary from Employee table
-          Asked at: TCS, Wipro, Infosys, Capgemini, L&T Infotech, Hexaware
+  [ ] (M) Maximum subarray sum (Kadane's Algorithm)
+        Asked at: Amazon, Microsoft, Google, Flipkart, Adobe, Samsung
 
-  [ ] (E) Find duplicate records in a table
-          SELECT name, COUNT(*) FROM t GROUP BY name HAVING COUNT(*) > 1
-          Asked at: TCS, Wipro, Infosys, Capgemini
+  [ ] (M) Sort an array of 0s, 1s, 2s in single pass (Dutch National Flag)
+        Asked at: Amazon, Microsoft, Flipkart, Paytm, Zoho
 
-  [ ] (E) Find employees who earn more than their manager
-          Asked at: TCS, Wipro, Infosys, L&T Infotech
+  [ ] (M) 3Sum — find all unique triplets summing to zero
+        Asked at: Amazon, Microsoft, Google, Adobe
 
-  [ ] (M) Find the Nth highest salary (use DENSE_RANK or LIMIT with OFFSET)
-          Asked at: Amazon, Microsoft, L&T Infotech, Persistent
+  [ ] (M) Find majority element (appears more than N/2 times)
+        Hint: Boyer-Moore Voting algorithm
+        Asked at: Amazon, Microsoft, Adobe, Swiggy
 
-  [ ] (M) Find departments with more than 5 employees
-          Asked at: TCS, Wipro, Infosys, Capgemini
+  [ ] (M) Container with most water (two pointer)
+        Asked at: Amazon, Google, Microsoft, Adobe
 
-  [ ] (M) Find employees who have never taken a project
-          (LEFT JOIN + IS NULL or NOT EXISTS)
-          Asked at: Wipro, Infosys, L&T Infotech
+  [ ] (M) Trapping Rain Water
+        Asked at: Amazon, Google, Microsoft, Adobe, Flipkart, Goldman Sachs
 
-  [ ] (M) Find running total of salary over time (using window functions)
-          Asked at: Amazon, L&T Infotech, Persistent, Goldman Sachs
+  [ ] (M) Product of array except self (no division, O(N), O(1) extra space)
+        Asked at: Amazon, Microsoft, Google
 
-  [ ] (M) Rank employees within each department by salary
-          Asked at: Amazon, Goldman Sachs, L&T Infotech
+  [ ] (M) Find duplicate in array of N+1 integers (values 1 to N)
+        Asked at: Amazon, Microsoft, Google
 
-================================================================================
-SECTION F — OS / NETWORKING BASICS (asked at mid-tier companies)
-================================================================================
+  [ ] (M) Merge two sorted arrays in-place
+        Asked at: Amazon, Microsoft, Adobe
 
-  [T][ ] What is an operating system? What are its main functions?
-          Asked at: TCS, Wipro, L&T Infotech, Mphasis
+  [ ] (M) Rotate matrix (image) 90 degrees clockwise in-place
+        Asked at: Amazon, Microsoft, Google, Adobe
 
-  [T][ ] What is a process vs a thread?
-          Asked at: L&T Infotech, Persistent, Mphasis, Nagarro
+  [ ] (M) Spiral order traversal of matrix
+        Asked at: Amazon, Microsoft, Flipkart, Adobe
 
-  [T][ ] What is context switching?
-          Asked at: L&T Infotech, Persistent, Dolat Capital
+  [ ] (M) Set matrix zeroes (if element is 0, set entire row and column to 0)
+        Asked at: Amazon, Microsoft
 
-  [T][ ] What is virtual memory? What is paging?
-          Asked at: L&T Infotech, Persistent, Sasken
+  [ ] (M) Search in rotated sorted array
+        Asked at: Amazon, Microsoft, Google, Flipkart
 
-  [T][ ] What is a page fault?
-          Asked at: L&T Infotech, Persistent, Sasken
+  [ ] (M) Find minimum in rotated sorted array
+        Asked at: Amazon, Google, Microsoft
 
-  [T][ ] What is the difference between process scheduling algorithms?
-          (FCFS, SJF, Round Robin, Priority)
-          Asked at: L&T Infotech, Mphasis, Hexaware, TCS
+  [ ] (M) Count inversions in array (number of pairs where arr[i] > arr[j], i<j)
+        Asked at: Amazon, Google, Flipkart, Goldman Sachs
 
-  [T][ ] What is thrashing?
-          Asked at: L&T Infotech, Persistent
+  [ ] (M) Subarray with given sum (positive numbers — sliding window)
+        Asked at: Amazon, Flipkart, Paytm, Zoho
 
-  [T][ ] What is the difference between mutex and semaphore?
-          Asked at: Persistent, Nagarro, Dolat Capital, L&T Infotech
+  [ ] (M) Longest consecutive sequence
+        Hint: use unordered_set, O(N)
+        Asked at: Google, Amazon, Microsoft, Atlassian
 
-  [T][ ] What is the OSI model? Name all 7 layers.
-          Asked at: L&T Infotech, Mphasis, Hexaware, TCS
+  [ ] (M) Maximum product subarray
+        Asked at: Amazon, Microsoft, Google
 
-  [T][ ] What is the difference between TCP and UDP?
-          Asked at: L&T Infotech, Mphasis, Hexaware, Dolat Capital, ICICI Securities
+CODING — HARD
+--------------
+  [ ] (H) Largest rectangle in histogram
+        Asked at: Amazon, Google, Microsoft, Adobe, Goldman Sachs
 
-  [T][ ] What is a three-way handshake in TCP?
-          (SYN, SYN-ACK, ACK)
-          Asked at: L&T Infotech, Sasken, Dolat Capital
+  [ ] (H) Maximum size rectangle of 1s in binary matrix
+        Asked at: Amazon, Microsoft, Google
 
-  [T][ ] What is HTTP vs HTTPS?
-          Asked at: L&T Infotech, Mphasis, Hexaware
-
-  [T][ ] What is DNS? What happens when you type google.com in a browser?
-          Asked at: L&T Infotech, Persistent, Nagarro
-
-  [T][ ] What is the difference between REST and gRPC?
-          Asked at: Persistent, Nagarro, Dolat Capital
-
-  [T][ ] What is a CDN?
-          Asked at: L&T Infotech, Persistent, Nagarro
-
-  [T][ ] What is the difference between latency and bandwidth?
-          Asked at: Dolat Capital, L&T Infotech, ICICI Securities
+  [ ] (H) Median of two sorted arrays in O(log(min(m,n)))
+        Asked at: Google, Amazon, Microsoft
 
 ================================================================================
-UPDATED TOTAL COUNT
+PHASE 7 — STRINGS
 ================================================================================
 
-  Section                              | Theory | Coding | Total
-  -------------------------------------|--------|--------|------
-  A. C/C++ Deep Theory                 |  120   |    0   |  120
-  B. Quant Theory & Finance Coding     |   35   |   18   |   53
-  C. Additional Coding (all topics)    |    0   |  120   |  120
-  D. Puzzle / Brain Teasers            |   13   |    0   |   13
-  E. SQL                               |   11   |    8   |   19
-  F. OS / Networking                   |   17   |    0   |   17
-  -------------------------------------|--------|--------|------
-  This file total                      |  196   |  146   |  342
-  Previous file total                  |  ---   |  ---   |  296
-  -------------------------------------|--------|--------|------
-  GRAND TOTAL (both files combined)    |        |        |  638
+THEORY
+-------
+  [ ] What is the difference between C-style string and std::string?
+  [ ] What is string immutability? (context of some languages vs C++)
+  [ ] What is the time complexity of string concatenation in a loop?
+  [ ] What is a string stream? When would you use stringstream?
+
+CODING — EASY
+--------------
+  [ ] (E) Reverse a string
+        Asked at: TCS, Wipro, Infosys, Capgemini
+
+  [ ] (E) Check if string is palindrome
+        Asked at: TCS, Wipro, Amazon, Zoho
+
+  [ ] (E) Count vowels and consonants in a string
+        Asked at: TCS, Wipro, Capgemini
+
+  [ ] (E) Remove all spaces from a string
+        Asked at: TCS, Infosys
+
+  [ ] (E) Convert string to uppercase / lowercase
+        Asked at: TCS, Wipro
+
+  [ ] (E) Count words in a sentence
+        Asked at: Wipro, Capgemini, Zoho
+
+  [ ] (E) Check if two strings are anagrams
+        Asked at: Amazon, Microsoft, Zoho, Flipkart
+
+  [ ] (E) First non-repeating character in a string
+        Asked at: Amazon, Microsoft, Adobe, Zoho, Flipkart
+
+CODING — MEDIUM
+----------------
+  [ ] (M) Longest substring without repeating characters
+        Asked at: Amazon, Microsoft, Google, Adobe, Flipkart, Goldman Sachs
+
+  [ ] (M) Longest common prefix among array of strings
+        Asked at: Amazon, Google
+
+  [ ] (M) Check if one string is rotation of another
+        Hint: check if s2 is substring of s1+s1
+        Asked at: Amazon, Microsoft, Flipkart
+
+  [ ] (M) String compression (aabccc -> a2b1c3)
+        Asked at: Amazon, Microsoft, Adobe, Goldman Sachs
+
+  [ ] (M) Group anagrams from list of strings
+        Asked at: Amazon, Microsoft, Google, Adobe
+
+  [ ] (M) Minimum window substring (containing all chars of pattern)
+        Asked at: Amazon, Google, Microsoft, Adobe, Flipkart
+
+  [ ] (M) Longest palindromic substring
+        Asked at: Amazon, Microsoft, Google, Adobe, Flipkart
+
+  [ ] (M) Count palindromic substrings
+        Asked at: Google, Amazon
+
+  [ ] (M) Valid parentheses string
+        Asked at: Amazon, Google, Microsoft
+
+  [ ] (M) Decode string (e.g. "3[a2[bc]]" -> "abcbcabcbcabcbc")
+        Asked at: Amazon, Google, Adobe, Atlassian
+
+  [ ] (M) Reverse words in a string (reverse word order, remove extra spaces)
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Find all permutations of a string (unique)
+        Asked at: Amazon, Microsoft, Adobe, Zoho
+
+  [ ] (M) Implement atoi (string to integer) — handle edge cases
+        Asked at: Amazon, Google, Microsoft
+
+  [ ] (M) Wildcard matching (* matches any sequence, ? matches one char)
+        Asked at: Amazon, Google, Microsoft
+
+CODING — HARD
+--------------
+  [ ] (H) KMP pattern matching — find all occurrences of pattern in text
+        Asked at: Google, Microsoft, Amazon
+
+  [ ] (H) Minimum characters to add to make string palindrome
+        Asked at: Amazon, Flipkart, Goldman Sachs
+
+  [ ] (H) Shortest palindrome (add chars at front to make palindrome)
+        Asked at: Google, Amazon
 
 ================================================================================
-COMPANY-ROLE QUICK GUIDE
+PHASE 8 — OOP (Object Oriented Programming)
 ================================================================================
 
-  DOLAT CAPITAL (C++ Quant / Algo Trading):
-    Must know: Memory model, cache, threading, lock-free programming,
-    low-latency C++, order book design, Black-Scholes, Greeks, VWAP,
-    Market microstructure, fast data structures (ring buffer, memory pool)
-    Focus: Sections A8, A9, A10, B1, B2, B3
+THEORY — HEAVILY ASKED IN INTERVIEWS
+--------------------------------------
+  [ ] What are the 4 pillars of OOP? Explain each with real-world example.
+  [ ] What is a class? What is an object? What is the difference?
+  [ ] What is encapsulation? Why is it important?
+  [ ] What is the difference between public, private, protected?
+  [ ] What is a constructor? What are the types of constructors?
+  [ ] What is a copy constructor? When is it called automatically?
+  [ ] What is a destructor? When is it called?
+  [ ] What is the difference between shallow copy and deep copy?
+  [ ] What is 'this' pointer? Give an example of when you'd use it.
+  [ ] What is a static member variable? How is it different from a regular member?
+  [ ] What is a friend function? When would you use it?
+  [ ] What is inheritance? What are the types of inheritance in C++?
+  [ ] What is the diamond problem? How is it solved?
+  [ ] What is a virtual function? Why do we need it?
+  [ ] What is a pure virtual function? What is an abstract class?
+  [ ] What is the difference between function overloading and function overriding?
+  [ ] What is early binding vs late binding (static vs dynamic dispatch)?
+  [ ] What is a vtable (virtual function table)?
+  [ ] What is a virtual destructor? Why is it important?
+  [ ] What is operator overloading? Which operators cannot be overloaded?
+  [ ] What is the difference between struct and class in C++?
+  [ ] Can constructors be virtual? Can destructors be virtual?
+  [ ] What is object slicing?
+  [ ] What is RTTI (Run Time Type Information)?
+  [ ] What is the difference between aggregation and composition?
+  [ ] What does the 'explicit' keyword do in constructors?
+  [ ] What is a mutable member? When would you use it?
+  [ ] What is the order of constructor and destructor calls in inheritance?
+  [ ] What is multiple inheritance? What are its pros and cons?
 
-  EDELWEISS / ANGEL BROKING / SHAREKHAN:
-    Must know: OOP, STL, basic DSA, finance concepts (moving avg, RSI),
-    SQL, basic statistics, option Greeks basics
-    Focus: Phase 8-17 problems, B1, B3 (moving avg, SMA/EMA), SQL
+CODING
+-------
+  [ ] (M) Design a BankAccount class with deposit, withdraw, getBalance
+        Asked at: TCS, Zoho, Wipro, Infosys
 
-  ICICI SECURITIES / HDFC SECURITIES / KOTAK SECURITIES:
-    Must know: Java/C++ basics, OOP, SQL, basic data structures,
-    financial products knowledge, Excel/Python scripting
-    Focus: Sections A1-A5, Phase 8-14 problems, SQL, B1
+  [ ] (M) Design a Student class, sort by marks, find topper
+        Asked at: TCS, Wipro
 
-  MOTILAL OSWAL / SHAREKHAN:
-    Must know: C++/Python basics, OOP, SQL, stats basics
-    Focus: Same as above, lighter on advanced DSA
+  [ ] (M) Implement a stack class using array with overflow/underflow handling
+        Asked at: Amazon, Microsoft, Zoho
 
-  L&T INFOTECH / MINDTREE / MPHASIS / HEXAWARE:
-    Must know: C++ theory (storage classes, pointers, OOP), DSA basics,
-    SQL, OS concepts, basic networking
-    Focus: Sections A1-A7, Phase 6-17 coding problems, SQL, OS/Net
+  [ ] (M) Design an Animal hierarchy: Animal -> Dog, Cat with speak() polymorphism
+        Asked at: Zoho, TCS, Infosys
 
-  PERSISTENT SYSTEMS / NAGARRO / CYIENT:
-    Must know: C++ theory + modern C++, templates, smart pointers,
-    design patterns, medium DSA problems, SQL
-    Focus: Sections A1-A7 (all), Phases 8-22 problems, Section D designs
+  [ ] (M) Implement a class for Complex numbers with operator overloading (+, -, *, <<)
+        Asked at: Samsung, Adobe, Zoho
 
-  SASKEN / EMBEDDED ROLES:
-    Must know: Memory model, storage classes, compilation, signals,
-    C-style programming, bit manipulation, real-time systems
-    Focus: Sections A1, A2, A3, A9, A10, Phase 23 (bit manipulation)
+  [ ] (M) Design a singleton class (thread-safe)
+        Asked at: Amazon, Microsoft, Google, Adobe
 
-  BIRLASOFT / ZENSAR / SONATA:
-    Must know: OOP basics, SQL, basic DSA, Java/C++ theory
-    Focus: Phase 8 theory, Phase 6-14 easy/medium problems, SQL
-
-  TCS / WIPRO / INFOSYS / CAPGEMINI (Mass Hiring):
-    Must know: Basic C++ theory, easy-medium DSA, SQL, patterns
-    Focus: Phase 1-15 easy problems, OOP theory, SQL basics
+  [ ] (M) Implement LRU Cache using class (HashMap + Doubly Linked List)
+        Asked at: Amazon, Microsoft, Google, Flipkart, Paytm
 
 ================================================================================
-END OF EXTENDED FILE
+PHASE 9 — STL (Standard Template Library)
 ================================================================================
 
-"For C++ developer roles: depth in language theory > breadth in DSA."
-"For quant roles: statistics + finance domain + fast C++ coding."
-"For service companies: OOP + basic DSA + SQL is enough to start."
+THEORY
+-------
+  [ ] What is STL? What are its main components?
+  [ ] What is the difference between vector and array?
+  [ ] What is the difference between vector and list? When to use each?
+  [ ] What is the time complexity of push_back in vector?
+  [ ] What is the internal implementation of unordered_map?
+  [ ] What is the difference between map and unordered_map?
+  [ ] What is the difference between set and unordered_set?
+  [ ] What is a priority_queue? What is its default order?
+  [ ] How do you create a min-heap using priority_queue in C++?
+  [ ] What is an iterator? What are the types of iterators?
+  [ ] What is the difference between begin() and end()?
+  [ ] What does sort() use internally? (Introsort — hybrid of quicksort + heapsort + insertion)
+  [ ] What is stable_sort and when should you use it?
+  [ ] What is a lambda expression? Give an example.
+  [ ] What is the difference between find() and binary_search() in STL?
+  [ ] What is lower_bound vs upper_bound?
+
+CODING
+-------
+  [ ] (E) Count word frequencies in a sentence using map
+        Asked at: Amazon, Microsoft, Zoho, TCS
+
+  [ ] (M) Find top K frequent elements using unordered_map + priority_queue
+        Asked at: Amazon, Microsoft, Google, Flipkart
+
+  [ ] (M) Sort vector of pairs by second element using lambda comparator
+        Asked at: Amazon, Flipkart
+
+  [ ] (M) Find first non-repeating character in stream using queue + hashmap
+        Asked at: Amazon, Microsoft, Adobe
+
+  [ ] (M) Implement browser history using two stacks
+        Asked at: Zoho, Atlassian
+
+  [ ] (M) K closest points to origin using max-heap
+        Asked at: Amazon, Google, Microsoft
+
+================================================================================
+PHASE 10 — POINTERS & MEMORY
+================================================================================
+
+THEORY — VERY COMMON IN SYSTEM/BACKEND INTERVIEWS
+---------------------------------------------------
+  [ ] What is a pointer? What is a reference? What is the difference?
+  [ ] What is a null pointer? What is a dangling pointer?
+  [ ] What is a memory leak? How do you detect and prevent it?
+  [ ] What is the difference between stack memory and heap memory?
+  [ ] What does new and delete do? What happens if you forget to delete?
+  [ ] What is a void pointer? What are its limitations?
+  [ ] What is a double pointer (pointer to pointer)?
+  [ ] What is the difference between array name and pointer?
+  [ ] What is pointer arithmetic? Is it safe to go out of bounds?
+  [ ] What is a smart pointer? What types exist in C++?
+  [ ] What is the difference between unique_ptr, shared_ptr, weak_ptr?
+  [ ] What is a reference count? How does shared_ptr use it?
+  [ ] What is a circular reference? How does weak_ptr solve it?
+  [ ] What is RAII? Give an example.
+  [ ] What does valgrind do?
+  [ ] What is a segmentation fault? What causes it?
+  [ ] What is the difference between delete and delete[]?
+  [ ] Can you have a pointer to a function in C++? Show syntax.
+
+CODING
+-------
+  [ ] (M) Implement your own smart pointer (unique_ptr) from scratch
+        Asked at: Google, Microsoft
+
+  [ ] (M) Find if there is a memory leak in given code snippet (code review question)
+        Asked at: Amazon, Microsoft, Adobe
+
+================================================================================
+PHASE 11 — ADVANCED C++ FEATURES
+================================================================================
+
+THEORY
+-------
+  [ ] What is a template? What is template specialization?
+  [ ] What is SFINAE?
+  [ ] What is move semantics? What is an rvalue reference?
+  [ ] What is the difference between std::move and std::copy?
+  [ ] What is a move constructor? When is it called?
+  [ ] What is perfect forwarding?
+  [ ] What is an initializer list in C++11?
+  [ ] What is auto type deduction? What are its pitfalls?
+  [ ] What is nullptr vs NULL vs 0?
+  [ ] What is the range-based for loop? How does it work internally?
+  [ ] What is constexpr? How is it different from const?
+  [ ] What is a variadic template?
+  [ ] What is std::function and std::bind?
+  [ ] What is a coroutine? (C++20)
+  [ ] What is structured binding? (C++17)
+  [ ] What are concepts in C++20?
+
+================================================================================
+PHASE 12 — LINKED LISTS
+================================================================================
+
+THEORY
+-------
+  [ ] What is a linked list? How is it different from an array?
+  [ ] What are advantages and disadvantages of linked list over array?
+  [ ] What is a singly vs doubly vs circular linked list?
+  [ ] What is the time complexity of insertion/deletion at beginning, end, middle?
+  [ ] What is Floyd's cycle detection algorithm? How does it work?
+
+CODING — EASY
+--------------
+  [ ] (E) Reverse a singly linked list (iterative + recursive)
+        Asked at: Amazon, Microsoft, Google, Flipkart, Adobe, Paytm, Goldman Sachs
+
+  [ ] (E) Find the middle element of a linked list (single pass)
+        Asked at: Amazon, Microsoft, Flipkart, Zoho
+
+  [ ] (E) Delete Nth node from end of list
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (E) Merge two sorted linked lists
+        Asked at: Amazon, Microsoft, Google, Adobe
+
+  [ ] (E) Remove duplicates from sorted linked list
+        Asked at: Amazon, Microsoft, TCS
+
+  [ ] (E) Check if linked list is a palindrome
+        Asked at: Amazon, Microsoft, Adobe, Flipkart
+
+CODING — MEDIUM
+----------------
+  [ ] (M) Detect cycle in linked list (Floyd's algorithm)
+        Asked at: Amazon, Microsoft, Google, Flipkart, Paytm
+
+  [ ] (M) Find starting point of cycle in linked list
+        Asked at: Amazon, Google, Microsoft
+
+  [ ] (M) Find intersection point of two linked lists
+        Asked at: Amazon, Microsoft, Adobe, Flipkart, Goldman Sachs
+
+  [ ] (M) Add two numbers represented as linked lists
+        Asked at: Amazon, Microsoft, Google, Flipkart
+
+  [ ] (M) Reverse linked list in groups of K
+        Asked at: Amazon, Microsoft, Google, Flipkart
+
+  [ ] (M) Flatten a multilevel doubly linked list
+        Asked at: Amazon, Microsoft
+
+  [ ] (M) Clone linked list with random pointer
+        Asked at: Amazon, Microsoft, Google, Adobe
+
+  [ ] (M) Sort linked list (use merge sort)
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Rotate linked list to the right by K places
+        Asked at: Amazon, Microsoft
+
+  [ ] (M) Remove all nodes with value X
+        Asked at: Amazon, Flipkart
+
+CODING — HARD
+--------------
+  [ ] (H) Merge K sorted linked lists
+        Asked at: Amazon, Google, Microsoft, Goldman Sachs
+
+  [ ] (H) Reverse nodes in K groups (K-group reversal)
+        Asked at: Amazon, Google, Microsoft
+
+================================================================================
+PHASE 13 — STACKS & QUEUES
+================================================================================
+
+THEORY
+-------
+  [ ] What is a stack? What operations does it support?
+  [ ] What is a queue? What is the difference between stack and queue?
+  [ ] What is a circular queue? Why is it needed?
+  [ ] What is a deque? What problems does it solve?
+  [ ] What is a priority queue? How is it implemented?
+  [ ] What is the call stack? How is it related to function calls?
+  [ ] How would you implement a stack using two queues?
+  [ ] How would you implement a queue using two stacks?
+
+CODING — EASY/MEDIUM
+---------------------
+  [ ] (E) Valid parentheses — check if (){}[] are balanced
+        Asked at: Amazon, Microsoft, Google, Adobe, Zoho, Flipkart
+
+  [ ] (M) Next greater element for each element in array
+        Asked at: Amazon, Flipkart, Adobe, Paytm
+
+  [ ] (M) Previous greater element
+        Asked at: Amazon, Flipkart
+
+  [ ] (M) Daily temperatures (next warmer day) — monotonic stack
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Stock span problem
+        Asked at: Amazon, Microsoft, Goldman Sachs
+
+  [ ] (M) Min Stack — getMin() in O(1)
+        Asked at: Amazon, Microsoft, Google, Adobe
+
+  [ ] (M) Implement queue using two stacks (amortized O(1))
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Implement stack using two queues
+        Asked at: Amazon, Microsoft
+
+  [ ] (M) Sliding window maximum (use deque)
+        Asked at: Amazon, Google, Microsoft, Goldman Sachs
+
+  [ ] (M) Evaluate reverse polish notation (postfix expression)
+        Asked at: Amazon, Microsoft, Adobe
+
+  [ ] (M) Decode string using stack (e.g. "3[a2[b]]")
+        Asked at: Amazon, Google
+
+  [ ] (M) Largest rectangle in histogram (monotonic stack)
+        Asked at: Amazon, Google, Microsoft, Adobe, Goldman Sachs
+
+  [ ] (M) Remove k digits to make smallest number
+        Asked at: Amazon, Google
+
+  [ ] (H) Maximum rectangle of 1s in binary matrix (using histogram)
+        Asked at: Amazon, Microsoft, Google
+
+================================================================================
+PHASE 14 — HASHING
+================================================================================
+
+THEORY
+-------
+  [ ] What is a hash function? What makes a good hash function?
+  [ ] What is a hash collision? How is it handled?
+  [ ] What is chaining vs open addressing?
+  [ ] What is load factor? What happens when it exceeds a threshold?
+  [ ] What is rehashing?
+  [ ] What is the time complexity of unordered_map operations?
+  [ ] When would you use map vs unordered_map?
+  [ ] What is the worst-case time complexity of unordered_map lookup?
+
+CODING
+-------
+  [ ] (E) Count frequency of each element in array
+        Asked at: TCS, Wipro, Infosys, Amazon
+
+  [ ] (E) Check if two arrays are equal (same elements, any order)
+        Asked at: TCS, Wipro
+
+  [ ] (M) Two Sum using hashmap — O(N)
+        Asked at: Amazon, Microsoft, Google, Adobe, Flipkart
+
+  [ ] (M) Subarray with zero sum — check if exists
+        Asked at: Amazon, Flipkart, Paytm
+
+  [ ] (M) Longest consecutive sequence
+        Asked at: Google, Amazon, Microsoft, Atlassian
+
+  [ ] (M) Group anagrams together
+        Asked at: Amazon, Microsoft, Google, Adobe
+
+  [ ] (M) 4Sum — find all unique quadruplets summing to target
+        Asked at: Amazon, Microsoft
+
+  [ ] (M) Pair with given sum in unsorted array — count pairs
+        Asked at: Amazon, Flipkart
+
+  [ ] (M) Longest subarray with equal number of 0s and 1s
+        Asked at: Amazon, Flipkart, Paytm
+
+  [ ] (M) Subarray sum equals K — count subarrays
+        Asked at: Amazon, Google, Microsoft
+
+  [ ] (M) Find if any permutation of string can form palindrome
+        Asked at: Amazon, Microsoft, Adobe
+
+================================================================================
+PHASE 15 — SEARCHING & SORTING
+================================================================================
+
+THEORY
+-------
+  [ ] What is binary search? What is the prerequisite?
+  [ ] Why use low + (high-low)/2 instead of (low+high)/2?
+  [ ] What is the difference between lower_bound and upper_bound?
+  [ ] Compare all sorting algorithms: time, space, stable, use case
+  [ ] When would you use insertion sort over merge sort?
+  [ ] What is the best sorting algorithm for nearly-sorted data?
+  [ ] Why is quick sort preferred in practice despite O(N^2) worst case?
+  [ ] What is introsort? (what std::sort uses)
+  [ ] What is the difference between comparison and non-comparison sorts?
+  [ ] When would you use counting sort over merge sort?
+  [ ] What is external sorting? (for data that doesn't fit in memory)
+
+CODING — BINARY SEARCH
+-----------------------
+  [ ] (E) Binary search — find index of element in sorted array
+        Asked at: TCS, Amazon, Microsoft, Google
+
+  [ ] (M) Search in rotated sorted array
+        Asked at: Amazon, Microsoft, Google, Flipkart, Adobe
+
+  [ ] (M) Find first and last position of element in sorted array
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Find peak element in array
+        Asked at: Amazon, Google, Microsoft
+
+  [ ] (M) Find minimum in rotated sorted array
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Sqrt(x) — compute integer square root using binary search
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Search a 2D matrix (row-wise and column-wise sorted)
+        Asked at: Amazon, Microsoft, Google, Adobe
+
+  [ ] (M) Koko eating bananas — binary search on answer
+        Asked at: Amazon, Google
+
+  [ ] (H) Median of two sorted arrays — O(log(min(m,n)))
+        Asked at: Google, Amazon, Microsoft
+
+  [ ] (H) Split array largest sum — minimize the max sum of subarrays
+        Asked at: Google, Amazon, Facebook
+
+CODING — SORTING
+-----------------
+  [ ] (M) Sort colors — Dutch National Flag (one pass, O(1) space)
+        Asked at: Amazon, Microsoft, Flipkart, Paytm, Adobe
+
+  [ ] (M) Merge intervals
+        Asked at: Amazon, Microsoft, Google, Adobe, Flipkart, Goldman Sachs
+
+  [ ] (M) Largest number — arrange array digits to form largest number
+        Asked at: Amazon, Microsoft, Flipkart
+
+  [ ] (M) Kth largest element in array (use heap or quickselect)
+        Asked at: Amazon, Microsoft, Google, Flipkart, Goldman Sachs
+
+  [ ] (M) Merge K sorted arrays
+        Asked at: Amazon, Microsoft, Google, Goldman Sachs
+
+  [ ] (M) Count inversions in array (modified merge sort)
+        Asked at: Amazon, Google, Flipkart, Goldman Sachs
+
+  [ ] (M) Meeting rooms II — minimum meeting rooms needed
+        Asked at: Amazon, Microsoft, Google, Atlassian
+
+================================================================================
+PHASE 16 — TREES
+================================================================================
+
+THEORY
+-------
+  [ ] What is a binary tree? What are its properties?
+  [ ] What is a full, complete, perfect, balanced binary tree?
+  [ ] Explain all 4 traversals with example.
+  [ ] What is the time and space complexity of tree traversals?
+  [ ] What is BST? What is its inorder property?
+  [ ] What is the time complexity of BST operations? Worst case?
+  [ ] What is a balanced BST? Name some examples.
+  [ ] What is an AVL tree? What is a balance factor?
+  [ ] What is a Red-Black tree? What does std::map use internally?
+  [ ] What is the difference between BFS and DFS for trees?
+  [ ] What is LCA (Lowest Common Ancestor)?
+  [ ] What is a heap? What is the difference between heap and BST?
+
+CODING — EASY
+--------------
+  [ ] (E) Maximum depth (height) of binary tree
+        Asked at: Amazon, Microsoft, Google, Flipkart
+
+  [ ] (E) Check if two trees are identical
+        Asked at: Amazon, Microsoft
+
+  [ ] (E) Mirror (invert) a binary tree
+        Asked at: Amazon, Microsoft, Google — famously asked to Max Howell
+
+  [ ] (E) Check if tree is symmetric
+        Asked at: Amazon, Microsoft
+
+  [ ] (E) Count total nodes / leaf nodes
+        Asked at: TCS, Amazon
+
+  [ ] (E) Level order traversal (BFS)
+        Asked at: Amazon, Microsoft, Google, Flipkart
+
+  [ ] (E) Left view and right view of binary tree
+        Asked at: Amazon, Flipkart, Paytm, Adobe
+
+CODING — MEDIUM
+----------------
+  [ ] (M) Diameter of binary tree (longest path between any two nodes)
+        Asked at: Amazon, Microsoft, Google, Flipkart, Adobe
+
+  [ ] (M) Maximum path sum in binary tree
+        Asked at: Amazon, Microsoft, Google, Adobe, Goldman Sachs
+
+  [ ] (M) Lowest Common Ancestor (LCA) of two nodes
+        Asked at: Amazon, Microsoft, Google, Flipkart, Adobe
+
+  [ ] (M) Path from root to node
+        Asked at: Amazon, Flipkart, Paytm
+
+  [ ] (M) All root-to-leaf paths
+        Asked at: Amazon, Microsoft
+
+  [ ] (M) Zigzag level order traversal
+        Asked at: Amazon, Microsoft, Flipkart, Adobe
+
+  [ ] (M) Vertical order traversal
+        Asked at: Amazon, Microsoft, Adobe
+
+  [ ] (M) Top view and bottom view of binary tree
+        Asked at: Amazon, Flipkart, Paytm, Adobe
+
+  [ ] (M) Check if binary tree is balanced
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Flatten binary tree to linked list (preorder)
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Construct binary tree from preorder and inorder traversal
+        Asked at: Amazon, Microsoft, Google, Adobe
+
+  [ ] (M) Construct binary tree from postorder and inorder traversal
+        Asked at: Amazon, Microsoft
+
+  [ ] (M) Serialize and deserialize binary tree
+        Asked at: Amazon, Microsoft, Google, Flipkart, Adobe
+
+  [ ] (M) Kth smallest element in BST
+        Asked at: Amazon, Microsoft, Google, Flipkart
+
+  [ ] (M) Validate binary search tree
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Convert sorted array to balanced BST
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) BST to sorted doubly linked list
+        Asked at: Amazon, Microsoft
+
+  [ ] (M) Recover BST (two nodes swapped by mistake)
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Count nodes in complete binary tree — O(log^2 N)
+        Asked at: Google, Amazon
+
+CODING — HARD
+--------------
+  [ ] (H) Binary tree maximum path sum
+        Asked at: Amazon, Microsoft, Google, Goldman Sachs
+
+  [ ] (H) Binary Tree cameras — minimum cameras to cover all nodes
+        Asked at: Google, Amazon
+
+================================================================================
+PHASE 17 — HEAPS
+================================================================================
+
+THEORY
+-------
+  [ ] What is a heap? What are its properties?
+  [ ] What is the difference between min-heap and max-heap?
+  [ ] How is a heap represented as an array?
+  [ ] What is the time complexity of insert and extract in heap?
+  [ ] What is heapify? What is its time complexity?
+  [ ] Why is build-heap O(N) and not O(N log N)?
+  [ ] How do you implement a min-heap using STL?
+  [ ] What is heap sort? Is it stable?
+
+CODING
+-------
+  [ ] (M) Kth largest element (min-heap of size K)
+        Asked at: Amazon, Microsoft, Google, Flipkart, Goldman Sachs
+
+  [ ] (M) Top K frequent elements
+        Asked at: Amazon, Microsoft, Google, Flipkart
+
+  [ ] (M) Merge K sorted lists (min-heap)
+        Asked at: Amazon, Microsoft, Google, Goldman Sachs
+
+  [ ] (M) K closest points to origin
+        Asked at: Amazon, Google, Microsoft, Facebook
+
+  [ ] (M) Find median from data stream (two heaps)
+        Asked at: Amazon, Microsoft, Google, Goldman Sachs
+
+  [ ] (M) Task scheduler — minimum time to finish with cooldown
+        Asked at: Amazon, Google, Microsoft
+
+  [ ] (M) Reorganize string — no two adjacent same characters
+        Asked at: Amazon, Google, Microsoft
+
+  [ ] (M) Minimum cost to connect ropes
+        Asked at: Amazon, Flipkart, Goldman Sachs
+
+================================================================================
+PHASE 18 — GRAPHS
+================================================================================
+
+THEORY
+-------
+  [ ] What is a graph? What are the types?
+  [ ] What is the difference between adjacency matrix and adjacency list?
+  [ ] What is BFS? What is DFS? What is the difference?
+  [ ] What is the time complexity of BFS and DFS?
+  [ ] What is a topological sort? When is it possible?
+  [ ] What is Dijkstra's algorithm? What is its time complexity?
+  [ ] Why can't Dijkstra handle negative weights?
+  [ ] What is Bellman-Ford? When do you use it over Dijkstra?
+  [ ] What is Floyd-Warshall? When do you use it?
+  [ ] What is a Minimum Spanning Tree?
+  [ ] What is the difference between Prim's and Kruskal's?
+  [ ] What is Union-Find? What optimizations make it nearly O(1)?
+  [ ] What is a strongly connected component?
+  [ ] What is a bridge? What is an articulation point?
+  [ ] What is a bipartite graph? How do you check?
+
+CODING — MEDIUM
+----------------
+  [ ] (M) Number of islands (grid DFS/BFS)
+        Asked at: Amazon, Microsoft, Google, Flipkart, Paytm
+
+  [ ] (M) Number of provinces (connected components)
+        Asked at: Amazon, Flipkart
+
+  [ ] (M) BFS shortest path in unweighted graph
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Cycle detection in undirected graph (DFS / Union-Find)
+        Asked at: Amazon, Microsoft, Google, Flipkart
+
+  [ ] (M) Cycle detection in directed graph (DFS with color)
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Topological sort (DFS method)
+        Asked at: Amazon, Microsoft, Google, Flipkart, Adobe
+
+  [ ] (M) Topological sort (Kahn's BFS method)
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Course Schedule I — can you finish all courses?
+        Asked at: Amazon, Microsoft, Google, Adobe
+
+  [ ] (M) Course Schedule II — find order to take courses
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Rotten Oranges — minimum time to rot all (multi-source BFS)
+        Asked at: Amazon, Microsoft, Google, Paytm, Swiggy
+
+  [ ] (M) 01 Matrix — distance to nearest 0
+        Asked at: Amazon, Microsoft, Google, Flipkart
+
+  [ ] (M) Walls and Gates (BFS from all gates simultaneously)
+        Asked at: Amazon, Google, Facebook
+
+  [ ] (M) Check if graph is bipartite
+        Asked at: Amazon, Google, Microsoft
+
+  [ ] (M) Flood Fill (DFS on grid)
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Pacific Atlantic Water Flow
+        Asked at: Amazon, Google, Facebook
+
+  [ ] (M) Number of enclaves / surrounded regions
+        Asked at: Amazon, Google
+
+  [ ] (M) Dijkstra's — Network Delay Time
+        Asked at: Amazon, Google, Microsoft
+
+  [ ] (M) Cheapest Flights within K Stops
+        Asked at: Amazon, Google, Microsoft
+
+  [ ] (M) Kruskal's MST / Prim's MST
+        Asked at: Amazon, Microsoft, Goldman Sachs
+
+  [ ] (M) Redundant Connection (Union-Find)
+        Asked at: Amazon, Google, Microsoft
+
+  [ ] (M) Accounts Merge (Union-Find)
+        Asked at: Amazon, Google, Facebook
+
+  [ ] (M) Eventual Safe States (reverse DFS / topological)
+        Asked at: Google, Amazon
+
+CODING — HARD
+--------------
+  [ ] (H) Word Ladder — minimum transformations (BFS)
+        Asked at: Amazon, Microsoft, Google, Goldman Sachs
+
+  [ ] (H) Find all critical connections (bridges) — Tarjan's
+        Asked at: Amazon, Google, Facebook, Atlassian
+
+  [ ] (H) Alien Dictionary — topological sort on characters
+        Asked at: Amazon, Google, Microsoft, Facebook
+
+  [ ] (H) Minimum cost to reach destination with at most K stops
+        Asked at: Amazon, Google, Goldman Sachs
+
+================================================================================
+PHASE 19 — RECURSION & BACKTRACKING
+================================================================================
+
+THEORY
+-------
+  [ ] What is backtracking? How is it different from brute force?
+  [ ] What is pruning in backtracking?
+  [ ] What is the time complexity of generating all subsets?
+  [ ] What is the time complexity of generating all permutations?
+
+CODING — MEDIUM
+----------------
+  [ ] (M) Generate all subsets (power set)
+        Asked at: Amazon, Microsoft, Google, Flipkart, Adobe
+
+  [ ] (M) Generate all permutations of array (with and without duplicates)
+        Asked at: Amazon, Microsoft, Google, Adobe
+
+  [ ] (M) Combination Sum — find all combinations summing to target (can repeat)
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Combination Sum II — cannot reuse elements
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Letter combinations of phone number
+        Asked at: Amazon, Microsoft, Google, Flipkart, Adobe
+
+  [ ] (M) Generate valid parentheses of N pairs
+        Asked at: Amazon, Microsoft, Google, Adobe, Goldman Sachs
+
+  [ ] (M) Palindrome partitioning — all ways to partition as palindromes
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Subsets II (with duplicates in input)
+        Asked at: Amazon, Microsoft
+
+  [ ] (M) Word Search in grid
+        Asked at: Amazon, Microsoft, Google, Adobe, Flipkart
+
+  [ ] (M) Rat in a maze (find all paths)
+        Asked at: Amazon, Flipkart, Paytm
+
+CODING — HARD
+--------------
+  [ ] (H) N-Queens — place N queens, no two attack
+        Asked at: Amazon, Microsoft, Google, Adobe
+
+  [ ] (H) Sudoku Solver
+        Asked at: Amazon, Microsoft, Google, Adobe
+
+  [ ] (H) M-Coloring Problem
+        Asked at: Amazon, Flipkart
+
+================================================================================
+PHASE 20 — DIVIDE AND CONQUER
+================================================================================
+
+CODING
+-------
+  [ ] (M) Merge Sort implementation from scratch
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Quick Sort implementation from scratch
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Count inversions using merge sort
+        Asked at: Amazon, Google, Flipkart, Goldman Sachs
+
+  [ ] (M) Find peak element in O(log N)
+        Asked at: Amazon, Google, Microsoft
+
+  [ ] (M) Pow(x, n) — fast exponentiation, handle negative n
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (H) Median of two sorted arrays
+        Asked at: Google, Amazon, Microsoft
+
+================================================================================
+PHASE 21 — GREEDY ALGORITHMS
+================================================================================
+
+THEORY
+-------
+  [ ] What is a greedy algorithm? When does it give optimal result?
+  [ ] What is the greedy choice property?
+  [ ] Greedy vs DP — how do you decide which to use?
+  [ ] Why does greedy fail for 0/1 Knapsack but work for Fractional?
+
+CODING
+-------
+  [ ] (M) Activity Selection / N Meetings in one room (max non-overlapping)
+        Asked at: Amazon, Microsoft, Google, Goldman Sachs
+
+  [ ] (M) Fractional Knapsack
+        Asked at: Amazon, Flipkart, Goldman Sachs
+
+  [ ] (M) Job Sequencing with deadlines (maximize profit)
+        Asked at: Amazon, Flipkart, Goldman Sachs
+
+  [ ] (M) Minimum platforms needed for railway station
+        Asked at: Amazon, Flipkart, Paytm, Goldman Sachs
+
+  [ ] (M) Jump Game — can you reach the last index?
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Jump Game II — minimum jumps to reach end
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Gas Station — complete circular trip
+        Asked at: Amazon, Google, Microsoft
+
+  [ ] (M) Candy — give candies with constraints (harder than it looks)
+        Asked at: Amazon, Google, Goldman Sachs
+
+  [ ] (M) Partition Labels
+        Asked at: Amazon, Google
+
+  [ ] (M) Assign cookies — maximize satisfied children
+        Asked at: Amazon
+
+  [ ] (H) Minimum cost to connect ropes (Huffman — use min-heap)
+        Asked at: Amazon, Flipkart, Goldman Sachs
+
+================================================================================
+PHASE 22 — DYNAMIC PROGRAMMING
+================================================================================
+
+THEORY
+-------
+  [ ] What is dynamic programming? What are the two conditions for DP?
+  [ ] What is the difference between memoization and tabulation?
+  [ ] What is overlapping subproblems?
+  [ ] What is optimal substructure?
+  [ ] What is the difference between greedy and DP?
+  [ ] What is the state of a DP solution? How do you define it?
+  [ ] What is the space optimization technique in DP? (reducing 2D to 1D)
+
+CODING — 1D DP
+---------------
+  [ ] (E) Climbing Stairs (1 or 2 steps) — count ways
+        Asked at: Amazon, Microsoft, Google, Flipkart, Adobe
+
+  [ ] (M) House Robber — max loot, no two adjacent houses
+        Asked at: Amazon, Microsoft, Google, Flipkart
+
+  [ ] (M) House Robber II — circular arrangement
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Longest Increasing Subsequence (LIS)
+        Asked at: Amazon, Microsoft, Google, Flipkart, Adobe, Goldman Sachs
+
+  [ ] (M) Decode Ways — count ways to decode digit string
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Coin Change I — minimum coins to make amount
+        Asked at: Amazon, Microsoft, Google, Flipkart, Paytm
+
+  [ ] (M) Coin Change II — count number of ways to make amount
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Maximum product subarray
+        Asked at: Amazon, Microsoft, Google, Flipkart
+
+CODING — 2D / CLASSIC DP
+--------------------------
+  [ ] (M) 0/1 Knapsack — find max value within weight capacity
+        Asked at: Amazon, Microsoft, Flipkart, Goldman Sachs, Paytm
+
+  [ ] (M) Subset Sum — can we pick subset summing to K?
+        Asked at: Amazon, Microsoft, Flipkart, Paytm
+
+  [ ] (M) Partition Equal Subset Sum
+        Asked at: Amazon, Microsoft, Google, Flipkart
+
+  [ ] (M) Count subsets with given sum
+        Asked at: Amazon, Flipkart
+
+  [ ] (M) Longest Common Subsequence (LCS)
+        Asked at: Amazon, Microsoft, Google, Adobe, Goldman Sachs
+
+  [ ] (M) Longest Common Substring
+        Asked at: Amazon, Microsoft, Flipkart
+
+  [ ] (M) Edit Distance (minimum operations to convert s1 to s2)
+        Asked at: Amazon, Microsoft, Google, Adobe, Goldman Sachs
+
+  [ ] (M) Shortest Common Supersequence
+        Asked at: Amazon, Google
+
+  [ ] (M) Unique Paths in grid (from top-left to bottom-right)
+        Asked at: Amazon, Microsoft, Google, Flipkart
+
+  [ ] (M) Unique Paths II (with obstacles)
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Minimum Path Sum in grid
+        Asked at: Amazon, Microsoft, Google, Flipkart
+
+  [ ] (M) Matrix Chain Multiplication
+        Asked at: Amazon, Microsoft, Goldman Sachs
+
+  [ ] (M) Palindrome Partitioning II — minimum cuts
+        Asked at: Amazon, Google, Microsoft
+
+  [ ] (M) Word Break I — can string be segmented using dictionary?
+        Asked at: Amazon, Microsoft, Google, Adobe, Flipkart
+
+  [ ] (M) Word Break II — find all valid segmentations
+        Asked at: Amazon, Microsoft, Google, Adobe
+
+CODING — STRING DP
+-------------------
+  [ ] (M) Longest Palindromic Subsequence
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Longest Palindromic Substring
+        Asked at: Amazon, Microsoft, Google, Adobe, Flipkart, Goldman Sachs
+
+  [ ] (M) Distinct Subsequences — count distinct occurrences of t in s
+        Asked at: Amazon, Google, Microsoft
+
+  [ ] (H) Wildcard Matching
+        Asked at: Amazon, Google, Microsoft
+
+  [ ] (H) Regular Expression Matching
+        Asked at: Amazon, Google, Microsoft, Facebook
+
+CODING — TREE DP
+-----------------
+  [ ] (M) House Robber on Tree — max loot, no two adjacent nodes
+        Asked at: Amazon, Google, Microsoft
+
+  [ ] (H) Binary Tree Maximum Path Sum
+        Asked at: Amazon, Microsoft, Google, Goldman Sachs
+
+CODING — ADVANCED DP
+---------------------
+  [ ] (H) Burst Balloons — maximize coins
+        Asked at: Google, Amazon, Facebook
+
+  [ ] (H) Egg Dropping Problem — minimum trials in worst case
+        Asked at: Google, Amazon, Microsoft, Goldman Sachs
+
+  [ ] (H) Buying and Selling Stock with Cooldown
+        Asked at: Amazon, Google, Microsoft
+
+  [ ] (H) Buying and Selling Stock with Transaction Fee
+        Asked at: Amazon, Google, Microsoft
+
+  [ ] (H) Maximum Profit with at most K transactions
+        Asked at: Amazon, Google, Goldman Sachs
+
+================================================================================
+PHASE 23 — BIT MANIPULATION
+================================================================================
+
+THEORY
+-------
+  [ ] What is two's complement? How is negative number stored?
+  [ ] What is the result of XOR of a number with itself? With 0?
+  [ ] How do you check if ith bit is set?
+  [ ] How do you set, clear, toggle the ith bit?
+  [ ] How do you count set bits efficiently?
+  [ ] How do you check if a number is power of 2 using bits?
+
+CODING
+-------
+  [ ] (E) Check if number is power of 2 using bits
+        Asked at: Amazon, Adobe, Samsung
+
+  [ ] (E) Count set bits in an integer (Brian Kernighan)
+        Asked at: Amazon, Microsoft, Samsung, Google
+
+  [ ] (E) Find the only non-repeating element (XOR trick)
+        Asked at: Amazon, Microsoft, Google, Flipkart
+
+  [ ] (M) Find two non-repeating elements in array of pairs
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Generate all subsets of array using bitmask
+        Asked at: Amazon, Microsoft, Google, Flipkart
+
+  [ ] (M) Reverse bits of 32-bit integer
+        Asked at: Amazon, Microsoft, Adobe
+
+  [ ] (M) Maximum XOR of two numbers in array (Trie approach)
+        Asked at: Amazon, Google, Microsoft
+
+  [ ] (M) Total Hamming distance (sum of bit differences all pairs)
+        Asked at: Amazon, Google, Microsoft
+
+  [ ] (M) Single Number II (every element appears 3 times except one)
+        Asked at: Amazon, Google, Microsoft
+
+  [ ] (M) Counting bits — for every number 0 to N, count set bits
+        Asked at: Amazon, Microsoft, Google
+
+================================================================================
+PHASE 24 — TRIE
+================================================================================
+
+THEORY
+-------
+  [ ] What is a Trie? When would you use it over a HashMap?
+  [ ] What is the time complexity of Trie insert and search?
+  [ ] What is a compressed Trie (Radix Tree)?
+
+CODING
+-------
+  [ ] (M) Implement Trie (insert, search, startsWith)
+        Asked at: Amazon, Microsoft, Google, Adobe
+
+  [ ] (M) Word Search II — find all words from dictionary in grid (Trie + DFS)
+        Asked at: Amazon, Microsoft, Google, Adobe
+
+  [ ] (M) Replace words — replace words with their root from dictionary
+        Asked at: Amazon, Google
+
+  [ ] (M) Maximum XOR of two numbers (Trie)
+        Asked at: Amazon, Google
+
+  [ ] (M) Design Search Autocomplete System
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (H) Longest word in dictionary with all prefixes present
+        Asked at: Google, Amazon, Microsoft
+
+================================================================================
+PHASE 25 — SEGMENT TREE & FENWICK TREE
+================================================================================
+
+THEORY
+-------
+  [ ] What is a segment tree? What problems does it solve?
+  [ ] What is lazy propagation? When do you need it?
+  [ ] What is a Fenwick Tree (BIT)? How does it differ from segment tree?
+  [ ] What is the time complexity of segment tree build, query, update?
+
+CODING
+-------
+  [ ] (M) Range sum query with point updates (Segment Tree)
+        Asked at: Amazon, Google, Competitive Programming
+
+  [ ] (M) Range minimum query (Segment Tree)
+        Asked at: Amazon, Google, Competitive Programming
+
+  [ ] (M) Prefix sum with updates (Fenwick Tree)
+        Asked at: Amazon, Google, Goldman Sachs
+
+  [ ] (M) Count inversions using Fenwick Tree
+        Asked at: Amazon, Google, Goldman Sachs
+
+  [ ] (H) Range sum with range updates (Lazy propagation)
+        Asked at: Google, Competitive Programming
+
+================================================================================
+PHASE 26 — MATHEMATICS & NUMBER THEORY
+================================================================================
+
+THEORY
+-------
+  [ ] What is modular arithmetic? Why do we mod by 10^9+7?
+  [ ] What is Fermat's little theorem?
+  [ ] What is modular inverse? How do you compute it?
+  [ ] What is the Sieve of Eratosthenes?
+  [ ] What is Euler's Totient function?
+  [ ] What is matrix exponentiation? What is it used for?
+
+CODING
+-------
+  [ ] (E) GCD and LCM of two numbers (Euclidean algorithm)
+        Asked at: Amazon, Microsoft, TCS
+
+  [ ] (M) Sieve of Eratosthenes — find all primes up to N
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Count prime factors of N
+        Asked at: Amazon, Flipkart
+
+  [ ] (M) Pow(x, n) — fast exponentiation (handle large N with mod)
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Modular inverse using Fermat's little theorem
+        Asked at: Amazon, Google, Goldman Sachs
+
+  [ ] (M) Fibonacci in O(log N) using matrix exponentiation
+        Asked at: Google, Goldman Sachs, Amazon
+
+  [ ] (M) Count numbers in [L, R] with property X (Digit DP)
+        Asked at: Google, Amazon, Goldman Sachs
+
+================================================================================
+PHASE 27 — DESIGN & SYSTEM QUESTIONS (asked in senior/SDE interviews)
+================================================================================
+
+DATA STRUCTURE DESIGN
+----------------------
+  [ ] Design LRU Cache (O(1) get and put)
+        Asked at: Amazon, Microsoft, Google, Flipkart, Adobe, Paytm, Goldman Sachs
+
+  [ ] Design LFU Cache
+        Asked at: Amazon, Google, Microsoft
+
+  [ ] Design a stack that supports push, pop, getMin in O(1)
+        Asked at: Amazon, Microsoft, Google, Adobe
+
+  [ ] Design a data structure for insert, delete, getRandom — all O(1)
+        Asked at: Amazon, Microsoft, Google, Facebook
+
+  [ ] Design Twitter — post tweet, follow, get news feed (top 10 recent)
+        Asked at: Amazon, Google, Microsoft
+
+  [ ] Design a Trie for autocomplete
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] Design Hit Counter — count hits in last 5 minutes
+        Asked at: Amazon, Google, Dropbox
+
+  [ ] Implement a file system using Trie
+        Asked at: Amazon, Google, Dropbox
+
+  [ ] Design a Text Editor with cursor movement and undo
+        Asked at: Google, Microsoft, Atlassian
+
+  [ ] Design a HashMap from scratch
+        Asked at: Amazon, Microsoft, Google
+
+OOP DESIGN (asked at Zoho, TCS, product companies)
+---------------------------------------------------
+  [ ] Design a Parking Lot system
+        Asked at: Amazon, Microsoft, Flipkart, Zoho
+
+  [ ] Design an ATM machine
+        Asked at: Zoho, TCS, Wipro, Infosys
+
+  [ ] Design a Library Management System
+        Asked at: Zoho, TCS, Infosys
+
+  [ ] Design an Elevator system
+        Asked at: Amazon, Microsoft, Zoho
+
+  [ ] Design a Chess game
+        Asked at: Amazon, Microsoft, Google, Atlassian
+
+================================================================================
+BONUS — MISCELLANEOUS FREQUENTLY ASKED
+================================================================================
+
+CONCEPTS ASKED AS PUZZLES / LOGIC
+-----------------------------------
+  [ ] (E) Find element that appears once when all others appear twice — XOR
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (E) Check if a matrix is a magic square
+        Asked at: TCS, Wipro
+
+  [ ] (M) Find the celebrity in a party (knows nobody, everyone knows him)
+        Asked at: Amazon, Microsoft, Google, Adobe
+
+  [ ] (M) Gas station — can you complete the circuit?
+        Asked at: Amazon, Google, Microsoft
+
+  [ ] (M) Jump game — greedy or DP
+        Asked at: Amazon, Microsoft, Google
+
+  [ ] (M) Minimum number of jumps to reach end
+        Asked at: Amazon, Microsoft, Google, Flipkart, Paytm
+
+  [ ] (M) Maximum points on a line (geometry)
+        Asked at: Amazon, Google
+
+  [ ] (M) Task scheduler with cooldown period
+        Asked at: Amazon, Google, Microsoft
+
+  [ ] (H) Median from data stream
+        Asked at: Amazon, Microsoft, Google, Goldman Sachs
+
+  [ ] (H) Find median of sliding window of size K
+        Asked at: Amazon, Google, Goldman Sachs
+
+MUST-DO 50 PROBLEMS (If you only have limited time)
+----------------------------------------------------
+  ARRAYS:
+  [ ] Two Sum, Maximum Subarray (Kadane), Best Time to Buy/Sell Stock,
+      Contains Duplicate, Product of Array Except Self, Trapping Rain Water,
+      3Sum, Merge Intervals, Search in Rotated Sorted Array, Missing Number
+
+  STRINGS:
+  [ ] Longest Substring Without Repeating Characters, Minimum Window Substring,
+      Valid Anagram, Group Anagrams, Longest Palindromic Substring
+
+  LINKED LIST:
+  [ ] Reverse Linked List, Detect Cycle, Merge Two Sorted Lists,
+      Merge K Sorted Lists, Remove Nth Node From End
+
+  TREES:
+  [ ] Invert Binary Tree, Maximum Depth, Same Tree, Level Order Traversal,
+      Validate BST, LCA, Diameter, Serialize and Deserialize
+
+  GRAPHS:
+  [ ] Number of Islands, Course Schedule, Pacific Atlantic Water Flow,
+      Dijkstra's Network Delay Time
+
+  DP:
+  [ ] Climbing Stairs, Coin Change, Longest Increasing Subsequence,
+      House Robber, Unique Paths, Edit Distance, Knapsack 0/1,
+      LCS, Palindromic Substrings
+
+  STACK/HEAP:
+  [ ] Valid Parentheses, Min Stack, Largest Rectangle in Histogram,
+      Kth Largest Element, Find Median from Data Stream
+
+  BACKTRACKING:
+  [ ] Subsets, Permutations, Combination Sum, N-Queens, Word Search
+
+================================================================================
+COMPANY FOCUS GUIDE
+================================================================================
+
+  AMAZON (SDE 1 & 2):
+    Must do: Arrays, Strings, Linked List, Trees, Graphs, DP, Backtracking
+    High frequency: Two Sum, LRU Cache, Merge Intervals, LCA, Word Ladder,
+    Number of Islands, Trapping Rain Water, Serialize Tree, Top K Elements
+
+  MICROSOFT:
+    Must do: Arrays, Strings, Trees, Graphs, DP
+    High frequency: Reverse Linked List, Valid Parentheses, LCA, Spiral Matrix,
+    House Robber, Edit Distance, Binary Search variants
+
+  GOOGLE:
+    Must do: Everything — all topics, hard problems
+    High frequency: Hard graph problems, advanced DP, Trie, Segment Tree,
+    System Design, Mathematical problems
+
+  FLIPKART / SWIGGY / ZOMATO:
+    Must do: Arrays, Strings, Trees, Graphs, DP, Greedy
+    High frequency: Standard medium/hard problems from all categories
+
+  GOLDMAN SACHS / JP MORGAN:
+    Must do: DP, Greedy, Math, Arrays, Graphs
+    High frequency: Counting inversions, Stock problems, Median problems,
+    Matrix Chain, LCS, Knapsack
+
+  PAYTM / STARTUPS:
+    Must do: Arrays, Strings, Linked List, Stack, Queue, Trees, Basic DP
+    High frequency: Medium problems from all basic data structures
+
+  ZOHO:
+    Must do: OOP design, Strings, Arrays, Linked List, SQL basics
+    High frequency: OOP system design questions (Library, ATM, Parking Lot)
+
+  TCS / WIPRO / INFOSYS / CAPGEMINI (Campus):
+    Must do: Basic programming, Patterns, Sorting, Searching, OOP concepts
+    High frequency: Easy-Medium problems, basic data structures, verbal OOP
+
+================================================================================
+TOTAL PROBLEM COUNT
+================================================================================
+
+  Topic                     | Easy | Medium | Hard | Total
+  --------------------------|------|--------|------|-------
+  Arrays                    |  10  |   20   |   3  |  33
+  Strings                   |   8  |   14   |   3  |  25
+  Linked Lists              |   6  |   10   |   2  |  18
+  Stacks & Queues           |   1  |   12   |   1  |  14
+  Hashing                   |   2  |    9   |   0  |  11
+  Searching & Sorting       |   1  |   16   |   2  |  19
+  Trees (Binary + BST)      |   7  |   18   |   2  |  27
+  Heaps                     |   0  |    8   |   0  |   8
+  Graphs                    |   0  |   21   |   5  |  26
+  Backtracking              |   0  |   10   |   3  |  13
+  Divide & Conquer          |   0  |    5   |   1  |   6
+  Greedy                    |   0  |   11   |   1  |  12
+  Dynamic Programming       |   1  |   24   |   9  |  34
+  Bit Manipulation          |   2  |    8   |   0  |  10
+  Trie                      |   0  |    5   |   1  |   6
+  Segment/Fenwick Tree      |   0  |    4   |   1  |   5
+  Math & Number Theory      |   1  |    6   |   0  |   7
+  Design Questions          |   0  |   10   |   0  |  10
+  Misc / Bonus              |   1  |    9   |   2  |  12
+  --------------------------|------|--------|------|-------
+  TOTAL                     |  40  |  220   |  36  | 296
+
+================================================================================
+END OF FILE
+================================================================================
+
+"Solve problems daily. Understand patterns, not just solutions."
+"For every problem: Brute Force -> Optimize -> Code -> Test -> Complexity"
 ================================================================================
