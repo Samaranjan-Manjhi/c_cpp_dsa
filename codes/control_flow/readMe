@@ -232,7 +232,7 @@ SECTION 4 — CODING QUESTIONS — LOOPS & PATTERNS
   [C][ ] (E) Print Pascal's triangle for N rows
              Asked at: Amazon, Microsoft, TCS
 
-  [C][ ] (E) Check Armstrong number (e.g. 153 = 1^3 + 5^3 + 3^3)
+  [C][x] (E) Check Armstrong number (e.g. 153 = 1^3 + 5^3 + 3^3)
              Asked at: TCS, Capgemini
 
   [C][ ] (E) Find GCD of two numbers using Euclidean algorithm (loop version)
@@ -241,22 +241,22 @@ SECTION 4 — CODING QUESTIONS — LOOPS & PATTERNS
   [C][ ] (E) Find LCM of two numbers
              Asked at: TCS, Wipro
 
-  [C][ ] (E) Print 1 to N
+  [C][x] (E) Print 1 to N
              Asked at: TCS, Wipro
 
-  [C][ ] (E) Print multiplication table of a given number
+  [C][x] (E) Print multiplication table of a given number
              Asked at: TCS, Wipro, Capgemini
 
-  [C][ ] (E) Sum of digits of a number (e.g. 1234 -> 1+2+3+4 = 10)
+  [C][x] (E) Sum of digits of a number (e.g. 1234 -> 1+2+3+4 = 10)
              Asked at: TCS, Wipro, Infosys
 
-  [C][ ] (E) Reverse a number (e.g. 1234 -> 4321)
+  [C][x] (E) Reverse a number (e.g. 1234 -> 4321)
              Asked at: TCS, Wipro, Capgemini
 
-  [C][ ] (E) Check if a number is palindrome using loop
+  [C][x] (E) Check if a number is palindrome using loop
              Asked at: TCS, Wipro, Zoho
 
-  [C][ ] (E) Find factorial of N using a loop
+  [C][x] (E) Find factorial of N using a loop
              Asked at: TCS, Infosys, Cognizant
 
 --------------------------------------------------------------------------------
