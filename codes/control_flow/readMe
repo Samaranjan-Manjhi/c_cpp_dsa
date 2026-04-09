@@ -226,7 +226,7 @@ SECTION 4 — CODING QUESTIONS — LOOPS & PATTERNS
   [C][ ] (E) Print diamond pattern (combination of two triangles)
              Asked at: Wipro, Capgemini, Infosys
 
-  [C][ ] (E) Print hollow square pattern of size N using *
+  [C][x] (E) Print hollow square pattern of size N using *
              Asked at: TCS, Wipro
 
   [C][ ] (E) Print Pascal's triangle for N rows
@@ -235,10 +235,10 @@ SECTION 4 — CODING QUESTIONS — LOOPS & PATTERNS
   [C][x] (E) Check Armstrong number (e.g. 153 = 1^3 + 5^3 + 3^3)
              Asked at: TCS, Capgemini
 
-  [C][ ] (E) Find GCD of two numbers using Euclidean algorithm (loop version)
+  [C][x] (E) Find GCD of two numbers using Euclidean algorithm (loop version)
              Asked at: Amazon, Microsoft, Zoho
 
-  [C][ ] (E) Find LCM of two numbers
+  [C][x] (E) Find LCM of two numbers
              Asked at: TCS, Wipro
 
   [C][x] (E) Print 1 to N
@@ -263,7 +263,7 @@ SECTION 4 — CODING QUESTIONS — LOOPS & PATTERNS
 4B. MEDIUM — LOOPS & PATTERNS (from all_in_one_question — Part 1)
 --------------------------------------------------------------------------------
 
-  [C][ ] (M) Print all prime factors of a number
+  [C][x] (M) Print all prime factors of a number
              Asked at: Amazon, Flipkart
 
   [C][ ] (M) Find sum of series: 1 + 1/2 + 1/3 + ... + 1/N
@@ -273,25 +273,25 @@ SECTION 4 — CODING QUESTIONS — LOOPS & PATTERNS
 4C. EASY — LOOPS & PATTERNS (from all_in_one_question_2 — Part 3)
 --------------------------------------------------------------------------------
 
-  [C][ ] (E) Print the following right-aligned number pattern for N=4:
+  [C][x] (E) Print the following right-aligned number pattern for N=4:
                 1
                12
               123
              1234
              Asked at: TCS, Wipro, Capgemini
 
-  [C][ ] (E) Print alternating 0 and 1 in a single row for N elements
+  [C][x] (E) Print alternating 0 and 1 in a single row for N elements
              e.g. N=6 output: 0 1 0 1 0 1
              Asked at: TCS, Wipro
 
-  [C][ ] (E) Print Floyd's triangle:
+  [C][x] (E) Print Floyd's triangle:
              1
              2 3
              4 5 6
              7 8 9 10
              Asked at: TCS, Wipro, Infosys
 
-  [C][ ] (E) Find the sum of all even numbers between 1 and N (inclusive)
+  [C][x] (E) Find the sum of all even numbers between 1 and N (inclusive)
              Asked at: TCS, Wipro, Capgemini
 
   [C][ ] (E) Find the smallest divisor of N greater than 1
