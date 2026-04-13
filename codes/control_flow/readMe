@@ -266,7 +266,7 @@ SECTION 4 — CODING QUESTIONS — LOOPS & PATTERNS
   [C][x] (M) Print all prime factors of a number
              Asked at: Amazon, Flipkart
 
-  [C][ ] (M) Find sum of series: 1 + 1/2 + 1/3 + ... + 1/N
+  [C][x] (M) Find sum of series: 1 + 1/2 + 1/3 + ... + 1/N
              Asked at: Capgemini, Wipro
 
 --------------------------------------------------------------------------------
@@ -294,7 +294,7 @@ SECTION 4 — CODING QUESTIONS — LOOPS & PATTERNS
   [C][x] (E) Find the sum of all even numbers between 1 and N (inclusive)
              Asked at: TCS, Wipro, Capgemini
 
-  [C][ ] (E) Find the smallest divisor of N greater than 1
+  [C][x] (E) Find the smallest divisor of N greater than 1
              (can be used as the basis of a prime check)
              Asked at: TCS, Infosys
 
@@ -302,22 +302,22 @@ SECTION 4 — CODING QUESTIONS — LOOPS & PATTERNS
 4D. MEDIUM — LOOPS & PATTERNS (from all_in_one_question_2 — Part 3)
 --------------------------------------------------------------------------------
 
-  [C][ ] (M) Print all perfect numbers between 1 and N
+  [C][x] (M) Print all perfect numbers between 1 and N
              A perfect number = sum of its proper divisors (e.g. 6 = 1+2+3)
              Asked at: Wipro, Zoho, Capgemini
 
-  [C][ ] (M) Find all numbers between 1 and N that are both prime AND palindrome
+  [C][x] (M) Find all numbers between 1 and N that are both prime AND palindrome
              Asked at: Wipro, Infosys
 
-  [C][ ] (M) Print the multiplication table of numbers 1 to N in matrix form
+  [C][x] (M) Print the multiplication table of numbers 1 to N in matrix form
              (N rows and N columns)
              Asked at: Capgemini, TCS
 
-  [C][ ] (M) Find all pairs (i, j) where i < j and arr[i] > arr[j] — brute force O(N^2)
+  [C][x] (M) Find all pairs (i, j) where i < j and arr[i] > arr[j] — brute force O(N^2)
              (Count inversions — brute force version before learning merge sort)
              Asked at: TCS, Infosys, Wipro
 
-  [C][ ] (M) Check if N is a perfect square without using sqrt() — use loop only
+  [C][x] (M) Check if N is a perfect square without using sqrt() — use loop only
              Asked at: Amazon, TCS, Wipro
 
 --------------------------------------------------------------------------------
@@ -327,18 +327,18 @@ SECTION 4 — CODING QUESTIONS — LOOPS & PATTERNS
   [C][ ] (E) Print a hollow diamond pattern for N=4
              Asked at: TCS, Infosys, Capgemini
 
-  [C][ ] (E) Find sum of all numbers from 1 to N divisible by 3 OR 5
+  [C][x] (E) Find sum of all numbers from 1 to N divisible by 3 OR 5
              (Classic FizzBuzz sum variant)
              Asked at: Google, Amazon campus
 
-  [C][ ] (E) Print the number spiral matrix for N=4 clockwise starting from 1
+  [C][~] (E) Print the number spiral matrix for N=4 clockwise starting from 1
              Asked at: Amazon, Zoho
 
 --------------------------------------------------------------------------------
 4F. MEDIUM — LOOPS & PATTERNS (from all_in_one_question_3 — Part 4)
 --------------------------------------------------------------------------------
 
-  [C][ ] (M) Print all numbers from 1 to N that are perfect squares
+  [C][x] (M) Print all numbers from 1 to N that are perfect squares
              Without using sqrt() — use only loops
              Asked at: TCS, Wipro, Capgemini
 
@@ -366,22 +366,22 @@ SECTION 5 — COMPLETE PROBLEM LIST (from all_in_one — Roadmap)
   These are the programs the roadmap says you MUST write before moving on:
 
   CONDITIONALS:
-  [C][ ] Grade calculator (90+=A, 80+=B, 70+=C, 60+=D, else F)
-  [C][ ] Calculator using switch (+, -, *, /)
-  [C][ ] Check if triangle is valid given 3 sides
-  [C][ ] Check if character is vowel or consonant using switch
-  [C][ ] Find the largest of three numbers
+  [C][x] Grade calculator (90+=A, 80+=B, 70+=C, 60+=D, else F)
+  [C][x] Calculator using switch (+, -, *, /)
+  [C][x] Check if triangle is valid given 3 sides
+  [C][x] Check if character is vowel or consonant using switch
+  [C][x] Find the largest of three numbers
 
   LOOPS:
-  [C][ ] Print 1 to N
-  [C][ ] Print multiplication table of a number
-  [C][ ] Sum of digits of a number (1234 -> 10)
-  [C][ ] Reverse a number (1234 -> 4321)
-  [C][ ] Check if a number is palindrome
-  [C][ ] Print all primes up to N (nested loops, then optimize)
-  [C][ ] Print left-aligned, right-aligned, and inverted star patterns
-  [C][ ] Fibonacci series up to N terms
-  [C][ ] Find factorial of N using a loop
+  [C][x] Print 1 to N
+  [C][x] Print multiplication table of a number
+  [C][x] Sum of digits of a number (1234 -> 10)
+  [C][x] Reverse a number (1234 -> 4321)
+  [C][x] Check if a number is palindrome
+  [C][x] Print all primes up to N (nested loops, then optimize)
+  [C][x] Print left-aligned, right-aligned, and inverted star patterns
+  [C][x] Fibonacci series up to N terms
+  [C][x] Find factorial of N using a loop
 
 ================================================================================
 SUMMARY COUNT
