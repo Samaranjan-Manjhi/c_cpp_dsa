@@ -127,14 +127,14 @@ SECTION 2 — EASY CODING QUESTIONS
   [C][x] (E) Factorial using recursion
              Asked at: TCS, Wipro, Infosys
 
-  [C][ ] (E) Sum of digits of a number using recursion
+  [C][x] (E) Sum of digits of a number using recursion
              e.g. 1234 -> 1+2+3+4 = 10
              Asked at: Wipro, Cognizant
 
-  [C][ ] (E) Power(x, n) using recursion — x^n = x * pow(x, n-1)
+  [C][x] (E) Power(x, n) using recursion — x^n = x * pow(x, n-1)
              Asked at: Amazon, Microsoft
 
-  [C][ ] (E) Check if a string is palindrome using recursion
+  [C][x] (E) Check if a string is palindrome using recursion
              Asked at: Amazon, Zoho
 
 --------------------------------------------------------------------------------
