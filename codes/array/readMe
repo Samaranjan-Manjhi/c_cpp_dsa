@@ -91,7 +91,7 @@ SECTION 2 — EASY CODING QUESTIONS
              Hint: use XOR or sum formula N*(N+1)/2 - actual_sum
              Asked at: Amazon, Microsoft, Google, Flipkart, TCS
 
-  [C][ ] (E) Two Sum — find pair with given target sum (brute force then hashmap)
+  [C][x] (E) Two Sum — find pair with given target sum (brute force then hashmap)
              Asked at: Amazon, Microsoft, Google, Adobe, Flipkart
 
   [C][ ] (E) Find all pairs in an array with a given difference
