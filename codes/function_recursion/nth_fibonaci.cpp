@@ -9,8 +9,9 @@ using namespace std;
 
 int fibbo(int n, int a, int b)
 {
-     if(n > 0)
-          return fibbo(n-1,b, a+b);
+     if(n == 1)
+          return a;
+     return fibbo(n-1, b, a+b);
 }
 
 int main()
@@ -28,6 +29,6 @@ int main()
        b = temp;
        i++;
        }*/
-     cout << "Nth term:- " << fibbo(n-1, a, b) << endl;
+     cout << "Nth term:- " << fibbo(n, a, b) << endl;
      return 0;
 }

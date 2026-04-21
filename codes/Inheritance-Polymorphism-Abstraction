@@ -1,0 +1,516 @@
+================================================================================
+     INHERITANCE, POLYMORPHISM & ABSTRACTION — COMPLETE QUESTION BANK
+     Compiled from all_in_one, all_in_one_question_1/2/3/4
+     No duplicates | Theory + Coding | All difficulties
+     Added company-asked questions not in source files (marked with ★)
+================================================================================
+
+FORMAT:
+  [ ] = not attempted   [~] = need revision   [x] = done
+  (E) Easy   (M) Medium   (H) Hard
+  [T] = Theory/Verbal    [C] = Coding
+  ★  = Added question (commonly asked in real interviews, not in source files)
+
+================================================================================
+SECTION 1 — THEORY QUESTIONS
+================================================================================
+
+--------------------------------------------------------------------------------
+1A. INHERITANCE — CORE THEORY
+--------------------------------------------------------------------------------
+
+  [T][ ] What is inheritance? What are the benefits of using it?
+         Asked at: TCS, Wipro, Infosys, Zoho, Amazon
+
+  [T][ ] What are the types of inheritance in C++? Explain each with an example.
+         (Single, Multiple, Multilevel, Hierarchical, Hybrid)
+         Asked at: TCS, Wipro, Infosys, L&T Infotech
+
+  [T][ ] What is the difference between public, protected, and private inheritance?
+         How does each affect the access of base class members in the derived class?
+         Asked at: TCS, Wipro, Infosys, Zoho, Amazon
+
+  [T][ ] What is the order of constructor and destructor calls in inheritance?
+         (Base constructor first, Derived destructor first)
+         Asked at: Amazon, Microsoft, TCS, Zoho
+
+  [T][ ] What is the diamond problem in multiple inheritance? How does C++ solve it?
+         (Virtual base class: class B : virtual public A { })
+         Asked at: TCS, Wipro, L&T Infotech, Persistent
+
+  [T][ ] What is a virtual base class? When should you use it?
+         Asked at: L&T Infotech, Persistent, Samsung
+
+  [T][ ] What is multiple inheritance? What are its pros and cons?
+         Asked at: TCS, Wipro, Amazon, Infosys
+
+  [T][ ] What is the difference between aggregation and composition?
+         (Composition: owned object cannot exist without owner; Aggregation: can exist independently)
+         Asked at: TCS, Infosys, L&T Infotech
+
+  [T][ ] What is the difference between aggregation, composition, and association?
+         Asked at: TCS, Infosys, L&T Infotech, Persistent
+
+  [T][ ] Can a derived class call a base class constructor explicitly? How?
+         (Yes, using initializer list: Derived() : Base(args) { })
+         Asked at: TCS, Wipro, Zoho
+
+  [T][ ] What is constructor chaining in inheritance?
+         Asked at: TCS, Wipro, Infosys
+
+  [T][ ] What members are NOT inherited from a base class?
+         (Constructors, destructor, copy assignment operator, friend functions)
+         Asked at: TCS, Wipro, Infosys, Zoho
+
+  ★[T][ ] What is the Liskov Substitution Principle (LSP)? Why is it important?
+         (Derived objects must be substitutable for base objects)
+         Asked at: Amazon, Microsoft, Google, Atlassian
+
+  ★[T][ ] What is the difference between IS-A and HAS-A relationships? Give examples.
+         (IS-A → inheritance; HAS-A → composition/aggregation)
+         Asked at: TCS, Zoho, Infosys, Amazon
+
+--------------------------------------------------------------------------------
+1B. POLYMORPHISM — CORE THEORY
+--------------------------------------------------------------------------------
+
+  [T][ ] What are the 4 pillars of OOP? Explain each with a real-world example.
+         (Encapsulation, Inheritance, Polymorphism, Abstraction)
+         Asked at: TCS, Wipro, Infosys, Zoho, Amazon, Microsoft
+
+  [T][ ] What is polymorphism? What are its two types in C++?
+         (Compile-time/Static: overloading; Runtime/Dynamic: virtual functions)
+         Asked at: TCS, Wipro, Infosys, Zoho, Amazon
+
+  [T][ ] What is the difference between function overloading and function overriding?
+         (Overloading: same name, different params, same class;
+          Overriding: same signature, different class, virtual keyword)
+         Asked at: TCS, Wipro, Infosys, Zoho, Amazon
+
+  [T][ ] What is the difference between overloading, overriding, and hiding?
+         Give an example of function hiding.
+         Asked at: TCS, Zoho, Persistent, L&T Infotech
+
+  [T][ ] What is a virtual function? Why do we need it?
+         Asked at: TCS, Wipro, Amazon, Zoho, L&T Infotech
+
+  [T][ ] What is early binding vs late binding (static vs dynamic dispatch)?
+         Asked at: TCS, Wipro, Infosys, Amazon, Microsoft
+
+  [T][ ] What is a vtable (virtual function table)? How does it work?
+         Asked at: TCS, Wipro, Amazon, Samsung, Zoho
+
+  [T][ ] Explain the vtable and vptr mechanism in detail.
+         (Each class with virtual functions has a vtable; each object has a vptr pointing to it)
+         Asked at: Amazon, Samsung, Sasken, embedded C++ roles
+
+  [T][ ] What is the overhead of a virtual function call vs a direct call?
+         Asked at: Dolat Capital, HFT firms, Sasken
+
+  [T][ ] What is devirtualization? When can the compiler perform it?
+         Asked at: Dolat Capital, HFT firms
+
+  [T][ ] What is a virtual destructor? Why is it important?
+         (Without it: deleting derived via base pointer causes undefined behavior / memory leak)
+         Asked at: Amazon, Microsoft, Google, TCS, Wipro, Adobe
+
+  [T][ ] Can constructors be virtual? Can destructors be virtual?
+         (Constructors: No. Destructors: Yes — and base destructor SHOULD be virtual)
+         Asked at: Amazon, TCS, Wipro, Infosys
+
+  [T][ ] Can you call a virtual function from a constructor or destructor? What happens?
+         (It calls the base class version — vtable not yet pointing to derived)
+         Asked at: Amazon, Microsoft, Adobe
+
+  [T][ ] Can you call a non-virtual function polymorphically? Explain.
+         (No — non-virtual uses static binding based on pointer type, not actual object type)
+         Asked at: Zoho, Persistent
+
+  [T][ ] What is the difference between the override and final keywords?
+         (override: forces derived to override; final: prevents further overriding)
+         Asked at: Persistent, Nagarro, L&T Infotech
+
+  [T][ ] What is operator overloading? Which operators cannot be overloaded?
+         (Cannot overload: :: . .* ?: sizeof typeid)
+         Asked at: TCS, Wipro, Zoho, Samsung, Adobe
+
+  [T][ ] What is a covariant return type? Give an example.
+         (Derived override can return a pointer/reference to derived type instead of base type)
+         Asked at: Advanced C++ roles, Google
+
+  [T][ ] What is CRTP (Curiously Recurring Template Pattern)?
+         How does it achieve static polymorphism?
+         Asked at: Dolat Capital, HFT firms, Advanced C++ roles
+
+  ★[T][ ] What is the difference between static polymorphism and dynamic polymorphism?
+         Give a performance comparison.
+         (Static: templates/overloading, resolved at compile-time, zero overhead;
+          Dynamic: vtable/vptr, resolved at runtime, indirect call overhead)
+         Asked at: Google, Dolat Capital, Goldman Sachs, HFT firms
+
+  ★[T][ ] Can a virtual function be inline? Is it ever inlined by the compiler?
+         (Declared inline but usually not inlined when called via pointer/reference)
+         Asked at: Samsung, L&T Infotech, Persistent
+
+  ★[T][ ] What is the difference between compile-time and runtime polymorphism
+         from a memory/performance perspective?
+         Asked at: Amazon, Samsung, Sasken
+
+--------------------------------------------------------------------------------
+1C. ABSTRACTION — CORE THEORY
+--------------------------------------------------------------------------------
+
+  [T][ ] What is a pure virtual function? What is an abstract class?
+         (Pure virtual: virtual void f() = 0; Abstract: has at least one pure virtual)
+         Asked at: TCS, Wipro, Amazon, Zoho, Infosys
+
+  [T][ ] What is a pure virtual function? Can it have a body?
+         (Yes — pure virtual CAN have a body, it just forces override in derived)
+         Asked at: Amazon, Microsoft, Persistent
+
+  [T][ ] What is an abstract class? Can you instantiate it?
+         (No — must be subclassed with all pure virtuals overridden)
+         Asked at: TCS, Wipro, Infosys, Amazon
+
+  [T][ ] What is an interface in C++? How do you implement it?
+         (Abstract class with ALL pure virtual functions and no data members)
+         Asked at: Amazon, Microsoft, TCS
+
+  [T][ ] What is encapsulation? Why is it important?
+         Asked at: TCS, Wipro, Infosys, Zoho, Amazon
+
+  [T][ ] What is the difference between public, private, and protected access specifiers?
+         Asked at: TCS, Wipro, Infosys, Zoho
+
+  [T][ ] What is object slicing? When does it happen? How do you prevent it?
+         (Passing derived by value to base type — extra members get sliced off)
+         (Prevent: use pointer or reference to base)
+         Asked at: Amazon, Microsoft, Zoho, Persistent
+
+  [T][ ] What is RTTI (Run Time Type Information)?
+         (dynamic_cast, typeid — enables type queries at runtime)
+         Asked at: Amazon, Microsoft, Adobe
+
+  [T][ ] What is the difference between dynamic_cast and static_cast?
+         (dynamic_cast: runtime check, safe downcast; static_cast: compile-time, no runtime check)
+         Asked at: Amazon, Microsoft, Adobe, Persistent
+
+  [T][ ] What is the difference between struct and class in C++?
+         (Only difference: struct defaults to public access, class defaults to private)
+         Asked at: TCS, Wipro, Infosys (very common)
+
+  [T][ ] What does the explicit keyword do in constructors?
+         (Prevents implicit/automatic conversions)
+         Asked at: Amazon, Adobe, Persistent, Nagarro
+
+  [T][ ] What is a mutable member? When would you use it?
+         (Can be modified even in a const method — e.g. caching, logging)
+         Asked at: Amazon, Adobe, advanced C++ roles
+
+  [T][ ] What is a friend function? When would you use it?
+         Asked at: TCS, Wipro, Infosys, Zoho
+
+  [T][ ] What is the 'this' pointer? Give an example of when you would use it.
+         Asked at: TCS, Wipro, Infosys, Amazon
+
+  ★[T][ ] What is the Open/Closed Principle (OCP)?
+         How does abstraction and polymorphism enable it?
+         Asked at: Amazon, Google, Atlassian, Adobe
+
+  ★[T][ ] When should you use an abstract class vs a pure interface in C++?
+         (Abstract class: shared default behavior + interface;
+          Interface: only contract, no state)
+         Asked at: Amazon, Microsoft, Adobe, Atlassian
+
+================================================================================
+SECTION 2 — EASY CODING QUESTIONS
+================================================================================
+
+--------------------------------------------------------------------------------
+2A. EASY CODING (from all_in_one_question_1 / all_in_one_question_3)
+--------------------------------------------------------------------------------
+
+  [C][ ] (E) Create a base class Shape with a virtual method draw().
+             Derive Circle and Square. Override draw() in each.
+             Create an array of Shape* and call draw() on each — demonstrate polymorphism.
+             Asked at: TCS, Wipro, Zoho
+
+  [C][ ] (E) Design a class Rectangle with width and height.
+             Add methods: area(), perimeter(), isSquare()
+             Create 3 objects and call all methods.
+             Asked at: TCS, Wipro, Infosys
+
+  [C][ ] (E) Create a class Counter with increment(), decrement(), reset(), getValue()
+             Use a private member and demonstrate encapsulation.
+             Asked at: TCS, Wipro, Infosys
+
+  [C][ ] (E) Create a class with a static member that counts total objects created.
+             Destructor decrements the count when an object is destroyed.
+             Asked at: Zoho, TCS, Wipro
+
+  [C][ ] (E) Overload the == operator for a Point class (x, y coordinates).
+             Two points are equal if both x and y match.
+             Asked at: Zoho, TCS, Wipro
+
+  [C][ ] (E) Design a class hierarchy: Vehicle -> ElectricVehicle -> Tesla.
+             Show constructor/destructor call order with virtual destructors.
+             Asked at: TCS, Wipro, L&T Infotech
+
+  [C][ ] (E) Design a complex number class with operator+, -, *, /, ==, and <<.
+             Asked at: Zoho, Samsung, L&T Infotech
+
+  [C][ ] (E) Design a Fraction class with +, -, *, / operators that auto-simplifies.
+             (Use GCD to reduce after each operation)
+             Asked at: Zoho, Amazon campus, Adobe
+
+  [C][ ] (E) Implement the Singleton pattern and make it thread-safe using
+             a local static (Meyers Singleton) or std::call_once.
+             Asked at: Amazon, Microsoft, Flipkart
+
+  [C][ ] (E) Design a class Matrix with operator+, operator* (matrix multiply),
+             and operator<< for printing.
+             Asked at: Zoho, Persistent, Adobe
+
+  ★[C][ ] (E) Create an abstract class Animal with a pure virtual method speak().
+              Derive Dog, Cat, and Cow. Each speaks differently.
+              Store in a vector<Animal*> and call speak() polymorphically.
+              Asked at: TCS, Wipro, Infosys, Zoho (very common interview question)
+
+  ★[C][ ] (E) Demonstrate the diamond problem: classes A, B, C, D where
+              B and C inherit from A, and D inherits from both B and C.
+              Fix with virtual inheritance and show the correct output.
+              Asked at: TCS, Wipro, L&T Infotech, Persistent
+
+================================================================================
+SECTION 3 — MEDIUM CODING QUESTIONS
+================================================================================
+
+--------------------------------------------------------------------------------
+3A. MEDIUM CODING (from all_in_one_question_1)
+--------------------------------------------------------------------------------
+
+  [C][ ] (M) Design a BankAccount class with deposit(), withdraw(), getBalance().
+             Derive SavingsAccount (adds interest), CurrentAccount (allows overdraft).
+             Use virtual methods where appropriate.
+             Asked at: TCS, Zoho, Wipro, Infosys
+
+  [C][ ] (M) Design a Student class. Sort students by marks, find the topper.
+             Asked at: TCS, Wipro
+
+  [C][ ] (M) Implement a stack class using an array with overflow/underflow handling.
+             Template it to support any type.
+             Asked at: Amazon, Microsoft, Zoho
+
+  [C][ ] (M) Design an Animal hierarchy: Animal -> Dog, Cat with speak() polymorphism.
+             Use base class pointer, demonstrate dynamic dispatch.
+             Asked at: Zoho, TCS, Infosys
+
+  [C][ ] (M) Implement a class for Complex numbers with operator overloading (+, -, *, <<).
+             Asked at: Samsung, Adobe, Zoho
+
+  [C][ ] (M) Design a singleton class (thread-safe).
+             Asked at: Amazon, Microsoft, Google, Adobe
+
+  [C][ ] (M) Implement LRU Cache using a class (HashMap + Doubly Linked List).
+             Asked at: Amazon, Microsoft, Google, Flipkart, Paytm
+
+--------------------------------------------------------------------------------
+3B. MEDIUM CODING (from all_in_one_question_3)
+--------------------------------------------------------------------------------
+
+  [C][ ] (M) Implement a generic Stack<T> class template with:
+             push(), pop(), top(), isEmpty(), size()
+             Handle underflow with a custom exception.
+             Asked at: Amazon, Microsoft, Zoho, Persistent
+
+  [C][ ] (M) Implement an Iterator pattern for a custom linked list class.
+             Support range-based for: for (auto x : myList) {...}
+             Requires begin(), end(), operator++, operator*, operator!=
+             Asked at: Adobe, Atlassian, Persistent
+
+  [C][ ] (M) Design a publish-subscribe (Observer) system:
+             EventBus class, subscribers register for events,
+             publisher emits an event, all subscribers are notified.
+             Asked at: Adobe, Persistent, Nagarro
+
+  [C][ ] (M) Implement copy-on-write string class:
+             Only deep copy when a write happens (lazy copy).
+             Asked at: Dolat Capital, Adobe, advanced C++ roles
+
+  [C][ ] (M) Design an immutable class in C++:
+             All members set in constructor, no setters, all methods const.
+             Asked at: Persistent, Nagarro, Google
+
+  [C][ ] (M) Implement the Builder pattern for constructing a complex Pizza order:
+             setPizzaSize(), addTopping(), setBase(), build() -> Pizza object
+             Asked at: Persistent, Nagarro, Amazon
+
+  [C][ ] (M) Implement CRTP (Curiously Recurring Template Pattern) for static polymorphism:
+             Base<Derived> class with non-virtual interface() method.
+             Show it avoids vtable overhead.
+             Asked at: Dolat Capital, HFT firms, advanced C++ roles
+
+  [C][ ] (M) Create a class Matrix with operator+ and operator* overloaded.
+             operator* should perform actual matrix multiplication.
+             Asked at: Samsung, Adobe, Goldman Sachs
+
+--------------------------------------------------------------------------------
+3C. MEDIUM CODING (from all_in_one_question_4)
+--------------------------------------------------------------------------------
+
+  [C][ ] (M) Design an event system using the Observer pattern.
+             EventSource, IListener interface (pure virtual), multiple concrete listeners.
+             Asked at: Amazon, Adobe, Atlassian
+
+  [C][ ] (M) Design a plugin system using the Factory pattern.
+             ShapeFactory creates Circle, Square, Triangle based on string input.
+             Asked at: Amazon, Flipkart, Adobe
+
+  [C][ ] (M) Implement a thread-safe LRU Cache class.
+             Doubly linked list + unordered_map. O(1) get and put.
+             Use mutex for thread safety.
+             Asked at: Amazon, Google, Microsoft, Flipkart (VERY common!)
+
+  [C][ ] (M) Design a generic Stack class using templates with:
+             - push, pop, top, isEmpty, size
+             - Exception on pop/top when empty
+             - Copy constructor and assignment operator
+             Asked at: Zoho, Amazon, Adobe
+
+  [C][ ] (M) Design and implement a simple expression parser using OOP:
+             Expression base class, BinaryExpression, Literal, Variable derived.
+             Visitor pattern for evaluation.
+             Asked at: Atlassian, Adobe, Google
+
+  ★[C][ ] (M) Implement a Shape hierarchy with an abstract base class:
+              Pure virtual: area() and perimeter()
+              Derive: Circle, Rectangle, Triangle — each must implement both methods.
+              Store shapes in vector<Shape*>, compute total area.
+              Asked at: Amazon, TCS, Zoho, Wipro, Infosys (VERY common!)
+
+  ★[C][ ] (M) Design a Payment system:
+              Abstract base: Payment with virtual processPayment()
+              Derived: CreditCard, UPI, Cash — each with its own implementation.
+              Demonstrate runtime polymorphism.
+              Asked at: Amazon, Flipkart, Paytm, Swiggy
+
+  ★[C][ ] (M) Implement a simple Employee hierarchy:
+              Base: Employee with virtual calculateSalary()
+              Derived: Manager (base + bonus), Developer (base + stockOptions)
+              Demonstrate virtual dispatch via base pointer.
+              Asked at: TCS, Wipro, Infosys, Zoho
+
+  ★[C][ ] (M) Implement the Strategy design pattern:
+              SortContext class, abstract SortStrategy, concrete BubbleSort,
+              QuickSort, MergeSort. Switch strategy at runtime.
+              Asked at: Amazon, Microsoft, Adobe, Atlassian
+
+================================================================================
+SECTION 4 — HARD CODING QUESTIONS
+================================================================================
+
+--------------------------------------------------------------------------------
+4A. HARD CODING (from all_in_one_question_3)
+--------------------------------------------------------------------------------
+
+  [C][ ] (H) Implement a type-safe variant class (like std::variant) from scratch.
+             Stores one of several types, supports get<T>() and visit().
+             Asked at: Google, advanced C++ roles
+
+  [C][ ] (H) Implement a thread-safe object pool with acquire() and release().
+             Objects are reused — not re-allocated. Support templated type.
+             Asked at: Dolat Capital, HFT firms, Persistent
+
+  [C][ ] (H) Design a plugin system where plugins are loaded as .so files at runtime.
+             Plugins implement a common abstract interface, discovered via dlopen/dlsym.
+             Asked at: L&T Infotech, Sasken, advanced roles
+
+--------------------------------------------------------------------------------
+4B. HARD CODING (from all_in_one + added)
+--------------------------------------------------------------------------------
+
+  ★[C][ ] (H) Design a Parking Lot system using OOP:
+              Classes: ParkingLot, ParkingFloor, ParkingSlot, Vehicle, Ticket.
+              Support multiple vehicle types (Bike, Car, Truck).
+              Use abstract classes and polymorphism for VehicleType and Slot.
+              Asked at: Amazon, Microsoft, Flipkart, Zoho
+
+  ★[C][ ] (H) Design an ATM machine using OOP:
+              Classes: ATM, Card, Account, Transaction, CashDispenser.
+              Use abstract state pattern for ATM states (Idle, HasCard, PIN, etc.)
+              Asked at: Zoho, TCS, Wipro, Infosys
+
+  ★[C][ ] (H) Design a Chess game using OOP:
+              Abstract Piece class, derived King, Queen, Rook, Bishop, Knight, Pawn.
+              Each piece overrides isValidMove(). Board and Player classes.
+              Asked at: Amazon, Microsoft, Google, Atlassian
+
+  ★[C][ ] (H) Design an Elevator system using OOP:
+              Abstract ElevatorController, Elevator, Floor, Request.
+              Use strategy/state pattern for scheduling.
+              Asked at: Amazon, Microsoft, Zoho
+
+================================================================================
+SECTION 5 — OOP DESIGN THEORY (System Design — asked in SDE interviews)
+================================================================================
+
+  [T][ ] Design a file system (directory + file hierarchy) using OOP.
+         Asked at: Amazon, Google, Dropbox
+
+  [T][ ] Design a Library Management System using OOP + data structures.
+         Asked at: Zoho, TCS, Infosys
+
+  ★[T][ ] How would you design a notification system (email, SMS, push) using
+          polymorphism and the Strategy/Observer pattern?
+          Asked at: Amazon, Flipkart, Swiggy, Adobe
+
+  ★[T][ ] Explain the SOLID principles. How does OOP support each one?
+          (Single Responsibility, Open/Closed, Liskov Substitution,
+           Interface Segregation, Dependency Inversion)
+          Asked at: Amazon, Microsoft, Google, Atlassian, Adobe
+
+================================================================================
+SUMMARY COUNT
+================================================================================
+
+  Category                                     | E  | M  | H  | Total
+  ---------------------------------------------|----|----|----|---------
+  Theory — Inheritance                         | 14 |  0 |  0 |    14
+  Theory — Polymorphism                        | 18 |  0 |  0 |    18
+  Theory — Abstraction                         | 15 |  0 |  0 |    15
+  Theory — OOP Design                          |  4 |  0 |  0 |     4
+  Coding Easy                                  | 12 |  0 |  0 |    12
+  Coding Medium                                |  0 | 20 |  0 |    20
+  Coding Hard                                  |  0 |  0 |  7 |     7
+  ---------------------------------------------|----|----|----|---------
+  TOTAL                                        | 63 | 20 |  7 |    90
+
+  ★ = 20 questions added from real interviews not present in source files
+
+================================================================================
+QUICK REFERENCE — MOST ASKED TOPICS BY COMPANY
+================================================================================
+
+  TCS / WIPRO / INFOSYS / CAPGEMINI (Campus):
+    → 4 pillars of OOP, virtual functions, abstract class, constructor order,
+      inheritance types, operator overloading, diamond problem
+
+  ZOHO:
+    → OOP design (Animal/Shape hierarchies), operator overloading,
+      polymorphism demo, Singleton, BankAccount design
+
+  AMAZON / MICROSOFT / FLIPKART:
+    → vtable/vptr, virtual destructor, object slicing, RTTI,
+      LRU Cache, Observer/Factory/Strategy patterns, thread-safe Singleton
+
+  GOOGLE / ATLASSIAN / ADOBE:
+    → CRTP, covariant return type, SOLID principles, Visitor pattern,
+      Expression parser via OOP, advanced design patterns
+
+  DOLAT CAPITAL / HFT FIRMS / SAMSUNG:
+    → vtable overhead, devirtualization, CRTP for static polymorphism,
+      virtual function call cost, object pool
+
+================================================================================
+END
+================================================================================

@@ -75,19 +75,19 @@ SECTION 2 — EASY CODING QUESTIONS
   [C][x] (E) Check if an array is sorted in ascending order
              Asked at: Wipro, Capgemini
 
-  [C][ ] (E) Find the second largest element in an array
+  [C][x] (E) Find the second largest element in an array
              Asked at: Amazon, Flipkart, TCS, Zoho
 
-  [C][ ] (E) Move all zeros to end while maintaining order of non-zero elements
+  [C][x] (E) Move all zeros to end while maintaining order of non-zero elements
              Asked at: Amazon, Microsoft, Google
 
-  [C][ ] (E) Find if an array contains any duplicate element
+  [C][x] (E) Find if an array contains any duplicate element
              Asked at: Amazon, Microsoft, Adobe
 
-  [C][ ] (E) Left rotate an array by K positions
+  [C][x] (E) Left rotate an array by K positions
              Asked at: Amazon, Flipkart, TCS
 
-  [C][ ] (E) Find the missing number in an array of 1 to N
+  [C][x] (E) Find the missing number in an array of 1 to N
              Hint: use XOR or sum formula N*(N+1)/2 - actual_sum
              Asked at: Amazon, Microsoft, Google, Flipkart, TCS
 

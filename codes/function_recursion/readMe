@@ -141,11 +141,11 @@ SECTION 2 — EASY CODING QUESTIONS
 2B. EASY CODING (from all_in_one_question_2 — Part 3)
 --------------------------------------------------------------------------------
 
-  [C][ ] (E) Write a function that returns the Nth Fibonacci term using recursion
+  [C][x] (E) Write a function that returns the Nth Fibonacci term using recursion
              Sequence: 1, 1, 2, 3, 5, 8, 13...
              Asked at: TCS, Wipro, Infosys
 
-  [C][ ] (E) Write a recursive function to compute sum of first N odd numbers
+  [C][x] (E) Write a recursive function to compute sum of first N odd numbers
              Asked at: TCS, Wipro
 
   [C][ ] (E) Write a function that counts how many times digit d appears in number n
