@@ -5,31 +5,23 @@
 
 #include <iostream>
 #include <vector>
-#include <algorithm>
+#include <unordered_map>
 using namespace std;
 
 vector<pair<int, int>> two_sum(const vector<int>& v, int t)
 {
-     int n = v.size();
      vector<pair<int, int>> out;
-     int l = 0, r = n-1;
-     while(l < r)
+     unordered_map<int, int> freq;
+     for(int x : v)
      {
-          int curr_sum = v[l]+v[r];
-          if(curr_sum == t)
+          int need = t-x;
+          if(freq[need] > 0)
           {
-               out.push_back({v[l], v[r]});
-               l++;
-               r--;
-          }
-          else if(curr_sum < t)
-          {
-               l++;
-          }
-          else 
-          {
-               r--;
-          }
+               out.push_back({need, x});
+               freq[need]--;
+          }     
+          else
+               freq[x]++;
      }
      return out;
 }
@@ -59,8 +51,7 @@ int main()
      int tar;
      cout << "Enter Target: ";
      cin >> tar;
-     sort(v.begin(), v.end());
-     print(v);
+     //print(v);
      vector<pair<int, int>> res = two_sum(v, tar);
      for(int i=0;i<res.size();i++)
      {

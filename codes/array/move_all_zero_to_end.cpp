@@ -33,24 +33,14 @@ void moveZeroes(vector<int>& v)
 
 void moveZeroes1(vector<int>& v)
 {
-     int n = v.size();
-     int l = 0, r = l + 1;
-     while(r < n) 
+     int j = 0; 
+     for(int i = 0; i < v.size(); i++)
      {
-          if(v[l] == 0 && v[r] != 0)
+          if(v[i] != 0)
           {
-               v[l] = v[r];
-               v[r] = 0;
-               l++;
+               swap(v[i], v[j]);
+               j++;
           }
-          /*else if(v[l] == 0 && v[r] == 0)
-            {
-            r++;
-            }*/
-          else if(v[l] != 0)
-               l++;
-          else
-               r++;
      }
 }
 

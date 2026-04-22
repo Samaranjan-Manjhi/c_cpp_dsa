@@ -84,7 +84,7 @@ SECTION 2 — EASY CODING QUESTIONS
   [C][x] (E) Find if an array contains any duplicate element
              Asked at: Amazon, Microsoft, Adobe
 
-  [C][x] (E) Left rotate an array by K positions
+  [C][~] (E) Left rotate an array by K positions
              Asked at: Amazon, Flipkart, TCS
 
   [C][x] (E) Find the missing number in an array of 1 to N
@@ -94,17 +94,17 @@ SECTION 2 — EASY CODING QUESTIONS
   [C][x] (E) Two Sum — find pair with given target sum (brute force then hashmap)
              Asked at: Amazon, Microsoft, Google, Adobe, Flipkart
 
-  [C][ ] (E) Find all pairs in an array with a given difference
+  [C][x] (E) Find all pairs in an array with a given difference
              Asked at: Amazon, Zoho
 
 --------------------------------------------------------------------------------
 2B. EASY CODING (from all_in_one_question_1 — Part 2, Section C)
 --------------------------------------------------------------------------------
 
-  [C][ ] (E) Check if an array is a permutation of 1 to N
+  [C][~] (E) Check if an array is a permutation of 1 to N
              Asked at: TCS, Wipro, Infosys
 
-  [C][ ] (E) Find the element that appears an odd number of times (XOR trick)
+  [C][x] (E) Find the element that appears an odd number of times (XOR trick)
              Asked at: TCS, Wipro, Amazon
 
   [C][ ] (E) Build the running maximum (prefix max array)
