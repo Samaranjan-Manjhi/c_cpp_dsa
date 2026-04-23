@@ -9,7 +9,7 @@
 using namespace std;
 void count_small(const vector<int>& v)
 {
-     for(int i=0;i<v.size()-1;i++)
+     for(int i=0;i<v.size();i++)
      {
           int cnt = 0;
           for(int j=i+1;j<v.size();j++)

@@ -11,17 +11,10 @@ void prefix_max(vector<int>& v)
 {
      int n = v.size();
      int maxi = v[0]; 
-     for(int i=1;i<n-1;i++)
+     for(int i=1;i<n;i++)
      {
-          if(maxi < v[i])
-          {
-               //cout << maxi << "   " << v[j] << endl;
-               maxi = v[i];
-          }
-          else
-          {
-               v[i] = maxi;
-          }
+          maxi = max(maxi, v[i]);
+          v[i] = maxi;
      }
 }
 void print(const vector<int>& v)

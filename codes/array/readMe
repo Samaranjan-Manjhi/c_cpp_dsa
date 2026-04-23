@@ -107,10 +107,10 @@ SECTION 2 — EASY CODING QUESTIONS
   [C][x] (E) Find the element that appears an odd number of times (XOR trick)
              Asked at: TCS, Wipro, Amazon
 
-  [C][ ] (E) Build the running maximum (prefix max array)
+  [C][x] (E) Build the running maximum (prefix max array)
              Asked at: TCS, Wipro, Capgemini
 
-  [C][ ] (E) Count elements smaller than the current element to its right
+  [C][x] (E) Count elements smaller than the current element to its right
              (brute force O(N^2) first)
              Asked at: Flipkart, Amazon
 
@@ -118,20 +118,20 @@ SECTION 2 — EASY CODING QUESTIONS
 2C. EASY CODING (from all_in_one_question_2 — Part 3)
 --------------------------------------------------------------------------------
 
-  [C][ ] (E) Find the sum of all elements in an array
+  [C][x] (E) Find the sum of all elements in an array
              Asked at: TCS, Wipro, Infosys
 
-  [C][ ] (E) Count elements greater than a given value X in an array
+  [C][x] (E) Count elements greater than a given value X in an array
              Asked at: TCS, Wipro, Capgemini
 
-  [C][ ] (E) Replace each element with the greatest element on its right side
+  [C][x] (E) Replace each element with the greatest element on its right side
              e.g. [17,18,5,4,6,1] -> [18,6,6,6,1,-1]
              Asked at: Amazon, LeetCode Easy
 
-  [C][ ] (E) Find the index of the first occurrence of the minimum element
+  [C][x] (E) Find the index of the first occurrence of the minimum element
              Asked at: TCS, Wipro
 
-  [C][ ] (E) Separate odd and even numbers — odds first, evens after (any order within groups)
+  [C][x] (E) Separate odd and even numbers — odds first, evens after (any order within groups)
              Asked at: TCS, Wipro, Zoho
 
   [C][ ] (E) Check if two arrays have the same elements (not necessarily same order)
