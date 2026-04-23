@@ -134,17 +134,17 @@ SECTION 2 — EASY CODING QUESTIONS
   [C][x] (E) Separate odd and even numbers — odds first, evens after (any order within groups)
              Asked at: TCS, Wipro, Zoho
 
-  [C][ ] (E) Check if two arrays have the same elements (not necessarily same order)
+  [C][x] (E) Check if two arrays have the same elements (not necessarily same order)
              without sorting — use frequency map
              Asked at: TCS, Wipro
 
-  [C][ ] (E) Find the intersection of two unsorted arrays (common elements)
+  [C][x] (E) Find the intersection of two unsorted arrays (common elements)
              Asked at: Amazon, TCS
 
-  [C][ ] (E) Find the union of two unsorted arrays (all unique elements)
+  [C][x] (E) Find the union of two unsorted arrays (all unique elements)
              Asked at: Amazon, TCS, Wipro
 
-  [C][ ] (E) Right rotate an array by 1 position
+  [C][x] (E) Right rotate an array by 1 position
              Asked at: TCS, Wipro
 
   [C][ ] (E) Count occurrences of each element and print only those appearing once

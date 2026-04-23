@@ -9,11 +9,10 @@
 #include <unordered_map>
 using namespace std;
 
-
-int main()
+bool check_2_arr(const vector<int>& v, const vector<int>& v1)
 {
-     vector<int> v{1, 2, 3, 4, 5};
-     vector<int> v1{2, 1, 5, 3, 4};
+     if(v.size() != v1.size())     
+          return false;
      unordered_map<int, int> m1;
      unordered_map<int, int> m2;
      for(int x : v)
@@ -24,13 +23,18 @@ int main()
      {
           m2[x1]++;
      }
-     for(auto& mp1 : m1)
-     {
-          cout << "mp1 --> " << mp1.first << " " << mp1.second << endl;
-     }
-     for(auto& mp2 : m2)
-     {
-          cout << "mp2 --> " << mp2.first << " " << mp2.second << endl;
-     }
+     
+     return m1 == m2;
+}
+
+int main()
+{
+     vector<int> v{1, 2, 3, 4, 5};
+     vector<int> v1{2, 2, 5, 3, 4};
+     bool res = check_2_arr(v, v1);
+     if(res)
+          cout << "Vectors are identical.\n";
+     else
+          cout << "Vectors are not identical.\n";
      return 0;
 } 
