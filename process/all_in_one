@@ -234,11 +234,11 @@ STEP 7: Control Flow — Loops                                             [C++]
     [ ] Check if a number is palindrome
     [ ] Print all primes up to N (using nested loops first, then optimize)
     [ ] Print these patterns:
-          *         *****     *
-          **        ****      **
-          ***       ***       ***
-          ****      **        ****
-          *****     *         *****
+          *         *****     
+          **        ****      
+          ***       ***       
+          ****      **        
+          *****     *         
     [ ] Fibonacci series up to N terms
     [ ] Find factorial of N using a loop
 

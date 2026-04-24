@@ -147,45 +147,45 @@ SECTION 2 — EASY CODING QUESTIONS
   [C][x] (E) Right rotate an array by 1 position
              Asked at: TCS, Wipro
 
-  [C][ ] (E) Count occurrences of each element and print only those appearing once
+  [C][x] (E) Count occurrences of each element and print only those appearing once
              Asked at: TCS, Wipro, Amazon
 
-  [C][ ] (E) Find the sum of elements at even indices vs odd indices
+  [C][x] (E) Find the sum of elements at even indices vs odd indices
              Asked at: TCS, Capgemini
 
-  [C][ ] (E) Find the first repeating element in an array
+  [C][x] (E) Find the first repeating element in an array
              Asked at: Amazon, Flipkart, Paytm
 
-  [C][ ] (E) Find the first non-repeating element in an array
+  [C][x] (E) Find the first non-repeating element in an array
              Asked at: Amazon, Flipkart, Adobe
 
-  [C][ ] (E) Print all elements that appear exactly K times in an array
+  [C][x] (E) Print all elements that appear exactly K times in an array
              Asked at: Amazon, Flipkart
 
-  [C][ ] (E) Check if an array can be divided into pairs with equal sum
+  [C][x] (E) Check if an array can be divided into pairs with equal sum
              Asked at: TCS, Amazon
 
 --------------------------------------------------------------------------------
 2D. EASY CODING (from all_in_one_question_3 — Part 4)
 --------------------------------------------------------------------------------
 
-  [C][ ] (E) Find the missing number using XOR only (no arithmetic sum)
+  [C][x] (E) Find the missing number using XOR only (no arithmetic sum)
              Array of size N containing elements 1 to N+1 with one missing
              Asked at: Amazon, Microsoft, TCS
 
-  [C][ ] (E) Find the element that appears more than N/2 times (majority element)
+  [C][x] (E) Find the element that appears more than N/2 times (majority element)
              Use Boyer-Moore Voting Algorithm — O(N) time O(1) space
              Asked at: Amazon, Adobe, Flipkart
 
-  [C][ ] (E) Rotate array right by K positions in O(N) time O(1) space
+  [C][x] (E) Rotate array right by K positions in O(N) time O(1) space
              Hint: reverse entire, reverse first K, reverse last N-K
              Asked at: Amazon, Microsoft, Adobe
 
-  [C][ ] (E) Check if an array is a permutation of 1 to N
+  [C][x] (E) Check if an array is a permutation of 1 to N
              (all elements unique and in range [1, N])
              Asked at: TCS, Wipro, Zoho
 
-  [C][ ] (E) Find the product of all elements except itself without using division
+  [C][~] (E) Find the product of all elements except itself without using division
              Input: [1,2,3,4] -> Output: [24,12,8,6]
              Asked at: Amazon, Microsoft, Google, Flipkart
 
