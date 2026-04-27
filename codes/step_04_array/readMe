@@ -205,11 +205,11 @@ SECTION 2 — EASY CODING QUESTIONS
              First array has extra space for second array's elements
              Asked at: Amazon, Microsoft
 
-  [C][ ] (E) Count elements smaller than current element for each position
+  [C][~] (E) Count elements smaller than current element for each position
              Input: [8,5,2,6] -> Output: [3,1,0,2]
              Asked at: Amazon, Flipkart
 
-  [C][ ] (E) Find the equilibrium index: index where sum of left = sum of right
+  [C][~] (E) Find the equilibrium index: index where sum of left = sum of right
              Asked at: Amazon, Adobe, Zoho
 
   [C][ ] (E) Find the minimum number of jumps to reach end of array (greedy)
