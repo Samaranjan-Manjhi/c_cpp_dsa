@@ -10,16 +10,18 @@ using namespace std;
 void segregate_even_odd(vector<int>& v)
 {
      int n = v.size();
-     int j = 0;
-     for(int i=0;i<n;i++)
+     //int l = 0, r = l+1;
+     int l = 0, r = 0;
+     while(r < n-1)
      {
-               cout <<"111-- " << v[i] << "    " << v[j] << endl;
-          if(v[i]%2 == 0)
+          if(v[l]%2!=0 && v[r]%2==0)
           {
-               cout << v[i] << "    " << v[j] << endl;
-               swap(v[i], v[j]);
-               j++;
+               swap(v[l], v[r]);
+               l++;
           }
+          if(v[l]%2==0)
+               l++;
+          r++;
      }
 }
 void printVec(const vector<int>& v)

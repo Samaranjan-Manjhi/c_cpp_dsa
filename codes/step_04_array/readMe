@@ -189,15 +189,15 @@ SECTION 2 — EASY CODING QUESTIONS
              Input: [1,2,3,4] -> Output: [24,12,8,6]
              Asked at: Amazon, Microsoft, Google, Flipkart
 
-  [C][ ] (E) Segregate even and odd numbers — evens first, odds second
+  [C][x] (E) Segregate even and odd numbers — evens first, odds second
              Maintain relative order. O(N) time O(1) space.
              Asked at: Amazon, Zoho, TCS
 
-  [C][ ] (E) Given sorted array, remove duplicates in-place and return new length
+  [C][x] (E) Given sorted array, remove duplicates in-place and return new length
              Do NOT use extra space
              Asked at: Amazon, TCS, Wipro, Adobe
 
-  [C][ ] (E) Find the only element that appears once when every other appears thrice
+  [C][x] (E) Find the only element that appears once when every other appears thrice
              Hint: count bits at each position mod 3
              Asked at: Amazon, Adobe, Samsung
 
@@ -205,7 +205,7 @@ SECTION 2 — EASY CODING QUESTIONS
              First array has extra space for second array's elements
              Asked at: Amazon, Microsoft
 
-  [C][~] (E) Count elements smaller than current element for each position
+  [C][x] (E) Count elements smaller than current element for each position
              Input: [8,5,2,6] -> Output: [3,1,0,2]
              Asked at: Amazon, Flipkart
 
