@@ -248,11 +248,11 @@ SECTION 2 — CODING QUESTIONS
 2A. EASY CODING
 --------------------------------------------------------------------------------
 
-  [C][ ] (E) Reverse a string.
+  [C][x] (E) Reverse a string.
              Methods: two-pointer, using std::reverse, recursion.
              Asked at: TCS, Wipro, Infosys, Capgemini
 
-  [C][ ] (E) Check if a string is a palindrome.
+  [C][x] (E) Check if a string is a palindrome.
              O(N) two-pointer approach. Also handle ignoring non-alphanumeric.
              Asked at: TCS, Wipro, Amazon, Zoho
 
