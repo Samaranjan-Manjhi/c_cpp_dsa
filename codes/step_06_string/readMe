@@ -256,21 +256,21 @@ SECTION 2 — CODING QUESTIONS
              O(N) two-pointer approach. Also handle ignoring non-alphanumeric.
              Asked at: TCS, Wipro, Amazon, Zoho
 
-  [C][ ] (E) Count vowels and consonants in a string.
+  [C][x] (E) Count vowels and consonants in a string.
              Asked at: TCS, Wipro, Capgemini
 
-  [C][ ] (E) Remove all spaces from a string.
+  [C][x] (E) Remove all spaces from a string.
              Asked at: TCS, Infosys
 
-  [C][ ] (E) Convert string to uppercase / lowercase manually.
+  [C][x] (E) Convert string to uppercase / lowercase manually.
              (Without using toupper/tolower — use ASCII arithmetic too)
              Asked at: TCS, Wipro
 
-  [C][ ] (E) Count words in a sentence.
+  [C][x] (E) Count words in a sentence.
              Handle multiple consecutive spaces.
              Asked at: Wipro, Capgemini, Zoho
 
-  [C][ ] (E) Check if two strings are anagrams.
+  [C][x] (E) Check if two strings are anagrams.
              Method 1: sort both. Method 2: frequency array of 26. O(N).
              Asked at: Amazon, Microsoft, Zoho, Flipkart
 

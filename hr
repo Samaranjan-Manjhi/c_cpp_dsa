@@ -1,0 +1,140 @@
+Q. What is your expected CTC?
+A: I am currently working on C/C++, Qt, Linux/macOS in a product-based cybersecurity environment. Based on my experience and market standards, I am expecting around 12–14 LPA, but I am flexible depending on role and technical depth.
+
+Q. If HR pushes: “That is too high for 3 years”
+A: I understand. My expectation is based on the kind of responsibilities I am handling currently in a product-based environment, especially C++ and Qt development. I am open to discussion if the role scope aligns.
+
+Q. If HR counters with 8–10 LPA
+A: I was expecting slightly higher based on my current skill set. Can we explore something closer to 11–12 LPA? I believe that would be fair considering the domain and technical stack.
+
+Q. If HR says final offer (low)
+A: Is there flexibility in fixed vs variable, or joining bonus?
+
+🧠 1. C++ Core (VERY IMPORTANT)
+
+These are almost guaranteed:
+
+Basics
+Q. Difference between C and C++
+A: Key Points
+C is a simple, fast, procedural language mainly used for system programming, embedded systems, and operating systems.
+C++ is an extension of C that adds Object-Oriented Programming (OOP) features and many advanced capabilities.
+Most C programs can be compiled in C++, but not all C++ programs can run as C programs.
+In short:
+C focuses on functions and procedures, while C++ focuses on objects, classes, and code reusability.
+
+Q. OOP concepts: encapsulation, inheritance, polymorphism, abstraction
+
+
+Constructor vs destructor
+Copy constructor vs assignment operator
+Memory management
+Stack vs heap
+new vs malloc
+Memory leaks — how to detect and avoid
+What is RAII
+Smart pointers:
+unique_ptr
+shared_ptr
+weak_ptr
+Advanced C++
+Virtual functions & vtable
+Pure virtual function vs interface
+Function overloading vs overriding
+Templates (basic + STL usage)
+Move semantics (C++11+)
+
+👉 Example questions:
+
+“What happens when destructor is not virtual?”
+“Why do we use smart pointers?”
+“Explain shallow copy vs deep copy”
+⚙️ 2. Data Structures & Algorithms (DSA)
+
+Even for Qt/C++ roles, this is asked:
+
+Arrays, strings
+Linked list (reverse, detect cycle)
+Stack / queue
+Binary tree basics
+Sorting (quick, merge)
+Time complexity (very important)
+
+👉 Common questions:
+
+Reverse linked list
+Find middle element
+Longest substring without repeating characters
+Binary search variations
+🧵 3. Multithreading (VERY IMPORTANT for your domain)
+
+Since you work in product/security software:
+
+Process vs thread
+Race condition
+Deadlock (and how to avoid)
+Mutex / semaphore
+Thread synchronization in C++
+
+👉 Questions:
+
+“What is race condition?”
+“How do you avoid deadlocks?”
+“What is mutex used for?”
+🐧 4. Linux basics (VERY IMPORTANT for your profile)
+Process vs thread in Linux
+Fork vs exec
+Signals
+File descriptors
+Permissions (chmod, chown)
+Basic shell commands
+
+👉 Questions:
+
+“What happens when fork() is called?”
+“Difference between process and thread in Linux?”
+“What is zombie process?”
+🖥️ 5. Qt GUI (your KEY advantage)
+What is Qt framework?
+Signals and slots mechanism
+Event loop in Qt
+Qt widgets vs QML
+Qt memory management (parent-child model)
+
+👉 Questions:
+
+“How does signal-slot work internally?”
+“What is event loop in Qt?”
+“Why Qt is cross-platform?”
+🔐 6. System design (light for 3 YOE but asked)
+Basic design of:
+file explorer
+antivirus scanning system (very relevant for eScan)
+chat application
+
+👉 Questions:
+
+“How would you design a file scanning system?”
+“How to handle large file processing efficiently?”
+🧪 7. Debugging / Practical scenarios
+
+They may ask:
+
+“Your application is crashing randomly — how will you debug?”
+“Memory leak in C++ application — steps?”
+“High CPU usage in Linux process — how to analyze?”
+💥 8. Realistic interview focus for YOU
+
+Since you are from:
+
+👉 C/C++ + Qt + Linux + cybersecurity product (eScan)
+
+They will focus MOST on:
+
+✔ Memory management
+✔ Multithreading
+✔ Linux internals
+✔ Debugging skills
+✔ Qt architecture
+
+NOT heavy DSA like FAANG level
