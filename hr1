@@ -1,0 +1,309 @@
+1. C++ (Very Important)
+Most product companies and many GCCs will heavily test this.
+Core C++
+    • OOP concepts 
+        ◦ Encapsulation 
+        ◦ Inheritance 
+        ◦ Polymorphism 
+        ◦ Abstraction 
+        ◦ Virtual functions 
+    • Constructors & destructors 
+    • Copy constructor 
+    • Move constructor 
+    • Copy assignment operator 
+    • Move assignment operator 
+    • Rule of 3/5 
+    • Friend functions/classes 
+Memory Management
+    • Stack vs Heap 
+    • malloc/free vs new/delete 
+    • Memory leaks 
+    • Dangling pointers 
+    • Smart pointers 
+        ◦ unique_ptr 
+        ◦ shared_ptr 
+        ◦ weak_ptr 
+    • RAII 
+STL
+    • vector 
+    • list 
+    • deque 
+    • map 
+    • unordered_map 
+    • set 
+    • unordered_set 
+    • priority_queue 
+    • Algorithms 
+        ◦ sort 
+        ◦ binary_search 
+        ◦ lower_bound 
+        ◦ upper_bound 
+Modern C++
+    • auto 
+    • lambda 
+    • constexpr 
+    • move semantics 
+    • rvalue references 
+    • templates 
+
+2. Data Structures & Algorithms (Very Important)
+Even service companies ask these.
+Data Structures
+    • Arrays 
+    • Linked Lists 
+    • Stack 
+    • Queue 
+    • Hash Table 
+    • Heap 
+    • Tree 
+    • BST 
+    • Graph 
+Algorithms
+    • Binary Search 
+    • DFS 
+    • BFS 
+    • Sliding Window 
+    • Two Pointers 
+    • Recursion 
+    • Backtracking 
+    • Dynamic Programming basics 
+Must Practice
+    • Top 100 LeetCode questions 
+    • Medium-level problems 
+
+3. Operating Systems (Extremely Important)
+Since you work with Linux.
+Processes
+    • Process lifecycle 
+    • Process states 
+    • Context switching 
+Threads
+    • Process vs Thread 
+    • User vs Kernel thread 
+    • Thread scheduling 
+Synchronization
+    • Mutex 
+    • Semaphore 
+    • Spinlock 
+    • Condition Variable 
+    • Deadlock 
+    • Race Condition 
+Memory
+    • Virtual Memory 
+    • Paging 
+    • Segmentation 
+    • Memory Mapping 
+Linux Internals
+    • fork() 
+    • exec() 
+    • wait() 
+    • signals 
+    • shared memory 
+    • pipes 
+
+4. Multithreading & Concurrency (Very Important)
+Frequently asked in C++ interviews.
+Topics
+    • Thread creation 
+    • Mutex 
+    • Locks 
+    • Atomic operations 
+    • Producer-Consumer 
+    • Reader-Writer problem 
+    • Deadlock prevention 
+    • Lock-free concepts 
+C++ Specific
+    • std::thread 
+    • std::mutex 
+    • std::condition_variable 
+    • std::atomic 
+    • futures/promises 
+
+5. Linux (Very Important)
+Commands
+    • ps 
+    • top 
+    • grep 
+    • awk 
+    • sed 
+    • find 
+    • lsof 
+    • netstat 
+    • ss 
+System Programming
+    • File descriptors 
+    • Poll 
+    • Select 
+    • Epoll 
+    • Signals 
+    • Shared memory 
+    • Pipes 
+    • Socket programming 
+Debugging
+    • gdb 
+    • valgrind 
+    • strace 
+
+6. Networking (Very Important)
+Cybersecurity companies ask this a lot.
+Fundamentals
+    • OSI model 
+    • TCP/IP 
+TCP
+    • 3-way handshake 
+    • 4-way termination 
+    • Retransmission 
+    • Flow control 
+    • Congestion control 
+Protocols
+    • HTTP/HTTPS 
+    • DNS 
+    • DHCP 
+    • ARP 
+    • ICMP 
+Security
+    • TLS basics 
+    • Certificates 
+    • Public Key Infrastructure 
+
+7. Cybersecurity Basics (Important)
+You already have domain experience.
+Topics
+    • Symmetric encryption 
+    • Asymmetric encryption 
+    • Hashing 
+    • Digital signatures 
+    • TLS/SSL 
+    • Authentication vs Authorization 
+    • Common vulnerabilities 
+        ◦ Buffer Overflow 
+        ◦ SQL Injection 
+        ◦ XSS 
+        ◦ CSRF 
+Endpoint Security
+    • Malware detection concepts 
+    • Process monitoring 
+    • File monitoring 
+    • Behavioral analysis 
+
+8. System Design (3 Years Experience)
+Many companies now ask light system design at 3 years.
+Basics
+    • Scalability 
+    • Load Balancer 
+    • Cache 
+    • Database basics 
+    • Message Queue 
+Design Questions
+    • Design a logging system 
+    • Design URL shortener 
+    • Design file scanning service 
+    • Design antivirus agent architecture 
+
+9. Database Basics
+SQL
+    • Joins 
+    • Indexes 
+    • Normalization 
+    • Transactions 
+    • ACID
+
+10. Qt Topics to Prepare
+Core Qt Framework
+    • QObject 
+    • Parent-child ownership model 
+    • Event loop 
+    • Event handling 
+    • Meta-object system 
+Signals & Slots
+    • How signals and slots work 
+    • Connection types 
+        ◦ Direct Connection 
+        ◦ Queued Connection 
+        ◦ Blocking Queued Connection 
+    • Thread-safe signal-slot communication 
+Interview question:
+What happens when a signal is emitted from one thread and the slot executes in another thread?
+
+Widgets
+    • QWidget 
+    • QMainWindow 
+    • Dialogs 
+    • Layouts 
+    • Custom widgets 
+Be ready to explain:
+    • How you designed screens 
+    • How widgets communicate 
+    • How UI updates are handled 
+
+Model-View Architecture
+Very commonly asked.
+    • Model 
+    • View 
+    • Delegate 
+    • Proxy Models 
+Classes:
+    • QAbstractItemModel 
+    • QTableView 
+    • QListView 
+    • QTreeView 
+Interview question:
+Difference between MVC and Qt's Model/View framework?
+
+Multithreading in Qt
+Important if your application performs scanning, monitoring, networking, etc.
+    • QThread 
+    • QRunnable 
+    • QThreadPool 
+    • QtConcurrent 
+Interview question:
+Why should GUI updates not be performed from worker threads?
+
+Memory Management
+Qt interviewers often ask this.
+    • Parent-child ownership 
+    • QObject destruction 
+    • Smart pointers with Qt 
+    • Avoiding memory leaks 
+Interview question:
+When does Qt automatically delete an object?
+
+Networking
+    • QTcpSocket 
+    • QUdpSocket 
+    • QNetworkAccessManager 
+If your cybersecurity product communicates with servers, this becomes important.
+
+IPC and System Integration
+Useful for cybersecurity and system software.
+    • QProcess 
+    • Shared Memory 
+    • Local Sockets 
+    • D-Bus (Linux) 
+
+Qt Build System
+    • qmake 
+    • CMake with Qt 
+    • MOC (Meta Object Compiler) 
+    • UI Compiler 
+Interview question:
+What is MOC and why does Qt need it?
+
+Qt Debugging
+    • Qt Creator debugger 
+    • Logging 
+    • Profiling 
+    • Memory leak debugging 
+
+Questions You Should Definitely Be Able to Answer
+    1. What is the purpose of QObject? 
+    2. How do signals and slots work internally? 
+    3. Difference between std::thread and QThread? 
+    4. Why is the GUI thread special? 
+    5. What is an event loop? 
+    6. What is MOC? 
+    7. How does parent-child memory management work? 
+    8. How do you communicate between threads in Qt? 
+    9. How do you create a custom widget? 
+    10. How would you design a large desktop application using Qt?
+

@@ -274,24 +274,24 @@ SECTION 2 — CODING QUESTIONS
              Method 1: sort both. Method 2: frequency array of 26. O(N).
              Asked at: Amazon, Microsoft, Zoho, Flipkart
 
-  [C][ ] (E) First non-repeating character in a string.
+  [C][x] (E) First non-repeating character in a string.
              (Frequency array + linear scan)
              Asked at: Amazon, Microsoft, Adobe, Zoho, Flipkart
 
-  [C][ ] (E) Find the ASCII value of each character in a string.
+  [C][x] (E) Find the ASCII value of each character in a string.
              Asked at: TCS, Wipro
 
-  [C][ ] (E) Check if a string is a valid identifier.
+  [C][x] (E) Check if a string is a valid identifier.
              (Starts with letter or _, followed by letters, digits, _)
              Asked at: TCS, Wipro, Zoho
 
-  [C][ ] (E) Print all characters at even index positions of a string.
+  [C][x] (E) Print all characters at even index positions of a string.
              Asked at: TCS, Wipro
 
-  [C][ ] (E) Replace all spaces in a string with '%20' (URL encoding).
+  [C][x] (E) Replace all spaces in a string with '%20' (URL encoding).
              Asked at: Amazon, Microsoft
 
-  [C][ ] (E) Count the number of uppercase and lowercase letters in a string.
+  [C][x] (E) Count the number of uppercase and lowercase letters in a string.
              Asked at: TCS, Wipro, Capgemini
 
   [C][ ] (E) Find the longest word in a sentence.
