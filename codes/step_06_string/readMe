@@ -308,13 +308,13 @@ SECTION 2 — CODING QUESTIONS
   [C][x] (E) Convert a sentence to title case (first letter of each word uppercase).
              Asked at: TCS, Wipro, Infosys
 
-  [C][ ] (E) Find the most frequent character in a string.
+  [C][x] (E) Find the most frequent character in a string.
              Asked at: TCS, Amazon, Zoho
 
-  [C][ ] (E) Find frequency of each character in a string.
+  [C][x] (E) Find frequency of each character in a string.
              Asked at: TCS, Wipro, Infosys
 
-  [C][ ] (E) Remove consecutive duplicates from string.
+  [C][x] (E) Remove consecutive duplicates from string.
              "aabbccdde" -> "abcde"
              Asked at: Zoho, Paytm, Swiggy
 
