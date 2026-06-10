@@ -318,13 +318,13 @@ SECTION 2 — CODING QUESTIONS
              "aabbccdde" -> "abcde"
              Asked at: Zoho, Paytm, Swiggy
 
-  [C][ ] (E) Count occurrences of a word in a sentence (case-insensitive).
+  [C][x] (E) Count occurrences of a word in a sentence (case-insensitive).
              Asked at: TCS, Wipro, Zoho
 
-  [C][ ] (E) Given string, print all characters in it that appear exactly once.
+  [C][x] (E) Given string, print all characters in it that appear exactly once.
              Asked at: TCS, Wipro, Amazon
 
-  [C][ ] (E) Check if string contains only digits.
+  [C][x] (E) Check if string contains only digits.
              Asked at: TCS, Wipro, Capgemini
 
   [C][ ] (E) Caesar cipher: shift characters by K positions in alphabet.
