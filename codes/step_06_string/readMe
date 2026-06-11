@@ -327,30 +327,30 @@ SECTION 2 — CODING QUESTIONS
   [C][x] (E) Check if string contains only digits.
              Asked at: TCS, Wipro, Capgemini
 
-  [C][ ] (E) Caesar cipher: shift characters by K positions in alphabet.
+  [C][x] (E) Caesar cipher: shift characters by K positions in alphabet.
              Wrap around: 'z' + 1 = 'a'.
              Asked at: TCS, Capgemini, Zoho
 
-  [C][ ] (E) Given two strings, find the number of positions where
+  [C][x] (E) Given two strings, find the number of positions where
              they have the same character.
              Asked at: TCS, Wipro
 
-  [C][ ] (E) Find all starting indices of anagrams of pattern P in string S.
+  [C][x] (E) Find all starting indices of anagrams of pattern P in string S.
              Use sliding window + frequency array comparison.
              Asked at: Amazon, Microsoft, Flipkart
 
-  [C][ ] (E) Reverse only the words in a sentence, not the characters.
+  [C][x] (E) Reverse only the words in a sentence, not the characters.
              "hello world" -> "world hello"
              Asked at: Amazon, Microsoft, TCS, Zoho
 
-  [C][ ] (E) Find the longest common prefix among an array of strings.
+  [C][~] (E) Find the longest common prefix among an array of strings.
              Vertical scanning approach.
              Asked at: Amazon, Flipkart
 
-  [C][ ] (E) Count occurrences of a given character in a string.
+  [C][x] (E) Count occurrences of a given character in a string.
              Asked at: TCS, Wipro
 
-  [C][ ] (E) Given a string of brackets, find the minimum insertions to make it valid.
+  [C][x] (E) Given a string of brackets, find the minimum insertions to make it valid.
              (Count unmatched '(' and ')' using a counter — not a stack)
              Asked at: Amazon, Microsoft
 
