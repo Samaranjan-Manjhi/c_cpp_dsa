@@ -1,0 +1,2203 @@
+# PRIORITY 1 — DO NOW
+  C/C++ OOP Concepts (Gap in your profile — JD requires this explicitly)
+Q.  What are the 4 pillars of OOP? Give real C++ examples.
+Q.  Virtual functions vs pure virtual functions — when do you use each?
+Q.  What is RAII? How do you use it in your security daemons?
+Q.  Explain vtable and how polymorphism works under the hood.
+Q.  Copy constructor, assignment operator, move semantics — Rule of 5.
+Q.  What is the difference between struct and class in C++?
+
+
+# PRIORITY 1 — DO NOW
+  Windows SDK / API — JD's biggest gap vs your Linux/macOS background
+
+Q.  What is the Windows equivalent of Linux's inotify? (Answer: ReadDirectoryChangesW)
+Q.  What is a HANDLE in Windows? How does CreateFile() work?
+Q.  Explain Windows Services — how would you port your Linux daemon to Windows?
+Q.  What is KMDF? How does it differ from Linux kernel modules (.ko)?
+Q.  What are named pipes in Windows? How do they compare to your Unix domain sockets?
+
+# PRIORITY 2 — NEXT BREAK
+DSA — Coding round prep (30–45 min problems expected)
+
+Q.  Reverse a linked list (iterative + recursive).
+Q.  Find a cycle in a linked list — Floyd's algorithm.
+Q.  Binary search on a sorted array.
+Q.  Sliding window: longest substring without repeating chars.
+Q.  Stack using two queues / Queue using two stacks.
+Q.  Level-order traversal of a binary tree (BFS)
+
+
+# PRIORITY 2 — NEXT BREAK
+  Multithreading & IPC (Your strength — just refresh terminology)
+
+Q.  Mutex vs semaphore — key difference with example.
+Q.  What is a race condition? How did you avoid it in your daemons?
+Q.  What is a deadlock? Name 4 conditions for deadlock.
+Q.  std::thread vs POSIX threads — what did you use and why?
+Q.  Explain your Unix domain socket IPC design in MW Guardian.
+
+
+# PRIORITY 3 — LUNCH BREAK
+  OS Internals — Bridges your kernel work to their Windows focus
+
+Q.  What happens when a process calls exec() on Linux?
+Q.  User space vs kernel space — how does context switching happen?
+Q.  What is a system call? How does your ftrace hooking intercept them?
+Q.  Process vs thread — memory layout difference.
+Q.  What is virtual memory? Explain page faults.
+
+
+
+# PRIORITY 4 — COMMUTE / BEFORE INTERVIEW
+  Your projects — prepare 2-min explanations for each
+
+Q.  Explain MW Guardian in simple terms — what problem does it solve?
+Q.  How does fanotify FAN_OPEN_PERM differ from a regular file watch?
+Q.  Why did you choose Ed25519 over RSA for binary signing?
+Q.  What was the hardest bug you fixed in the ransomware defense module?
+Q.  How does your DLP content scanner handle encrypted/binary files?
+
+
+
+############# INTERVIEW PROCESS #############
+# Round 1 — Aptitude / Written (30–45 min)
+    C/C++ output prediction questions — pointer arithmetic, operator precedence.
+    Find output: pre/post increment, bitwise ops, size of struct with padding.
+    Basic DSA: complexity (Big-O), find the bug in a linked list code snippet.
+    Logic / quantitative — simple probability, number series, if any.
+   ⚡ Common C trap: printf("%d", sizeof(int)) — answer is 4 but on some compilers sizeof returns size_t, %zu is correct. Know these quirks.
+
+
+# Round 2 — Technical Interview 1 (45–60 min)
+    Deep dive on 1–2 of your projects — expect "why", "what if", "what else did you consider".
+    OOP design: design a class hierarchy for a security event logger.
+    Live coding: write a function on paper/whiteboard — linked list, string manipulation.
+    Memory management: stack vs heap, memory leaks, how valgrind works.
+    Explain multithreading in one of your modules with actual code flow.
+
+
+# Round 3 — Technical Interview 2 / Senior (30–45 min)
+    Windows-specific: how would you implement a file monitor on Windows?
+    Driver concepts: difference between KMDF and UMDF.
+    System design: design a DLP system for Windows — what APIs would you use?
+    Debugging: "your kernel module causes a BSOD — how do you debug it?"
+    Code quality: static analysis tools you've used, how you prevent memory leaks.
+
+
+# Round 4 — HR / Managerial (20–30 min)
+    Why are you leaving MicroWorld after ~3 years?
+    Tell me about a time you missed a deadline — what happened?
+    How do you handle a situation where tech lead's approach is wrong?
+    Where do you see yourself in 3 years?
+    Why Network Marvels / this role specifically?
+   ⚡ For "why leaving" — keep it positive: "I want to expand into Windows/enterprise product development. My Linux/macOS work is strong, and I'm looking for the next challenge."
+
+
+
+############# RESUME QUESTIONS #############
+# MW Guardian — most likely deep dive
+    How does fanotify FAN_OPEN_PERM freeze execution? What's the kernel mechanism?
+    What happens if your verifier process crashes while a binary is frozen?
+    How do you handle key rotation without breaking already-deployed binaries?
+    Why Ed25519 and not RSA-2048? What are the tradeoffs?
+    Self-verification on startup — how do you prevent an attacker from replacing the guardian itself?
+
+
+# Ransomware Defense Kernel Module
+    How does ftrace hooking work? What are its limitations vs eBPF?
+    Why does your module hide from lsmod? Isn't that a rootkit technique?
+    What's your false positive rate on bulk-rename detection? How did you tune the threshold?
+    Can your module be bypassed by a kernel exploit? How would you harden it?
+    sysfs password protection — is this cryptographically secure or security through obscurity?
+
+
+# Content Scanner / DLP Engine
+    How does PCRE2 perform vs RE2 for your use case? Did you benchmark?
+    How do you handle a 5GB PDF with Poppler — memory management strategy?
+    Your Unix socket server avoids re-initialising regex engine — explain the architecture.
+    What PII patterns do you detect? How do you handle false positives for PAN numbers?
+
+
+# General / Behavioral
+    You've built 16 modules in ~3 years — how do you prioritize and manage quality?
+    Have you written unit tests for kernel modules? How do you test kernel code safely?
+    You've worked solo on most projects — how do you handle code reviews?
+    What's the biggest production issue you caused, and how did you fix it?
+
+############# HR QUESTIONS #############
+Q. When HR asks "what is your expected CTC?"
+   Say: "Based on my 3 years of experience in kernel-level security development — building production modules like binary integrity systems, ransomware defense, and DLP engines — I'm looking for ₹8.5 to 9 LPA. I understand there may be a ramp-up on Windows, but the core systems depth transfers directly."
+
+Q. If they say "you're currently at 5, we can offer 6.5"
+   Say: "I appreciate the offer. Given that I'll be contributing production-level work from month one — not a fresher — and the market rate for kernel/systems security engineers with my profile is ₹8–10 LPA, I'd request you reconsider ₹8 LPA at minimum. I'm flexible on other components like variable pay or joining bonus."
+
+# Your leverage points — mention these
+    16 production security modules delivered — not just intern/academic projects.
+    Kernel-level work (Linux .ko, ftrace, syscall hooks) is rare — most engineers don't go this deep.
+    ESF / macOS Endpoint Security expertise is niche — high demand in security product companies.
+    You can immediately contribute to Linux/macOS product lines while learning Windows.
+
+
+############# THEORY / OOPS / OS #############
+
+Q. What are the 4 pillars of OOP? Give C++ examples.
+Ans: 1. Encapsulation — hiding data inside a class. 
+     2. Abstraction — exposing only what's needed. 
+     3. Inheritance — child class reuses parent. 
+     4. Polymorphism — same function behaves differently.
+class Animal {
+  public:
+    virtual void speak() { cout << "..."; }  // polymorphism
+};
+class Dog : public Animal {           // inheritance
+  private: string name;               // encapsulation
+  public:
+    void speak() override { cout << "Woof"; }
+};
+Link to your work: "In MW Guardian I use a base SecurityEvent class with virtual handlers for different event types."
+
+
+Q. Types of polymorphism in C++?
+Ans: Compile-time (static): function overloading, operator overloading — resolved at compile time.
+     Runtime (dynamic): virtual functions + inheritance — resolved at runtime via vtable.
+// Compile-time
+int add(int a, int b) { return a+b; }
+float add(float a, float b) { return a+b; }
+
+// Runtime
+class Base { public: virtual void show() {} };
+class Derived : public Base {
+  public: void show() override { cout << "Derived"; }
+};
+Base* b = new Derived();
+b->show(); // calls Derived::show() via vtable
+
+
+Q. Virtual function vs pure virtual function?
+Ans: Virtual: has a default body, child can override. 
+     Pure virtual: = 0, no body, makes class abstract — child MUST override it.
+class Shape {
+  virtual void draw() { }           // virtual — optional override
+  virtual double area() = 0;        // pure virtual — must override
+};
+// Cannot instantiate Shape directly
+
+
+Q. What is RAII? Where have you used it?
+Ans: Resource Acquisition Is Initialization — tie resource lifetime to object lifetime. Constructor acquires, destructor releases. Prevents leaks even on exceptions.
+class FileHandle {
+  FILE* f;
+public:
+  FileHandle(const char* path) { f = fopen(path, "r"); }
+  ~FileHandle() { if(f) fclose(f); }  // auto cleanup
+};
+Say: "I use RAII in my DLP scanner — file descriptors and SQLite handles are wrapped in classes so they auto-close on any exit path."
+
+
+Q. Difference between struct and class in C++?
+Ans: Only one difference: default access. struct members are public by default, class members are private by default. Otherwise identical — both can have constructors, methods, inheritance.
+
+
+
+Q. What are threads? Process vs thread?
+Ans: Process: independent program with its own memory space. Thread: unit of execution WITHIN a process, shares memory with other threads of the same process. Threads are lighter to create and switch between.
+Your answer: "In MW Guardian I run the fanotify event loop on one thread and the IPC Unix socket handler on another — they share a queue protected by a mutex."
+
+
+
+Q. Mutex vs Semaphore — key difference?
+Ans: Mutex: ownership — only the thread that locked it can unlock it. Binary (locked/unlocked). Used for mutual exclusion.
+Semaphore: no ownership — any thread can signal. Can be counting (0 to N). Used for signaling between threads or limiting access to N resources.
+// Mutex
+std::mutex mtx;
+mtx.lock();   // only this thread can unlock
+mtx.unlock();
+
+// Semaphore (C++20)
+std::counting_semaphore<5> sem(5); // allow 5 concurrent
+sem.acquire();
+sem.release();
+
+
+Q. What is deadlock? 4 conditions for deadlock? 
+Ans: Deadlock: two or more threads waiting for each other forever. 4 conditions (all must hold simultaneously):
+1. Mutual exclusion — resource held by only one thread
+2. Hold and wait — holding one, waiting for another
+3. No preemption — resource can't be taken forcibly
+4. Circular wait — A waits for B, B waits for A
+
+
+Q. BFS vs DFS — difference?
+Ans: 
+BFS (Breadth First Search): uses a Queue. Explores level by level. Good for shortest path in unweighted graphs.
+DFS (Depth First Search): uses Stack (or recursion). Goes deep first. Good for cycle detection, topological sort, connected components.
+// BFS skeleton
+queue<int> q;
+q.push(start); visited[start]=true;
+while(!q.empty()){
+  int node = q.front(); q.pop();
+  for(auto nb : adj[node])
+    if(!visited[nb]){ visited[nb]=true; q.push(nb); }
+}
+
+
+
+Q. What is a system call? How does your ftrace hooking work?
+Ans: System call: a mechanism for user-space programs to request kernel services. User calls write(), CPU switches to kernel mode, kernel executes, returns result. ftrace hooks the function tracer built into the kernel — you register a callback that fires before/after any kernel function including sys_rename, sys_execve etc. No kernel recompile needed.
+Your answer is hands-on — say "I hooked sys_rename via ftrace in my ransomware defense module. When bulk renames exceed a threshold, I SIGKILL the offending PID and log to dmesg."
+
+
+
+Q. What is the output? (pointer arithmetic) (APTITUDE ROUND)
+Ans: 
+int arr[] = {10, 20, 30, 40};
+int *p = arr;
+printf("%d %d", *p, *(p+2));
+Output: 10 30. p points to arr[0]=10, p+2 points to arr[2]=30. Pointer arithmetic adds sizeof(int)*2 bytes.
+
+
+
+Q. What is the output? (pre/post increment) (APTITUDE ROUND)
+Ans: 
+int a = 5;
+printf("%d %d %d", a++, ++a, a);
+Undefined behavior — multiple modifications of 'a' between sequence points. In practice most compilers print 7 7 7 or 6 7 7 but the correct answer to say is "this is undefined behavior in C."
+Saying "undefined behavior" is the right answer — it shows you know the standard, not just guessing output.
+
+
+
+Q. sizeof struct with padding — what's the output? (APTITUDE ROUND)
+Ans: 
+struct A {
+  char c;   // 1 byte + 3 padding
+  int i;    // 4 bytes
+  char d;   // 1 byte + 3 padding
+};
+printf("%lu", sizeof(A));
+Output: 12. Compiler adds padding to align int to 4-byte boundary. c(1)+pad(3)+i(4)+d(1)+pad(3) = 12. To reduce: reorder fields — int first, then chars.
+
+
+############# DSA CODINGS #############
+
+Q. Reverse a linked list (iterative)
+Ans: 
+Use 3 pointers: prev, curr, next. Move through list reversing each pointer.
+ListNode* reverse(ListNode* head) 
+{
+    ListNode *prev = nullptr, *curr = head, *next;
+    while(curr) 
+    {
+        next = curr->next;   // save next
+        curr->next = prev;   // reverse link
+        prev = curr;         // move prev
+        curr = next;         // move curr
+    }
+    return prev;             // new head
+}
+Time: O(n), Space: O(1). Trace it on paper: 1→2→3→null becomes null←1←2←3
+
+
+Q. Find middle of a linked list
+Ans: 
+ListNode* findMiddle(ListNode* head) 
+{
+    ListNode *slow = head, *fast = head;
+    while(fast && fast->next) 
+    {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    return slow; // slow is at middle
+}
+
+
+Q. Detect cycle in a linked list (Floyd's algorithm)
+Ans: 
+Two pointers: slow moves 1 step, fast moves 2 steps. If they meet, cycle exists.
+bool hasCycle(ListNode* head) 
+{
+    ListNode *slow = head, *fast = head;
+    while(fast && fast->next) 
+    {
+        slow = slow->next;
+        fast = fast->next->next;
+        if(slow == fast) return true;
+    }
+    return false;
+}
+Time: O(n), Space: O(1). If asked "find where cycle starts" — reset slow to head, move both 1 step at a time until they meet again.
+
+
+Q. Lowest Common Ancestor (LCA) of binary tree
+Ans: 
+If current node is null or equals p or q, return it. Recurse left and right. If both sides return non-null, current node is LCA. If only one side, return that side.
+TreeNode* lca(TreeNode* root, TreeNode* p, TreeNode* q) 
+{
+    if(!root || root==p || root==q) return root;
+    TreeNode* left  = lca(root->left,  p, q);
+    TreeNode* right = lca(root->right, p, q);
+    if(left && right) return root;  // p and q on different sides
+    return left ? left : right;
+}
+Time: O(n), Space: O(h). For BST (not general binary tree), can do it faster using BST property.
+
+
+Q. Level order traversal (BFS on tree)
+Ans: 
+vector<vector<int>> levelOrder(TreeNode* root) 
+{
+    vector<vector<int>> res;
+    if(!root) return res;
+    queue<TreeNode*> q;
+    q.push(root);
+    while(!q.empty()) 
+    {
+        int sz = q.size();
+        vector<int> level;
+        for(int i=0; i<sz; i++) 
+        {
+            auto node = q.front(); q.pop();
+            level.push_back(node->val);
+            if(node->left)  q.push(node->left);
+            if(node->right) q.push(node->right);
+        }
+        res.push_back(level);
+    }
+    return res;
+}
+
+
+Q. Longest substring without repeating characters
+Ans: 
+Sliding window with a set. Expand right, shrink left when duplicate found.
+int lengthOfLongestSubstring(string s) 
+{
+    unordered_set<char> seen;
+    int left=0, maxLen=0;
+    for(int right=0; right<s.size(); right++) 
+    {
+        while(seen.count(s[right]))
+            seen.erase(s[left++]);
+        seen.insert(s[right]);
+        maxLen = max(maxLen, right-left+1);
+    }
+    return maxLen;
+}
+Time: O(n), Space: O(min(n, alphabet)). For "abcabcbb" → answer is 3 ("abc").
+
+
+
+Q. Two sum — find pair that adds to target
+Ans: 
+vector<int> twoSum(vector<int>& nums, int target) 
+{
+    unordered_map<int,int> mp; // val → index
+    for(int i=0; i<nums.size(); i++) 
+    {
+        int complement = target - nums[i];
+        if(mp.count(complement))
+            return {mp[complement], i};
+        mp[nums[i]] = i;
+    }
+    return {};
+}
+Time: O(n), Space: O(n). Better than brute force O(n²).
+
+
+
+Q. Reverse a string in-place
+Ans:
+void reverseString(string& s) 
+{
+    int l=0, r=s.size()-1;
+    while(l < r) swap(s[l++], s[r--]);
+}
+
+
+
+Q. Check if string is palindrome
+Ans: 
+bool isPalindrome(string s) 
+{
+    int l=0, r=s.size()-1;
+    while(l < r)
+        if(s[l++] != s[r--]) return false;
+    return true;
+}
+
+
+
+Q. Valid parentheses using stack
+Ans:
+bool isValid(string s) 
+{
+    stack<char> st;
+    for(char c : s) 
+    {
+        if(c=='(' || c=='{' || c=='[') 
+            st.push(c);
+        else 
+        {
+            if(st.empty()) 
+               return false;
+            char top = st.top(); 
+               st.pop();
+            if(c==')' && top!='(') 
+               return false;
+            if(c=='}' && top!='{') 
+               return false;
+            if(c==']' && top!='[') 
+               return false;
+        }
+    }
+    return st.empty();
+}
+
+
+
+############# SQL #############
+
+
+Q. Top 3 users by total spending in last 6 months (CONFIRMED ASKED)
+Ans: 
+This exact question was asked in a Network Marvels interview (Apr 2025). Uses JOIN + GROUP BY + ORDER BY + LIMIT.
+SELECT u.user_id, u.name, SUM(o.amount) AS total_spent
+FROM users u
+JOIN orders o ON u.user_id = o.user_id
+WHERE o.created_at >= NOW() - INTERVAL 6 MONTH
+GROUP BY u.user_id, u.name
+ORDER BY total_spent DESC
+LIMIT 3;
+Be ready to explain each clause. If they ask "what if orders table has nulls?" — add WHERE o.amount IS NOT NULL before GROUP BY.
+
+
+Q. Find max salary in each department (MUST KNOW)
+Ans: 
+SELECT department, MAX(salary) AS max_salary
+FROM employees
+GROUP BY department;
+Variation: find the employee with max salary per department (needs subquery or window function):
+SELECT * FROM employees e
+WHERE salary = (
+    SELECT MAX(salary) FROM employees
+    WHERE department = e.department
+);
+
+
+
+Q. Second highest salary (CLASSIC — ALWAYS ASKED)
+Ans: 
+-- Method 1: subquery
+SELECT MAX(salary) FROM employees
+WHERE salary < (SELECT MAX(salary) FROM employees);
+
+-- Method 2: LIMIT OFFSET
+SELECT DISTINCT salary FROM employees
+ORDER BY salary DESC
+LIMIT 1 OFFSET 1;
+
+-- Method 3: dense_rank (best — handles ties)
+SELECT salary FROM (
+    SELECT salary, DENSE_RANK() OVER (ORDER BY salary DESC) AS rnk
+    FROM employees
+) t WHERE rnk = 2;
+Always mention DENSE_RANK — it shows you know window functions, which impresses interviewers.
+
+
+Q. Difference between WHERE and HAVING? (MUST KNOW)
+Ans: 
+WHERE filters rows BEFORE grouping. HAVING filters groups AFTER GROUP BY. You cannot use aggregate functions (SUM, COUNT) in WHERE.
+-- Find departments with more than 5 employees
+SELECT department, COUNT(*) as cnt
+FROM employees
+WHERE status = 'active'        -- filters rows first
+GROUP BY department
+HAVING COUNT(*) > 5;           -- filters groups after
+
+
+Q. Types of JOINs — explain with example (MUST KNOW)
+Ans: 
+INNER JOIN: only matching rows from both tables.
+LEFT JOIN: all rows from left + matching from right (NULL if no match).
+RIGHT JOIN: all rows from right + matching from left.
+FULL OUTER JOIN: all rows from both, NULL where no match.
+-- All employees even if no department assigned
+SELECT e.name, d.dept_name
+FROM employees e
+LEFT JOIN departments d ON e.dept_id = d.id;
+Most common follow-up: "When would you use LEFT JOIN over INNER JOIN?" — Answer: when you want rows from the left table even if there's no matching row on the right (e.g., employees with no assigned project).
+
+
+
+Q. Find duplicate records in a table (COMMON) 
+Ans:
+-- Find emails that appear more than once
+SELECT email, COUNT(*) as cnt
+FROM users
+GROUP BY email
+HAVING COUNT(*) > 1;
+
+
+
+Q. Delete duplicate rows keeping one (ASKED SOMETIMES)
+Ans:
+-- Keep the row with lowest id, delete rest
+DELETE FROM users
+WHERE id NOT IN (
+    SELECT MIN(id) FROM users
+    GROUP BY email
+);
+
+
+
+Q. What is indexing? When should you use it? (THEORY Q)
+Ans: 
+Index is a data structure (usually B-tree) that speeds up SELECT queries at the cost of slower INSERT/UPDATE and extra storage. Use on columns that appear in WHERE, JOIN ON, or ORDER BY frequently. Don't index columns with low cardinality (e.g., boolean).
+CREATE INDEX idx_user_email ON users(email);
+-- Now SELECT WHERE email='x' is O(log n) not O(n)
+
+
+
+Q. INNER JOIN vs subquery — which is faster? (THEORY Q)
+Ans: 
+Generally JOIN is faster because the query optimizer can use index-based lookups and hash joins. Correlated subqueries execute once per row (N times). But modern optimizers often rewrite subqueries as JOINs automatically. Best to test with EXPLAIN ANALYZE for your specific case.
+
+
+
+MW Guardian:
+
+How does fanotify FAN_OPEN_PERM actually freeze a binary before it executes?
+Why Ed25519 over RSA? What are the tradeoffs?
+How does key rotation work without invalidating old signed binaries?
+What is the "bootstrap trust gap" and how did you close it?
+
+Ransomware module:
+
+How does ftrace hooking work at kernel level?
+How do you distinguish ransomware bulk-rename from a legitimate operation?
+How does your module hide from lsmod? Is that the same technique rootkits use?
+
+DLP / Content Scanner:
+
+Why does the Unix socket server variant reduce per-scan latency?
+How did you handle false positives in PII regex?
+
+
+Technical questions to brush up (C++ + OS)
+
+malloc/free vs new/delete — what's the difference?
+What is RAII? Give an example from your actual code.
+Virtual functions and vtable — how does dynamic dispatch work?
+Smart pointers: unique_ptr vs shared_ptr vs weak_ptr
+Process vs thread — what's shared in memory, what's not?
+What happens when you call exec() in Linux?
+Mutex vs semaphore — when to use which?
+Deadlock: Coffman's four conditions
+DSA to know: reverse linked list, detect cycle (Floyd's), BST validation, sliding window
+
+
+Slot 1 (10 min) — Windows SDK basics: HANDLE, CreateProcess, CreateThread, GetLastError. Just the concepts.
+Slot 2 (10 min) — Re-read your own resume bullets for MW Guardian and Ransomware module. Practice saying them out loud in 2 minutes each.
+Slot 3 (15 min) — C++ memory: virtual functions, vtable, RAII, smart pointers.
+Slot 4 (10 min) — DSA: mentally walk through reverse linked list and cycle detection. Enough to not blank if asked.
+Slot 5 (10 min) — Say your "tell me about yourself" out loud. Practice "I'm looking at 8.5 LPA" without hesitation.
+Tonight (30 min) — KMDF vs Linux .ko: what an IRP is, KMDF vs UMDF difference. Skim one article — just enough to say "yes, I know this space."
+
+
+Revise OOP: classes, inheritance, virtual functions, polymorphism, abstract class, vtable
+Practice DSA on paper: reverse linked list, BFS/DFS, detect cycle, LCA
+Revise your own projects — be able to explain every design decision
+
+C++ deep dive: pointers, memory management, smart pointers, RAII, move semantics
+OS internals: process vs thread, deadlock, virtual memory, paging, context switch
+SQL: JOIN, GROUP BY, HAVING, subqueries, window functions — write 5–6 queries
+
+Windows SDK/KMDF basics: WDM vs KMDF, IRP, IOCTL, minifilter concept
+.NET basics: CLR, managed vs unmanaged memory, P/Invoke
+Script your salary answer and HR answers out loud
+Prepare your 2 questions for the interviewer
+
+Quantitative: number series, percentages, time-speed-distance
+Logical reasoning: syllogisms, seating arrangements, blood relations
+Basic IT/CS: networking definitions, OS terms, C output prediction
+Tip: Don't get stuck on one question. Move on and return.
+
+Common: reverse a linked list, BFS/DFS traversal, string reversal, LCA on binary tree
+Write pseudocode first, then fill in — they evaluate thought process
+Language: C or C++
+
+OOP, DSA, OS internals, networking basics, your projects, SQL
+Interviewer style: friendly and conversational (confirmed on Glassdoor)
+They will go deep on every project on your resume
+
+TECHNICAL QUESTIONS — OOP
+Q: What are the 4 pillars of OOP? Give an example from your code.
+
+The 4 pillars are Encapsulation, Abstraction, Inheritance, and Polymorphism.
+
+Encapsulation: your daemon classes hide socket file descriptors as private members
+Abstraction: your scanner interface hides PCRE2 regex internals behind a clean scan() method
+Inheritance: you can extend a base Scanner class for different file types (PDF, image, text)
+Polymorphism: virtual scan() method behaves differently per derived scanner type at runtime
+
+Use your Content Scanner project as the example.
+
+Q: What is a virtual function? How does vtable work?
+
+A virtual function enables runtime polymorphism. When a class has virtual functions, the compiler creates a vtable — a table of function pointers to the actual method implementations. Each object has a hidden vptr (virtual pointer) that points to its class's vtable. When you call a virtual function on a base pointer, the vptr resolves which implementation to call at runtime. Derived classes override their vtable entries.
+Q: Difference between abstract class and interface in C++?
+
+In C++, an abstract class has at least one pure virtual function (declared with = 0). A class that has all pure virtual functions acts as an interface. A concrete derived class must implement all pure virtual functions, otherwise it also becomes abstract. C++ has no separate "interface" keyword unlike Java.
+Q: What is the diamond problem? How does C++ solve it?
+
+Diamond problem occurs in multiple inheritance when two parent classes inherit from the same base class, causing ambiguity about which copy of the base to use. C++ solves it via virtual inheritance — when you declare the base as virtual in both parent classes, only one shared instance of the base class is created, eliminating the ambiguity.
+Q: Explain memory layout of a C++ object.
+
+Member variables are laid out in declaration order. If the class has virtual functions, a vptr is placed at the beginning. In inheritance, the base class subobject comes first, followed by derived class members. The compiler may add padding for alignment. For virtual inheritance, an additional vbptr (virtual base pointer) is added.
+
+TECHNICAL QUESTIONS — DSA
+Q: Reverse a singly linked list. Write code.
+Node* reverse(Node* head) {
+    Node* prev = NULL;
+    Node* curr = head;
+    Node* next = NULL;
+    while (curr != NULL) {
+        next = curr->next;
+        curr->next = prev;
+        prev = curr;
+        curr = next;
+    }
+    return prev;
+}
+Time: O(n), Space: O(1)
+Q: BFS vs DFS — when to use each?
+
+BFS: shortest path in unweighted graph, level-order traversal, uses a queue. Good when answer is close to root.
+DFS: cycle detection, topological sort, path finding in deep trees, uses stack or recursion. Good for exhaustive search.
+
+Relate to your work: ESF event chains can model as graphs; directory traversal in FIM uses DFS.
+
+Q: Find LCA of two nodes in a binary tree.
+Node* lca(Node* root, Node* p, Node* q) {
+    if (!root || root == p || root == q) return root;
+    Node* left = lca(root->left, p, q);
+    Node* right = lca(root->right, p, q);
+    if (left && right) return root;
+    return left ? left : right;
+}
+Time: O(n)
+Q: Detect cycle in a linked list.
+
+Floyd's cycle detection — slow pointer moves 1 step, fast pointer moves 2 steps. If they meet, a cycle exists.
+bool hasCycle(Node* head) {
+    Node* slow = head;
+    Node* fast = head;
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+        if (slow == fast) return true;
+    }
+    return false;
+}
+Time: O(n), Space: O(1)
+Q: Find the Kth largest element in an array.
+
+Use a min-heap of size K. Iterate array — if element > heap top, replace top and heapify. After full iteration, top is Kth largest. Time: O(n log K).
+
+TECHNICAL QUESTIONS — OS INTERNALS
+Q: Difference between process and thread?
+
+Process: independent memory address space, own file descriptors and resources, heavier context switch. Thread: shares the process memory and file descriptors, lighter context switch, faster to create. You ran multithreaded C++ daemons — mention your fanotify event loop with worker threads processing events concurrently.
+Q: What is a deadlock? Four conditions and prevention?
+
+Four conditions (Coffman conditions): mutual exclusion, hold-and-wait, no preemption, circular wait.
+
+Prevention strategies: lock ordering (always acquire locks in the same fixed order), try-lock with timeout to break hold-and-wait, avoid nested locks. In your daemon, mention using a consistent lock order across mutexes.
+Q: Explain virtual memory and page fault.
+
+Each process has a virtual address space mapped to physical RAM via page tables maintained by the OS. A page fault occurs when the CPU accesses a virtual address whose page is not currently in physical memory. The OS kernel handles it by locating the page (on disk/swap), loading it into RAM, updating the page table, and resuming the process. Hard fault = load from swap. Soft fault = page in memory but not mapped yet.
+Q: What is a context switch?
+
+Saving the CPU state (registers, program counter, stack pointer) of the currently running process/thread and restoring the saved state of the next one. Triggered by scheduler preemption, I/O wait, or system calls. Threads are cheaper to switch because they share virtual memory — only registers and stack change.
+Q: Explain how fanotify works at the kernel level.
+
+fanotify is a Linux kernel subsystem for filesystem event notification and permission control. Your daemon opens a fanotify group with fanotify_init(), then marks paths or mount points with fanotify_mark(). FAN_OPEN_PERM causes the kernel to block the opening syscall — the process waits until your daemon reads the event and writes back FAN_ALLOW or FAN_DENY. FAN_ACCESS_PERM does the same for reads. Your Guardian uses this to freeze binaries at exec() and verify Ed25519 signatures before allowing execution.
+Q: What is a semaphore vs mutex?
+
+Mutex: binary lock owned by the thread that acquired it — only that thread can release it. Used for mutual exclusion. Semaphore: signaling primitive with a counter — one thread can signal and another can wait, no ownership concept. Use mutex for protecting shared resources; use semaphore for signaling between threads (producer-consumer).
+
+TECHNICAL QUESTIONS — SQL
+Q: Find top 3 users by total order amount in last 6 months.
+SELECT u.name, SUM(o.amount) AS total
+FROM Users u
+JOIN Orders o ON u.id = o.user_id
+WHERE o.created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+GROUP BY u.id, u.name
+ORDER BY total DESC
+LIMIT 3;
+
+Q: Difference between WHERE and HAVING?
+
+WHERE filters individual rows before grouping happens. HAVING filters groups after GROUP BY. WHERE cannot use aggregate functions (SUM, COUNT, AVG). HAVING can — e.g. HAVING COUNT(*) > 5.
+Q: What is a clustered vs non-clustered index?
+
+Clustered index: the data rows are physically sorted and stored in the order of the index key. Only one per table (usually primary key). Non-clustered index: a separate structure that holds the index key and a pointer to the actual data row. Multiple allowed per table. Your SQLite FIM uses an index on file path for fast O(log n) lookups during baseline diff.
+Q: What is a JOIN? Types?
+
+INNER JOIN: only rows with matching values in both tables. LEFT JOIN: all rows from left table, nulls for unmatched right. RIGHT JOIN: opposite. FULL OUTER JOIN: all rows from both, nulls where no match. CROSS JOIN: Cartesian product of both tables.
+
+RESUME-BASED QUESTIONS (EXPECT DEEP DIVES)
+Q: Walk me through MW Guardian. Why Ed25519 and not RSA?
+
+Ed25519 advantages: 32-byte key size vs 256+ bytes for RSA-2048, faster signing and verification, constant-time operations (immune to timing side-channel attacks), and libsodium makes it simple to implement correctly with no footguns. RSA verification speed matters because Guardian is synchronously blocking exec() via fanotify FAN_OPEN_PERM — the process is frozen during verification, so latency is critical. Ed25519 verify completes in microseconds.
+Q: How does your ransomware module avoid false positives on legitimate bulk renames?
+
+Two conditions must be true simultaneously: the rename target must match known ransomware extension patterns (PCRE2 suffix matching), AND the rename count must exceed the configurable threshold within the detection window. Both conditions are AND'd — not OR'd — so a developer's IDE doing 500 renames without changing extensions won't trigger. The threshold and pattern list are configurable at insmod time, so teams can tune per environment without recompiling.
+Q: Why does your kernel module hide from lsmod?
+
+It's a defense-in-depth layer. An attacker who gains root access cannot trivially identify which kernel module is providing the protection and attempt to rmmod it. Combined with the sysfs passphrase requirement, it raises the effort required to remove the protection. This is not the sole defense — it's one layer. I can explain the self-hiding mechanism via manipulating the module's list_head in the kernel module list.
+Q: In your DLP printer module, how do you handle the race between scan and job dispatch?
+
+The ESF NOTIFY_CLOSE event fires only after the spool file write completes — at that point the file is fully written and closed. Scan runs on the complete file. The delete + cupsd job cancel happens before cupsd polls the spool directory for new jobs (cupsd polls at intervals, not via inotify). The inherent ordering in the CUPS spool lifecycle prevents the race without requiring explicit locking.
+Q: You've only worked on macOS and Linux. Are you okay shifting to Windows development?
+
+"My concepts transfer directly. fanotify maps to Windows minifilter drivers for filesystem interception. Linux kernel modules map to KMDF/WDM drivers. ESF process identity maps to Windows process creation callbacks in KMDF. Unix domain sockets map to named pipes or ALPC. The APIs differ but the architectural patterns are identical. I'm actively studying Windows internals — KMDF minifilters and IRPs — and given how quickly I built 16 modules, I'm confident I'll ramp up fast."
+Q: Why did you use SQLite for FIM instead of a flat file?
+
+Fast O(log n) indexed lookup by file path vs O(n) linear scan for a flat file. ACID transactions ensure baseline snapshot integrity even if the daemon crashes mid-write. Easy schema evolution — adding new columns for new metadata fields without rewriting the parser. WAL mode gives concurrent read performance. For a security tool that monitors thousands of files, lookup speed matters.
+Q: Explain your IPC design in your daemon.
+
+Unix domain sockets — same-host IPC with no network stack overhead, faster than TCP loopback. The content scanner daemon listens on a Unix socket path. Client sends a file path as a message. Daemon reads the path, runs the full scan (PCRE2 + OCR if needed), and returns a JSON result with PII findings. The key benefit: the regex engine is initialized once at daemon start and reused for all client requests, eliminating per-scan startup latency. Without the socket server, each CLI invocation would pay the regex compile cost.
+
+HR QUESTIONS
+Q: Why are you leaving MicroWorld?
+
+"MicroWorld gave me excellent depth — I built 16 production security modules end to end, from kernel to GUI. I'm now looking for a role where I can broaden my expertise into the Windows ecosystem and contribute to a different product architecture. Network Marvels' security product focus is a strong match for where I want to grow."
+Q: What is your current CTC and expectation?
+
+"My current CTC is 5 LPA. Given my 3 years of hands-on kernel-level C++ experience — Linux .ko modules, macOS Endpoint Security Framework, fanotify execution gating, and 16 production security modules — I'm targeting 8 to 9 LPA. Systems and kernel-level security expertise at this depth is relatively rare, and I believe that warrants the step up."
+Q: Are you okay with the Thane location?
+
+You're in Kandivali — Thane is approximately 45–60 minutes by train (Western line to Dadar, then Central to Thane). Be straightforward and confirm you're fine with the commute.
+Q: What is your notice period?
+
+State your actual notice period clearly. If you can negotiate an early release, mention that possibility.
+Q: Where do you see yourself in 3 years?
+
+"Growing into a senior engineer who owns the kernel and driver component of a security product end to end — taking architectural decisions on the low-level layer. I want to bridge my Linux kernel expertise with Windows driver development and eventually mentor junior engineers on systems programming."
+Q: Tell me about yourself.
+
+"I'm a C/C++ systems and security engineer with 3 years of experience at MicroWorld Software Services, where I built 16 production security modules for the eScan EDR/XDR/DLP product line. My work spans the full systems stack — Linux kernel modules using ftrace and fanotify, macOS Endpoint Security Framework for real-time process and file monitoring, Ed25519 binary integrity signing, DLP content scanning with OCR, and Qt GUI applications. I've worked on execution gating, ransomware detection, file integrity monitoring, printer DLP, and firewall rule generation. I thrive in low-level systems work and I'm now looking to expand into the Windows driver space."
+
+Question 1 — about the work:
+
+"Can you tell me more about the security product I'd be working on — specifically whether there's kernel-level or driver development involved, and whether the team works primarily on Windows or is cross-platform?"
+Why this is good: Shows you know your domain, signals you want depth not just a job, and lets you address the Windows gap intelligently.
+Question 2 — about process and growth:
+
+"For an engineer joining with systems security experience, what does the first 3–6 months typically look like — is there a structured ramp-up on the codebase, and how does the team handle code reviews for new members?"
+Why this is good: Shows maturity and aligns perfectly with the JD's mention of peer reviews, LLD documents, and software development processes.
+Bonus — if salary comes up and you want to push back:
+
+"Is there any flexibility on the compensation? My background in kernel-level development is fairly specialized — I'd appreciate if the team could take another look at the range."
+
+Say this calmly and matter-of-factly. You have real leverage with 16 production modules.
+
+QUICK REFERENCE — THINGS TO SAY WHEN YOU DON'T KNOW SOMETHING
+
+On Windows SDK: "I haven't worked with Windows SDK yet, but the concepts map directly from my Linux and macOS kernel work. I'm actively studying KMDF and expect to ramp up quickly."
+On .NET: "I haven't used .NET directly, but I understand the CLR model and P/Invoke for calling native C++ from managed code — which is likely how your security components integrate."
+On anything else: "I haven't encountered that specific scenario, but here's how I'd approach it..." — then reason through it out loud. They're testing how you think.
+
+COMPLETE QUESTION BANK — NETWORK MARVELS INTERVIEW
+C/C++, OS, Networks, Puzzles, MCQ, Aptitude — Full Prep
+
+SECTION 1 — MCQ TEST TOPICS (Round 1)
+What NM actually tests: C++, OS, Networking, SQL, Aptitude, Logical Reasoning
+
+1A. C / C++ OUTPUT PREDICTION MCQs (most common in MCQ round)
+Q1. What is the output?
+
+int x = 5;
+printf("%d %d %d", x++, x++, x++);
+Answer: 7 6 5 (arguments evaluated right to left in most compilers, undefined behaviour technically — but NM expects 7 6 5)
+Q2. What is the output?
+
+int a = 10;
+int *p = &a;
+*p = 20;
+printf("%d", a);
+Answer: 20
+Q3. What is the output?
+int arr[] = {1, 2, 3, 4, 5};
+printf("%d", *(arr + 2));
+Answer: 3
+Q4. What is the output?
+class A {
+public:
+    A() { cout << "A "; }
+    ~A() { cout << "~A "; }
+};
+class B : public A {
+public:
+    B() { cout << "B "; }
+    ~B() { cout << "~B "; }
+};
+int main() { B obj; }
+Answer: A B ~B ~A (base constructor first, derived destructor first)
+Q5. What is the output?
+int i = 0;
+while (i++ < 3)
+    printf("%d ", i);
+Answer: 1 2 3
+Q6. What is the output?
+printf("%d", sizeof("hello"));
+Answer: 6 (5 chars + null terminator)
+Q7. What is the output?
+int x = 10;
+int &ref = x;
+ref = 20;
+cout << x;
+Answer: 20
+Q8. What does this do?
+int *p = NULL;
+*p = 10;
+Answer: Segmentation fault (dereferencing null pointer)
+Q9. What is the output?
+int x = 7;
+x = x & (x-1);
+printf("%d", x);
+Answer: 6 (clears the lowest set bit: 0111 & 0110 = 0110 = 6)
+Q10. What is the output?
+int a = 5, b = 10;
+swap(a, b);
+cout << a << " " << b;
+Answer: 10 5
+Q11. Which is correct for deep copy?
+
+a) Copy constructor  b) Assignment operator  c) Both  d) Neither
+
+Answer: c) Both
+
+Q12. What is the size of an empty class in C++?
+
+Answer: 1 byte (compiler inserts 1 byte to give the object a unique address)
+Q13. What is a dangling pointer?
+
+Answer: A pointer that points to memory that has already been freed/deleted.
+Q14. malloc() vs new — key difference?
+
+Answer: malloc() allocates raw memory, does not call constructor. new allocates memory AND calls constructor. malloc returns void*, new returns typed pointer. new throws exception on failure, malloc returns NULL.
+Q15. What is a memory leak?
+
+Answer: Allocated memory (malloc/new) that is never freed/deleted. Program consumes increasing memory over time.
+
+1B. OS MCQs
+Q1. Which scheduling algorithm gives minimum average waiting time?
+
+a) FCFS  b) SJF  c) Round Robin  d) Priority
+
+Answer: b) SJF (Shortest Job First)
+
+Q2. What is thrashing?
+
+Answer: When a process spends more time swapping pages in/out than executing. Occurs when working set > available RAM.
+Q3. Which page replacement algorithm is optimal but not implementable in practice?
+
+Answer: Optimal (OPT) / Belady's algorithm — requires future knowledge of page references.
+Q4. Difference between mutex and semaphore?
+
+Answer: Mutex is a binary lock with ownership — only the locking thread can unlock. Semaphore is a counter-based signaling mechanism with no ownership.
+Q5. What is a zombie process?
+
+Answer: A process that has finished execution but still has an entry in the process table because its parent hasn't called wait() to read its exit status.
+Q6. What is an orphan process?
+
+Answer: A process whose parent has terminated before it. The init process (PID 1) adopts it.
+Q7. Which is NOT a valid process state?
+
+a) Ready  b) Running  c) Suspended  d) Compiling
+
+Answer: d) Compiling
+
+Q8. What does fork() return?
+
+Answer: Returns child's PID to parent, returns 0 to child, returns -1 on failure.
+Q9. What is the purpose of the Translation Lookaside Buffer (TLB)?
+
+Answer: Cache for page table entries — speeds up virtual-to-physical address translation by avoiding full page table walk.
+Q10. Difference between internal and external fragmentation?
+
+Answer: Internal fragmentation — allocated memory larger than needed, wasted space inside block. External fragmentation — enough total free memory but not contiguous, cannot satisfy large allocation.
+Q11. What is a critical section?
+
+Answer: Part of code that accesses shared resources and must not be executed by more than one thread/process simultaneously.
+Q12. Which IPC mechanism is fastest for same-machine communication?
+
+Answer: Shared memory (no data copying needed, both processes access same memory region).
+Q13. What is the difference between preemptive and non-preemptive scheduling?
+
+Answer: Preemptive — OS can interrupt a running process and allocate CPU to another. Non-preemptive — process runs until it voluntarily yields or finishes.
+Q14. What is a binary semaphore?
+
+Answer: A semaphore with only two values — 0 and 1. Functionally similar to a mutex, but without ownership.
+Q15. What is demand paging?
+
+Answer: Pages are loaded into memory only when accessed, not at process load time. On first access, page fault occurs and OS loads the page from disk.
+
+1C. NETWORKING MCQs
+Q1. Which layer of OSI handles routing?
+
+Answer: Layer 3 — Network layer
+Q2. What is the difference between TCP and UDP?
+
+Answer: TCP — connection-oriented, reliable, ordered, flow control, slower. UDP — connectionless, unreliable, no ordering, faster. Use TCP for file transfer, HTTP. Use UDP for DNS, video streaming, gaming.
+Q3. What does ARP do?
+
+Answer: Address Resolution Protocol — maps IP address to MAC address within a local network segment.
+Q4. What is the default subnet mask for Class C?
+
+Answer: 255.255.255.0 (/24)
+Q5. What port does HTTP use? HTTPS? SSH? FTP? DNS?
+
+Answer: HTTP = 80, HTTPS = 443, SSH = 22, FTP = 20/21, DNS = 53
+Q6. What is the difference between hub, switch, and router?
+
+Answer:
+
+Hub: Layer 1, broadcasts to all ports, no intelligence
+Switch: Layer 2, learns MAC addresses, sends frames only to correct port
+Router: Layer 3, routes packets between different networks using IP addresses
+
+Q7. What is a 3-way handshake in TCP?
+
+Answer: SYN (client) → SYN-ACK (server) → ACK (client). Establishes a TCP connection.
+Q8. What is NAT?
+
+Answer: Network Address Translation — maps private IP addresses to a public IP for internet communication. Allows multiple devices on a private network to share one public IP.
+Q9. What is DHCP?
+
+Answer: Dynamic Host Configuration Protocol — automatically assigns IP address, subnet mask, gateway, and DNS to devices on a network.
+Q10. What is the loopback address?
+
+Answer: 127.0.0.1 — traffic sent here stays on the local machine, never reaches the network.
+Q11. What is the difference between HTTP and HTTPS?
+
+Answer: HTTPS = HTTP + TLS/SSL encryption. Data is encrypted in transit, server is authenticated via certificate.
+Q12. What is a MAC address?
+
+Answer: 48-bit hardware address burned into the NIC. Used for communication within a local network at Layer 2.
+Q13. What is the purpose of TTL in an IP packet?
+
+Answer: Time To Live — decremented by 1 at each router hop. When it reaches 0, packet is discarded and ICMP "Time Exceeded" is sent back. Prevents packets from looping forever.
+Q14. What is the difference between IPv4 and IPv6?
+
+Answer: IPv4 = 32-bit address (4.3 billion addresses). IPv6 = 128-bit address (340 undecillion addresses). IPv6 also has no broadcast, built-in IPSec support, and simplified header.
+Q15. What happens when you type google.com in a browser?
+
+Answer: DNS lookup (resolve domain to IP) → TCP 3-way handshake → TLS handshake (for HTTPS) → HTTP GET request → server sends response → browser renders HTML.
+
+1D. SQL MCQs
+Q1. Which command removes all rows but keeps table structure?
+
+Answer: TRUNCATE (faster than DELETE, cannot be rolled back in most DBs)
+Q2. What is the difference between DELETE and DROP?
+
+Answer: DELETE removes rows (DML, can be rolled back). DROP removes the entire table structure (DDL, cannot be rolled back).
+Q3. What does DISTINCT do?
+
+Answer: Removes duplicate rows from result set.
+Q4. What is a PRIMARY KEY?
+
+Answer: A column (or combination) that uniquely identifies each row. Cannot be NULL. Only one per table.
+Q5. What is a FOREIGN KEY?
+
+Answer: A column that references the PRIMARY KEY of another table. Enforces referential integrity.
+Q6. What is the difference between UNION and UNION ALL?
+
+Answer: UNION removes duplicate rows. UNION ALL keeps all rows including duplicates. UNION ALL is faster.
+Q7. Write a query to find the second highest salary.
+
+SELECT MAX(salary) FROM employees
+WHERE salary < (SELECT MAX(salary) FROM employees);
+SELECT salary FROM employees
+ORDER BY salary DESC
+LIMIT 1 OFFSET 1;
+
+Q8. What is a self join?
+
+Answer: Joining a table with itself. Used for hierarchical data — e.g., finding employees and their managers from the same Employees table.
+Q9. What does GROUP BY do?
+
+Answer: Groups rows with the same values in specified columns into summary rows, typically used with aggregate functions (SUM, COUNT, AVG, MAX, MIN).
+Q10. What is a view?
+
+Answer: A virtual table based on a SELECT query. Does not store data. Used for security (hide columns), simplification, and reuse.
+1E. APTITUDE MCQs (Number Series — NM confirmed asking these)
+Q1. Find the wrong term: 2, 6, 12, 20, 30, 42, 56, 70
+
+Answer: 70 is correct, all are n(n+1). Wait — let me check: 1×2=2, 2×3=6, 3×4=12, 4×5=20, 5×6=30, 6×7=42, 7×8=56, 8×9=72. So 70 is wrong, should be 72.
+Q2. Find the wrong term: 4, 6, 15, 49, 201
+
+Answer: 15 is wrong. Pattern: 2nd = (1st × 1 + 2) = 6, 3rd = (2nd × 2 + 3) = 15 ✓, 4th = (3rd × 3 + 4) = 49 ✓, 5th = (4th × 4 + 5) = 201 ✓. Actually this is NM's own confirmed question from their aptitude test — answer is 5 is wrong (the series is 4, 6, 15, 49, 201 where none match the pattern at position 1 since 4 should be something else).
+Q3. Series: 1, 4, 9, 16, 25, ?
+
+Answer: 36 (perfect squares: 1², 2², 3², 4², 5², 6²)
+Q4. Series: 2, 3, 5, 8, 13, 21, ?
+
+Answer: 34 (Fibonacci: each = sum of previous two)
+Q5. Series: 3, 6, 18, 72, 360, ?
+
+Answer: 2520 (multiply by 2, 3, 4, 5, 6, 7...)
+Q6. A train 150m long passes a pole in 15 seconds. Speed?
+
+Answer: Speed = 150/15 = 10 m/s = 36 km/h
+Q7. A can do a job in 12 days, B in 15 days. Together?
+
+Answer: A's rate = 1/12, B's rate = 1/15. Together = 1/12 + 1/15 = 5/60 + 4/60 = 9/60 = 3/20. Days = 20/3 = 6.67 days
+Q8. If 20% of a number is 80, what is the number?
+
+Answer: 80 × 5 = 400
+Q9. A shopkeeper marks up 25%, then gives 20% discount. Profit/loss?
+
+Answer: SP = 100 × 1.25 × 0.80 = 100. No profit, no loss.
+Q10. Logical — All cats are dogs. All dogs are birds. Conclusion?
+
+Answer: All cats are birds. (valid syllogism — follow the chain)
+
+SECTION 2 — C/C++ TECHNICAL INTERVIEW QUESTIONS (Round 3)
+
+2A. C LANGUAGE — CORE
+Q: What is a pointer? What is a pointer to a pointer?
+
+A pointer stores the memory address of a variable. A pointer to a pointer (double pointer) stores the address of a pointer. Example:
+int x = 5;
+int *p = &x;      // p holds address of x
+int **pp = &p;    // pp holds address of p
+printf("%d", **pp); // prints 5
+Q: What is the difference between array and pointer?
+
+Array name is a constant pointer — cannot be reassigned. sizeof(arr) gives total array size. sizeof(ptr) gives pointer size (4 or 8 bytes). Arrays are allocated on stack by default; pointers can point anywhere (stack, heap, global).
+Q: What is void pointer? When is it used?
+
+A pointer with no associated data type — void *p. Can point to any type. Must be cast before dereferencing. Used in: malloc() return type, generic functions like memcpy(), qsort().
+Q: Difference between malloc, calloc, realloc, free?
+
+malloc(n): allocates n bytes, uninitialized memory
+calloc(n, size): allocates n*size bytes, initializes to 0
+realloc(ptr, n): resizes previously allocated block
+free(ptr): releases allocated memory
+
+Q: What is a structure? How is it different from a union?
+
+Structure: all members have separate memory, total size = sum of members + padding.
+
+Union: all members share the same memory, total size = largest member. Only one member holds valid data at a time.
+Q: What are storage classes in C?
+
+auto: default for local variables, stack, function scope
+register: hint to store in CPU register, cannot take address
+static: retains value between function calls, initialized once
+extern: declares variable defined elsewhere (another file)
+
+Q: What is the difference between #define and const?
+
+#define is a preprocessor macro — no type, no scope, not in symbol table, simple text substitution. const is a typed constant, has scope, is in symbol table, can be debugged. Prefer const in C++.
+Q: What is a function pointer?
+
+A pointer that points to a function. Used for callbacks, dispatch tables.
+int add(int a, int b) { return a + b; }
+int (*fp)(int, int) = add;
+printf("%d", fp(3, 4)); // prints 7
+2B. C++ SPECIFIC
+Q: What is RAII? Give an example.
+
+Resource Acquisition Is Initialization — resources are acquired in constructor and released in destructor. Ensures no resource leaks even when exceptions occur. Example: std::unique_ptr, std::lock_guard. In your work: your daemon wraps file descriptors in RAII wrappers so they're always closed.
+Q: What is the difference between new/delete and malloc/free?
+
+new/delete: call constructor/destructor, type-safe, throw exception on failure.
+
+malloc/free: no constructor/destructor call, returns void*, return NULL on failure.
+
+Never mix them — don't free() memory allocated with new.
+Q: What are smart pointers? Types?
+
+Smart pointers manage memory automatically using RAII.
+
+unique_ptr: sole ownership, cannot be copied, can be moved
+shared_ptr: shared ownership via reference count, deleted when count reaches 0
+weak_ptr: non-owning reference to a shared_ptr, breaks circular references
+
+Q: What is the difference between stack and heap memory?
+
+Stack: automatic allocation/deallocation, LIFO, limited size (~1-8MB), fast. Local variables live here.
+
+Heap: manual allocation (new/malloc), large, slow (fragmentation), must be explicitly freed.
+Q: What is a copy constructor? When is it called?
+
+Special constructor that creates a new object as a copy of an existing object.
+
+Called when: passing object by value, returning object from function, initializing with another object.
+
+MyClass(const MyClass &other) { this->x = other.x; }
+Q: What is the Rule of Three? Rule of Five?
+
+Rule of Three: if you define destructor, copy constructor, or copy assignment — define all three.
+
+Rule of Five (C++11): add move constructor and move assignment operator to the three.
+Q: What is move semantics?
+
+Moving resources from one object to another without copying. std::move() casts to rvalue reference, enabling move constructor/assignment. Critical for performance — avoids deep copy when temporary objects are involved. Your vector/string operations use this automatically.
+Q: What is a template?
+
+Allows writing generic code that works with any data type.
+template <typename T>
+T add(T a, T b) { return a + b; }
+Instantiated at compile time for each type used. STL containers like vector<T>, map<K,V> are templates.
+Q: What is the difference between compile-time and runtime polymorphism?
+
+Compile-time: function overloading and templates — resolved at compile time, faster.
+
+Runtime: virtual functions — resolved at runtime via vtable, slight overhead, needed when type is unknown at compile time.
+Q: What is an inline function?
+
+Hint to compiler to substitute function body at call site instead of generating a function call. Reduces call overhead. Compiler may ignore the hint. Used for small, frequently called functions.
+Q: What is explicit keyword?
+
+Prevents implicit conversion by constructor.
+class MyClass {
+public:
+    explicit MyClass(int x) {}
+};
+MyClass obj = 5; // Error with explicit, OK without
+Q: What is operator overloading?
+
+Defining custom behavior for operators (+, -, ==, <<) for user-defined types. Example: overloading + for a Vector class to add two vectors.
+Q: What is a namespace?
+
+A declarative region to avoid name conflicts. std::cout — cout is in the std namespace. Create with namespace MyNS { ... }. Access with MyNS::func() or using namespace MyNS.
+Q: What is the difference between struct and class in C++?
+
+Only difference: default access specifier. struct = public by default. class = private by default. Otherwise identical.
+
+2C. MEMORY & POINTERS (Deep level — relevant to your kernel work)
+Q: What is memory alignment? Why does it matter?
+
+CPU reads memory in aligned chunks (4 or 8 bytes). Misaligned access causes extra reads or a hardware trap. Compilers add padding to structs to maintain alignment. Critical in your kernel structs and packed network packets.
+Q: What is the difference between shallow copy and deep copy?
+
+Shallow copy: copies the pointer value — both objects point to same memory. Deep copy: allocates new memory and copies the actual data. Shallow copy causes double-free crashes.
+Q: What causes a segfault?
+
+Dereferencing null/invalid pointer, accessing freed memory, stack overflow (infinite recursion), writing to read-only memory, buffer overflow past array bounds.
+Q: What is buffer overflow? How do you prevent it?
+
+Writing beyond the end of a fixed-size buffer, overwriting adjacent memory (return addresses, stack canaries). Prevention: use strncpy instead of strcpy, bounds checking, stack canaries (compiler flag -fstack-protector), ASLR, NX bit.
+Q: What is a race condition?
+
+When output depends on the timing/order of thread execution. Two threads read-modify-write the same variable without synchronization. Fix: mutex, atomic operations, lock-free data structures.
+
+SECTION 3 — OS INTERNALS INTERVIEW QUESTIONS
+Q: What are the states of a process?
+
+New → Ready → Running → Waiting (blocked) → Terminated. Also: Suspended Ready and Suspended Waiting in some models.
+Q: What is a system call? Give examples.
+
+Interface between user space and kernel space. Examples: open(), read(), write(), fork(), exec(), mmap(), ioctl(). Your fanotify work uses fanotify_init(), fanotify_mark(), read() on the fanotify fd.
+Q: How does exec() work internally?
+
+exec() replaces the current process image with a new program. Kernel loads the new binary, sets up new stack with arguments, resets instruction pointer to entry point. Does not create a new process — same PID. Your Guardian intercepts this moment via fanotify FAN_OPEN_PERM.
+Q: What is the difference between fork() and exec()?
+
+fork(): creates a new child process (copy of parent). exec(): replaces current process with a new program. Typically used together — fork to create child, exec in child to run new program.
+Q: What is mmap()?
+
+Maps a file or device into the process's virtual address space. Allows file I/O via memory reads/writes instead of read()/write() syscalls. Also used for shared memory between processes.
+Q: What is the difference between hard link and soft link?
+
+Hard link: another directory entry pointing to the same inode. Same data, same inode number. Survives deletion of original file.
+
+Soft link (symlink): a file containing the path to the target. Different inode. Breaks if original is deleted.
+Q: What is an inode?
+
+Data structure storing file metadata — size, permissions, owner, timestamps, and pointers to data blocks. Does NOT store the filename. Directory entries map filenames to inodes.
+Q: What is a kernel module (.ko)?
+
+Code that can be loaded into and unloaded from the running kernel dynamically without rebooting. Your ransomware detector and Guardian are kernel modules. Loaded with insmod, removed with rmmod, listed with lsmod.
+Q: What is the difference between user space and kernel space?
+
+Kernel space: privileged mode, full hardware access, shared address space, a crash brings down the system. User space: restricted mode, isolated address space, crashes only affect that process. Transitions via system calls, interrupts, exceptions.
+Q: What is ioctl()?
+
+General-purpose system call for device-specific control operations. Used to communicate with device drivers/kernel modules. You expose sysfs interface in your ransomware module — ioctl is the alternative approach.
+Q: What is ftrace? How did you use it?
+
+Linux kernel tracing framework. Allows hooking kernel functions by replacing their first bytes with a call to a trampoline. Your ransomware module uses ftrace to hook sys_rename, sys_execve, sys_open — you store original function pointer, replace with your hook, call original inside hook.
+
+SECTION 4 — NETWORKING INTERVIEW QUESTIONS (Technical Round)
+Q: Explain the OSI model — all 7 layers.
+
+Physical — bits, cables, hubs, NIC hardware
+Data Link — frames, MAC addresses, switches, error detection (CRC)
+Network — packets, IP addresses, routing, routers
+Transport — segments, TCP/UDP, ports, flow control, reliability
+Session — manages sessions/connections between applications
+Presentation — encryption, compression, encoding (TLS, JPEG, ASCII)
+Application — HTTP, FTP, DNS, SMTP, user-facing protocols
+
+Q: TCP vs UDP — when to use which?
+
+TCP: reliability required — HTTP/HTTPS, SSH, FTP, email, file transfer
+
+UDP: speed over reliability — DNS, DHCP, video streaming, VoIP, gaming, your syslog
+Q: What happens during a TCP connection teardown?
+
+4-way handshake: FIN (client) → ACK (server) → FIN (server) → ACK (client). TIME_WAIT state prevents stale packets from confusing new connections.
+Q: What is a firewall? Types?
+
+Network security device that filters traffic based on rules.
+
+Packet filter: inspects headers (IP, port) — your pf rule engine does this
+Stateful: tracks connection state, allows only established-connection traffic
+Application-layer (proxy): inspects actual payload, understands protocols
+
+Q: What is your pf firewall project — how does pf work?
+
+pf (packet filter) is BSD/macOS firewall. Your project generates pf.conf anchor rules from XML policy files. pfctl loads/reloads rules. pf evaluates rules top-to-bottom, first match wins. Supports tables for IP blocklists, interfaces, NAT, redirection.
+Q: What is a socket? What is the difference between TCP socket and Unix domain socket?
+
+Socket: endpoint for communication identified by IP + port (or path for Unix sockets). TCP socket: network communication, goes through network stack. Unix domain socket: same-machine IPC, bypasses network stack entirely, much faster. Your content scanner daemon uses Unix domain sockets.
+Q: What is DNS? How does DNS resolution work?
+
+Browser checks local cache → OS cache → /etc/hosts → Recursive resolver (ISP) → Root nameserver → TLD nameserver (.com) → Authoritative nameserver → IP address returned.
+Q: What is SSL/TLS? What is a certificate?
+
+TLS handshake: client hello → server sends certificate → client verifies certificate against CA → key exchange (asymmetric) → session key established → symmetric encryption for data transfer. Certificate contains server's public key signed by a trusted CA.
+Q: What is AES? How is it different from Ed25519 that you use?
+
+AES: symmetric encryption — same key for encrypt/decrypt. Fast, used for bulk data. Your FIM uses AES-256 for data encryption.
+
+Ed25519: asymmetric signature scheme — private key signs, public key verifies. No encryption, just authenticity/integrity. Your Guardian uses it to verify binary authenticity.
+Q: What is the difference between encryption, hashing, and digital signatures?
+
+Encryption: reversible transformation with key. Decryptable by holder of key.
+
+Hashing: one-way, fixed-size output. Used for integrity (MD5, SHA-256). Your FIM hashes files with MD5.
+
+Digital signature: hash of data encrypted with private key. Anyone with public key can verify. Your Guardian signs binaries with Ed25519.
+SECTION 5 — PUZZLES (LOGICAL / BRAIN TEASERS)
+
+PUZZLE 1: Tower of Hanoi
+Problem: Move n disks from peg A to peg C using peg B. Never place larger disk on smaller.
+Solution (recursive):
+To move n disks from A to C using B:
+1. Move n-1 disks from A to B (using C as auxiliary)
+2. Move the nth (largest) disk from A to C
+3. Move n-1 disks from B to C (using A as auxiliary)
+void hanoi(int n, char from, char to, char aux) {
+    if (n == 1) {
+        printf("Move disk 1 from %c to %c\n", from, to);
+        return;
+    }
+    hanoi(n-1, from, aux, to);
+    printf("Move disk %d from %c to %c\n", n, from, to);
+    hanoi(n-1, aux, to, from);
+}
+Number of moves: 2^n - 1 (for 3 disks = 7 moves, for 4 = 15 moves)
+
+Time complexity: O(2^n)
+
+PUZZLE 2: Two Eggs and 100 Floors
+Problem: Find the highest floor from which an egg won't break, using 2 eggs and minimum drops worst-case.
+Answer: 14 drops worst-case. Drop first egg at floors 14, 27, 39, 50, 60, 69, 77, 84, 90, 95, 99, 100 (decreasing intervals). When it breaks, use second egg linearly from previous safe floor. Worst case = 14 drops.
+Mathematical: n(n+1)/2 ≥ 100 → n = 14.
+
+PUZZLE 3: 8 Balls, One Heavier — Find in 2 Weighings
+Divide 8 balls into 3 groups: 3, 3, 2.
+
+Weigh group1 vs group2.
+
+If equal: heavier ball is in group of 2 → weigh those 2 → done in 2 weighings.
+If unequal: heavier is in the heavier group of 3 → take 2 of those 3, weigh them → if equal, third is heavy; if unequal, heavier side is the ball.
+
+
+PUZZLE 4: 3 Bulbs and 3 Switches
+Problem: 3 light switches outside a room, 3 bulbs inside. You can enter only once. Which switch controls which bulb?
+Answer: Turn on switch 1 for 5 minutes, then turn it off. Turn on switch 2. Enter the room. Bulb that is ON = switch 2. Bulb that is OFF but warm = switch 1. Bulb that is OFF and cold = switch 3.
+
+PUZZLE 5: Bridge and Torch (4 people crossing)
+People take 1, 2, 5, 10 minutes. Bridge holds 2, torch needed. Minimize total time.
+Optimal: 17 minutes.
+
+1 and 2 cross → 2 min. 1 comes back → 1 min.
+5 and 10 cross → 10 min. 2 comes back → 2 min.
+1 and 2 cross → 2 min.
+
+Total: 2 + 1 + 10 + 2 + 2 = 17 minutes.
+
+
+PUZZLE 6: How many golf balls fit in a school bus?
+This is a Fermat estimation question. Show your reasoning:
+
+Bus volume ≈ 2.5m × 2m × 6m = 30 cubic meters = 30,000,000 cm³
+
+Golf ball volume ≈ (4/3)π(2.1)³ ≈ 38.8 cm³, packing ~64% efficiency
+
+Usable space ≈ 30,000,000 × 0.64 = 19,200,000 cm³
+
+Count ≈ 19,200,000 / 38.8 ≈ ~500,000 golf balls
+
+Note: They care about your reasoning process, not the exact number.
+
+PUZZLE 7: Bit manipulation — count set bits (Brian Kernighan)
+
+int countBits(int n) {
+    int count = 0;
+    while (n) {
+        n = n & (n - 1); // clears lowest set bit
+        count++;
+    }
+    return count;
+}
+Runs in O(number of set bits) not O(32).
+
+PUZZLE 8: Check if a number is a power of 2
+bool isPowerOf2(int n) {
+    return n > 0 && (n & (n - 1)) == 0;
+}
+Power of 2 in binary has exactly one 1 bit. n-1 has all lower bits set. AND = 0.
+
+PUZZLE 9: Swap two numbers without a temp variable
+// Using XOR
+a = a ^ b;
+b = a ^ b;
+a = a ^ b;
+
+// Using arithmetic
+a = a + b;
+b = a - b;
+a = a - b;
+PUZZLE 10: Find the missing number in array 1 to n
+int missing(int arr[], int n) {
+    int expected = n * (n + 1) / 2;
+    int actual = 0;
+    for (int i = 0; i < n - 1; i++) actual += arr[i];
+    return expected - actual;
+}
+SECTION 6 — CODING ROUND (Write on Paper)
+Program 1: Reverse a linked list (most likely)
+
+Already in previous document — 3-pointer approach.
+Program 2: Check if a string is palindrome
+bool isPalindrome(char *s) {
+    int l = 0, r = strlen(s) - 1;
+    while (l < r) {
+        if (s[l] != s[r]) return false;
+        l++; r--;
+    }
+    return true;
+}
+Program 3: Fibonacci — iterative
+int fib(int n) {
+    if (n <= 1) return n;
+    int a = 0, b = 1, c;
+    for (int i = 2; i <= n; i++) {
+        c = a + b;
+        a = b;
+        b = c;
+    }
+    return b;
+}
+Program 4: Binary search
+int binarySearch(int arr[], int n, int target) {
+    int lo = 0, hi = n - 1;
+    while (lo <= hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (arr[mid] == target) return mid;
+        else if (arr[mid] < target) lo = mid + 1;
+        else hi = mid - 1;
+    }
+    return -1;
+}
+Program 5: Reverse a string in place
+void reverseStr(char *s) {
+    int l = 0, r = strlen(s) - 1;
+    while (l < r) {
+        char tmp = s[l];
+        s[l] = s[r];
+        s[r] = tmp;
+        l++; r--;
+    }
+}
+Program 6: BFS on a graph
+void bfs(int graph[][MAX], int start, int n) {
+    int visited[MAX] = {0};
+    int queue[MAX], front = 0, rear = 0;
+    visited[start] = 1;
+    queue[rear++] = start;
+    while (front < rear) {
+        int node = queue[front++];
+        printf("%d ", node);
+        for (int i = 0; i < n; i++) {
+            if (graph[node][i] && !visited[i]) {
+                visited[i] = 1;
+                queue[rear++] = i;
+            }
+        }
+    }
+}
+SECTION 7 — QUICK REFERENCE ANSWERS FOR INTERVIEW
+What is an API?
+
+Application Programming Interface — a defined set of functions/protocols that allows two programs to communicate. REST API uses HTTP, OS API (Win32/POSIX) provides syscalls.
+What is endianness?
+
+Byte order in multi-byte values. Little-endian: least significant byte at lowest address (x86, most modern CPUs). Big-endian: most significant byte first (network byte order). Your kernel structs must handle this when reading network packets.
+What is a mutex vs spinlock?
+
+Mutex: thread sleeps while waiting (OS schedules another thread). Spinlock: thread busy-waits in a loop. Spinlock is faster for very short wait times (no OS overhead), but wastes CPU. Your kernel module likely uses spinlocks for interrupt contexts.
+What is the difference between a process and a daemon?
+
+Daemon: a background process not attached to any terminal, typically started at boot, runs continuously providing a service. Your fanotify guardian, FIM, and scanner daemons are exactly this.
+What is errno?
+
+Global variable set by system calls and library functions to indicate what error occurred. Check with perror() or strerror(errno). Always check return values and errno in systems code.
+What is volatile keyword?
+
+Tells compiler not to optimize reads/writes to this variable — it may change externally (hardware register, another thread, signal handler). Critical in kernel drivers and interrupt handlers.
+What is restrict keyword in C?
+
+Hints to compiler that a pointer is the only pointer accessing that memory — enables more aggressive optimization. Used in memcpy, string functions.
+EXTENDED QUESTION BANK — PART 2
+C/C++ Advanced + OS Deep + Networks Deep + DBMS + More Puzzles + Security + Qt
+
+SECTION 8 — ADVANCED C++ (They will ask these for 3-year experience)
+
+8A. CONSTRUCTORS & DESTRUCTORS
+Q: What is the order of constructor/destructor calls in inheritance?
+
+Constructor: Base first, then Derived.
+
+Destructor: Derived first, then Base.
+
+Always make base class destructor virtual if using polymorphism — otherwise deleting via base pointer won't call derived destructor (memory leak / undefined behaviour).
+class A {
+public:
+    A()  { cout << "A constructor\n"; }
+    virtual ~A() { cout << "A destructor\n"; }
+};
+class B : public A {
+public:
+    B()  { cout << "B constructor\n"; }
+    ~B() { cout << "B destructor\n"; }
+};
+// Output when B obj created and destroyed:
+// A constructor → B constructor → B destructor → A destructor
+Q: What is a delegating constructor? (C++11)
+
+A constructor that calls another constructor of the same class.
+class MyClass {
+    int x, y;
+public:
+    MyClass(int x, int y) : x(x), y(y) {}
+    MyClass(int x) : MyClass(x, 0) {}  // delegates to above
+};
+Q: What is an initializer list? Why is it preferred?
+
+Initializes members before constructor body runs. Required for: const members, reference members, base class constructors, objects without default constructor. More efficient — avoids default-init + assignment.
+MyClass(int a, int b) : x(a), y(b) {}  // initializer list
+Q: When is a destructor NOT called?
+
+When program calls exit() or abort(). When process is killed with SIGKILL. When destructor itself throws. When using placement new without explicit destructor call. Important for your daemon shutdown logic.
+
+8B. INHERITANCE & POLYMORPHISM
+Q: What is object slicing?
+
+When a derived object is assigned to a base object (by value), the derived-specific members are "sliced off". Only base part is copied. Fix: always use pointers or references when working with polymorphism.
+Dog d;
+Animal a = d;  // slicing — Dog's bark() is lost
+Animal &a = d; // correct — no slicing, polymorphism works
+Q: What is a pure virtual function? Can you have a pure virtual destructor?
+
+Pure virtual: virtual void func() = 0; — makes class abstract, forces derived to implement.
+
+Pure virtual destructor: yes, but you must still provide a definition (the chain needs to call it).
+virtual ~Base() = 0;
+Base::~Base() {}  // must define even though pure virtual
+Q: What is multiple inheritance? What problems does it cause?
+
+A class inheriting from more than one base class. Problems: diamond problem (ambiguity), increased complexity, name conflicts. Solved with virtual inheritance. C++ supports it; Java/C# avoid it by allowing only single class inheritance.
+Q: What is the difference between overloading and overriding?
+
+Overloading: same function name, different parameters, same class, resolved at compile time.
+
+Overriding: derived class provides new implementation of a virtual function from base class, same signature, resolved at runtime.
+Q: Can static functions be virtual?
+
+No. Static functions have no this pointer and are resolved at compile time. Virtual functions need runtime dispatch via vtable (which requires this pointer). Contradiction — cannot be both.
+Q: What is a friend function/class?
+
+A function/class declared as friend inside a class can access private and protected members of that class. Not a member, not inherited. Use sparingly — breaks encapsulation.
+
+8C. STL — Standard Template Library
+Q: What is the difference between vector and list?
+
+vector: dynamic array, O(1) random access, O(n) insert/delete in middle, cache-friendly (contiguous memory).
+
+list: doubly linked list, O(1) insert/delete anywhere (with iterator), O(n) random access, not cache-friendly.
+
+Use vector by default. Use list only when frequent middle insertions.
+Q: What is the difference between map and unordered_map?
+
+map: red-black tree (balanced BST), O(log n) all operations, keys sorted.
+
+unordered_map: hash table, O(1) average all operations, O(n) worst case (hash collision), keys unordered.
+
+Use unordered_map for speed. Use map when you need sorted keys or guaranteed O(log n).
+Q: What is the difference between set and multiset?
+
+set: unique elements, O(log n), sorted.
+
+multiset: allows duplicates, O(log n), sorted.
+Q: What are iterators? Types?
+
+Objects that point to elements in containers. Types:
+
+Input: read-only, single pass
+Output: write-only, single pass
+Forward: read/write, single pass forward
+Bidirectional: read/write, forward and backward (list, set, map)
+Random access: all above + jump to any element (vector, deque, array)
+
+Q: What does std::move() do internally?
+
+Casts an lvalue to an rvalue reference — does NOT actually move anything by itself. The move constructor/assignment then takes ownership of resources from the temporary, leaving the source in a valid but unspecified state. Critical for performance when returning large objects from functions.
+Q: What is std::shared_ptr reference counting mechanism?
+
+shared_ptr maintains a control block (on heap) with use_count and weak_count. Each copy increments use_count. Each destruction decrements it. When use_count reaches 0, object is deleted. Thread-safe for count operations but not for the pointed-to object itself.
+Q: What is a circular reference with shared_ptr? How to break it?
+
+If A holds shared_ptr to B, and B holds shared_ptr to A, use_count never reaches 0 — memory leak. Fix: one side uses weak_ptr. weak_ptr does not increment use_count; call lock() to get a temporary shared_ptr.
+
+8C. EXCEPTIONS & ERROR HANDLING
+Q: What is exception handling? How does it work?
+
+try-catch-throw. When throw executes, stack unwinding begins — destructors of all local objects are called as stack frames are popped, until a matching catch block is found. RAII ensures resources released during unwinding.
+Q: What is std::exception? Hierarchy?
+
+Base class for all standard exceptions. Derived: std::runtime_error, std::logic_error, std::bad_alloc (new failure), std::out_of_range, std::invalid_argument. Always catch by reference: catch (const std::exception &e).
+Q: When should you NOT use exceptions?
+
+In kernel code (no exception support). In real-time systems (unpredictable timing). In destructors (can cause terminate() if another exception is propagating). In performance-critical tight loops.
+
+8D. CONCURRENCY (Very relevant to your daemon work)
+Q: What is std::thread? How to create one?
+#include <thread>
+void worker(int id) { /* ... */ }
+std::thread t(worker, 1);
+t.join();    // wait for thread to finish
+t.detach();  // let it run independently
+Q: What is std::mutex? std::lock_guard?
+
+mutex: provides mutual exclusion. lock()/unlock().
+
+lock_guard: RAII wrapper — locks in constructor, unlocks in destructor. Cannot be manually unlocked. Never throws past unlock.
+
+unique_lock: more flexible — can unlock/relock manually, works with condition_variable.
+Q: What is std::atomic?
+
+Guarantees atomic read-modify-write operations without locks for primitive types. No data race by definition. Faster than mutex for simple counters/flags. std::atomic<int> counter{0}; counter++; is thread-safe.
+Q: What is a condition variable?
+
+Allows threads to wait until a condition is true. Used with unique_lock.
+std::condition_variable cv;
+std::mutex mtx;
+bool ready = false;
+
+// Consumer thread:
+std::unique_lock<std::mutex> lk(mtx);
+cv.wait(lk, []{ return ready; }); // releases lock while waiting
+
+// Producer thread:
+{ std::lock_guard<std::mutex> lk(mtx); ready = true; }
+cv.notify_one();
+Q: What is a deadlock? Give a real example from systems programming.
+
+Thread A holds lock1, waits for lock2. Thread B holds lock2, waits for lock1. Neither can proceed. Real example: two threads each trying to lock a socket and a file descriptor in opposite order. Fix: always acquire locks in the same global order.
+Q: What is a data race vs race condition?
+
+Data race: two threads access same memory simultaneously, at least one writes, no synchronization. Undefined behaviour in C++.
+
+Race condition: program correctness depends on timing of events. A data race is one type. A race condition can exist without a data race (e.g., TOCTOU — time-of-check to time-of-use). Your DLP printer module had to reason about TOCTOU in spool file handling.
+SECTION 9 — OS INTERNALS DEEP DIVE
+
+9A. PROCESS & MEMORY MANAGEMENT
+Q: What is copy-on-write (COW) in fork()?
+
+After fork(), parent and child share the same physical memory pages (marked read-only). When either writes to a page, the kernel makes a private copy for the writer. Avoids copying entire process memory on every fork — crucial for efficiency. exec() after fork() triggers COW for all pages.
+Q: What is the difference between stack overflow and heap overflow?
+
+Stack overflow: recursive calls or large local arrays exceed stack size limit (~1-8MB). Usually SIGSEGV. Infinite recursion is the common cause.
+
+Heap overflow: writing beyond malloc'd buffer into adjacent heap metadata or other allocations. Exploitable for code execution.
+Q: What are the segments of a process in memory?
+
+From low to high address (typical Linux):
+
+Text (code) segment: read-only, executable — machine instructions
+Data segment: initialized global/static variables
+BSS segment: uninitialized global/static variables (zeroed at startup)
+Heap: grows upward, dynamic allocation
+Stack: grows downward, function call frames, local variables
+Kernel space: mapped but inaccessible to user (top of address space)
+
+Q: What is mprotect()? How is it used in security?
+
+System call that changes memory page protections (PROT_READ, PROT_WRITE, PROT_EXEC). Used in security to: implement W^X (write XOR execute — a page is either writable or executable, never both), protect JIT-compiled code, implement stack canaries. Relevant to your binary integrity work.
+Q: What is ASLR?
+
+Address Space Layout Randomization — randomizes base addresses of stack, heap, and libraries at each execution. Makes exploitation harder — attacker cannot predict where shellcode or libc functions are. Can be disabled per-process with personality(ADDR_NO_RANDOMIZE) — useful in debugging.
+Q: What is a core dump?
+
+Snapshot of process memory at the time of a crash (SIGSEGV, SIGABRT etc.). Contains register state, call stack, heap/stack contents. Analyzed with GDB: gdb ./program core. Your fanotify-based security work should not interfere with core dump generation.
+Q: What is the difference between paging and segmentation?
+
+Paging: divides memory into fixed-size pages (typically 4KB). Physical/virtual split. No external fragmentation. OS manages page tables.
+
+Segmentation: divides memory into variable-size logical segments (code, data, stack). Can have external fragmentation. x86 uses segmentation + paging together.
+Q: What are huge pages (THP)?
+
+Instead of 4KB pages, use 2MB or 1GB pages. Reduces TLB misses (fewer entries needed for same memory). Linux Transparent Huge Pages (THP) can do this automatically. Relevant in high-performance daemons.
+
+9B. FILE SYSTEM INTERNALS
+Q: What is the VFS (Virtual File System)?
+
+Abstraction layer in the Linux kernel that provides a uniform interface for different filesystem types (ext4, NTFS, tmpfs, procfs). Your fanotify hooks at the VFS layer — works regardless of underlying filesystem.
+Q: What is /proc filesystem?
+
+Virtual filesystem exposing kernel and process information as files. /proc/PID/maps: memory map. /proc/PID/fd: open file descriptors. /proc/meminfo: memory stats. /proc/net/: network info. Your kernel modules can read /proc entries.
+Q: What is the difference between buffered and unbuffered I/O?
+
+Buffered (stdio): data goes through userspace buffer (FILE*). Writes batched and flushed periodically. fflush() forces flush.
+
+Unbuffered (syscall): write() goes directly to kernel. No userspace buffer. Always immediately visible to kernel. Your daemon uses write() directly for reliability.
+Q: What is fsync() and why is it needed?
+
+Forces kernel to flush all buffered writes for a file descriptor to disk. write() just writes to kernel page cache — fsync() persists to physical storage. Critical for databases, audit logs, your FIM baseline snapshot.
+Q: What is an epoll? How is it different from select/poll?
+
+epoll: Linux-specific, O(1) for checking ready file descriptors, edge-triggered or level-triggered, scales to millions of FDs.
+
+select: O(n) scan, limited to 1024 FDs, not scalable.
+
+poll: O(n) scan, no FD limit, but still not scalable.
+
+Your daemon likely uses a poll/epoll loop to monitor the fanotify file descriptor.
+
+9C. SIGNALS & IPC
+Q: What are signals? Give 5 important ones.
+
+Asynchronous notifications to a process.
+
+SIGKILL (9): cannot be caught or ignored, immediate kill — your kernel module sends this to ransomware
+SIGTERM (15): polite termination request, can be caught for cleanup
+SIGSEGV (11): segmentation fault — invalid memory access
+SIGCHLD: sent to parent when child terminates
+SIGUSR1/SIGUSR2: user-defined, commonly used for daemon reload/status
+
+Q: What is signal()/sigaction()? Which is better?
+
+signal(): simple, but behaviour varies across systems, non-reentrant.
+
+sigaction(): portable, more control (blocking signals during handler, SA_RESTART for syscall restart, SA_SIGINFO for extra info). Always prefer sigaction() in production code.
+Q: What are the IPC mechanisms in Linux?
+
+Pipes: anonymous (parent-child), half-duplex
+Named pipes (FIFOs): unrelated processes, filesystem path
+Unix domain sockets: bidirectional, faster than TCP, your scanner uses this
+Message queues (System V / POSIX): structured messages, persist until deleted
+Shared memory: fastest, needs explicit synchronization (mutex/semaphore)
+Semaphores: synchronization primitive
+Signals: notification only, no data
+Memory-mapped files: file-based shared memory via mmap()
+
+Q: What is a pipe buffer size? What happens when it's full?
+
+Default pipe buffer: 64KB on Linux. When full, write() to the pipe blocks until the reader consumes data. This is backpressure — relevant when your fanotify daemon processes events slower than they're generated.
+
+SECTION 10 — COMPUTER NETWORKS DEEP DIVE
+
+10A. TCP/IP IN DEPTH
+Q: What is TCP flow control? Congestion control?
+
+Flow control: prevents sender from overwhelming receiver. TCP uses sliding window — receiver advertises window size (how much buffer it has). Sender cannot send more than window size unacknowledged.
+
+Congestion control: prevents sender from overwhelming the network. Algorithms: Slow Start, Congestion Avoidance, Fast Retransmit, Fast Recovery (TCP Reno/CUBIC).
+Q: What is the difference between latency and bandwidth?
+
+Latency: time for a packet to travel from source to destination (milliseconds).
+
+Bandwidth: amount of data that can be transferred per second (Mbps/Gbps).
+
+A satellite link has high bandwidth but high latency. A fast LAN has high bandwidth and low latency.
+Q: What is TIME_WAIT state in TCP? Why is it 2*MSL?
+
+After sending the final ACK in connection teardown, the socket stays in TIME_WAIT for 2*MSL (Maximum Segment Lifetime, typically 2 minutes). Reason: ensures the final ACK was received (if not, remote sends FIN again). Also ensures old packets from this connection die before a new connection on same port.
+Q: What is Nagle's algorithm?
+
+TCP optimization that combines small writes into larger segments — waits before sending if there's unacknowledged data. Reduces packet count but adds latency. Disabled with TCP_NODELAY socket option. Important for your Unix socket IPC — disable Nagle for low-latency scan results.
+Q: What is a SYN flood attack? How to prevent?
+
+Attacker sends many SYN packets without completing handshake — fills server's SYN queue, legitimate connections rejected. Prevention: SYN cookies (encode connection state in sequence number instead of memory), reduce SYN_RCVD timeout, increase backlog queue, rate limiting.
+Q: What is the difference between ICMP and ping?
+
+ICMP (Internet Control Message Protocol): Layer 3 protocol for network diagnostic/error messages. Ping uses ICMP Echo Request and Echo Reply to test reachability and measure RTT.
+Q: What is MTU? What is fragmentation?
+
+Maximum Transmission Unit: largest packet size a network link can carry (Ethernet default: 1500 bytes). If IP packet exceeds MTU, it's fragmented into smaller pieces. Reassembled at destination. IPv6 doesn't allow router fragmentation — uses Path MTU Discovery instead.
+Q: What is a VLAN?
+
+Virtual LAN — logically partitions a physical network into separate broadcast domains. Configured on switches. Traffic between VLANs requires a router. Used for security isolation, traffic management. Your pf firewall project deals with zone-based rules which are conceptually similar.
+
+10B. NETWORK SECURITY
+Q: What is a man-in-the-middle attack?
+
+Attacker intercepts communication between two parties, can read or modify data. Prevention: TLS/SSL with certificate validation, public key pinning, HSTS.
+Q: What is ARP poisoning?
+
+Attacker sends fake ARP replies linking their MAC to a legitimate IP address. Causes traffic to be redirected to attacker. Used for MITM on local networks. Prevention: dynamic ARP inspection, static ARP entries.
+Q: What is a replay attack?
+
+Attacker captures a valid message/token and retransmits it later. Prevention: nonces (numbers used once), timestamps, session tokens. Your Ed25519 signatures don't prevent replay (same binary signed with same key) — you need version numbers or timestamps for that.
+Q: What is SQL injection?
+
+Attacker inserts SQL commands into input fields that get executed by the database. Example: ' OR '1'='1 in login field. Prevention: parameterized queries / prepared statements, input validation, stored procedures.
+Q: What is a buffer overflow exploit?
+
+Overflow a stack buffer to overwrite the return address and redirect execution to shellcode. Modern mitigations: stack canaries (detect overflow before return), ASLR (randomize addresses), NX bit (non-executable stack), CFI (control flow integrity). Relevant to your security work.
+Q: What is the difference between authentication and authorization?
+
+Authentication: verifying identity — who are you? (password, biometric, certificate)
+
+Authorization: verifying permissions — what are you allowed to do? (ACLs, roles)
+
+Authentication before authorization.
+Q: What is a rootkit? Types?
+
+Malware that hides its presence and maintains privileged access.
+
+Types: User-space rootkit (hooks libc functions), Kernel rootkit (modifies kernel — similar to your module's lsmod hiding), Bootkit (infects MBR/UEFI), Hypervisor rootkit (runs below OS). Your security work is specifically defending against kernel rootkits.
+Q: What is PII? Why is it regulated?
+
+Personally Identifiable Information — data that can identify an individual: SSN, PAN, email, phone, biometric data. Regulated by GDPR, India's DPDP Act, HIPAA. Your DLP engine detects PII in files and print jobs.
+
+10C. SOCKET PROGRAMMING
+Q: Write a simple TCP server in C (skeleton).
+int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+
+int opt = 1;
+setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+
+struct sockaddr_in addr = {0};
+addr.sin_family = AF_INET;
+addr.sin_addr.s_addr = INADDR_ANY;
+addr.sin_port = htons(8080);
+
+bind(sockfd, (struct sockaddr*)&addr, sizeof(addr));
+listen(sockfd, 5);
+
+int clientfd = accept(sockfd, NULL, NULL);
+char buf[1024];
+int n = read(clientfd, buf, sizeof(buf));
+write(clientfd, buf, n);   // echo back
+
+close(clientfd);
+close(sockfd);
+Q: What is select() used for?
+
+Monitors multiple file descriptors simultaneously — returns when one or more are ready for read/write. Used in single-threaded servers handling multiple clients. Limited to 1024 FDs. Your daemon likely uses poll() or epoll() which are more scalable.
+Q: What is htons()? Why is it needed?
+
+Host TO Network Short — converts 16-bit integer from host byte order to network byte order (big-endian). Network protocols use big-endian. x86 is little-endian. Always use htons() for port numbers, htonl() for IPv4 addresses in socket structs.
+Q: What is SO_REUSEADDR?
+
+Socket option that allows binding to a port that's in TIME_WAIT state. Without it, restarting a server fails with "Address already in use" for ~2 minutes after shutdown. Always set this on server sockets.
+
+SECTION 11 — DBMS (Database Management Systems)
+Q: What is ACID?
+
+Atomicity: transaction is all-or-nothing. Either all operations commit or none do.
+Consistency: database goes from one valid state to another. Constraints never violated.
+Isolation: concurrent transactions don't interfere with each other.
+Durability: committed transactions survive crashes (written to disk).
+
+Your SQLite FIM baseline uses ACID — if daemon crashes mid-update, snapshot remains consistent.
+
+Q: What is normalization? Forms?
+
+Process of organizing data to reduce redundancy.
+
+1NF: atomic values, no repeating groups
+2NF: 1NF + no partial dependencies (all non-key columns depend on entire primary key)
+3NF: 2NF + no transitive dependencies (non-key columns don't depend on other non-key columns)
+BCNF: stricter 3NF
+
+Q: What is a transaction? How do you write one in SQL?
+BEGIN TRANSACTION;
+UPDATE accounts SET balance = balance - 500 WHERE id = 1;
+UPDATE accounts SET balance = balance + 500 WHERE id = 2;
+COMMIT;
+-- or ROLLBACK; if something fails
+Q: What is an index? How does B-tree index work?
+
+B-tree (Balanced tree) index: self-balancing tree where internal nodes act as guides and leaf nodes contain data pointers. Keeps data sorted, allows O(log n) search, insert, delete. Range queries are efficient. Your SQLite FIM uses B-tree index on file path.
+Q: What is a stored procedure?
+
+Precompiled SQL code stored in the database and executed by name. Advantages: reduced network traffic, reusable logic, security (users call procedure without direct table access), performance (precompiled execution plan).
+Q: What is a trigger?
+
+SQL code that automatically executes in response to INSERT, UPDATE, or DELETE on a table. Used for audit logging, enforcing complex constraints, cascading changes.
+Q: What is the difference between INNER JOIN and OUTER JOIN?
+
+INNER JOIN: only rows that match in both tables.
+
+LEFT OUTER JOIN: all rows from left table + matched rows from right (NULL for unmatched).
+
+RIGHT OUTER JOIN: all rows from right table + matched rows from left (NULL for unmatched).
+
+FULL OUTER JOIN: all rows from both tables (NULL where no match on either side).
+Q: What is a deadlock in databases?
+
+Transaction A holds lock on row 1, waits for row 2. Transaction B holds lock on row 2, waits for row 1. Database detects this and rolls back one transaction (victim). Different from OS deadlock — database handles it automatically.
+Q: What are isolation levels?
+
+Controls what a transaction can see from other concurrent transactions.
+
+Read Uncommitted: can read uncommitted changes (dirty reads possible)
+Read Committed: only reads committed data (most DBs default)
+Repeatable Read: same row returns same value in a transaction
+Serializable: strictest — transactions appear to run serially
+
+
+SECTION 12 — DATA STRUCTURES DEEP DIVE
+Q: What is a hash table? How does it handle collisions?
+
+Array + hash function. Hash function maps key to array index. Collisions (two keys map to same index) handled by:
+
+Chaining: linked list at each slot
+Open addressing: probe for next empty slot (linear, quadratic, double hashing)
+
+Load factor = elements / slots. Resize (rehash) when load factor > 0.7.
+
+Q: What is a heap? Min-heap vs max-heap?
+
+Complete binary tree where parent is always smaller (min-heap) or larger (max-heap) than children. Not sorted — just the heap property. Used in priority queues, heap sort, Dijkstra's algorithm. Insert: add at end, bubble up. Delete min/max: replace root with last, bubble down. O(log n) operations.
+Q: What is a trie? When to use it?
+
+Tree where each node represents a character. Root to leaf spells a word. O(L) search where L = word length. Used for: autocomplete, spell check, IP routing tables (prefix matching). Relevant to your PCRE2 pattern matching work.
+Q: What is dynamic programming? Difference from recursion with memoization?
+
+DP: breaking problem into overlapping subproblems, solving each once, storing results.
+
+Memoization (top-down DP): recursive solution + cache. Lazy — only computes needed subproblems.
+
+Tabulation (bottom-up DP): iterative, fills table from base cases. No recursion overhead.
+Q: What is amortized analysis?
+
+Average cost per operation over a sequence of operations, even if individual operations vary. Example: dynamic array doubling — individual resize is O(n) but amortized over n pushes = O(1) per push. Your event queue processing uses similar reasoning.
+Q: What is the difference between DFS and BFS complexity?
+
+Both: Time O(V+E) where V = vertices, E = edges.
+
+Space: BFS uses O(V) for queue (worst case all vertices in queue). DFS uses O(V) for stack/recursion (depth of tree). For wide graphs, DFS uses less memory. For deep graphs, BFS uses less memory.
+
+SECTION 13 — MORE PUZZLES & BRAIN TEASERS
+PUZZLE 11: Josephus Problem
+
+N people in a circle, every Kth person eliminated. Find safe position.
+
+For K=2 (every 2nd person eliminated):
+int josephus(int n) {
+    int pos = 0;
+    for (int i = 2; i <= n; i++)
+        pos = (pos + 2) % i;
+    return pos + 1;
+}
+For n=8: safe position is 1.
+PUZZLE 12: Rotate an array by K positions
+void reverse(int* arr, int l, int r) {
+    while (l < r) { int tmp=arr[l]; arr[l]=arr[r]; arr[r]=tmp; l++; r--; }
+}
+void rotateLeft(int* arr, int n, int k) {
+    k = k % n;
+    reverse(arr, 0, k-1);
+    reverse(arr, k, n-1);
+    reverse(arr, 0, n-1);
+}
+// [1,2,3,4,5] rotated left by 2 → [3,4,5,1,2]
+PUZZLE 13: Find the duplicate in array 1 to N using XOR
+int findDuplicate(int arr[], int n) {
+    int xorAll = 0;
+    for (int i = 1; i <= n-1; i++) xorAll ^= i;
+    for (int i = 0; i < n; i++) xorAll ^= arr[i];
+    return xorAll;
+    // XOR of 1..n-1 cancels everything except the duplicate
+}
+PUZZLE 14: Check if two strings are anagrams
+bool isAnagram(char* s1, char* s2) {
+    if (strlen(s1) != strlen(s2)) return false;
+    int freq[256] = {0};
+    for (int i = 0; s1[i]; i++) freq[(unsigned char)s1[i]]++;
+    for (int i = 0; s2[i]; i++) {
+        freq[(unsigned char)s2[i]]--;
+        if (freq[(unsigned char)s2[i]] < 0) return false;
+    }
+    return true;
+}
+PUZZLE 15: Print Pascal's Triangle
+void pascal(int n) {
+    int arr[n][n];
+    for (int i = 0; i < n; i++) {
+        arr[i][0] = arr[i][i] = 1;
+        for (int j = 1; j < i; j++)
+            arr[i][j] = arr[i-1][j-1] + arr[i-1][j];
+        for (int j = 0; j <= i; j++) printf("%d ", arr[i][j]);
+        printf("\n");
+    }
+}
+PUZZLE 16: Coin change problem (DP)
+
+Minimum coins to make amount N.
+int minCoins(int coins[], int n, int amount) {
+    int dp[amount+1];
+    dp[0] = 0;
+    for (int i = 1; i <= amount; i++) dp[i] = INT_MAX;
+    for (int i = 1; i <= amount; i++)
+        for (int j = 0; j < n; j++)
+            if (coins[j] <= i && dp[i - coins[j]] != INT_MAX)
+                dp[i] = min(dp[i], dp[i - coins[j]] + 1);
+    return dp[amount];
+}
+PUZZLE 17: Next permutation
+
+Problem: given [1,3,2] find next permutation in lexicographic order → [2,1,3]
+
+Steps:
+
+Find largest index i such that arr[i] < arr[i+1]. If none, reverse all (already last permutation).
+Find largest index j > i such that arr[j] > arr[i].
+Swap arr[i] and arr[j].
+Reverse suffix starting at arr[i+1].
+
+PUZZLE 18: Median of two sorted arrays
+
+Optimal: O(log(min(m,n))) — binary search on smaller array's partition.
+
+Simpler O(m+n) merge approach (mention optimal exists if asked):
+
+Merge both arrays (like merge sort step), return middle element(s).
+PUZZLE 19: Stock buy/sell — maximum profit
+
+int maxProfit(int prices[], int n) {
+    int minPrice = prices[0], maxProfit = 0;
+    for (int i = 1; i < n; i++) {
+        if (prices[i] < minPrice) minPrice = prices[i];
+        else if (prices[i] - minPrice > maxProfit)
+            maxProfit = prices[i] - minPrice;
+    }
+    return maxProfit;
+}
+PUZZLE 20: Longest common subsequence (DP)
+int lcs(char* s1, char* s2, int m, int n) {
+    int dp[m+1][n+1];
+    for (int i = 0; i <= m; i++) {
+        for (int j = 0; j <= n; j++) {
+            if (!i || !j) dp[i][j] = 0;
+            else if (s1[i-1] == s2[j-1]) dp[i][j] = dp[i-1][j-1] + 1;
+            else dp[i][j] = max(dp[i-1][j], dp[i][j-1]);
+        }
+    }
+    return dp[m][n];
+}
+SECTION 14 — SECURITY-SPECIFIC QUESTIONS (Your domain — expect deep questions here)
+Q: What is the difference between EDR and antivirus?
+
+Antivirus: signature-based, detects known malware by hash/pattern. Reactive.
+
+EDR (Endpoint Detection and Response): behavior-based monitoring, records process activity, network connections, file operations, detects anomalies. Your eScan EDR work is this — fanotify, ESF, and syscall hooks enable behavioral detection.
+Q: What is code signing? Why is it important?
+
+Attaching a cryptographic signature to a binary to prove it came from a known source and hasn't been tampered with. Your Guardian project implements this with Ed25519. macOS and Windows both require code signing for apps to run without warnings. Prevents supply chain attacks.
+Q: What is the principle of least privilege?
+
+Give any process, user, or system only the minimum permissions needed to perform its function. Your fanotify daemon runs as root (needed for FAN_OPEN_PERM) but could drop capabilities after initialization. Reducing attack surface.
+Q: What is a race condition in security context (TOCTOU)?
+
+Time-Of-Check to Time-Of-Use: check a condition (e.g., file exists and is safe) then use it — attacker replaces file between check and use. Your DLP printer scanner must handle this: check spool file → verify content → delete. If another process replaces the spool file between check and delete, wrong file gets deleted. Fix: open file once, operate on the open fd.
+Q: What is defense in depth?
+
+Multiple independent security layers so that failure of one doesn't compromise the system. Your ransomware module demonstrates this: lsmod hiding + passphrase sysfs + SIGKILL on detection + JSON audit log. Each layer adds cost for attacker.
+Q: What is the difference between symmetric and asymmetric encryption?
+
+Symmetric: same key for encrypt/decrypt (AES). Fast, used for bulk data. Key distribution is the problem.
+
+Asymmetric: public key encrypts, private key decrypts (RSA). Or private key signs, public key verifies (Ed25519). Slow, used for key exchange and signatures. Key distribution solved — public key can be shared freely.
+Q: What is a hash collision? How does it affect your FIM?
+
+Two different inputs produce the same hash output. MD5 has known collision attacks — attacker could craft a malicious file with the same MD5 hash as a legitimate file. Your FIM uses MD5 (your resume mentions this) — upgrade path is SHA-256 which has no practical collisions. Mention this proactively — shows awareness.
+Q: What is a kernel module attack surface?
+
+Your kernel module runs in ring 0 — any bug is a privilege escalation or system crash. Attack surface includes: sysfs interface (your password-protected interface), ioctl handlers, probe functions, symbol exports. Must validate ALL userspace input before using it in kernel context — never trust userspace data size/pointer.
+
+SECTION 15 — Qt SPECIFIC (Since you have Qt5/6 experience)
+Q: What is the signal-slot mechanism in Qt?
+
+Qt's event communication system. Objects emit signals when something happens. Slots are functions that respond. connect(sender, SIGNAL(clicked()), receiver, SLOT(doSomething())). Loosely coupled — sender doesn't know who receives. Can be across threads (queued connection uses event loop). Your Qt GUI security dashboards use this.
+Q: What is the Qt event loop?
+
+QApplication::exec() starts the event loop — processes events (user input, timers, network, signals). Essential for GUI responsiveness. Long operations in the main thread block the event loop and freeze the UI. Solution: QThread, QtConcurrent, or async operations.
+Q: What is the difference between QThread and std::thread in Qt context?
+
+QThread integrates with Qt's event loop — can use signals/slots, QTimer, network operations inside the thread. std::thread does not. For Qt GUI work, use QThread. For pure computation, either works.
+Q: What is a Model-View architecture in Qt?
+
+Qt's MVC pattern: Model (data), View (display), delegate (rendering). QAbstractItemModel is the base model. QTableView, QListView, QTreeView are views. Separation allows same data displayed in multiple views. Your security dashboard likely uses QTableView for event logs.
+
+SECTION 16 — WINDOWS SDK / KMDF (Gap area — know enough to not fail)
+Q: What is the difference between WDM and KMDF?
+
+WDM (Windows Driver Model): older, complex, manual IRP handling, error-prone.
+
+KMDF (Kernel-Mode Driver Framework): higher-level wrapper over WDM, handles IRP complexity, plug-and-play, power management automatically. Use KMDF for new drivers. Equivalent to saying: WDM is like raw syscalls, KMDF is like using a framework.
+Q: What is an IRP?
+
+I/O Request Packet — the fundamental communication structure between Windows I/O manager and drivers. Equivalent to a struct carrying the I/O request (read, write, ioctl). Drivers receive IRPs, process them, and either complete or pass to next driver in the stack. Analogous to your fanotify event + response pattern.
+Q: What is a minifilter driver? How does it relate to your fanotify work?
+
+Minifilter: Windows kernel component that attaches to the file system filter manager to intercept file I/O. Exact equivalent of your Linux fanotify work. Pre-operation callback = your FAN_OPEN_PERM handler. Post-operation callback = your NOTIFY_CLOSE handler. FltRegisterFilter() is the Windows equivalent of fanotify_init().
+Q: What is IOCTL?
+
+I/O Control — mechanism for userspace to send commands and receive data from a kernel driver. Defined by control code (CTL_CODE macro on Windows, ioctl() on Linux). Your sysfs password interface on Linux is the equivalent — userspace writes password to a sysfs file; Windows equivalent would be a DeviceIoControl() call.
+Q: What is the Win32 API equivalent of fork()?
+
+Windows has no fork(). Instead: CreateProcess() creates a new process from scratch. CreateThread() creates a thread. For process-based parallelism, Windows uses spawn pattern (CreateProcess) not fork+exec pattern.
+
+SECTION 17 — DESIGN & ARCHITECTURE QUESTIONS (For 3-year experience)
+Q: How would you design a file integrity monitoring system from scratch?
+
+Answer framework:
+
+Baseline: walk target directories, compute SHA-256 hash + permissions + size + mtime for each file, store in SQLite with transaction.
+Monitoring: FSEvents (macOS), inotify (Linux) for real-time events.
+On each event: recompute hash, compare with baseline, if different: raise alert with diff details (old vs new hash, what changed).
+Alert delivery: write to structured log (JSON), optionally send to SIEM via syslog.
+Config: watch paths, exclude patterns, alert thresholds — from config file.
+Edge cases: handle symlinks (follow or not?), handles, hard links, large files (stream hash), permission denied (log and continue).
+
+Q: How would you design an IPC-based scanner daemon?
+
+Answer framework:
+
+Server: Unix domain socket at fixed path (/var/run/scanner.sock). Single init: load PCRE2 patterns, init Tesseract, load magic database.
+Protocol: client sends length-prefixed JSON message with file path and options. Server responds with JSON result (matches, PII types, locations).
+Concurrency: thread pool (N workers) pulling from request queue. Each thread handles one scan request.
+Lifecycle: client sends path, gets back results without re-initializing regex engine.
+Error handling: timeout per request, graceful degradation if OCR fails.
+
+Q: Why did you choose Ed25519 over ECDSA for your Guardian?
+
+Both are elliptic curve based. Ed25519 advantages: deterministic signatures (no random nonce needed — ECDSA requires a cryptographically random k; if k is reused or weak, private key is recoverable), faster verification, simpler implementation, constant-time by design in libsodium. Sony PS3 hack exploited ECDSA k reuse — Ed25519 doesn't have this problem.
+
+SECTION 18 — TRICKY C OUTPUT QUESTIONS (MCQ round type)
+Q1:
+int x = 10;
+if (x = 5)
+    printf("true");
+else
+    printf("false");
+Output: true (assignment returns 5, which is truthy — common bug)
+Q2:
+int arr[5] = {1, 2, 3, 4, 5};
+int *p = arr + 2;
+printf("%d %d", *(p-1), *(p+1));
+Output: 2 4
+Q3:
+char *s = "hello";
+s[0] = 'H';
+printf("%s", s);
+Output: Segmentation fault (string literals are in read-only memory)
+Q4:
+int a = 5, b = 10, c = 15;
+printf("%d", a > b ? a > c ? a : c : b > c ? b : c);
+Output: 15 (max of three)
+Q5:
+static int x = 0;
+void foo() { printf("%d ", ++x); }
+int main() { foo(); foo(); foo(); }
+Output: 1 2 3 (static retains value between calls)
+Q6:
+int i;
+for (i = 0; i < 5; i++);
+printf("%d", i);
+Output: 5 (note the semicolon after for — empty loop body)
+Q7:
+int x = 1;
+switch(x) {
+    case 1: printf("one ");
+    case 2: printf("two ");
+    case 3: printf("three ");
+}
+Output: one two three (no break statements — fall-through)
+Q8:
+int x = 0;
+printf("%d", x++ + ++x);
+Output: Undefined behaviour — but many compilers output 2 (say "undefined behaviour" first, then explain)
+Q9:
+void foo(int arr[]) {
+    printf("%d", sizeof(arr));
+}
+int main() {
+    int arr[10];
+    foo(arr);
+}
+Output: 4 or 8 (size of pointer, not the array — arrays decay to pointers when passed to functions)
+Q10:
+int x = -1;
+printf("%u", x);
+Output: 4294967295 (two's complement -1 in unsigned = max uint32)
+SECTION 19 — QUICK CONCEPT DEFINITIONS FOR MCQ
+What is a semaphore initialized to 1?
+
+Binary semaphore — acts like a mutex but without ownership. First wait() decrements to 0, blocks others. Signal() increments back to 1.
+What is Belady's anomaly?
+
+With FIFO page replacement, increasing the number of frames can sometimes increase page faults. Does NOT occur with LRU or Optimal.
+What is critical section problem requirements?
+
+Must satisfy: Mutual exclusion (only one process inside at a time), Progress (if no one inside, waiting process must be able to enter), Bounded waiting (no starvation — process must eventually enter).
+What is the banker's algorithm?
+
+Deadlock avoidance algorithm — checks if allocating a resource leads to a safe state (where all processes can eventually finish). Keeps system in safe state at all times.
+What is a race condition in the kernel?
+
+Two CPU cores accessing the same kernel data structure simultaneously without locking. On single-core with preemption: interrupt handler and process context. Fix: spinlocks (in interrupt context), mutexes (in process context), RCU for read-heavy data.
+What is cache coherence?
+
+In multi-core CPUs, each core has its own L1/L2 cache. When one core writes to a memory location, other cores' cached copies become stale. Cache coherence protocols (MESI) ensure all cores see a consistent view of memory. Relevant to your atomic operations and memory ordering.
+What is memory ordering?
+
+CPU and compiler can reorder memory operations for performance. std::atomic with memory_order_relaxed gives no ordering guarantees. memory_order_acquire/release creates synchronization points. memory_order_seq_cst gives total ordering (default, safest). Use in your daemon's atomic flag for shutdown signaling.
+What is the difference between process scheduling and memory management?
+
+Process scheduling: decides which process/thread runs on CPU (scheduler).
+
+Memory management: manages virtual-physical address mapping, paging, swapping (memory manager / VMM).
+
+Both are core OS kernel subsystems.
+What is copy-on-write in C++ strings?
+
+Pre-C++11: some implementations shared string buffer until a write occurred, then made a copy. C++11 mandates separate storage — COW is no longer allowed for std::string due to thread safety issues.
+What is RVO (Return Value Optimization)?
+
+Compiler optimization — when a function returns a local object, compiler constructs it directly in the caller's space instead of copying. Avoids copy/move constructor call entirely. Guaranteed since C++17 (NRVO is optional).

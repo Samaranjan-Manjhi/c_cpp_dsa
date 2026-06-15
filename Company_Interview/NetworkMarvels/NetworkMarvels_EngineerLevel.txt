@@ -1,0 +1,929 @@
+================================================================
+NETWORK MARVELS — SOFTWARE ENGINEER (ENGINEER LEVEL QUESTIONS)
+Puzzles + Deep STL + Vector Internals + String Internals
+NOT in your previous prep docs.
+For: Samaranjan Manjhi | Interview: 16 June 2026, 2 PM
+================================================================
+Engineer-level = they expect you to know WHY, not just WHAT.
+They want internal mechanics, edge cases, and real trade-offs.
+================================================================
+
+
+================================================================
+SECTION 1 — CLASSIC ENGINEER PUZZLES
+(These are asked to test logical thinking and problem decomposition)
+================================================================
+
+----------------------------------------------------------------
+PUZZLE 1: 8 Balls, 1 Odd (lighter) — 2 Weighings
+----------------------------------------------------------------
+Problem: 8 balls, one is lighter. Balance scale, 2 weighings. Find it.
+
+ANSWER:
+Weighing 1: Put 3 balls on left, 3 on right.
+  Case A — one side lighter → odd ball is in that group of 3.
+  Case B — balanced → odd ball is in remaining 2.
+
+Weighing 2:
+  Case A: Take 2 balls from lighter group. Weigh them.
+    If one side lighter → that's it.
+    If balanced → third ball (not weighed) is the odd one.
+  Case B: Weigh the remaining 2 against each other.
+    Lighter one is odd.
+
+ENGINEER FOLLOW-UP: "What if you don't know if it's lighter or heavier?"
+ANSWER: Need 3 weighings. Label balls 1-8. First weigh 1,2,3 vs 4,5,6.
+Track which pan dips — now you know heavier OR lighter. Then narrow down.
+
+----------------------------------------------------------------
+PUZZLE 2: 2 Eggs, 100 Floors — Minimum Worst Case Drops
+----------------------------------------------------------------
+Problem: 2 eggs, 100-floor building. Find the highest floor an egg
+can be dropped from without breaking. Minimize worst-case drops.
+
+ANSWER (the engineer answer, not the naive one):
+Naive wrong answer: Binary search = O(log n) but only works with
+unlimited eggs. With 2 eggs, if first egg breaks, you must do linear
+search from below — so binary search doesn't work.
+
+Correct approach: Try floors 14, 27, 39, 50, 60, 69, 77, 84, 90, 95, 99, 100.
+Gap decreasing by 1 each time (14, 13, 12, 11...).
+Worst case: 14 drops.
+
+Formula: k + (k-1) + (k-2) + ... + 1 >= 100 → k(k+1)/2 >= 100 → k=14.
+
+WHY DECREASING GAPS: As egg 1 is dropped more times, egg 2 has fewer
+floors left to linearly scan. Keeps worst case flat.
+
+----------------------------------------------------------------
+PUZZLE 3: Pirates and Gold (Logic)
+----------------------------------------------------------------
+Problem: 5 pirates rank 1-5 (1=most senior). They found 100 gold coins.
+Senior pirate proposes split. All vote. If >= 50% agree, done.
+If not, proposer thrown overboard and next senior proposes.
+Pirates are rational and greedy. What does Pirate 1 propose?
+
+ANSWER: Work backwards.
+2 pirates: Pirate 2 takes all 100. Pirate 1 gets 0 (loses vote).
+3 pirates: Pirate 3 needs 2 votes. Offers pirate 1 just 1 coin
+  (pirate 1 gets 0 if 3 dies, so takes 1). Pirate 3: 99, P2: 0, P1: 1.
+4 pirates: Pirate 4 needs 2 votes. Offers P2 1 coin (P2 gets 0 if 4 dies).
+  P4: 99, P3: 0, P2: 1, P1: 0.
+5 pirates: Pirate 5 needs 3 votes. Offers P3 and P1 each 1 coin.
+  Final: P5=98, P4=0, P3=1, P2=0, P1=1.
+
+WHAT THIS TESTS: Recursive reasoning, backward induction — same thinking
+used in game trees (minimax). Relevant to algorithm design.
+
+----------------------------------------------------------------
+PUZZLE 4: Odd One Out (Bit Trick — CODE)
+----------------------------------------------------------------
+Problem: Array has n elements where every element appears twice
+except one. Find the odd one out. O(n) time, O(1) space.
+
+ANSWER:
+int findOdd(vector<int>& arr) {
+    int res = 0;
+    for(int x : arr) res ^= x;
+    return res;
+}
+// XOR property: a^a=0, a^0=a, XOR is commutative and associative.
+// All pairs cancel to 0. Only unpaired element remains.
+
+FOLLOW-UP: What if two elements appear odd number of times?
+int x = 0;
+for(int n : arr) x ^= n; // x = a^b (XOR of the two odd elements)
+int bit = x & (-x);      // rightmost set bit (differs between a and b)
+int a = 0;
+for(int n : arr) if(n & bit) a ^= n; // partition and XOR
+int b = x ^ a;
+// Result: a and b.
+
+----------------------------------------------------------------
+PUZZLE 5: Water Jug Problem (Classic)
+----------------------------------------------------------------
+Problem: 3L jug and 5L jug, unlimited water. Measure exactly 4L.
+
+ANSWER:
+Step 1: Fill 5L jug.
+Step 2: Pour from 5L into 3L → 5L has 2L, 3L is full.
+Step 3: Empty 3L.
+Step 4: Pour 2L from 5L into 3L.
+Step 5: Fill 5L again.
+Step 6: Pour from 5L into 3L (needs 1L to fill) → 5L now has 4L.
+
+ENGINEER NOTE: This is BFS in disguise. State = (x, y) where x=3L jug,
+y=5L jug. BFS from (0,0) to any state where x=4 or y=4.
+
+----------------------------------------------------------------
+PUZZLE 6: Josephus Problem (CODE — engineers love this)
+----------------------------------------------------------------
+Problem: n people in circle, every k-th person eliminated. Who survives?
+Classic case: n people, eliminate every 2nd. Find survivor's position.
+
+ANSWER (0-indexed):
+int josephus(int n) {
+    // k=2 special case — O(log n) solution
+    // Find highest power of 2 <= n, then: survivor = 2*(n - 2^L) + 1
+    int p = 1;
+    while(p * 2 <= n) p *= 2;
+    return 2 * (n - p) + 1;
+}
+// n=6: p=4, survivor = 2*(6-4)+1 = 5
+
+General k (O(n)):
+int josephus(int n, int k) {
+    int pos = 0; // survivor's position in 1-person circle
+    for(int i = 2; i <= n; i++)
+        pos = (pos + k) % i;
+    return pos + 1; // 1-indexed
+}
+
+WHY THIS IS ASKED: Tests modular arithmetic + recurrence relations.
+
+----------------------------------------------------------------
+PUZZLE 7: Find Missing and Duplicate in Array (One Pass)
+----------------------------------------------------------------
+Problem: Array 1..n with one missing number and one duplicate. Find both.
+
+ANSWER:
+pair<int,int> findMissingDup(vector<int>& arr) {
+    int n = arr.size();
+    long long sumExpected = (long long)n*(n+1)/2;
+    long long sum2Expected = (long long)n*(n+1)*(2*n+1)/6;
+    long long sum=0, sum2=0;
+    for(int x : arr) { sum += x; sum2 += (long long)x*x; }
+    // sum = sumExpected - missing + dup
+    // sum2 = sum2Expected - missing^2 + dup^2
+    long long diff = sumExpected - sum;          // missing - dup
+    long long diff2 = sum2Expected - sum2;        // missing^2 - dup^2
+    // diff2 = (missing+dup)(missing-dup) = (missing+dup)*diff
+    long long sumMD = diff2 / diff;              // missing + dup
+    int missing = (diff + sumMD) / 2;
+    int dup = (sumMD - diff) / 2;
+    return {missing, dup};
+}
+Time: O(n), Space: O(1)
+
+----------------------------------------------------------------
+PUZZLE 8: Clock Angle Problem
+----------------------------------------------------------------
+Problem: What is the angle between hour and minute hands at 3:27?
+
+ANSWER:
+Minute hand: 27 * 6 = 162 degrees (moves 6° per minute)
+Hour hand: 3*30 + 27*0.5 = 90 + 13.5 = 103.5 degrees
+           (moves 30° per hour = 0.5° per minute)
+Angle between = |162 - 103.5| = 58.5 degrees
+
+FORMULA: |30H - 5.5M| where H=hours, M=minutes.
+= |30*3 - 5.5*27| = |90 - 148.5| = 58.5 degrees ✓
+
+----------------------------------------------------------------
+PUZZLE 9: 100 Lockers Problem
+----------------------------------------------------------------
+Problem: 100 lockers, all closed. 100 people. Person k toggles every
+k-th locker. Which lockers are open at the end?
+
+ANSWER: Lockers with an ODD number of factors — i.e., PERFECT SQUARES.
+Open lockers: 1, 4, 9, 16, 25, 36, 49, 64, 81, 100. (10 lockers)
+
+WHY: Locker n is toggled once per divisor. Most numbers have divisors
+in pairs (d and n/d). Perfect squares have one divisor that pairs with
+itself (sqrt). So only perfect squares are toggled odd times → left open.
+
+WHAT THIS TESTS: Number theory reasoning, not trial and error.
+
+
+================================================================
+SECTION 2 — DEEP VECTOR INTERNALS (Engineer Level)
+================================================================
+"Engineer" means: you know WHY push_back is amortized O(1),
+not just THAT it is.
+
+----------------------------------------------------------------
+Q. How does std::vector manage memory internally?
+----------------------------------------------------------------
+ANSWER: vector maintains three pointers internally:
+  _begin: start of allocated memory
+  _end: one past last element (size)
+  _cap_end: one past allocated capacity
+
+When push_back is called and size==capacity:
+1. Allocate new block (typically 2x current capacity)
+2. Move (or copy if no move ctor) all elements to new block
+3. Destroy old elements + deallocate old block
+4. Insert new element
+
+WHY 2x (doubling): Amortized analysis. If you start with capacity 1
+and push n elements, total copies = 1+2+4+...+n = 2n. Cost per
+push_back = O(1) amortized.
+
+TRICK QUESTION: "Is it always 2x?"
+ANSWER: No — the standard says "geometrically" but doesn't require 2x.
+GCC uses 2x. MSVC uses 1.5x (less memory waste, slightly more copies).
+
+----------------------------------------------------------------
+Q. What is the difference between size() and capacity()?
+   What does reserve() do vs resize()?
+----------------------------------------------------------------
+ANSWER:
+size(): number of elements currently in vector
+capacity(): total allocated slots (>= size)
+
+reserve(n): ensures capacity >= n, NO new elements created, size unchanged
+resize(n): sets size to n. If n > current size, new elements value-initialized
+            (0 for int, default-constructed for objects).
+            If n < current size, elements after n are destroyed.
+
+CODE TRAP:
+vector<int> v;
+v.reserve(10); // capacity=10, size=0
+v.resize(10);  // capacity=10, size=10, all elements = 0
+v[5] = 42;     // safe after resize, NOT safe after reserve
+
+----------------------------------------------------------------
+Q. When do vector iterators get invalidated?
+   (Engineer-level — they will ask this for your daemon code)
+----------------------------------------------------------------
+ANSWER (complete rules):
+1. push_back / emplace_back: ALL iterators invalidated IF reallocation
+   occurs (size == capacity). If no reallocation, only end() is invalidated.
+2. insert in middle: ALL iterators at/after insertion point invalidated.
+   If reallocation: ALL iterators invalidated.
+3. erase: iterators at/after erased position invalidated.
+4. resize: same as push_back rules.
+5. clear(): all iterators invalidated (but capacity unchanged).
+6. reserve(): if reallocation occurs, ALL invalidated.
+
+SAFE PATTERN for erase-while-iterate:
+// WRONG:
+for(auto it=v.begin(); it!=v.end(); ++it)
+    if(*it == target) v.erase(it); // it now invalid!
+
+// CORRECT (erase-remove idiom):
+v.erase(remove(v.begin(), v.end(), target), v.end());
+
+// OR:
+auto it = v.begin();
+while(it != v.end()) {
+    if(*it == target) it = v.erase(it); // erase returns next valid it
+    else ++it;
+}
+
+----------------------------------------------------------------
+Q. What is the erase-remove idiom? Why does it exist?
+----------------------------------------------------------------
+ANSWER: std::remove doesn't actually remove — it moves "kept" elements
+to the front and returns an iterator to the new end. Actual removal
+needs a second call to erase.
+
+vector<int> v = {1, 2, 3, 2, 4, 2};
+v.erase(remove(v.begin(), v.end(), 2), v.end());
+// v = {1, 3, 4}
+
+WHY: remove is an algorithm — it works on any range/iterator pair.
+It can't call erase because it doesn't know the container.
+erase is a container method. Two-step by design.
+
+YOUR LINK: "In my DLP scanner's file list, I use erase-remove to clean
+up entries that no longer exist on disk after a scan cycle."
+
+----------------------------------------------------------------
+Q. vector<bool> — what is special about it and why is it dangerous?
+----------------------------------------------------------------
+ANSWER: vector<bool> is a template specialization that packs bits.
+Each bool stored as 1 bit, not 1 byte. Saves memory.
+
+PROBLEM: operator[] returns a proxy object, not a reference to bool.
+So this breaks:
+bool& ref = v[0]; // ERROR — can't take reference to a bit
+auto x = v[0];    // x is proxy object, not bool — surprises possible
+
+ALSO: vector<bool> is not a contiguous array of bools. Passing
+&v[0] to a C API expecting bool* is undefined behavior.
+
+USE INSTEAD: vector<char>, vector<uint8_t>, or std::bitset (fixed size).
+
+----------------------------------------------------------------
+Q. What is std::vector::shrink_to_fit()? Is it guaranteed?
+----------------------------------------------------------------
+ANSWER: shrink_to_fit() is a non-binding request to reduce capacity
+to match size. The implementation MAY ignore it.
+Use case: after many erases, you want to reclaim memory.
+
+v.resize(10);     // size=10, capacity=1000 (was large)
+v.shrink_to_fit(); // requests capacity=10, not guaranteed
+
+SWAP TRICK (pre-C++11 guaranteed shrink):
+vector<int>(v).swap(v);
+// Creates temp copy (capacity=size), swaps with v, temp (old large v) destroyed.
+
+----------------------------------------------------------------
+Q. emplace_back vs push_back — when does it actually matter?
+----------------------------------------------------------------
+ANSWER: For primitive types (int, double): no difference.
+For complex objects: push_back requires either copy or move from a
+temporary. emplace_back forwards constructor args directly — NO temp.
+
+struct Point { int x, y; Point(int x, int y) : x(x), y(y) {} };
+
+v.push_back(Point(1, 2));   // construct Point, then move it into vector
+v.emplace_back(1, 2);       // construct Point directly in vector — zero copies
+
+ALSO: push_back requires an existing object. emplace_back can handle
+types without copy/move constructors (if placed correctly).
+
+----------------------------------------------------------------
+Q. Write a function to remove duplicates from a sorted vector in-place.
+   Return new size. O(n) time, O(1) space.
+----------------------------------------------------------------
+int removeDuplicates(vector<int>& v) {
+    if(v.empty()) return 0;
+    int write = 1;
+    for(int i = 1; i < v.size(); i++)
+        if(v[i] != v[i-1]) v[write++] = v[i];
+    v.resize(write);
+    return write;
+}
+// {1,1,2,3,3,4} → {1,2,3,4}, returns 4
+
+FOLLOW-UP: Unsorted vector, preserve order, O(n)?
+int removeDupsUnsorted(vector<int>& v) {
+    unordered_set<int> seen;
+    int write = 0;
+    for(int x : v)
+        if(seen.insert(x).second) v[write++] = x;
+    v.resize(write);
+    return write;
+}
+
+----------------------------------------------------------------
+Q. What is std::span (C++20) and how would you use it?
+   (Forward-thinking engineer question)
+----------------------------------------------------------------
+ANSWER: std::span is a non-owning view over contiguous memory —
+an array, vector, or C-style array. Like a (pointer, size) pair
+but type-safe and with STL iterator support.
+
+void process(std::span<const int> data) {
+    for(int x : data) { /* works on any contiguous range */ }
+}
+
+vector<int> v = {1,2,3};
+int arr[] = {4,5,6};
+process(v);    // works
+process(arr);  // works
+process({v.data()+1, 2}); // works — subspan
+
+WHY IT MATTERS FOR YOUR WORK: "In my kernel verifier, I pass raw
+buffer + length everywhere. std::span would replace that with
+type-safe, bounds-aware views — no accidental out-of-bounds."
+
+
+================================================================
+SECTION 3 — DEEP STRING INTERNALS (Engineer Level)
+================================================================
+
+----------------------------------------------------------------
+Q. How is std::string implemented? What is SSO?
+----------------------------------------------------------------
+ANSWER: std::string typically stores:
+- A pointer to heap-allocated char buffer
+- size (current length)
+- capacity (allocated bytes)
+
+SSO = Small String Optimization. For strings <= ~15 chars (varies by
+implementation), the characters are stored INSIDE the string object
+itself — no heap allocation. The same bytes used for the pointer are
+used directly as the buffer.
+
+WHY IT MATTERS: Short strings (file extensions, field names, flags)
+have zero allocation cost. Profiler won't show them as heap hotspots.
+
+TRAP: SSO means sizeof(std::string) is typically 24-32 bytes regardless
+of string content. Don't assume small string = small object.
+
+----------------------------------------------------------------
+Q. std::string vs std::string_view — when to use which?
+----------------------------------------------------------------
+ANSWER:
+string: owns the character data. Heap allocated (unless SSO). Can modify.
+string_view: non-owning view into existing string/char array. No copy.
+             Pointer + length only. Cannot modify. Cannot outlive source.
+
+USE string_view for: read-only function parameters, parsing substrings.
+USE string for: when you need ownership or modification.
+
+// WRONG — dangling string_view:
+string_view sv = string("temp"); // string destroyed, sv dangling!
+
+// RIGHT:
+string s = "hello world";
+string_view sv = s;         // sv points into s — safe as long as s lives
+string_view word = sv.substr(6, 5); // "world" — no copy
+
+YOUR LINK: "In my PCRE2 DLP engine, I pass string_view to the pattern
+matcher — avoids copying the file content into a new string for each
+regex check."
+
+----------------------------------------------------------------
+Q. What is the difference between find() and rfind() on strings?
+   What does find() return on failure?
+----------------------------------------------------------------
+ANSWER:
+find(sub, pos=0): first occurrence of sub at or after pos
+rfind(sub, pos=npos): last occurrence of sub at or before pos
+
+CRITICAL: On failure, both return string::npos (= SIZE_MAX = a very large
+unsigned value). Common bug:
+
+// WRONG:
+if(s.find("abc") >= 0) { ... } // ALWAYS true — npos is unsigned, >= 0 always
+
+// CORRECT:
+if(s.find("abc") != string::npos) { ... }
+
+----------------------------------------------------------------
+Q. Implement strstr() — find substring in string without using find().
+----------------------------------------------------------------
+int strstrCustom(const string& haystack, const string& needle) {
+    if(needle.empty()) return 0;
+    int n=haystack.size(), m=needle.size();
+    for(int i=0; i<=n-m; i++) {
+        int j=0;
+        while(j<m && haystack[i+j]==needle[j]) j++;
+        if(j==m) return i;
+    }
+    return -1;
+}
+Time: O(n*m) naive. O(n) with KMP.
+
+KMP (they may ask this for engineer level):
+void buildLPS(const string& p, vector<int>& lps) {
+    int m=p.size(), len=0, i=1;
+    lps[0]=0;
+    while(i<m) {
+        if(p[i]==p[len]) lps[i++]=++len;
+        else if(len) len=lps[len-1];
+        else lps[i++]=0;
+    }
+}
+int KMPSearch(const string& text, const string& pat) {
+    int n=text.size(), m=pat.size();
+    vector<int> lps(m);
+    buildLPS(pat, lps);
+    int i=0, j=0;
+    while(i<n) {
+        if(text[i]==pat[j]) { i++; j++; }
+        if(j==m) return i-j; // found
+        else if(i<n && text[i]!=pat[j]) {
+            if(j) j=lps[j-1];
+            else i++;
+        }
+    }
+    return -1;
+}
+Time: O(n+m)
+
+WHY ENGINEER CARES: KMP was used in your PCRE2 engine for literal
+pattern fast-path before regex match. Same principle.
+
+----------------------------------------------------------------
+Q. Implement a string split function (not in standard C++17 and below).
+----------------------------------------------------------------
+vector<string> split(const string& s, char delim) {
+    vector<string> res;
+    stringstream ss(s);
+    string token;
+    while(getline(ss, token, delim))
+        if(!token.empty()) res.push_back(token);
+    return res;
+}
+
+// OR without stringstream (faster, no copy):
+vector<string_view> splitView(string_view s, char delim) {
+    vector<string_view> res;
+    size_t start=0, end;
+    while((end=s.find(delim, start)) != string_view::npos) {
+        if(end>start) res.push_back(s.substr(start, end-start));
+        start=end+1;
+    }
+    if(start<s.size()) res.push_back(s.substr(start));
+    return res;
+}
+
+YOUR LINK: "I use split on config file lines in my FIM daemon — each
+line is 'path:event_mask'. string_view variant avoids copying paths."
+
+----------------------------------------------------------------
+Q. What is the complexity of string concatenation in a loop?
+   How do you fix it?
+----------------------------------------------------------------
+ANSWER: s += piece is O(n) per step (may reallocate). Over k pieces
+of average length m: O(k*m) amortized due to doubling. But naive + in
+a loop:
+string result = "";
+for(string& s : pieces) result = result + s; // O(n²) — creates new string each time!
+
+FIX 1: Use +=
+for(string& s : pieces) result += s; // O(n) amortized
+
+FIX 2: Use stringstream for many pieces:
+ostringstream oss;
+for(string& s : pieces) oss << s;
+string result = oss.str();
+
+FIX 3: Pre-calculate total length, reserve, then append:
+size_t total = 0;
+for(auto& s : pieces) total += s.size();
+result.reserve(total);
+for(auto& s : pieces) result += s;
+
+YOUR LINK: "In my JSON log builder for the ransomware module, I build
+log strings this way — reserve the estimated size first."
+
+----------------------------------------------------------------
+Q. What is the output? Explain.
+   string s = "hello";
+   s[0] = 'H';
+   const char* p = s.c_str();
+   s += " world";
+   printf("%s\n", p);
+----------------------------------------------------------------
+ANSWER: UNDEFINED BEHAVIOR.
+s += " world" may reallocate the internal buffer. p still points to
+the OLD buffer which is now freed/invalid. Accessing p is UB.
+
+RULE: After any modifying operation on string, all pointers obtained
+from c_str() or data() are invalidated.
+
+----------------------------------------------------------------
+Q. Implement atoi (string to int) handling edge cases.
+   (Different from your PDF — this version asks for edge cases verbally)
+----------------------------------------------------------------
+Edge cases to mention:
+1. Leading whitespace — skip it
+2. Optional '+' or '-' sign
+3. Non-digit characters after digits — stop there (don't return error)
+4. Overflow — clamp to INT_MAX or INT_MIN
+5. Empty string / only whitespace → return 0
+6. "  -2147483649" → clamp to INT_MIN
+
+int myAtoi(string s) {
+    int i=0, sign=1;
+    long result=0;
+    while(i<s.size() && s[i]==' ') i++;
+    if(i<s.size() && (s[i]=='+'||s[i]=='-'))
+        sign=(s[i++]=='+') ? 1 : -1;
+    while(i<s.size() && isdigit(s[i])) {
+        result=result*10+(s[i++]-'0');
+        if(result*sign > INT_MAX) return INT_MAX;
+        if(result*sign < INT_MIN) return INT_MIN;
+    }
+    return (int)(result*sign);
+}
+
+
+================================================================
+SECTION 4 — DEEP STL INTERNALS (Engineer Level)
+================================================================
+
+----------------------------------------------------------------
+Q. How does unordered_map work internally? What is a hash collision?
+   How is it resolved in the STL?
+----------------------------------------------------------------
+ANSWER:
+Internally: array of "buckets". Key → hash function → bucket index.
+Each bucket stores a linked list (chaining) of key-value pairs.
+
+Collision: two keys hash to same bucket. Both go into the same list.
+Lookup: hash → bucket → linear search the list.
+
+Load factor = size / bucket_count.
+When load factor > max_load_factor (default 1.0): rehash — double
+buckets, reinsert all elements. O(n) rehash, amortized O(1) per insert.
+
+WORST CASE: All keys collide → one huge list → O(n) lookup.
+This can be triggered deliberately (hash DoS attack) with bad hash functions.
+
+YOUR LINK: "In my PCRE2 match cache I use unordered_map with a custom
+hash to avoid collisions on file paths — file paths often share prefixes
+which naive hash functions handle poorly."
+
+----------------------------------------------------------------
+Q. What is the difference between map and unordered_map for iteration order?
+----------------------------------------------------------------
+ANSWER:
+map: stores in sorted order by key (Red-Black tree). Iteration in
+ascending key order always. Predictable.
+
+unordered_map: no guaranteed order. Order depends on hash and bucket
+layout. May change after rehash.
+
+USE map when: you need sorted iteration, range queries (lower_bound,
+upper_bound), or the key type has no hash.
+USE unordered_map when: you only need lookup by exact key, O(1) vs O(log n).
+
+ENGINEER TRAP:
+unordered_map<string,int> m;
+// After: m["c"]=3; m["a"]=1; m["b"]=2;
+// Iterating m does NOT give a,b,c — order is undefined.
+
+----------------------------------------------------------------
+Q. What is std::lower_bound vs std::upper_bound? Implement binary search
+   using them.
+----------------------------------------------------------------
+ANSWER:
+lower_bound(begin, end, val): first iterator where *it >= val
+upper_bound(begin, end, val): first iterator where *it > val
+
+// Count occurrences of val in sorted vector:
+int count(vector<int>& v, int val) {
+    auto lo = lower_bound(v.begin(), v.end(), val);
+    auto hi = upper_bound(v.begin(), v.end(), val);
+    return hi - lo;
+}
+
+// Check if val exists:
+bool exists(vector<int>& v, int val) {
+    auto it = lower_bound(v.begin(), v.end(), val);
+    return it != v.end() && *it == val;
+}
+
+// Insert maintaining sort:
+void sortedInsert(vector<int>& v, int val) {
+    v.insert(lower_bound(v.begin(), v.end(), val), val);
+}
+
+YOUR LINK: "In my signature database, I use lower_bound to quickly
+check if a binary path exists in the sorted key list before hitting SQLite."
+
+----------------------------------------------------------------
+Q. What is the complexity of std::set operations? How is it implemented?
+----------------------------------------------------------------
+ANSWER: std::set uses a Red-Black Tree (self-balancing BST).
+insert: O(log n) — tree traversal + rebalance
+find:   O(log n)
+erase:  O(log n)
+begin/end: O(1) (cached min/max pointers)
+Iteration: O(n) — in-order traversal of BST → sorted output
+
+COMPARE unordered_set:
+insert: O(1) avg, O(n) worst
+find:   O(1) avg, O(n) worst
+No ordering, no lower_bound/upper_bound.
+
+USE set when: need sorted iteration, range queries, or keys not hashable.
+USE unordered_set when: only need O(1) lookup, don't need order.
+
+----------------------------------------------------------------
+Q. What is priority_queue? How to make a min-heap?
+----------------------------------------------------------------
+ANSWER: priority_queue is a max-heap by default (largest at top).
+
+// Max-heap (default):
+priority_queue<int> maxPQ;
+maxPQ.push(3); maxPQ.push(1); maxPQ.push(4);
+maxPQ.top(); // 4
+
+// Min-heap:
+priority_queue<int, vector<int>, greater<int>> minPQ;
+minPQ.top(); // smallest
+
+// Custom comparator (e.g., sort by second element of pair):
+auto cmp = [](pair<int,int>& a, pair<int,int>& b) {
+    return a.second > b.second; // min-heap by second
+};
+priority_queue<pair<int,int>, vector<pair<int,int>>, decltype(cmp)> pq(cmp);
+
+ENGINEER USE CASE:
+"In my event prioritizer for the fanotify daemon, high-severity events
+(SIGKILL candidates) go into a min-heap keyed by urgency score — most
+urgent processed first."
+
+----------------------------------------------------------------
+Q. Implement a frequency map and find top-k frequent elements.
+----------------------------------------------------------------
+vector<int> topKFrequent(vector<int>& nums, int k) {
+    unordered_map<int,int> freq;
+    for(int x : nums) freq[x]++;
+
+    // Min-heap of size k
+    priority_queue<pair<int,int>, vector<pair<int,int>>, greater<>> pq;
+    for(auto& [val, cnt] : freq) {
+        pq.push({cnt, val});
+        if(pq.size() > k) pq.pop(); // keep only top k
+    }
+    vector<int> res;
+    while(!pq.empty()) { res.push_back(pq.top().second); pq.pop(); }
+    return res;
+}
+Time: O(n log k). Better than O(n log n) full sort.
+
+YOUR LINK: "Same pattern I'd use to find top-k most-frequently scanned
+file types in my DLP engine telemetry."
+
+----------------------------------------------------------------
+Q. What is std::transform, std::accumulate, std::for_each?
+   Give a real use case for each.
+----------------------------------------------------------------
+ANSWER:
+
+// transform: apply function to each element, write to output
+vector<string> paths = {"/etc/passwd", "/tmp/test", "/home/user"};
+vector<int> lengths;
+transform(paths.begin(), paths.end(), back_inserter(lengths),
+    [](const string& s){ return s.size(); });
+// lengths = {11, 9, 10}
+
+// accumulate: fold/reduce
+int total = accumulate(lengths.begin(), lengths.end(), 0);
+// total = 30
+
+// accumulate with custom op (e.g., concatenate):
+string all = accumulate(paths.begin(), paths.end(), string(""),
+    [](string a, const string& b){ return a + ":" + b; });
+
+// for_each: side effects
+for_each(paths.begin(), paths.end(),
+    [](const string& p){ cout << p << "\n"; });
+
+// vs range-for: for_each is composable, can be passed as argument.
+
+----------------------------------------------------------------
+Q. What is std::partition and std::stable_partition?
+   Write a one-liner to move all negative numbers before positives.
+----------------------------------------------------------------
+ANSWER:
+vector<int> v = {3, -1, 4, -2, 5, -6};
+// unstable (may reorder within groups, O(n) swaps):
+auto mid = partition(v.begin(), v.end(), [](int x){ return x < 0; });
+// [-1,-2,-6, 3,4,5] — order within groups not preserved
+
+// stable (preserves relative order, O(n log n)):
+stable_partition(v.begin(), v.end(), [](int x){ return x < 0; });
+// [-1,-2,-6, 3,4,5] — relative order preserved
+
+// mid points to first positive element — useful for further processing.
+
+YOUR LINK: "I use partition in my file scanner to separate blocked
+files from allowed files in a single pass over the scan results vector."
+
+----------------------------------------------------------------
+Q. What is std::move_iterator? When would you use it?
+----------------------------------------------------------------
+ANSWER: Wraps an iterator so dereferencing it produces an rvalue.
+Lets you "move" elements from a container instead of copying.
+
+vector<string> src = {"alpha", "beta", "gamma"};
+vector<string> dst;
+// Copy (src unchanged):
+copy(src.begin(), src.end(), back_inserter(dst));
+// Move (src elements now in valid-but-unspecified state):
+move(src.begin(), src.end(), back_inserter(dst)); // std::move (algorithm)
+// OR:
+dst.insert(dst.end(),
+    make_move_iterator(src.begin()),
+    make_move_iterator(src.end()));
+
+// After move: src[0] etc. are valid but likely empty strings.
+
+USE WHEN: Moving large strings/objects between containers without copy.
+
+----------------------------------------------------------------
+Q. What is the difference between std::copy and std::move (algorithm)?
+   Are they related to std::move (utility)?
+----------------------------------------------------------------
+ANSWER: Three different things with similar names:
+
+std::move (utility) — in <utility>: casts a value to rvalue reference.
+  NOT an algorithm, does NOT move data by itself.
+
+std::move (algorithm) — in <algorithm>: like std::copy but moves
+  each element using move semantics instead of copying.
+
+std::copy (algorithm) — copies elements from source range to destination.
+
+// Names are overloaded by the standard committee — common confusion.
+// On an interview, clarify which one you mean.
+
+
+================================================================
+SECTION 5 — TRICKY OUTPUT / TRAP QUESTIONS (Engineer Level)
+================================================================
+
+Q1. What is the output?
+    vector<int> v = {1, 2, 3};
+    for(auto x : v) v.push_back(x * 2);
+    cout << v.size();
+    ANSWER: UNDEFINED BEHAVIOR.
+    push_back may reallocate, invalidating the range-for's internal
+    iterators. Say "UB due to iterator invalidation during iteration."
+
+Q2. What is the output?
+    vector<int> v(5, 0);
+    fill(v.begin(), v.end(), 7);
+    cout << v[3];
+    ANSWER: 7. fill sets all elements to 7.
+
+Q3. What is the output?
+    string s = "abcde";
+    reverse(s.begin(), s.begin() + 3);
+    cout << s;
+    ANSWER: "cbaDE"? No — "cbade". reverse first 3 chars: "abc" → "cba".
+    Rest unchanged. Result: "cbade".
+
+Q4. What does this do?
+    vector<int> v = {5,3,1,4,2};
+    nth_element(v.begin(), v.begin()+2, v.end());
+    cout << v[2];
+    ANSWER: 3. nth_element partially sorts so that v[2] contains the
+    element that would be at index 2 in a sorted array. Elements before
+    index 2 are <= v[2], elements after are >= v[2], but not fully sorted.
+    O(n) average — faster than full sort when you only need the kth element.
+
+Q5. What is the output?
+    map<int,int> m;
+    m[5]; m[3]; m[7];
+    for(auto& [k,v] : m) cout << k << " ";
+    ANSWER: 3 5 7  (map is always sorted by key)
+
+Q6. What is the output?
+    unordered_map<string,int> um;
+    um["b"] = 2; um["a"] = 1; um["c"] = 3;
+    for(auto& [k,v] : um) cout << k << " ";
+    ANSWER: ORDER UNDEFINED. Could be "b a c" or "c b a" or any order.
+    This is a trap question — say "unordered_map has no guaranteed order."
+
+Q7. What is wrong with this code?
+    vector<int> v = {1,2,3,4,5};
+    for(auto it=v.begin(); it!=v.end(); ++it)
+        if(*it % 2 == 0) v.erase(it);
+    ANSWER: UB — erase invalidates it. Use it = v.erase(it) instead
+    (erase returns next valid iterator). Or use erase-remove idiom.
+
+Q8. What does std::unique do on this vector?
+    vector<int> v = {1,1,2,2,3,1,1};
+    auto it = unique(v.begin(), v.end());
+    v.erase(it, v.end());
+    cout << v.size();
+    ANSWER: 4. unique removes CONSECUTIVE duplicates only.
+    After: {1,2,3,1} — the second group of 1s at the end is kept
+    because it's not adjacent to the first group.
+    If you want all duplicates removed: sort first, then unique.
+
+
+================================================================
+SECTION 6 — 2 EXTRA SMART QUESTIONS TO ASK INTERVIEWER
+(These are more technical than in the previous doc)
+================================================================
+
+QUESTION A:
+"When you say Windows SDK and KMDF in the JD — is the existing
+codebase using WDF object model with WDFDEVICE/WDFREQUEST, or
+is it closer to raw WDM with IRPs directly? I'm ramping up on
+Windows and want to know which abstraction layer to focus on."
+
+WHY: Shows you already know the distinction between WDF (modern) and
+WDM (low-level). Any Windows kernel engineer will immediately know
+you've done your homework. Very few candidates ask this.
+
+QUESTION B:
+"For the DLP and EDR modules — are kernel components communicating
+with user-space via IOCTL/DeviceIoControl, or do you use a filter
+driver with the minifilter framework? I ask because my Linux equivalent
+uses Unix sockets for IPC, and I want to map it correctly to Windows."
+
+WHY: Shows you understand the Windows IPC model at driver level and
+that you're already thinking about how to apply your existing knowledge.
+This question will surprise most interviewers in a very good way.
+
+
+================================================================
+PRIORITY STUDY ORDER — TONIGHT (you have a few hours)
+================================================================
+
+HOUR 1:
+- Puzzles 1, 2, 4, 7 (most commonly asked)
+- Vector invalidation rules (will definitely be asked)
+- string_view vs string
+
+HOUR 2:
+- Linked list: merge sorted, remove Nth from end, palindrome check
+- Stack: MinStack, next greater element
+- Vector: erase-remove idiom, emplace_back vs push_back
+
+HOUR 3:
+- STL: unordered_map internals, priority_queue min-heap
+- String: find() npos trap, strstr, split
+- Output traps: Section 5 all 8 questions
+
+BEFORE SLEEP:
+- Re-read your project explanations in your existing PDFs
+- Link every answer back to something you actually built
+
+================================================================
+TOMORROW AT 2 PM — WALK IN LIKE YOU BUILT THE PRODUCT.
+BECAUSE YOU KIND OF ALREADY DID.
+================================================================
