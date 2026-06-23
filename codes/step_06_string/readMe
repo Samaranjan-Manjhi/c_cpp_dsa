@@ -358,21 +358,21 @@ SECTION 2 — CODING QUESTIONS
              "Shift all characters by same amount mod 26"
              Asked at: TCS, Capgemini
 
-  [C][ ] (E) Print all distinct substrings of a string using a set.
+  [C][x] (E) Print all distinct substrings of a string using a set.
              Asked at: Amazon, Zoho
 
   [C][ ] (E) Implement strlen, strcpy, strcat, strcmp from scratch
              (without using <cstring> library functions).
              Asked at: TCS, Wipro, Samsung, Sasken, embedded roles
 
-  [C][ ] (E) Check if a given string has balanced parentheses (only one type ()).
+  [C][x] (E) Check if a given string has balanced parentheses (only one type ()).
              Use a counter (not stack).
              Asked at: TCS, Wipro
 
-  [C][ ] (E) Find position (index) of first occurrence of a character in a string.
+  [C][x] (E) Find position (index) of first occurrence of a character in a string.
              Asked at: TCS, Wipro
 
-  [C][ ] (E) Read a full sentence using getline and print each word on a new line.
+  [C][x] (E) Read a full sentence using getline and print each word on a new line.
              Demonstrate cin vs getline difference.
              Asked at: TCS, Wipro, Infosys
 
