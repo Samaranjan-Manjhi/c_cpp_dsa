@@ -361,7 +361,7 @@ SECTION 2 — CODING QUESTIONS
   [C][x] (E) Print all distinct substrings of a string using a set.
              Asked at: Amazon, Zoho
 
-  [C][ ] (E) Implement strlen, strcpy, strcat, strcmp from scratch
+  [C][~] (E) Implement strlen, strcpy, strcat, strcmp from scratch
              (without using <cstring> library functions).
              Asked at: TCS, Wipro, Samsung, Sasken, embedded roles
 
