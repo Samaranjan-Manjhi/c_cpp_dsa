@@ -24,18 +24,58 @@ Constraints:
 
 #include <iostream>
 #include <vector>
+#include <string>
 
 using namespace std;
 
-vector<int> getDigitDiff1AndLessK(vector<int>& arr, int k) {
-        // code here
-        
-    }
+vector<int> getDigitDiff1AndLessK(vector<int>& arr, int k) 
+{
+     // code here
+     int n = arr.size();
+     vector<int> res;
+     if(n == 0 || k < 10)
+          return res;
+     for(int i=0;i<n;i++)
+     {
+          if(arr[i] < k)
+          {
+               bool isYes = true;
+               string temp = to_string(arr[i]);
+               for(int j=1;j<temp.size();j++)
+               {
+                    int a = (temp[j-1] - '0');
+                    int b = (temp[j] - '0');
+                    if(abs(a-b) != 1)
+                         isYes = false;
+               }
+               if(isYes)
+                    res.push_back(arr[i]);
+          }
+     } 
+     return res;
+}
 
 int main()
 {
+     int n;
+     cout << "Enter Vector Size: ";
+     cin >> n;
 
+     vector<int> v(n);
+     for(int i=0;i<n;i++)
+          cin >> v[i];
 
+     int k;
+     cout << "Enter K value: ";
+     cin >> k;
 
-return 0;
+     vector<int> res = getDigitDiff1AndLessK(v, k);
+     if(!res.empty())
+     {
+          for(int x : res)
+               cout << x << " ";
+          cout << endl;
+     }
+
+     return 0;
 }
