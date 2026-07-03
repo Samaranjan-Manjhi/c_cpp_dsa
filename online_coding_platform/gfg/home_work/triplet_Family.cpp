@@ -26,13 +26,27 @@ Constraints:
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
 bool findTriplet(vector<int>& arr) 
 {
-        // code here
-        
+     // code here
+     sort(arr.begin(), arr.end());
+     int l = 0, j = 1, r = arr.size()-1;
+     while(l < r)
+     {
+          int sum = arr[l] + arr[j];
+          if(sum == arr[r])
+          {
+               return true;
+          }
+          else if(j < arr.size() && sum < arr[r])
+          {
+               j++;
+          }
+     }
 }
 
 int main()

@@ -30,7 +30,14 @@ using namespace std;
 
 int minMoves(vector<int> &arr) 
 {
-        // code here.
+     // code here.
+     int tar = arr.size();
+     for (int i=arr.size(); i>=0; i--)
+     {
+          if (arr[i] == tar)
+               tar--;
+     }
+     return tar;
 }
 
 int main()

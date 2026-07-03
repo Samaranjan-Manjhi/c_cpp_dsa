@@ -48,7 +48,18 @@ using namespace std;
 
 int coin(vector<int>& arr)
 {
-
+     while(arr.size() > 1)
+     {
+          if(arr.front() > arr.back())
+          {
+               arr.erase(arr.begin());
+          }
+          else
+          {
+               arr.pop_back();
+          }
+     }
+     return arr.front();
 }
 
 int main()
