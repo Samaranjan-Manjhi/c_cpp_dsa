@@ -22,20 +22,77 @@ Constraints:
 
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 
 using namespace std;
 
+bool distinctAdjacent1(vector<int> &arr) 
+{
+     int n = arr.size();
+     unordered_map<int, int> mp;
+     for(int x : arr)
+     {
+          mp[x]++;
+     }
+
+     int cnt = 0;
+     for(auto& m : mp)
+     {
+          cnt = max(cnt, m.second);
+     }
+
+     return (cnt <= (n+1)/2);
+}
+
 bool distinctAdjacent(vector<int> &arr) 
 {
-        // code here
-        
+     // code here
+     int n = arr.size();
+     int cnt = 0;
+     int cnd = -1;
+     for(int x : arr)
+     {
+          if(cnt == 0)
+          {
+               cnd = x;
+               cnt++;
+          }
+          else if(cnd == x)
+          {
+               cnt++;
+          }
+          else
+          {
+               cnt--;
+          }
+     } 
+
+     cnt = 0;
+     for(int x : arr)
+     {
+          if(cnd == x)
+               cnt++;
+     }
+
+     return (cnt <= (n+1)/2);
 }
 
 int main()
 {
+     int n;
+     cout << "Enter Vector Size: ";
+     cin >> n;
 
+     vector<int> v(n);
+     for(int i=0;i<n;i++)
+          cin >> v[i];
 
+     bool res = distinctAdjacent(v);
+     bool res1 = distinctAdjacent1(v);
+     if(res && res1)
+          cout << "    Yes\n";
+     else
+          cout << "    Nope\n";
 
-
-return 0;
+     return 0;
 }

@@ -37,7 +37,7 @@ vector<int> getDigitDiff1AndLessK(vector<int>& arr, int k)
           return res;
      for(int i=0;i<n;i++)
      {
-          if(arr[i] < k)
+          if(arr[i] > 9 && arr[i] < k)
           {
                bool isYes = true;
                string temp = to_string(arr[i]);
