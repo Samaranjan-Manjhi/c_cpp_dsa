@@ -34,19 +34,25 @@ bool findTriplet(vector<int>& arr)
 {
      // code here
      sort(arr.begin(), arr.end());
-     int l = 0, j = 1, r = arr.size()-1;
-     while(l < r)
+     int n = arr.size();
+     for (int r = n - 1; r >= 2; r--) 
      {
-          int sum = arr[l] + arr[j];
-          if(sum == arr[r])
+          int l = 0;
+          int j = r - 1;
+
+          while (l < j) 
           {
-               return true;
-          }
-          else if(j < arr.size() && sum < arr[r])
-          {
-               j++;
+               int sum = arr[l] + arr[j];
+
+               if (sum == arr[r]) 
+                    return true;
+               else if (sum < arr[r]) 
+                    l++;
+               else 
+                    j--;
           }
      }
+     return false;
 }
 
 int main()

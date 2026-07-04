@@ -42,7 +42,7 @@ using namespace std;
 char firstNonRepeatingCharacter(string str) 
 {
      // Write your code here
-     vector<char> freq(str.length(), 0);
+     vector<char> freq(256, 0);
      for(char ch : str)
      {
           freq[ch]++;
