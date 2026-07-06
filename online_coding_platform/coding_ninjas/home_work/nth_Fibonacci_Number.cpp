@@ -43,11 +43,36 @@ Time Limit: 1 second
 #include<iostream>
 using namespace std;
 
+int nth_fibbo(int n)
+{
+     int a = 0 , b = 1;
+     int fibbo = 0;
+     if(n < 3)
+          return 1;
+
+     for(int i=2;i<=n;i++)
+     {
+          int temp = a + b;
+          a = b;
+          b = temp; 
+     }
+     return b;
+}
+
 int main()
 {
-        /*
-        *  Write your code here. 
-         *  Read input as specified in the question.
-         *  Print output as specified in the question.
-        */
+     /*
+      *  Write your code here. 
+      *  Read input as specified in the question.
+      *  Print output as specified in the question.
+      */
+
+     int n;
+     cout << "Enter n value: ";
+     cin >> n;
+
+     int res = nth_fibbo(n);
+     cout << "      Result:- " << res << endl;
+
+     return 0;
 }

@@ -42,7 +42,59 @@ Since, both input arrays have two '2's, the intersection of the arrays also have
 
 */
 
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
 void intersection(int *input1, int *input2, int size1, int size2)
 {
-    //Write your code here
+     //Write your code here
+     if(size1 == 0 || size2 == 0)
+          return;
+     int i = 0;
+     while(i < size1)
+     {
+          int j = 0;
+          while(j < size2)
+          {
+               if(input1[i] == input2[j])
+               {
+                    cout << input1[i] << " ";
+                    i++;
+                    j++;
+               }
+               else
+                    j++;
+          }
+          i++;
+     }
+     if(i == size1)
+          cout << endl;
+}
+
+int main()
+{
+     int n;
+     cout << "Enter Input Array1 Size: ";
+     cin >> n;
+
+     int *arr = new int[n];
+     for(int i=0;i<n;i++)
+          cin >> arr[i];
+
+     int m;
+     cout << "Enter Input Array2 Size: ";
+     cin >> m;
+
+     int *arr1 = new int[m];
+     for(int i=0;i<m;i++)
+          cin >> arr1[i];
+
+     intersection(arr, arr1, n, m);
+     delete[] arr;
+     delete[] arr1;
+
+     return 0;
 }

@@ -49,7 +49,66 @@ Sample Output 2 :
 
 */
 
+
+#include <iostream>
+#include <vector>
+
+using namespace std;; 
+
 vector<int> findArrayIntersection(vector<int> &arr1, int n, vector<int> &arr2, int m)
 {
-	// Write your code here.
+     // Write your code here.
+     vector<int> res;
+     int i = 0;
+     while(i < n)
+     {
+          int j = 0;
+          while(j < m)
+          {
+               if(arr1[i] == arr2[j])
+               {
+                    res.push_back(arr2[j]);
+                    i++;
+                    j++;
+               }
+               else
+               {
+                    j++;
+               }
+          }
+          i++;
+     }
+     if(res.empty())
+          return {-1};
+
+     return res;
+}
+
+int main()
+{
+     int n;
+     cout << "Enter Array1 Size: ";
+     cin >> n;
+
+     vector<int> arr1(n);
+     for(int i=0;i<n;i++)
+          cin >> arr1[i];
+
+     int m;
+     cout << "Enter Array2 Size: ";
+     cin >> m;
+
+     vector<int> arr2(m);
+     for(int i=0;i<m;i++)
+          cin >> arr2[i];
+
+     vector<int> res = findArrayIntersection(arr1, n, arr2, m);
+     if(!res.empty())
+     {
+          for(int x : res)
+               cout << x << " ";
+          cout << endl;
+     }
+
+     return 0;
 }

@@ -35,7 +35,48 @@ Time limit: 1 sec.
 
 */
 
+#include <iostream>
+#include <vector>
+#include <queue>
+
+using namespace std;
+
 int kthSmallest(int n,int k,vector<int> Arr)
 {
-    // Write your code here.
+     // Write your code here.
+     priority_queue<int> maxHeap;
+     for(int i=0;i<k;i++)
+     {
+          maxHeap.push(Arr[i]);
+     }
+
+     for(int i=k;i<n;i++)
+     {
+          if(Arr[i] < maxHeap.top())
+          {
+               maxHeap.pop();
+               maxHeap.push(Arr[i]);
+          }
+     }
+     return maxHeap.top();
+}
+
+int main()
+{
+     int n;
+     cout << "Enter Vector Size: ";
+     cin >> n;
+
+     vector<int> v(n);
+     for(int i=0;i<n;i++)
+          cin >> v[i];
+
+     int k;
+     cout << "Enter k Value: ";
+     cin >> k;
+
+     int res = kthSmallest(n, k, v);
+     cout << "    Result:- " << res << endl;
+
+     return 0;
 }

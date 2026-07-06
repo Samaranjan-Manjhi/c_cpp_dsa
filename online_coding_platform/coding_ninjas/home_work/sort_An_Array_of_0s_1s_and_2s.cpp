@@ -40,7 +40,61 @@ Time limit: 1 second
 
 */
 
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
 void sortArray(vector<int>& arr, int n)
 {
-    // Write your code here
+     // Write your code here
+     int low = 0, mid = 0, high = n-1;
+     while(mid <= high)
+     {
+          if(arr[mid] == 0)
+          {
+               swap(arr[low], arr[mid]);
+               low++;
+               mid++;
+          }
+          else if(arr[mid] == 1)
+          {
+               mid++;
+          }
+          else
+          {
+               swap(arr[mid], arr[high]);
+               high--;
+          }
+     }
+}
+
+int main()
+{
+     int n;
+     cout << "Enter Vector Size: ";
+     cin >> n;
+
+     vector<int> v(n);
+     for(int i=0;i<n;i++)
+          cin >> v[i];
+
+     cout << "Elements before sorting:- ";
+     if(!v.empty())
+     {
+          for(int x : v)
+               cout << x << " ";
+          cout << endl;
+     }
+
+     sortArray(v, n);
+     cout << "Elements after sorting:- ";
+     if(!v.empty())
+     {
+          for(int x : v)
+               cout << x << " ";
+          cout << endl;
+     }
+
+     return 0;
 }

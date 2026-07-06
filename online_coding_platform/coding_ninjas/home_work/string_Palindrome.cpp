@@ -1,13 +1,13 @@
 /*
 
-String Palindrome 
+   String Palindrome 
 
- Problem statement
+   Problem statement
 
-Given a string, determine if it is a palindrome, considering only alphanumeric characters.
-Palindrome
+   Given a string, determine if it is a palindrome, considering only alphanumeric characters.
+   Palindrome
 
-A palindrome is a word, number, phrase, or other sequences of characters which read the same backwards and forwards.
+   A palindrome is a word, number, phrase, or other sequences of characters which read the same backwards and forwards.
 
 Example:
 If the input string happens to be, "malayalam" then as we see that this word can be read the same as forward and backwards, it is said to be a valid palindrome.
@@ -29,9 +29,47 @@ coding
 Sample Output 2:
 false
 
-*/
+ */
 
-bool checkPalindrome(char str[]) {
-    // Write your code here
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+bool checkPalindrome(char str[]) 
+{
+     // Write your code here
+     int len = strlen(str);
+     int l = 0;
+     while(l < len)
+     {
+          if(str[l] == str[len])
+          {
+               l++;
+               len--;
+          }
+          else
+          {
+               return false;
+          }
+     }
+     return true;
 }
 
+int main()
+{
+     int n;
+     cout << "Enter Input String: ";
+     cin >> n;
+
+     char str[n];
+     cin >> str;
+
+     bool res = checkPalindrome(str);
+     if(res)
+          cout << "     Yes\n";
+     else
+          cout << "     Nope\n";
+
+     return 0;
+}

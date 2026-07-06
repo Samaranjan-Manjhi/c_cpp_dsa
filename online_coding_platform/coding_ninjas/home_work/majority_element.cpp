@@ -60,6 +60,58 @@ As no element occurs more than floor(4/2) = 2 times. Thus No majority element is
 
 */
 
-int findMajorityElement(int arr[], int n) {
-	// Write your code here.
+
+#include <iostream>
+
+using namespace std;
+
+int findMajorityElement(int arr[], int n) 
+{
+     // Write your code here.
+     int cnt = 0;
+     int cnd = 0;
+     for(int i=0;i<n;i++)
+     {
+          if(cnt == 0)
+          {
+               cnd = arr[i];
+               cnt = 1;
+          }
+          else if(cnd == arr[i])
+          {
+               cnt++;
+          }
+          else
+          {
+               cnt--;
+          }
+     }
+
+     cnt = 0;
+     for(int i=0;i<n;i++)
+     {
+          if(cnd == arr[i])
+               cnt++;
+     }
+
+     if(cnt > n/2)
+          return cnd;
+
+     return -1;
+}
+
+int main()
+{
+     int n;
+     cout << "Enter Array Size: ";
+     cin >> n;
+
+     int *arr = new int[n];
+     for(int i=0;i<n;i++)
+          cin >> arr[i];
+
+     int res = findMajorityElement(arr, n);
+     cout << "     Result:- " << res << endl;
+
+     return 0;
 }

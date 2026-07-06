@@ -44,6 +44,39 @@ Sample Output 2 :
 
 */
 
-int countOccurrences(vector < int > arr, int x) {
-    // Write your code here.
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int countOccurrences(vector<int> arr, int x) 
+{
+     // Write your code here.
+     int cnt = 0;
+     for(int val : arr)
+     {
+          if(val == x)
+               cnt++;
+     }
+     return cnt;
+}
+
+int main()
+{
+     int n;
+     cout << "Enter Vcetor Size: ";
+     cin >> n;
+
+     vector<int> v(n);
+     for(int i=0;i<n;i++)
+          cin >> v[i];
+
+     int x;
+     cout << "Enter Value of X: ";
+     cin >> x;
+
+     int res = countOccurrences(v, x);
+     cout << "     Result:- " << res << endl;
+
+     return 0;
 }

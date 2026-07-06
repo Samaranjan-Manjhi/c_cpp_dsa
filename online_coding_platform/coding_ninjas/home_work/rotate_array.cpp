@@ -1,10 +1,10 @@
 /*
 
-Rotate array
+   Rotate array
 
- Problem statement
+   Problem statement
 
-Given an array 'arr' with 'n' elements, the task is to rotate the array to the left by 'k' steps, where 'k' is non-negative.
+   Given an array 'arr' with 'n' elements, the task is to rotate the array to the left by 'k' steps, where 'k' is non-negative.
 
 Example:
 'arr '= [1,2,3,4,5]
@@ -45,8 +45,57 @@ Hints:
 1. For an index ‘i’, find where it lands after k swaps.
 2. When performing rotation once observe how the positions of all elements change.
 
-*/
+ */
 
-vector<int> rotateArray(vector<int>arr, int k) {
-    // Write your code here.
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+void doSwap(vector<int>& v, int l, int r)
+{
+     while(l < r)
+     {
+          swap(v[l], v[r]);
+          l++;
+          r--;
+     }
+}
+
+vector<int> rotateArray(vector<int>arr, int k) 
+{
+     // Write your code here.
+     vector<int> res(arr.begin(), arr.end());
+     int n = res.size();
+     k = k % n;
+     doSwap(res, 0, k-1);
+     doSwap(res, k, n-1);
+     doSwap(res, 0, n-1);
+
+     return res;
+} 
+
+int main()
+{
+     int n;
+     cout << "Enter Vector Size: ";
+     cin >> n;
+
+     vector<int> v(n);
+     for(int i=0;i<n;i++)
+          cin >> v[i];
+
+     int k;
+     cout << "Enter K value: ";
+     cin >> k;
+
+     vector<int> res = rotateArray(v, k);
+     if(!res.empty())
+     {
+          for(int x : res)
+               cout << x << " ";
+          cout << endl;
+     }
+
+     return 0;
 }
