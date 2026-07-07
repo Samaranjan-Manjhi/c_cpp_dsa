@@ -1,8 +1,8 @@
 /*
 
-Positive and negative elements
+   Positive and negative elements
 
-Given an array arr containing equal number of positive and negative elements, arrange the array such that every positive element is followed by a negative element.
+   Given an array arr containing equal number of positive and negative elements, arrange the array such that every positive element is followed by a negative element.
 Note: The relative order of positive and negative numbers should be maintained.
 
 Examples:
@@ -22,7 +22,7 @@ Constraints:
 2 ≤ arr.size() ≤ 10^6
 -106 ≤ arr[i] ≤ 10^6
 
-*/
+ */
 
 #include <iostream>
 #include <vector>
@@ -32,7 +32,21 @@ using namespace std;
 vector<int> arranged(vector<int>& arr) 
 {
      // code here
-
+     int n = arr.size();
+     vector<int> res, neg, pos;
+     for(int x : arr)
+     {
+          if(x < 0)
+               neg.push_back(x);
+          else
+               pos.push_back(x);
+     }
+     for(int i=0;i<pos.size();i++)
+     {
+          res.push_back(pos[i]);
+          res.push_back(neg[i]);
+     }
+     return res;
 }
 
 int main()

@@ -1,8 +1,8 @@
 /*
 
-One odd Occuring
+   One odd Occuring
 
-Given an array of arr[] positive integers where all numbers occur even number of times except one number which occurs odd number of times. Return that number.
+   Given an array of arr[] positive integers where all numbers occur even number of times except one number which occurs odd number of times. Return that number.
 
 Examples:
 
@@ -19,17 +19,26 @@ Constraints:
 1 ≤ arr.size() ≤ 10^5
 1 ≤ arr[i] ≤ 10^6
 
-*/
+ */
 
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 
 using namespace std;
 
 int getOddOccurrence(vector<int>& arr) 
 {
      // code here
-
+     unordered_map<int, int> mp;
+     for(int i : arr)
+          mp[i]++;
+     for(auto& m : mp)
+     {
+          if(m.second%2 != 0)
+               return m.first;
+     }
+     return -1;
 }
 
 int main()

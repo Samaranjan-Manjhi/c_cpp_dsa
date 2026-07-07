@@ -1,10 +1,10 @@
 /*
 
-Day 19 : Missing Numbers 
+   Day 19 : Missing Numbers 
 
- Problem statement
+   Problem statement
 
-You are given an array 'ARR' of distinct positive integers. You need to find all numbers that are in the range of the elements of the array, but not in the array. The missing elements should be printed in sorted order.
+   You are given an array 'ARR' of distinct positive integers. You need to find all numbers that are in the range of the elements of the array, but not in the array. The missing elements should be printed in sorted order.
 Example:
 If the given array is [4, 2, 9] then you should print "3 5 6 7 8". As all these elements lie in the range but not present in the array.
 
@@ -41,9 +41,72 @@ Explanation for Sample Output 2:
 In test case 1, As only 3, 5, 6 and 8 are not in the array and lie in the range of the array. Thus answer would be "3 5 6 8" i.e sorted order.
 In test case 2, As only 5 is not in the array and lie in the range of the array. Thus answer would be "5".
 
-*/
+ */
+
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <climits>
+
+using namespace std;
 
 vector<int> missingNumbers(vector<int> &arr, int n) 
 {
-    // Write your code here.
+     // Write your code here.
+     vector<int> res;
+     int mini = INT_MAX, maxi = INT_MIN;
+     for(int x : arr)
+     {
+          if(mini > x)
+               mini = x;
+          if(maxi < x)
+               maxi = x;
+     }
+     vector<int> temp;
+     if(mini == 1)
+          mini = 2;
+     for(int i=mini-1;i<=maxi;i++)
+     {
+          temp.push_back(i);
+     }
+     sort(arr.begin(), arr.end());
+     int i = 0, j = 0;
+     while(i < n)
+     {
+          if(arr[i] == temp[j])
+          {
+               i++;
+               j++;
+          }
+          else 
+          {
+               res.push_back(temp[j]);
+               j++;
+          }
+     }
+     return res;
+}
+
+int main()
+{
+     int  n;
+     cout << "Enter Vector Size: ";
+     cin >> n;
+
+     vector<int> v(n);
+     for(int i=0;i<n;i++)
+          cin >> v[i];
+
+     vector<int> res = missingNumbers(v, n);
+     if(!res.empty())
+     {
+          for(int x : res)
+               cout << x << " ";
+          cout << endl;
+     }
+     else
+          cout << "[Blank]\n";
+
+     return 0;
 }

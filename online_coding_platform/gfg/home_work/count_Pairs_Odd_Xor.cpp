@@ -35,8 +35,20 @@ using namespace std;
 
 int countXorPair(vector<int>& arr) 
 {
-        // code here
-        
+     // code here
+     int n = arr.size();
+     int cnt = 0;
+     for(int i=0;i<n;i++)
+     {
+          int j = i+1;
+          while(j < n)
+          {
+               if((arr[i]^arr[j])%2 != 0)
+                    cnt++;
+               j++;
+          }
+     }   
+     return cnt;
 }
 
 int main()
@@ -54,4 +66,3 @@ int main()
 
      return 0;
 }
-

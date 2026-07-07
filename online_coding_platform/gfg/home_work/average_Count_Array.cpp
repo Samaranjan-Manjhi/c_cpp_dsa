@@ -1,12 +1,12 @@
 /*
 
-Average Count Array
+   Average Count Array
 
-Given an integer array arr[] and an integer x.
-For each index i (0-based), calculate the floor value of the average of arr[i] and x:  avg = floor((arr[i] + x) / 2)
-Then, count how many times this calculated value occurs in the original array arr[].
-Store this count at index i of a new array result[].
-Return the array result[].
+   Given an integer array arr[] and an integer x.
+   For each index i (0-based), calculate the floor value of the average of arr[i] and x:  avg = floor((arr[i] + x) / 2)
+   Then, count how many times this calculated value occurs in the original array arr[].
+   Store this count at index i of a new array result[].
+   Return the array result[].
 
 Examples:
 
@@ -29,17 +29,31 @@ Constraints:
 0 ≤ x ≤ 10^5
 0 ≤ arr[i] ≤ 10^5
 
-*/
+ */
 
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 
 using namespace std;
 
 vector<int> countArray(vector<int>& arr, int x) 
 {
      // code here
+     unordered_map<int, int> mp;
+     for(int i : arr)
+          mp[i]++;
 
+     vector<int> res(arr.size(), 0);
+     for(int i=0;i<arr.size();i++)
+     {
+          int temp = (arr[i]+x)/2;
+          //cout << "temp:- " << temp << endl;
+          int cnt = mp[temp];
+          //cout << "cnt:- " << cnt << endl;
+          res[i] = cnt;
+     }
+     return res;
 }
 
 int main()

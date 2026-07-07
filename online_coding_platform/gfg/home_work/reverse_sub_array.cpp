@@ -1,8 +1,8 @@
 /*
 
-Reverse sub array
+   Reverse sub array
 
-Given an array arr, you need to reverse a subarray of that array. The range of this subarray is given by indices l and r (1-based indexing).
+   Given an array arr, you need to reverse a subarray of that array. The range of this subarray is given by indices l and r (1-based indexing).
 
 Examples:
 
@@ -19,7 +19,7 @@ Constraints:
 1 ≤ arr[i] ≤ 10^6
 1 ≤ l ≤ r ≤ arr.size()
 
-*/
+ */
 
 #include <iostream>
 #include <vector>
@@ -29,7 +29,15 @@ using namespace std;
 vector<int> reverseSubArray(vector<int> &arr, int l, int r) 
 {
      // code here
-
+     vector<int> res(arr.begin(), arr.end());
+     int i = l-1, j = r-1;
+     while(i < j)
+     {
+          swap(res[i], res[j]);
+          i++;
+          j--;
+     }
+     return res;
 }
 
 int main()

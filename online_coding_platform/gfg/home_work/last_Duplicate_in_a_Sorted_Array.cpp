@@ -1,8 +1,8 @@
 /*
 
-Last Duplicate in a Sorted Array
+   Last Duplicate in a Sorted Array
 
-You are given a sorted array arr[] that may contain duplicate elements. Your task is to find the index of the last occurrence of any duplicate element and return the index along with the value of that element. If no duplicate element is found, return [-1, -1].
+   You are given a sorted array arr[] that may contain duplicate elements. Your task is to find the index of the last occurrence of any duplicate element and return the index along with the value of that element. If no duplicate element is found, return [-1, -1].
 
 Examples :
 
@@ -18,7 +18,7 @@ Constraints:
 1 ≤ arr.size() ≤ 10^6
 1 ≤ arr[i] ≤ 10^6
 
-*/
+ */
 
 #include <iostream>
 #include <vector>
@@ -28,7 +28,13 @@ using namespace std;
 vector<int> dupLastIndex(vector<int>& arr) 
 {
      // code here
-
+     int n = arr.size();
+     for(int i=n-2;i>=0;i--)
+     {
+          if(arr[i] == arr[i+1])
+               return {i+1, arr[i]};
+     }
+     return {-1, -1};
 }
 
 int main()

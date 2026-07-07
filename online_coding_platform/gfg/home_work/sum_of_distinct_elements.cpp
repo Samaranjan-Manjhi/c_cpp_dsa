@@ -1,8 +1,8 @@
 /*
 
-Sum of distinct elements
+   Sum of distinct elements
 
-You are given an array arr. Find the sum of distinct elements in an array.
+   You are given an array arr. Find the sum of distinct elements in an array.
 
 Examples:
 
@@ -18,17 +18,29 @@ Constraints:
 1 ≤ arr.size() ≤ 10^6
 0 ≤ arr[i] ≤ 10^4
 
-*/
+ */
 
 #include <iostream>
 #include <vector>
+#include <unordered_set>
 
 using namespace std;
 
 int findSum(vector<int>& arr) 
 {
      // code here
-
+     int sum = 0;
+     unordered_set<int>seen;
+     int n = arr.size();
+     for(int i=0;i<n;i++)
+     {
+          if(seen.find(arr[i]) == seen.end())
+          {
+               seen.insert(arr[i]);
+               sum += arr[i];
+          }
+     }
+     return sum;
 }
 
 int main()

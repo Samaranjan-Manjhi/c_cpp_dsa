@@ -1,8 +1,8 @@
 /*
 
-Alternative Sorting
+   Alternative Sorting
 
-Given an array arr of distinct integers. Rearrange the array in such a way that the first element is the largest and the second element is the smallest, the third element is the second largest and the fourth element is the second smallest, and so on.
+   Given an array arr of distinct integers. Rearrange the array in such a way that the first element is the largest and the second element is the smallest, the third element is the second largest and the fourth element is the second smallest, and so on.
 
 Examples:
 
@@ -18,16 +18,28 @@ Constraints:
 1 ≤ arr.size() ≤ 10^5
 1 ≤ arr[i] ≤ 10^5
 
-*/
+ */
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
 vector<int> alternateSort(vector<int>& arr) 
 {
      // Your code goes here
+     int n = arr.size();
+     sort(arr.begin(), arr.end());
+     vector<int> temp;
+     for(int i=0;i<n/2;i++)
+     {
+          temp.push_back(arr[n-i-1]);
+          temp.push_back(arr[i]);
+     }
+     if(n%2 != 0)
+          temp.push_back(arr[n/2]);
+     return temp;
 }
 
 int main()

@@ -1,11 +1,11 @@
 /*
 
-Sum Array Puzzle
+   Sum Array Puzzle
 
-Given an array arr[] of integers, modify the array such that each element at index i becomes the sum of all elements of the array except the element present at index i.
+   Given an array arr[] of integers, modify the array such that each element at index i becomes the sum of all elements of the array except the element present at index i.
 
-That is, update each element as:
-arr[i] = arr[0] + arr[1] + ... + arr[i-1] + arr[i+1] + ... + arr[n-1]
+   That is, update each element as:
+   arr[i] = arr[0] + arr[1] + ... + arr[i-1] + arr[i+1] + ... + arr[n-1]
 
 Examples:
 
@@ -31,7 +31,7 @@ Constraint :
 1 ≤ arr.size() ≤ 10^5
 1 ≤ arr[i] ≤ 10^4
 
-*/
+ */
 
 #include <iostream>
 #include <vector>
@@ -41,7 +41,14 @@ using namespace std;
 void sumArray(vector<int> &arr) 
 {
      // code here
+     int sum = 0;
+     for(int s : arr)
+          sum += s;
 
+     for(int i=0;i<arr.size();i++)
+     {
+          arr[i] = sum - arr[i];
+     }
 }
 
 int main()
