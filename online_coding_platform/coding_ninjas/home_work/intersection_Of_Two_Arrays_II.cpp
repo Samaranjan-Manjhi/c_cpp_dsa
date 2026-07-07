@@ -1,10 +1,10 @@
 /*
 
-Intersection of Two Arrays II
+   Intersection of Two Arrays II
 
- Problem statement
+   Problem statement
 
-You have been given two integer arrays/list(ARR1 and ARR2) of size N and M, respectively. You need to print their intersection; An intersection for this problem can be defined when both the arrays/lists contain a particular value or to put it in other words, when there is a common value that exists in both the arrays/lists.
+   You have been given two integer arrays/list(ARR1 and ARR2) of size N and M, respectively. You need to print their intersection; An intersection for this problem can be defined when both the arrays/lists contain a particular value or to put it in other words, when there is a common value that exists in both the arrays/lists.
 Note :
 Input arrays/lists can contain duplicate elements.
 The intersection elements printed would be in the order they appear in the first array/list(ARR1)
@@ -40,7 +40,7 @@ Sample Output 2 :
 Explanation for Sample Output 2 :
 Since, both input arrays have two '2's, the intersection of the arrays also have two '2's. The first '2' of first array matches with the first '2' of the second array. Similarly, the second '2' of the first array matches with the second '2' if the second array.
 
-*/
+ */
 
 
 #include <iostream>
@@ -53,25 +53,27 @@ void intersection(int *input1, int *input2, int size1, int size2)
      //Write your code here
      if(size1 == 0 || size2 == 0)
           return;
-     int i = 0;
-     while(i < size1)
+     bool *visited = new bool[size2];
+
+     for(int i = 0; i < size2; i++)
      {
-          int j = 0;
-          while(j < size2)
+          visited[i] = false;
+     }
+
+     for(int i = 0; i < size1; i++)
+     {
+          for(int j = 0; j < size2; j++)
           {
-               if(input1[i] == input2[j])
+               if(input1[i] == input2[j] && visited[j] == false)
                {
                     cout << input1[i] << " ";
-                    i++;
-                    j++;
+                    visited[j] = true;
+                    break;
                }
-               else
-                    j++;
           }
-          i++;
      }
-     if(i == size1)
-          cout << endl;
+
+     delete [] visited;
 }
 
 int main()

@@ -40,13 +40,13 @@ bool checkPalindrome(char str[])
 {
      // Write your code here
      int len = strlen(str);
-     int l = 0;
-     while(l < len)
+     int l = 0, r = len-1;
+     while(l < r)
      {
-          if(str[l] == str[len])
+          if(str[l] == str[r])
           {
                l++;
-               len--;
+               r--;
           }
           else
           {
@@ -59,10 +59,10 @@ bool checkPalindrome(char str[])
 int main()
 {
      int n;
-     cout << "Enter Input String: ";
+     cout << "Enter size of string: ";
      cin >> n;
 
-     char str[n];
+     char str[n+1];
      cin >> str;
 
      bool res = checkPalindrome(str);

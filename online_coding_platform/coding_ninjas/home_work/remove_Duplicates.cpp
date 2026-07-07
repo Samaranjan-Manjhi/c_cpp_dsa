@@ -41,7 +41,7 @@ Sample Output 2:
 
 #include <iostream>
 #include <vector>
-#include <unordered_map>
+#include <unordered_set>
 
 using namespace std;
 
@@ -49,22 +49,17 @@ vector<int> removeDuplicates(vector<int> arr)
 {
      // Write your code here
      vector<int> res;
-     int n = arr.size();
-     if(n == 0)
-          return res;
-     int i = 0;
-     int j = 1;
-     res.push_back(arr[0]);
-     while(j < n)
+     unordered_set<int> seen;
+
+     for(int i = 0; i < arr.size(); i++)
      {
-          if(arr[i] != arr[j])
+          if(seen.find(arr[i]) == seen.end())
           {
-               res.push_back(arr[j]);
-               i = j;
+               res.push_back(arr[i]);
+               seen.insert(arr[i]);
           }
-               j++;
      }
-     
+
      return res;
 }
 

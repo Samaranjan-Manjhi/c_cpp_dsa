@@ -60,24 +60,24 @@ vector<int> findArrayIntersection(vector<int> &arr1, int n, vector<int> &arr2, i
      // Write your code here.
      vector<int> res;
      int i = 0;
-     while(i < n)
+     int j = 0;
+     while(i < n && j < m)
      {
-          int j = 0;
-          while(j < m)
+          if(arr1[i] == arr2[j])
           {
-               if(arr1[i] == arr2[j])
-               {
-                    res.push_back(arr2[j]);
-                    i++;
-                    j++;
-               }
-               else
-               {
-                    j++;
-               }
+               res.push_back(arr1[i]);
+               i++;
+               j++;
           }
-          i++;
-     }
+          else if(arr1[i] < arr2[j])
+          {
+               i++;
+          }
+          else
+          {
+               j++;
+          }
+     } 
      if(res.empty())
           return {-1};
 
