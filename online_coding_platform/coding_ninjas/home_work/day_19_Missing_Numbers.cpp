@@ -55,37 +55,16 @@ vector<int> missingNumbers(vector<int> &arr, int n)
 {
      // Write your code here.
      vector<int> res;
-     int mini = INT_MAX, maxi = INT_MIN;
-     for(int x : arr)
-     {
-          if(mini > x)
-               mini = x;
-          if(maxi < x)
-               maxi = x;
-     }
-     vector<int> temp;
-     if(mini == 1)
-          mini = 2;
-     for(int i=mini-1;i<=maxi;i++)
-     {
-          temp.push_back(i);
-     }
+
      sort(arr.begin(), arr.end());
-     int i = 0, j = 0;
-     while(i < n)
+
+     for(int i = arr.front(); i <= arr.back(); i++)
      {
-          if(arr[i] == temp[j])
-          {
-               i++;
-               j++;
-          }
-          else 
-          {
-               res.push_back(temp[j]);
-               j++;
-          }
+          if(!binary_search(arr.begin(), arr.end(), i))
+               res.push_back(i);
      }
-     return res;
+
+     return res; 
 }
 
 int main()

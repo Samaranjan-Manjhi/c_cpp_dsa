@@ -1,27 +1,42 @@
 #!/bin/bash
 
-DIR=$1
+DIR="$1"
+OUTPUT="/home/shubham/Desktop/samaranjan/work_prac/prep/c_cpp_dsa/home_work.txt"
 
 if [ -z "$DIR" ]; then
     echo "Usage: $0 <directory_path>"
     exit 1
 fi
 
-for cpp_file in "$DIR"/*.cpp
+mkdir -p "$(dirname "$OUTPUT")"
+
+missing_files=()
+
+while IFS= read -r cpp_file
 do
-    # If no cpp files exist
-    [ -e "$cpp_file" ] || continue
-
-    # Get filename without extension
+    dir=$(dirname "$cpp_file")
     filename=$(basename "$cpp_file" .cpp)
+    binary="$dir/$filename"
 
-    # Binary path
-    binary="$DIR/$filename"
-
-    # Check binary exists
-    if [ -f "$binary" ] && [ -x "$binary" ]; then
-        continue
-    else
-        echo "$cpp_file"
+    # Check if executable binary exists in the same directory
+    if [ ! -f "$binary" ] || [ ! -x "$binary" ]; then
+        missing_files+=("$cpp_file")
     fi
-done
+
+done < <(find "$DIR" -type f -name "*.cpp")
+
+{
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')]"
+
+    count=1
+    for file in "${missing_files[@]}"
+    do
+        echo "${count}] $file"
+        ((count++))
+    done
+
+    echo
+} >> "$OUTPUT"
+
+echo "Report appended to: $OUTPUT"
+echo "Missing binaries: $((${#missing_files[@]}))"

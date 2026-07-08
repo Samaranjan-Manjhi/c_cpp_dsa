@@ -115,3 +115,11 @@ int dequeue()
      stk2.pop();
      return front;
 }
+
+int main()
+{
+
+
+
+return 0;
+}
