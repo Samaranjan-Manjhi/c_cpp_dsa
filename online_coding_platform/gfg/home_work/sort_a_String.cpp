@@ -1,8 +1,8 @@
 /*
 
-Sort a String
+   Sort a String
 
-Given a string consisting of lowercase letters, arrange all its letters in ascending order. 
+   Given a string consisting of lowercase letters, arrange all its letters in ascending order. 
 
 Examples:
 
@@ -19,30 +19,30 @@ order in "xyz".
 Constraints:
 1 ≤ |s| ≤ 105
 
-*/
+ */
 
 
 #include <iostream>
-#include <vector>
+#include <algorithm>
+#include <string>
 
 using namespace std;
 
-string sortString(string &s) {
-        // code here
-        
-    }
+string sortString(string &s) 
+{
+     // code here
+     sort(s.begin(), s.end());
+     return s;
+}
 
 int main()
 {
-     int n;
-     cout << "Enter Vector Size: ";
-     cin >> n;
+     string str;
+     cout << "Enter Input String: ";
+     cin >> str;
 
-     vector<int> v(n);
-     for(int i=0;i<n;i++)
-          cin >> v[i];
-
-     
+     string res = sortString(str);
+     cout << "     Result:- " << res << endl;     
 
      return 0;
 }

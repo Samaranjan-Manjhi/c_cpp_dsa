@@ -1,8 +1,8 @@
 /*
 
-Minimum difference pair
+   Minimum difference pair
 
-Given an array arr[]. find the minimum difference between any pair in the given array.
+   Given an array arr[]. find the minimum difference between any pair in the given array.
 
 Examples:
 
@@ -18,18 +18,28 @@ Constraints:
 2 <= arr.size() <= 105
 1 <= arr[i] <= 109
 
-*/
+ */
 
 
 #include <iostream>
 #include <vector>
+#include <climits>
 
 using namespace std;
 
-int minDiff(vector<int>& arr) {
-        // Code here
-        
-    }
+int minDiff(vector<int>& arr) 
+{
+     // Code here
+     int n = arr.size();
+     int ans = INT_MAX;
+     for(int i=0;i<n-1;i++)
+     {
+          int curr = abs(arr[i] - arr[i+1]);
+          ans = min(ans, curr);
+     }
+
+     return ans;
+}
 
 int main()
 {
@@ -41,7 +51,8 @@ int main()
      for(int i=0;i<n;i++)
           cin >> v[i];
 
-     
+     int res = minDiff(v);
+     cout << "     Result:- " << res << endl;
 
      return 0;
 }

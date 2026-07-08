@@ -1,8 +1,8 @@
 /*
 
-Doubling the value
+   Doubling the value
 
-Given an array arr and an integer b, traverse the array (from the beginning) and if the element in array is b, double b and continue traversal. Find the value of b after the complete traversal.
+   Given an array arr and an integer b, traverse the array (from the beginning) and if the element in array is b, double b and continue traversal. Find the value of b after the complete traversal.
 
 Examples :
 
@@ -21,15 +21,26 @@ Constraints:
 1 ≤ b ≤ 103
 1 ≤ arr[i] ≤ 109
 
-*/
+ */
 
 
 #include <iostream>
 #include <vector>
 
-int solve(int b, vector<int> &arr) {
-        // code here.
-    }
+using namespace std;
+
+int solve(int b, vector<int> &arr) 
+{
+     // code here.
+     int n = arr.size();
+     for(int i=0;i<n;i++)
+     {
+          if(arr[i] == b)
+               b *= 2;
+     }
+
+     return b;
+}
 
 int main()
 {
@@ -41,7 +52,12 @@ int main()
      for(int i=0;i<n;i++)
           cin >> v[i];
 
-     
+     int b;
+     cout << "Enter b Value: ";
+     cin >> b;
+
+     int res = solve(b, v);
+     cout << "     Result:- " << res << endl;     
 
      return 0;
 }

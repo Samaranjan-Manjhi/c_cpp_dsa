@@ -1,9 +1,8 @@
 /*
 
-Second Largest
+   Second Largest
 
-Given an array of positive integers arr[], return the second largest element from the array. If the second largest element doesn't exist then return -1.
-
+   Given an array of positive integers arr[], return the second largest element from the array. If the second largest element doesn't exist then return -1.
 Note: The second largest element should not be equal to the largest element.
 
 Examples:
@@ -24,17 +23,37 @@ Constraints:
 2 ≤ arr.size() ≤ 105
 1 ≤ arr[i] ≤ 105
 
-*/
+ */
 
 #include <iostream>
 #include <vector>
+#include <climits>
 
 using namespace std;
 
-int getSecondLargest(vector<int> &arr) {
-        // code here
-        
-    }
+int getSecondLargest(vector<int> &arr) 
+{
+     // code here
+     int lar = INT_MIN;
+     int sec = INT_MIN;
+     for(int i=0;i<arr.size();i++)
+     {
+          if(arr[i] > lar)
+          {
+               sec = lar;
+               lar = arr[i];
+          }
+          else if(sec < arr[i] && arr[i] < lar)
+          {
+               sec = arr[i];
+          }
+     }
+
+     if(sec == INT_MIN)
+          return -1;
+
+     return sec;
+}
 
 int main()
 {
@@ -46,7 +65,8 @@ int main()
      for(int i=0;i<n;i++)
           cin >> v[i];
 
-     
+     int res = getSecondLargest(v);
+     cout << "     Result:- " << res << endl;
 
      return 0;
 }

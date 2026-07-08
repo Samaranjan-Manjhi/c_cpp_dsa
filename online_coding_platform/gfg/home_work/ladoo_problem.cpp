@@ -3,9 +3,7 @@
 Ladoo problem
 
 Bheem has one ladoo available for each day. The i-th friend wants a ladoo on day arr[i]. A ladoo can be given to at most one friend on a particular day.
-
 If Bheem cannot give a ladoo to a friend on their requested day, he loses that friendship.
-
 Find the maximum number of friends Bheem can have at the end.
 
 Examples:
@@ -30,10 +28,11 @@ Constraints:
 
 using namespace std;
 
-int divideLadoo(vector<int>& arr) {
-        // code here
+int divideLadoo(vector<int>& arr) 
+{
+     // code here
         
-    }
+}
 
 int main()
 {
