@@ -27,26 +27,25 @@ Constraints:
 
 #include <iostream>
 #include <string>
-#include <unordered_map>
+#include <map>
 
 using namespace std;
 
 int getCount(string s, int k) 
 {
      // code here
-     unordered_map<char, int> mp;
-     for(char ch : s)
+     map<char, int> mp;
+     for(int i=0;i<s.length();i++)
      {
-          mp[ch]++;
+          if(i == 0 || s[i] != s[i-1])
+               mp[s[i]]++;
      }
-
      int cnt = 0;
-     for(auto& m : mp)
+     for (auto &it : mp)
      {
-          if(m.second >= k)
+          if (it.second == k)
                cnt++;
      }
-
      return cnt;
 }
 

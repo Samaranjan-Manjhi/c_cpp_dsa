@@ -28,10 +28,17 @@ done < <(find "$DIR" -type f -name "*.cpp")
 {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')]"
 
+    #count=1
+    #for file in "${missing_files[@]}"
+    #do
+    #    echo "${count}] $file"
+    #    ((count++))
+    #done
+
     count=1
     for file in "${missing_files[@]}"
     do
-        echo "${count}] $file"
+        printf "%02d] %s\n" "$count" "$file"
         ((count++))
     done
 

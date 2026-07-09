@@ -23,6 +23,7 @@ Constraints:
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 #include <climits>
 
 using namespace std;
@@ -30,6 +31,7 @@ using namespace std;
 int minDiff(vector<int>& arr) 
 {
      // Code here
+     sort(arr.begin(), arr.end());
      int n = arr.size();
      int ans = INT_MAX;
      for(int i=0;i<n-1;i++)

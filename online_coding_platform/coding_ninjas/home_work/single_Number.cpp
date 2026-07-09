@@ -46,7 +46,10 @@ Time Limit: 1 sec
 #include <iostream>
 #include <vector>
 
-
+int occursOnce(vector<int> &a, int n){
+	// Write your code here.
+	
+}
 
 int main()
 {
