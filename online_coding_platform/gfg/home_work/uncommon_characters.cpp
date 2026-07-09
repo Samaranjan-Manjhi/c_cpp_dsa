@@ -1,8 +1,8 @@
 /*
 
-Uncommon characters
+   Uncommon characters
 
-You are given two strings s1 and s2. Your task is to identify the characters that appear in either string but not in both (i.e., characters that are unique to one of the strings). Return the result as a sorted string.
+   You are given two strings s1 and s2. Your task is to identify the characters that appear in either string but not in both (i.e., characters that are unique to one of the strings). Return the result as a sorted string.
 
 Examples:
 
@@ -22,9 +22,66 @@ Constraints:
 1<= s1.size(), s2.size() <= 105
 Both strings contain only lowercase English letters.
 
-*/
+ */
 
- string uncommonChars(string& s1, string& s2) {
-        // code here
-        
-    }
+
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <set>
+
+using namespace std;
+
+string uncommonChars(string& s1, string& s2) 
+{
+     // code here
+     sort(s1.begin(), s1.end());   
+     if(s1 == s2)
+          return "";
+
+     set<char> st;
+     for(char c : s1)
+     {
+          st.insert(c);   
+     }
+     string res = "";
+     for(char c : s2)
+     {
+          if(st.find(c) != st.end())
+          {
+               res += c;
+          }
+     }
+     string ans = "";
+     s2 += s1;
+     sort(s2.begin(), s2.end());
+     set<char> seen;
+     for(char c : s2)
+     {
+          if(res.find(c) == string::npos)
+          {
+               if(seen.find(c) == seen.end())
+               {
+                    ans += c;
+                    seen.insert(c);
+               }
+          }
+     } 
+     return ans;
+}
+
+int main()
+{
+     string str;
+     cout << "Enter Input String1: ";
+     cin >> str;
+
+     string str1;
+     cout << "Enter Input String2: ";
+     cin >> str1;
+
+     string res = uncommonChars(str, str1);
+     cout << "     Result:- " << res << endl;
+
+     return 0;
+}

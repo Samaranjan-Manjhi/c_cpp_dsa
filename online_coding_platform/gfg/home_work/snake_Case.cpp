@@ -1,17 +1,15 @@
 /*
 
-Snake Case
+   Snake Case
 
-Given a sentence s consisting of English alphabet characters and spaces, convert it into snake_case.
+   Given a sentence s consisting of English alphabet characters and spaces, convert it into snake_case.
 
-In snake case:
+   In snake case:
+   All letters are converted to lowercase.
+   Words are separated by a single underscore ('_') instead of spaces.
+   No spaces should appear in the resulting string.
 
-    All letters are converted to lowercase.
-    Words are separated by a single underscore ('_') instead of spaces.
-    No spaces should appear in the resulting string.
-
-Return the snake_case representation of the given sentence.
-
+   Return the snake_case representation of the given sentence.
 Note: The input sentence does not begin with a whitespace character.
 
 Examples:
@@ -27,10 +25,39 @@ Explanation: All upper case characters are converted to lower case and the white
 Constraints:
 1 ≤ n ≤ 105, n is length of the sentence
 
-*/
+ */
 
 
-string snakeCase(string &s) {
-        // code here
-        
-    }
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+string snakeCase(string &s) 
+{
+     // code here
+     string res = "";
+     for(char c : s)
+     {
+          if(c == ' ')
+               res += '_';
+          else if(c >= 'A' && c <= 'Z')
+               res += c + 32;
+          else
+               res += c;
+     }   
+
+     return res;
+}
+
+int main()
+{
+     string s;
+     cout << "Enter Input String: ";
+     getline(cin, s);
+
+     string res = snakeCase(s);
+     cout << "     Result:- " << res << endl;
+
+     return 0;
+}

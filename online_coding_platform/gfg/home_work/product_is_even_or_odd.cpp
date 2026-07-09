@@ -1,10 +1,10 @@
 /*
 
-Product is even or odd?
+   Product is even or odd?
 
-You are given two long numbers N1 and N2 in a string. You need to find out if the product of these numbers generate an even number or an odd number, If it is an even number print 1 else print 0.
+   You are given two long numbers N1 and N2 in a string. You need to find out if the product of these numbers generate an even number or an odd number, If it is an even number print 1 else print 0.
 
-Example 1:
+   Example 1:
 
 Input: 
 N1 = "12"
@@ -31,8 +31,37 @@ Expected Auxiliary Space: O(1).
 Constraints:
 1 ≤ N1, N2 ≤ 1099
 
-*/
+ */
 
-int EvenOdd(string n1, string n2) {
-    // code here.
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+int EvenOdd(string n1, string n2) 
+{
+     // code here.
+     int s1 = n1[n1.size()-1] - '0';
+     int s2 = n2[n2.size()-1] - '0';
+     int prod = s1*s2;
+     if(prod % 2 == 0)
+          return 1;
+
+     return 0;
+}
+
+int main()
+{
+     string s1;
+     cout << "Enter Num1 String: ";
+     cin >> s1;
+
+     string s2;
+     cout << "Enter Num2 String: ";
+     cin >> s2;
+
+     int res = EvenOdd(s1, s2);
+     cout << "     Result:- " << res << endl;
+
+     return 0;
 }
