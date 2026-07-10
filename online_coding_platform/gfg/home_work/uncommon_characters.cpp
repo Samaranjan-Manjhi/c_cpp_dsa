@@ -27,47 +27,66 @@ Both strings contain only lowercase English letters.
 
 #include <iostream>
 #include <string>
-#include <algorithm>
-#include <set>
+#include <vector>
 
 using namespace std;
 
 string uncommonChars(string& s1, string& s2) 
 {
      // code here
-     sort(s1.begin(), s1.end());   
-     if(s1 == s2)
-          return "";
+     /*
+        sort(s1.begin(), s1.end());   
+        if(s1 == s2)
+        return "";
 
-     set<char> st;
+        set<char> st;
+        for(char c : s1)
+        {
+        st.insert(c);   
+        }
+        string res = "";
+        for(char c : s2)
+        {
+        if(st.find(c) != st.end())
+        {
+        res += c;
+        }
+        }
+        string ans = "";
+        s2 += s1;
+        sort(s2.begin(), s2.end());
+        set<char> seen;
+        for(char c : s2)
+        {
+        if(res.find(c) == string::npos)
+        {
+        if(seen.find(c) == seen.end())
+        {
+        ans += c;
+        seen.insert(c);
+        }
+        }
+        } 
+        return ans;
+      */
+
+     vector<int> f1(26, 0), f2(26, 0);
+
      for(char c : s1)
-     {
-          st.insert(c);   
-     }
-     string res = "";
+          f1[c - 'a'] = 1;
+
      for(char c : s2)
+          f2[c - 'a'] = 1;
+
+     string ans;
+
+     for(int i = 0; i < 26; i++) 
      {
-          if(st.find(c) != st.end())
-          {
-               res += c;
-          }
+          if(f1[i] != f2[i])
+               ans += (char)(i + 'a');
      }
-     string ans = "";
-     s2 += s1;
-     sort(s2.begin(), s2.end());
-     set<char> seen;
-     for(char c : s2)
-     {
-          if(res.find(c) == string::npos)
-          {
-               if(seen.find(c) == seen.end())
-               {
-                    ans += c;
-                    seen.insert(c);
-               }
-          }
-     } 
-     return ans;
+
+     return ans.empty() ? "-1" : ans;
 }
 
 int main()

@@ -44,7 +44,7 @@ int lastWordLen(string &s)
 
      for(int i=r;i>=0;i--)
      {
-          cout << "s[i]: " << s[i] << endl;
+          //cout << "s[i]: " << s[i] << endl;
           if(s[i] == ' ')
           {
                return res;
