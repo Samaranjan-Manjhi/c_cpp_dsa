@@ -4,8 +4,6 @@ Carry counter
 
 Given two numbers in the form of Strings. Find the count of carries in their addition.
 
- 
-
 Example 1:
 
 Input:
@@ -26,25 +24,33 @@ Explanation:
 There are 2 carries when N and M
 are added.
 
- 
-
 Your Task:
 You don't need to read input or print anything. Your task is to complete the function getCarries() which takes two Strings N and M as input and returns an integer denoting the answer.
 
- 
-
 Expected Time Complexity: O(|N|)
 Expected Auxiliary Space: O(|N|)
-
  
-
 Constraints:
 1 <= |N|,|M| <= 105
 
 */
 
 
-int getCarries(string N, string M) {
-        // code here
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+int getCarries(string N, string M) 
+{
+     // code here
         
-    }
+}
+
+int main()
+{
+
+
+
+return 0;
+}
