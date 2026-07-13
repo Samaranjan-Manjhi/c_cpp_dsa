@@ -591,7 +591,6 @@ END OF PART 1 — CONTINUED IN NEXT FILE SECTION
      (Friend Functions, Const/Mutable, Operator Overloading, Inheritance
       & Polymorphism, OOP Design Principles, Tricky Questions)
 ================================================================================
-
 ================================================================================
 SECTION 1E — FRIEND FUNCTIONS & CLASSES (ANSWERS)
 ================================================================================
@@ -1214,4 +1213,167 @@ Q5. When should you prefer composition over inheritance?
 
 ================================================================================
 END OF PART 2 — CONTINUED IN NEXT FILE SECTION (TRICKY / GOTCHA QUESTIONS)
+================================================================================
+================================================================================
+SECTION 2 — TRICKY / GOTCHA QUESTIONS
+     (Sound right but aren't, or vice versa — classic Classes & Objects /
+      OOP interview traps, matching the style of your "new + free"
+      example.)
+================================================================================
+
+1. "Since struct defaults to public and class defaults to private, structs
+   in C++ can't have member functions, constructors, or inheritance like
+   classes can." TRICKY: FALSE — in modern C++, struct and class are
+   functionally identical in capability (both can have constructors,
+   destructors, member functions, virtual functions, templates,
+   inheritance, etc.). The ONLY differences are the default member access
+   specifier (public vs private) and the default inheritance mode (public
+   vs private) — everything else is purely a stylistic/conventional
+   choice, not a language restriction.
+
+2. "A destructor should always be virtual, just to be safe, even for
+   classes that are never used polymorphically." TRICKY: Overstated/not
+   quite right as an absolute — a virtual destructor adds a vptr to every
+   object of the class (memory overhead) and a small runtime cost to
+   destruction, which is wasted if the class is NEVER deleted through a
+   base pointer (e.g., a simple value-type utility class with no
+   inheritance hierarchy at all). The correct guideline is narrower: make
+   the destructor virtual specifically if the class has ANY virtual
+   function already, or is explicitly DESIGNED to be a polymorphic base
+   class meant to be deleted via base pointers — not as a blanket rule for
+   every single class.
+
+3. "Calling a virtual function from inside a base class constructor will
+   correctly call the derived class's override, since the object being
+   constructed really is a Derived object." TRICKY: FALSE — during the
+   base class's OWN constructor execution, the object's vtable pointer is
+   still set up for the BASE class (the derived portion hasn't been
+   constructed yet), so the call resolves to the BASE class's version,
+   not the derived override — regardless of what the object will
+   "really" be once construction fully completes.
+
+4. "A pure virtual function (= 0) can never have an implementation body —
+   that's the whole point of making it 'pure.'" TRICKY: FALSE — a pure
+   virtual function CAN have a default body defined (even though it's
+   still `= 0` and still forces derived classes to override it to become
+   concrete) — derived classes can even explicitly call that base default
+   implementation from within their own override if they choose to.
+
+5. "Object slicing causes a compile error, so the compiler protects you
+   from accidentally losing derived-class data." TRICKY: FALSE — object
+   slicing compiles perfectly fine and runs without any error or warning
+   by default; it SILENTLY discards the derived-specific data, which is
+   exactly what makes it a dangerous, easy-to-miss bug rather than a
+   caught mistake.
+
+6. "Copy assignment operator (operator=) and copy constructor do the same
+   thing, so you only need to define one of them." TRICKY: FALSE — the
+   copy CONSTRUCTOR initializes a brand-NEW object from an existing one
+   (no prior state to clean up); the copy ASSIGNMENT operator assigns
+   into an ALREADY-EXISTING object (which may already own resources that
+   need to be released/replaced first, and must handle self-assignment
+   safely). They serve related but distinct purposes and, per the Rule of
+   Three/Five, generally both need to be defined together (along with the
+   destructor) for a class managing its own resources — defining only one
+   correctly is usually a sign the other was overlooked, not "not needed."
+
+7. "A static member function has access to the this pointer, just like
+   any other member function, since it's part of the class." TRICKY:
+   FALSE — static member functions have NO `this` pointer at all, because
+   they aren't tied to any particular object instance; this is exactly
+   why they cannot directly access non-static (instance) member variables
+   either.
+
+8. "Since a const member function promises not to modify the object, you
+   can always safely call it on a const object even if it internally
+   modifies a mutable member." TRICKY: Actually TRUE, but for a subtle
+   reason worth understanding — `mutable` members are DELIBERATELY exempt
+   from the const-correctness check specifically so this is allowed; the
+   "constness" promise only covers non-mutable members. This is by
+   design (e.g. for internal caching), not a loophole/bug — but it DOES
+   mean "const" doesn't always mean "the object's bits truly never
+   change," which surprises people who assume const is an absolute,
+   bitwise guarantee.
+
+9. "operator== should always be implemented as a member function for
+   consistency with other operators like operator+=." TRICKY: FALSE as a
+   blanket rule — while some operators (like compound assignment
+   `+=`, which modifies `*this`) are naturally suited to being member
+   functions, `operator==` (and most binary comparison/arithmetic
+   operators) are generally BETTER as non-member (or friend) functions
+   specifically to allow implicit conversions to apply symmetrically to
+   BOTH operands, not just the right-hand one.
+
+10. "Multiple inheritance in C++ always causes the diamond problem, so it
+    should never be used." TRICKY: FALSE (overstated) — the diamond
+    problem specifically arises when TWO base classes SHARE A COMMON
+    ANCESTOR and a further class inherits from both of them without
+    virtual inheritance — plain multiple inheritance from UNRELATED base
+    classes (no shared ancestor) causes no such ambiguity at all and is a
+    perfectly normal, useful pattern (e.g. inheriting from two independent
+    "interface-like" abstract classes). The diamond problem is a specific
+    scenario, solvable with virtual inheritance when it does occur, not
+    an indictment of multiple inheritance as a whole.
+
+11. "Marking a base class destructor virtual is enough to guarantee
+    correct cleanup — you don't need to worry about the derived class's
+    destructor at all." TRICKY: Misleading — marking the BASE destructor
+    virtual ensures the DERIVED destructor actually GETS CALLED when
+    deleting through a base pointer (that's the whole point), but it's
+    still the DERIVED class's own destructor's RESPONSIBILITY to properly
+    clean up whatever resources IT specifically owns — a virtual base
+    destructor doesn't automatically know about or free derived-class-
+    specific resources; it just ensures the derived destructor runs so
+    THAT destructor can do its own cleanup correctly.
+
+12. "The order of member initialization in a constructor's initializer
+    list is determined by the order you write them in the list, e.g.
+    `MyClass() : b(1), a(2) {}` initializes b before a." TRICKY: FALSE —
+    member initialization order is ALWAYS determined by the ORDER MEMBERS
+    ARE DECLARED IN THE CLASS, completely ignoring the order they're
+    written in the initializer list. If `a` is declared before `b` in the
+    class body, `a` is ALWAYS initialized first regardless of writing
+    `b(1), a(2)` in that order in the initializer list — some compilers
+    even warn about this exact mismatch (-Wreorder), since it's a classic
+    source of subtle bugs when one member's initializer depends on
+    another's already-initialized value.
+
+13. "Since Rule of Zero says to avoid defining special member functions,
+    it means you should never write a destructor for any of your
+    classes." TRICKY: FALSE (overgeneralized) — Rule of Zero applies
+    specifically to classes that DON'T directly own a raw resource
+    (because their members are already RAII types that manage themselves)
+    — such classes genuinely don't need a custom destructor (or any of
+    the five). But a class that DOES directly manage a raw resource (the
+    rare low-level wrapper classes, like implementing your own smart
+    pointer or file handle wrapper) absolutely still needs a real,
+    hand-written destructor (and, per Rule of Three/Five, the
+    corresponding copy/move operations too) — Rule of Zero doesn't mean
+    "destructors are bad," it means "most ordinary classes shouldn't need
+    to write one because they should be built out of things that already
+    handle it."
+
+14. "typeid and dynamic_cast have no runtime cost, they're just compile-
+    time syntax like static_cast." TRICKY: FALSE — both `typeid` and
+    `dynamic_cast` are RTTI (Run-Time Type Information) features that
+    perform actual work AT RUNTIME (traversing type hierarchy information
+    to verify a cast, or to compare/report actual types) — unlike
+    `static_cast`, which performs no runtime type verification at all and
+    compiles down to a simple, free reinterpretation/adjustment. This
+    runtime cost is exactly why some performance-critical or embedded
+    codebases disable RTTI entirely.
+
+15. "final on a class or virtual function is purely a stylistic/
+    documentation marker with no effect on generated code." TRICKY:
+    FALSE, or at least incomplete — while `final`'s PRIMARY purpose is to
+    express design intent (and get a compile error if violated), it can
+    also ENABLE devirtualization in some compilers/scenarios — since the
+    compiler now knows for certain no further override of that function
+    (or class) is possible, it can sometimes convert what would otherwise
+    be a virtual (indirect, non-inlinable) call into a direct, inlinable
+    one at compile time, a genuine (if compiler-dependent) performance
+    benefit beyond documentation.
+
+================================================================================
+END OF FILE
 ================================================================================
