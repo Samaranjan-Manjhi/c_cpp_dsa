@@ -1,10 +1,10 @@
 /*
 
-Red OR Green
+   Red OR Green
 
-Given a string of length N, made up of only uppercase characters 'R' and 'G', where 'R' stands for Red and 'G' stands for Green.Find out the minimum number of characters you need to change to make the whole string of the same colour.
+   Given a string of length N, made up of only uppercase characters 'R' and 'G', where 'R' stands for Red and 'G' stands for Green.Find out the minimum number of characters you need to change to make the whole string of the same colour.
 
-Example 1:
+   Example 1:
 
 Input:
 N=5
@@ -39,10 +39,35 @@ Constraints:
 1<=N<=105
 S consists only of characters 'R' and 'G'.
 
-*/
+ */
 
 
-int RedOrGreen(int N, string S) {
-        // code here
-        
-    }
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+int RedOrGreen(int N, string S) 
+{
+     // code here
+     int red = 0;
+     for(char c : S)
+     {
+          if(c == 'R')
+               red++;
+     }   
+
+     return min(red, N-red);
+}
+
+int main()
+{
+     string s;
+     cout << "Enter Input String: ";
+     getline(cin, s);
+
+     int res = RedOrGreen(s.length(), s);
+     cout << "     Result:- " << res << endl;
+
+     return 0;
+}
