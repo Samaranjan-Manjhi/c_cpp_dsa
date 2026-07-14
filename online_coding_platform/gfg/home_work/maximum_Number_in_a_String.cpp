@@ -1,12 +1,12 @@
 /*
 
-Maximum Number in a String
+   Maximum Number in a String
 
-Given an alphanumeric string s consisting of lowercase letters (a–z), uppercase letters (A–Z), and digits (0–9).
+   Given an alphanumeric string s consisting of lowercase letters (a–z), uppercase letters (A–Z), and digits (0–9).
 
-Extract all numeric substrings from s and return the maximum numeric value among them.
+   Extract all numeric substrings from s and return the maximum numeric value among them.
 
-If no numeric substring exists, return -1.
+   If no numeric substring exists, return -1.
 
 Examples:
 
@@ -22,10 +22,44 @@ Constraints:
 1 ≤ |s| ≤ 104
 -1 ≤ output value ≤ 106
 
-*/
+ */
 
 
-int extractMaximum(string &s) {
-        // code here
-        
-    }
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+int extractMaximum(string &s) 
+{
+     // code here
+     int ans = -1;
+     int n = s.length();
+     int temp = 0;
+     for(int i=0;i<n;i++)
+     {
+          if(s[i] >= '0' && s[i] <= '9')
+          {
+               temp = temp*10 + s[i]-'0';
+          }
+          else
+          {
+               ans = max(ans, temp);
+               temp = 0;
+          }
+     }   
+
+     return ans;
+}
+
+int main()
+{
+     string s;
+     cout << "Enter Input String: ";
+     getline(cin, s);
+
+     int res = extractMaximum(s);
+     cout << "     Result:- " << res << endl;
+
+     return 0;
+}

@@ -1,10 +1,10 @@
 /*
 
-Swapping Triangles
+   Swapping Triangles
 
-Given an integer N and a matrix A of dimensions NxN.Swap the values of the triangle above the primary diagonal with the values of the triangle below the primary diagonal.
+   Given an integer N and a matrix A of dimensions NxN.Swap the values of the triangle above the primary diagonal with the values of the triangle below the primary diagonal.
 
-Example 1:
+   Example 1:
 Input:
 N=3
 A=[[1,2,3],[4,5,6],[7,8,9]]
@@ -14,7 +14,7 @@ Output:
 3 6 9
 Explanation:
 Swapping the upper triangle with the
- lower triangle gives this result.
+lower triangle gives this result.
 
 Example 2:
 Input:
@@ -34,14 +34,68 @@ You don't need to read input or print anything. Your task is to complete the fun
 
 Expected Time Complexity:O(N2)
 Expected Auxillary Space:O(1)
- 
+
 Constraints:
 1<=N,A[i][j]<=1000, for 0<=i  
 
-*/
+ */
 
 
-vector<vector<int>> swapTriangle(int N, vector<vector<int>> A) {
-        // code here
-        
-    }
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+vector<vector<int>> swapTriangle(int N, vector<vector<int>> A) 
+{
+     // code here
+     vector<vector<int>> res;
+     for(int i=0;i<N;i++)
+     {
+          vector<int> temp;
+          for(int j=0;j<N;j++)
+          {
+               temp.push_back(A[j][i]);
+          }
+          res.push_back(temp);
+     }
+     return res;
+}
+
+int main()
+{
+     int n;
+     cout << "Enter Matrix Size(n*n): ";
+     cin >> n;
+
+     vector<vector<int>> v(n, vector<int>(n));
+     for(int i=0;i<n;i++)
+     {
+          for(int j=0;j<n;j++)
+          {
+               cin >> v[i][j];
+          }
+     }
+
+     cout << "Matrix Before Operation:- \n";
+     for(int i=0;i<n;i++)
+     {
+          for(int j=0;j<n;j++)
+          {
+               cout << v[i][j] << " ";
+          }
+          cout << endl;
+     }
+     vector<vector<int>> res = swapTriangle(n, v);
+     cout << "Matrix After Operation:- \n";
+     for(int i=0;i<n;i++)
+     {
+          for(int j=0;j<n;j++)
+          {
+               cout << res[i][j] << " ";
+          }
+          cout << endl;
+     }
+
+     return 0;
+}

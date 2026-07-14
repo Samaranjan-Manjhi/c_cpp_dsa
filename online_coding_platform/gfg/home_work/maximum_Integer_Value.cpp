@@ -1,10 +1,10 @@
 /*
 
-Maximum Integer Value
+   Maximum Integer Value
 
-Given a string S of digits(0-9).Find the maximum value that can be obtained from the string by putting either '*' or '+' operators in between the digits while traversing from left to right of the string and picking up a single digit at a time.
+   Given a string S of digits(0-9).Find the maximum value that can be obtained from the string by putting either '*' or '+' operators in between the digits while traversing from left to right of the string and picking up a single digit at a time.
 
-Example 1:
+   Example 1:
 
 Input: 
 S="01230"
@@ -49,9 +49,35 @@ Constraints:
 S contains only digits from 0 to 9
 Leading 0's maybe present.
 
-*/
+ */
 
-long long int MaximumIntegerValue(string S) {
-        // code here
-        
-    }
+
+
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+long long int MaximumIntegerValue(string S) 
+{
+     // code here
+     int n = S.length();
+     long long int ans = 0;
+     for(int i=0;i<n;i++)
+     {
+          ans = max(ans*(S[i]-'0'), ans+(S[i]-'0'));
+     }   
+     return ans;
+}
+
+int main()
+{
+     string s;
+     cout << "Enter Input String: ";
+     getline(cin, s);
+
+     long long int res = MaximumIntegerValue(s);
+     cout << "     Result:- " << res << endl;
+
+     return 0;
+}
