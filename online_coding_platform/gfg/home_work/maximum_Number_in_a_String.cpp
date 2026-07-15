@@ -33,21 +33,40 @@ using namespace std;
 int extractMaximum(string &s) 
 {
      // code here
-     int ans = -1;
+     int ans = -1; 
      int n = s.length();
      int temp = 0;
-     for(int i=0;i<n;i++)
+     bool isNum = false; 
+     bool processingNum = false; 
+
+     for (int i = 0; i < n; i++) 
      {
-          if(s[i] >= '0' && s[i] <= '9')
+          if (s[i] >= '0' && s[i] <= '9') 
           {
-               temp = temp*10 + s[i]-'0';
-          }
-          else
+               isNum = true;
+               processingNum = true;
+               temp = temp * 10 + (s[i] - '0');
+          } 
+          else 
           {
-               ans = max(ans, temp);
-               temp = 0;
+               if (processingNum) 
+               {
+                    ans = max(ans, temp);
+                    temp = 0;
+                    processingNum = false;
+               }
           }
-     }   
+     }
+
+     if (processingNum) 
+     {
+          ans = max(ans, temp);
+     }
+
+     if (!isNum) 
+     {
+          return -1;
+     }
 
      return ans;
 }
