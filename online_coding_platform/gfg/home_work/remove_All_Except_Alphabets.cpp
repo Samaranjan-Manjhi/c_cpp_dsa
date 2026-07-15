@@ -1,10 +1,10 @@
 /*
 
-Remove All Except Alphabets
+   Remove All Except Alphabets
 
-Given a string s, remove all characters except lowercase and uppercase alphabets (a-z and A-Z) and return the resulting string.
+   Given a string s, remove all characters except lowercase and uppercase alphabets (a-z and A-Z) and return the resulting string.
 
-If no alphabetic characters remain after removal, return an empty string.
+   If no alphabetic characters remain after removal, return an empty string.
 
 Examples:
 
@@ -19,10 +19,42 @@ Explanation: The string "{{{}}> *& ^%*)" does not contain any alphabetic charact
 Constraints:
 1 ≤ n ≤ 105
 
-*/
+ */
 
 
- string removeChars(string &s) {
-        // code here
-        
-    }
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+bool isAlpha(char c)
+{
+     if(c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z')
+          return true;
+     return false;
+}
+
+string removeChars(string &s) 
+{
+     // code here
+     string res = "";
+     for(char c : s)
+     {
+          if(isAlpha(c))
+               res += c;
+     }        
+
+     return res;
+}
+
+int main()
+{
+     string s;
+     cout << "Enter Input String: ";
+     getline(cin, s);
+
+     string res = removeChars(s);
+     cout << "     Result:- " << res << endl;
+
+     return 0;
+}

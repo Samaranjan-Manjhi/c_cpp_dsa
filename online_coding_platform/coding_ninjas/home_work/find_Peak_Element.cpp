@@ -1,14 +1,12 @@
 /*
 
-Find Peak Element 
+   Find Peak Element 
 
- Problem statement
+   Problem statement
 
-You are given an array 'arr' of length 'n'. Find the index(0-based) of a peak element in the array. If there are multiple peak numbers, return the index of any peak number.
-
-Peak element is defined as that element that is greater than both of its neighbors. If 'arr[i]' is the peak element, 'arr[i - 1]' < 'arr[i]' and 'arr[i + 1]' < 'arr[i]'.
-
-Assume 'arr[-1]' and 'arr[n]' as negative infinity.
+   You are given an array 'arr' of length 'n'. Find the index(0-based) of a peak element in the array. If there are multiple peak numbers, return the index of any peak number.
+   Peak element is defined as that element that is greater than both of its neighbors. If 'arr[i]' is the peak element, 'arr[i - 1]' < 'arr[i]' and 'arr[i + 1]' < 'arr[i]'.
+   Assume 'arr[-1]' and 'arr[n]' as negative infinity.
 
 Note:
 1.  There are no 2 adjacent elements having same value (as mentioned in the constraints).
@@ -48,8 +46,46 @@ Constraints:
 1 <= 'arr[i]' <= 10^5
 'arr[i]' != 'arr[i + 1]' for all 'i' in range 0 <= 'i' < 'n' - 1
 
-*/
+ */
 
-int findPeakElement(vector<int> &arr) {
-    // Write your code here
+
+#include <iostream>
+#include <vector>
+#include <climits>
+
+using namespace std;
+
+int findPeakElement(vector<int> &arr) 
+{
+     // Write your code here
+     int n = arr.size();
+     vector<int> res(n+2, INT_MIN);
+     for(int i=0;i<n;i++)
+     {
+          res[i+1] = arr[i];
+     }
+
+     int maxi = 0;
+     for(int i=1;i<res.size()-1;i++)
+     {
+          if(res[i-1] < res[i] && res[i] > res[i+1])
+               return i-1;
+     }
+     return -1;
+}
+
+int main()
+{
+     int n;
+     cout << "Enter Vector Size: ";
+     cin >> n;
+
+     vector<int> v(n);
+     for(int i=0;i<n;i++)
+          cin >> v[i];
+
+     int res = findPeakElement(v);
+     cout << "    Result:- " << res << endl;
+
+     return 0;
 }
