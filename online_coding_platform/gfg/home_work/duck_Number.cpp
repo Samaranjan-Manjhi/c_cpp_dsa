@@ -29,9 +29,19 @@ using namespace std;
 bool check_duck(string num) 
 {
      // code here
-     if(num[0] >= '1' && num[0] <= '9')
-          return true;
-     return false;    
+     if (num[0] == '0')
+		return false;
+	
+	int l = 1;
+	bool isZero = false;
+	for(int i=0;i<num.size();i++)
+	{
+	    if(num[i] == '0')
+	        isZero = true;
+	}
+	if (isZero == false)
+		return false;
+	return true;
 }
 
 int main()
