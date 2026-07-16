@@ -1,12 +1,12 @@
 /*
 
-Single Number 
+   Single Number 
 
- Problem statement
+   Problem statement
 
-You are given an array A of length N, where N is always an odd integer. There are (N-1)/2 elements in the array that occur twice and one element which occurs once.
+   You are given an array A of length N, where N is always an odd integer. There are (N-1)/2 elements in the array that occur twice and one element which occurs once.
 
-Your task is to find the only element that occurs once in the array.
+   Your task is to find the only element that occurs once in the array.
 Note: There are (N-1)/2+1 elements that are unique in the array.
 Example:
 
@@ -40,15 +40,24 @@ Constraints:
 Where T denotes the number of test cases and N denotes the length of array A[].
 Time Limit: 1 sec
 
-*/
+ */
 
 
 #include <iostream>
 #include <vector>
 
-int occursOnce(vector<int> &a, int n){
-	// Write your code here.
-	
+using namespace std;
+
+int occursOnce(vector<int> &a, int n)
+{
+     // Write your code here.
+     int axi = 0;
+     for(int x : a)
+     {
+          axi ^= x;
+     }	
+
+     return axi;
 }
 
 int main()
@@ -61,7 +70,8 @@ int main()
      for(int i=0;i<n;i++)
           cin >> v[i];
 
-     
+     int res = occursOnce(v, n);
+     cout << "    Result:- " << res << endl; 
 
      return 0;
 }

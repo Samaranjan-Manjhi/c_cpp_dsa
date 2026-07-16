@@ -63,3 +63,19 @@ vector<int> sortByFrequency(vector<int>& nums)
 {
 	// Write your code here
 }
+
+int main()
+{
+int n;
+cout << "Enter Vector Size: ";
+cin >> n;
+
+vector<int> v(n);
+for(int i=0;i<n;i++)
+     cin >> v[i];
+
+
+
+
+return 0;
+}

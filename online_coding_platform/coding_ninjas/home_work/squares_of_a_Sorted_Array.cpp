@@ -1,12 +1,12 @@
 /*
 
-Squares of a Sorted Array 
+   Squares of a Sorted Array 
 
- Problem statement
+   Problem statement
 
-You are given an array/list ‘ARR’ of ‘N’ integers. You have to generate an array/list containing squares of each number in ‘ARR’, sorted in increasing order.
+   You are given an array/list ‘ARR’ of ‘N’ integers. You have to generate an array/list containing squares of each number in ‘ARR’, sorted in increasing order.
 
-For example :
+   For example :
 Input:
 ‘ARR’ = [-6,-3, 2, 1, 5] 
 
@@ -54,15 +54,46 @@ For test case 2:
 On taking the square of each element ‘ARR’ will become [36,9,4,1].
 Now we can see that the array/list is already sorted, so the output will be [36, 9, 4, 1].
 
-*/
+ */
 
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
 vector<int> sqsorted(vector<int>& arr) 
 {
-    // Write your code here.
+     // Write your code here.
+     int n = arr.size();
+     vector<int> res(n);
+     for(int i=0;i<n;i++)
+     {
+          res[i] = arr[i]*arr[i];
+     }
+     sort(res.begin(), res.end());
+     return res;
+}
+
+int main()
+{
+     int n;
+     cout << "Enter Vector Size: ";
+     cin >> n;
+
+     vector<int> v(n);
+     for(int i=0;i<n;i++)
+          cin >> v[i];
+
+     vector<int> res = sqsorted(v);
+     if(!res.empty())
+     {
+          cout << "    Result:- ";
+          for(int x : res)
+               cout << x << " ";
+          cout << endl;
+     }
+
+     return 0;
 }
