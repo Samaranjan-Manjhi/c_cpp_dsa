@@ -1,13 +1,13 @@
 /*
 
-Duplicate In Array
+   Duplicate In Array
 
- Problem statement
+   Problem statement
 
-You are given an array ‘ARR’ of size ‘N’ containing each number between 1 and ‘N’ - 1 at least once. There is a single integer value that is present in the array twice. Your task is to find the duplicate integer value present in the array.
+   You are given an array ‘ARR’ of size ‘N’ containing each number between 1 and ‘N’ - 1 at least once. There is a single integer value that is present in the array twice. Your task is to find the duplicate integer value present in the array.
 
-For example:
-Consider ARR = [1, 2, 3, 4, 4], the duplicate integer value present in the array is 4. Hence, the answer is 4 in this case.
+   For example:
+   Consider ARR = [1, 2, 3, 4, 4], the duplicate integer value present in the array is 4. Hence, the answer is 4 in this case.
 
 Note :
 A duplicate number is always present in the given array.
@@ -52,15 +52,26 @@ Hints:
 3. Think of a solution using Floyd’s cycle finding algorithm.
 4. Try to think of a solution based on bitwise XOR.
 
-*/
+ */
 
 #include <iostream>
 #include <vector>
 
+using namespace std;
+
 int findDuplicate(vector<int> &arr) 
 {
-    // Write your code here
-	
+     // Write your code here
+     int n = arr.size();
+     int orig = 0;
+     for(int i=1;i<n;i++)
+          orig ^= i;
+
+     int dub = 0;
+     for(int i=0;i<n;i++)
+          dub ^= arr[i];
+
+     return (dub - orig);
 }
 
 int main()
@@ -73,7 +84,8 @@ int main()
      for(int i=0;i<n;i++)
           cin >> v[i];
 
-     
+     int res = findDuplicate(v);
+     cout << "     Result:- " << res << endl;     
 
      return 0;
 }

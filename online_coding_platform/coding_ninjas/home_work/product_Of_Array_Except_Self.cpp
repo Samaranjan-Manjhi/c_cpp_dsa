@@ -1,11 +1,11 @@
 /*
 
-Product Of Array Except Self
+   Product Of Array Except Self
 
- Problem statement
+   Problem statement
 
-You have been given an integer array/list (ARR) of size N. You have to return an array/list PRODUCT such that PRODUCT[i] is equal to the product of all the elements of ARR except ARR[i]
- Note :
+   You have been given an integer array/list (ARR) of size N. You have to return an array/list PRODUCT such that PRODUCT[i] is equal to the product of all the elements of ARR except ARR[i]
+Note :
 
 Each product can cross the integer limits, so we should take modulo of the operation. 
 Take MOD = 10^9 + 7 to always stay in the limits.
@@ -30,10 +30,10 @@ Sample Output 1 :
 4 10 10
 
 Explanation for Sample Output 1 :
- Test case 1 : Given array = {1, 2, 3] 
- Required array = [2 * 3, 1 * 3, 1 * 2] = [6, 3, 2]
- Test case 2 : Given array = {5, 2, 2] 
- Required array = [2 * 2, 5 * 2, 5 * 2] = [4, 10, 10]
+Test case 1 : Given array = {1, 2, 3] 
+Required array = [2 * 3, 1 * 3, 1 * 2] = [6, 3, 2]
+Test case 2 : Given array = {5, 2, 2] 
+Required array = [2 * 2, 5 * 2, 5 * 2] = [4, 10, 10]
 
 Sample Input 2 :
 2
@@ -45,14 +45,47 @@ Sample Output 2 :
 1
 2 1
 
-*/
+ */
 
 
 #include <iostream>
 
 using namespace std;
 
+const int mod = 1e9+7;
+
 int *getProductArrayExceptSelf(int *arr, int n)
 {
-    //Write your code here
+     //Write your code here
+     int prod = 1;
+     for(int i=0;i<n;i++)
+     {
+          prod = (prod * arr[i])%mod;
+     }
+     for(int i=0;i<n;i++)
+     {
+          arr[i] = prod/arr[i];
+     }
+     return arr;
+}
+
+int main()
+{
+     int n;
+     cout << "Enter Array Size: ";
+     cin >> n;
+
+     int arr[n];
+     for(int i=0;i<n;i++)
+          cin >> arr[i];
+
+     int *ans = getProductArrayExceptSelf(arr, n);
+     cout << "     Result:- ";
+     for(int i=0;i<n;i++)
+     {
+          cout << ans[i] << " ";
+     }
+     cout << endl;
+
+     return 0;
 }

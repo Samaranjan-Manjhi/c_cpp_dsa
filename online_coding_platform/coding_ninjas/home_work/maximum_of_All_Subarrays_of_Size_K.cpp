@@ -1,25 +1,25 @@
 /*
 
-Maximum of All Subarrays of Size K
+   Maximum of All Subarrays of Size K
 
-Problem statement
+   Problem statement
 
-You are given an array “A” of N integers. Your task is to find the maximum element in all K sized contiguous subarrays from left to right.
-For Example:
+   You are given an array “A” of N integers. Your task is to find the maximum element in all K sized contiguous subarrays from left to right.
+   For Example:
 
-If A = [3, 2, 3], and K = 2.
-Then max of [3, 2] = 3 and max of [2, 3] = 3
-So, the answer will be [3, 3]
+   If A = [3, 2, 3], and K = 2.
+   Then max of [3, 2] = 3 and max of [2, 3] = 3
+   So, the answer will be [3, 3]
 
-If A = [3, 2, 3, 5, 1, 7] and K = 3.
-Then max of [3, 2, 3] = 3 
-Then max of [2, 3, 5] = 5 
-Then max of [3, 5, 1] = 5 
-Then max of [5, 1, 7] = 7 
-So  the answer will be [3, 5, 5, 7]
+   If A = [3, 2, 3, 5, 1, 7] and K = 3.
+   Then max of [3, 2, 3] = 3 
+   Then max of [2, 3, 5] = 5 
+   Then max of [3, 5, 1] = 5 
+   Then max of [5, 1, 7] = 7 
+   So  the answer will be [3, 5, 5, 7]
 
-Follow Up :
-Can you solve the problem in O(N) time complexity and O(K) space complexity?
+   Follow Up :
+   Can you solve the problem in O(N) time complexity and O(K) space complexity?
 
 Constraints :
 1 <= T <= 10    
@@ -58,15 +58,25 @@ Sample Output 2 :
 3 3
 3 4 5
 
-*/
+ */
 
 
 #include <iostream>
 #include <vector>
 
+using namespace std;
+
 vector<int> maximumInAllSubarraysOfSizeK(vector<int> arr, int n, int k)
 {
-    // Write down your code here
+     // Write down your code here
+     vector<int> res;
+     if(k == 1)
+          return arr;
+     
+     for(int i=0;i<n-k;i++)
+     {
+          
+     }
 }
 
 int main()
@@ -79,7 +89,18 @@ int main()
      for(int i=0;i<n;i++)
           cin >> v[i];
 
-     
+     int k;
+     cout << "Enter K value: ";
+     cin >> k;
+
+     vector<int> res = maximumInAllSubarraysOfSizeK(v, n, k); 
+     if(!res.empty())
+     {
+          cout << "     Result:- ";
+          for(int x : res)
+               cout << x << " ";
+          cout << endl;
+     }
 
      return 0;
 }

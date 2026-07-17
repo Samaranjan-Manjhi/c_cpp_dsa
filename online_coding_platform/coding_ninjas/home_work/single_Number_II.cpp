@@ -1,10 +1,10 @@
 /*
 
-Single Number II 
+   Single Number II 
 
- Problem statement
+   Problem statement
 
-You are given an arbitrary array ‘arr’ consisting of N non-negative integers, where every element appears thrice except one. You need to find the element that appears only once.
+   You are given an arbitrary array ‘arr’ consisting of N non-negative integers, where every element appears thrice except one. You need to find the element that appears only once.
 
 Constraints:
 1 <= T <= 100
@@ -29,14 +29,28 @@ Sample Input 2:
 Sample Output 2:
 4
 
-*/
+ */
 
 #include <iostream>
 #include <vector>
+#include <unordered_map>
+
+using namespace std;
 
 int elementThatAppearsOnce(vector<int> arr) 
 {
-	// Write your code here.
+     // Write your code here.
+     unordered_map<int, int> mp;
+     for(int x : arr)
+          mp[x]++;
+
+     for(auto& m : mp)
+     {
+          if(m.second < 2)
+               return m.first;
+     }
+
+     return -1;
 }
 
 int main()
@@ -49,7 +63,8 @@ int main()
      for(int i=0;i<n;i++)
           cin >> v[i];
 
-     
+     int res = elementThatAppearsOnce(v);
+     cout << "     Result:- " << res << endl;     
 
      return 0;
 }

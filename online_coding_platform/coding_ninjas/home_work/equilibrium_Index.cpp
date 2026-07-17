@@ -1,11 +1,11 @@
 /*
 
-Equilibrium Index 
+   Equilibrium Index 
 
- Problem statement
+   Problem statement
 
-You are given an array Arr consisting of N integers. You need to find the equilibrium index of the array.
-An index is considered as an equilibrium index if the sum of elements of the array to the left of that index is equal to the sum of elements to the right of it.
+   You are given an array Arr consisting of N integers. You need to find the equilibrium index of the array.
+   An index is considered as an equilibrium index if the sum of elements of the array to the left of that index is equal to the sum of elements to the right of it.
 
 Note:
 1. The array follows 0-based indexing, so you need to return the 0-based index of the element.
@@ -47,14 +47,34 @@ Explanation for Sample Input 2:
 In the first test case of sample input 2, the sum of elements on the left of index 3 (arr[3] = 9) is five which is equal to the sum of elements on the right of arr[3].
 For the second test case, since no such index exists, we print -1.
 
-*/
+ */
 
 
 #include <iostream>
 #include <vector>
 
-int findEquilibriumIndex(vector<int> &arr) {
-    // Write your code here.
+using namespace std;
+
+int findEquilibriumIndex(vector<int> &arr) 
+{
+     // Write your code here.
+     int n = arr.size();
+     vector<int> pre(n), pos(n);
+     pre[0] = arr[0];
+     for(int i=1;i<n;i++)
+          pre[i] = arr[i]+pre[i-1];
+
+     pos[n-1] = arr[n-1];
+     for(int i=n-2;i>=0;i--)
+          pos[i] = arr[i]+pos[i+1];
+
+     for(int i=0;i<n;i++)
+     {
+          if(pre[i] == pos[i])
+               return i;
+     }
+
+     return -1;
 }
 
 int main()
@@ -67,7 +87,8 @@ int main()
      for(int i=0;i<n;i++)
           cin >> v[i];
 
-     
+     int res = findEquilibriumIndex(v);
+     cout << "     Result:- " << res << endl;     
 
      return 0;
 }
