@@ -63,15 +63,15 @@ int findDuplicate(vector<int> &arr)
 {
      // Write your code here
      int n = arr.size();
-     int orig = 0;
-     for(int i=1;i<n;i++)
-          orig ^= i;
+     vector<int> freq(n+1, 0);
+     for(int x : arr)
+          freq[x]++;
 
-     int dub = 0;
-     for(int i=0;i<n;i++)
-          dub ^= arr[i];
+     for(int i=1;i<=freq.size();i++)
+          if(freq[i] >= 2)
+               return i;
 
-     return (dub - orig);
+     return -1;
 }
 
 int main()

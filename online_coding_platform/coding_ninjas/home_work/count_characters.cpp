@@ -21,28 +21,8 @@
 
 
 #include <iostream>
-#include <vector>
 
 using namespace std;
-
-vector<int> countChar(const string& s)
-{
-     int c = 0, d = 0, w = 0;
-     int n = s.length();
-     for(int i=0;i<n;i++)
-     {
-          if(s[i] >= 'a' && s[i] <= 'z')
-               c++;
-          else if(s[i] >= '0' && s[i] <= '9')
-               d++;
-          else if(s[i] == ' ')
-               w++;
-          else if(s[i] == '$')
-               break;
-     }
-
-     return {c, d, w};
-}
 
 int main()
 {
@@ -50,17 +30,23 @@ int main()
      /* Read input as specified in the question.
       * Print output as specified in the question.
       */
-     string s;
-     cout << "Enter Input String: ";
-     getline(cin, s);
+     int characters = 0, digits = 0, whitespaces = 0;
+     char ch;
 
-     vector<int> res = countChar(s);
-     if(!res.empty())
+     while (cin.get(ch)) 
      {
-          for(int x : res)
-               cout << x << " ";
-          cout << endl;
+          if (ch == '$')
+               break;
+
+          if (ch >= 'a' && ch <= 'z')
+               characters++;
+          else if (ch >= '0' && ch <= '9')
+               digits++;
+          else if (ch == ' ' || ch == '\t' || ch == '\n')
+               whitespaces++;
      }
 
-     return 0;  
+     cout << characters << " " << digits << " " << whitespaces;
+
+     return 0;
 }

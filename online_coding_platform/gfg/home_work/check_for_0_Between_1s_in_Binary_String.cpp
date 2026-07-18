@@ -31,15 +31,32 @@ bool checkBinary(string &s)
 {
      // code here
      int n = s.length();
-     if(n <= 2)
-          return false;
-     for(int i=1;i<n-1;i++)
+     int last = -1, first = -1;
+     for(int i=0;i<n;i++)
      {
-          if(s[i-1] == '1' && s[i] == '0' && s[i+1] == '1')
-               return true;
-     }        
+          if(s[i] == '1')
+          {
+               first = i;
+               break;
+          }
+     }
 
-     return false;
+     for(int i=n-1;i>=0;i--)
+     {
+          if(s[i] == '1')
+          {
+               last = i;
+               break;
+          }
+     }
+
+     for(int i=first;i<last;i++)
+     {
+          if(s[i] == '0')
+               return false;
+     }
+
+     return true;
 }
 
 int main()

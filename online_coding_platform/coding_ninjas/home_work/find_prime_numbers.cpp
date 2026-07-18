@@ -33,31 +33,27 @@ Sample Output 2 :
 
 using namespace std;
 
-bool isPrime(int n)
-{
-     if(n <= 1)
-          return false;
-     if(n == 2)
-          return true;
-     if(n%2 == 0)
-          return false;
-     for(int i=3;i*i<=n;i++)
-     {
-          if(n%i==0)
-               return false;
-     }
-
-     return true;
-
-}
-
 vector<int> primeNumbersTillN(int N) 
 { 
      // Write your code here
      vector<int> res;
-     for(int i=1;i<=N;i++)
+     vector<char> isPrime(N + 1, 1);
+     isPrime[0] = isPrime[1] = 0;
+
+     for (long long i = 2; i * i <= N; i++)
      {
-          if(isPrime(i))
+          if (isPrime[i])
+          {
+               for (long long j = i * i; j <= N; j += i)
+               {
+                    isPrime[j] = 0;
+               }
+          }
+     }
+
+     for (int i = 2; i <= N; i++)
+     {
+          if (isPrime[i])
                res.push_back(i);
      }
 

@@ -52,21 +52,28 @@ Sample Output 2 :
 
 using namespace std;
 
-const int mod = 1e9+7;
-
 int *getProductArrayExceptSelf(int *arr, int n)
 {
      //Write your code here
-     int prod = 1;
-     for(int i=0;i<n;i++)
+     const long long MOD = 1e9 + 7;
+     int *ans = new int[n];
+     long long prefix = 1;
+     // Prefix product
+     for (int i = 0; i < n; i++)
      {
-          prod = (prod * arr[i])%mod;
+          ans[i] = prefix;
+          prefix = (prefix * arr[i]) % MOD;
      }
-     for(int i=0;i<n;i++)
+
+     long long suffix = 1;
+     // Suffix product
+     for (int i = n - 1; i >= 0; i--)
      {
-          arr[i] = prod/arr[i];
+          ans[i] = (ans[i] * suffix) % MOD;
+          suffix = (suffix * arr[i]) % MOD;
      }
-     return arr;
+
+     return ans;
 }
 
 int main()
