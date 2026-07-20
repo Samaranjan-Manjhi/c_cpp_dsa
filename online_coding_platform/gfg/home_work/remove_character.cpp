@@ -1,10 +1,10 @@
 /*
 
-Remove character
+   Remove character
 
-Given two strings str1 and str2, remove those characters from the first string(str1) which are present in the second string(str2). Both the strings are different and contain only lowercase characters.
+   Given two strings str1 and str2, remove those characters from the first string(str1) which are present in the second string(str2). Both the strings are different and contain only lowercase characters.
 NOTE: Size of the first string is always greater than the size of the second string( |str1| > |str2|).
- 
+
 
 Example 1:
 
@@ -21,30 +21,38 @@ Explanation: After removing characters (c, a, r) from string1 we get "ouene".
 Constraints:
 1 <= |Str1| , |Str2| <= 50
 
-*/
+ */
 
 
 #include <iostream>
 #include <string>
 using namespace std;
 
-string removeChars(string str1, string str2) {
-    // code here
-    return "";
+string removeChars(string str1, string str2) 
+{
+     // code here
+     string ans = "";
+     for(char c : str1)
+     {
+          if(str2.find(c) == string::npos)
+               ans += c;
+     }
+     return ans;
 }
 
-int main() {
-    string str1, str2;
+int main() 
+{
+     string str1, str2;
 
-    cout << "Enter first string: ";
-    cin >> str1;
+     cout << "Enter first string: ";
+     cin >> str1;
 
-    cout << "Enter characters to remove: ";
-    cin >> str2;
+     cout << "Enter characters to remove: ";
+     cin >> str2;
 
-    string result = removeChars(str1, str2);
+     string result = removeChars(str1, str2);
 
-    cout << "Result: " << result << endl;
+     cout << "Result: " << result << endl;
 
-    return 0;
+     return 0;
 }

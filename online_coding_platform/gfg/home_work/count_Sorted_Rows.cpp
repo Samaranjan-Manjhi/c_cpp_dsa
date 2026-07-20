@@ -1,8 +1,8 @@
 /*
 
-Count Sorted Rows
+   Count Sorted Rows
 
-Given a matrix mat[][] of size n × m, count the number of rows that are sorted either in strictly increasing order or strictly decreasing order.
+   Given a matrix mat[][] of size n × m, count the number of rows that are sorted either in strictly increasing order or strictly decreasing order.
 
 Examples:
 
@@ -17,7 +17,7 @@ Explanation: All the rows are sorted in strictly increasing order.
 Constraints:
 1 ≤ n, m, mat[i][j] ≤ 103
 
-*/
+ */
 
 
 #include <iostream>
@@ -29,35 +29,40 @@ int sortedCount(vector<vector<int>> &mat)
 {
      // code here
      int cnt = 0;
-     int n = mat.size();
-     int m = mat[0].size();
-     for(int i=0;i<n;i++)
+     for(auto& row : mat)
      {
-          for(int j=0;j<m;j++)
+          bool a = true, d = true;
+          for(int i=0;i<row.size()-1;i++)
           {
-               if()
-
+               if(row[i] > row[i+1])
+                    a = false;
+               if(row[i] < row[i+1])
+                    d = false;
           }
-     }   
+          if(a || d)
+               cnt++;
+     } 
+
+     return cnt;
 }
 
 int main()
 {
-int n, m;
-cout << "Enter Matrix Size: ";
-cin >> n >> m;
+     int n, m;
+     cout << "Enter Matrix Size: ";
+     cin >> n >> m;
 
-vector<vector<int>> v(n, vector<int>(m));
-for(int i=0;i<n;i++)
-{
-for(int j=0;j<m;j++)
-{
-cin >> v[i][j];
-}
-}
+     vector<vector<int>> v(n, vector<int>(m));
+     for(int i=0;i<n;i++)
+     {
+          for(int j=0;j<m;j++)
+          {
+               cin >> v[i][j];
+          }
+     }
 
-int res = sortedCount(v);
-cout << "    Result:- " << res << endl;
+     int res = sortedCount(v);
+     cout << "    Result:- " << res << endl;
 
-return 0;
+     return 0;
 }
