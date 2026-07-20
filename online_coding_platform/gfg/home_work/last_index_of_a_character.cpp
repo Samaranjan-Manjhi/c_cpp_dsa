@@ -24,9 +24,15 @@ Constraints:
 #include <string>
 using namespace std;
 
-int LastIndex(string &s, char c) {
-    // code here
-    return -1;
+int LastIndex(string &s, char c) 
+{
+     // code here
+     for(int i=s.length()-1;i>=0;i--)
+     {
+          if(s[i] == c)
+               return i;
+     }
+     return -1;
 }
 
 int main() {
