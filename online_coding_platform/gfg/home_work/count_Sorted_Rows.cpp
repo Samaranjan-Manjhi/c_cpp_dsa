@@ -34,9 +34,9 @@ int sortedCount(vector<vector<int>> &mat)
           bool a = true, d = true;
           for(int i=0;i<row.size()-1;i++)
           {
-               if(row[i] > row[i+1])
+               if(row[i] >= row[i+1])
                     a = false;
-               if(row[i] < row[i+1])
+               if(row[i] <= row[i+1])
                     d = false;
           }
           if(a || d)

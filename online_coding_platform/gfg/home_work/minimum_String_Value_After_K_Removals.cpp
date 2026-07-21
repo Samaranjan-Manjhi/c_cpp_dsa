@@ -24,32 +24,49 @@ Constraints:
 #include <iostream>
 #include <string>
 #include <unordered_map>
-#include <vector>
-#include <algorithm>
+#include <queue>
 using namespace std;
 
 int minValue(string &s, int k) 
 {
      // code here
+     // Step 1: Count character frequencies
+     unordered_map<char, int> freq;
+     for (char c : s) 
+     {
+          freq[c]++;
+     }
+
+     // Step 2: Push all frequencies into a Max-Heap
+     priority_queue<int> maxHeap;
+     for (auto &pair : freq) 
+     {
+          maxHeap.push(pair.second);
+     }
+
+     // Step 3: Reduce highest frequency k times
+     while (k > 0 && !maxHeap.empty()) 
+     {
+          int top = maxHeap.top();
+          maxHeap.pop();
+
+          top--; // Remove one instance of the most frequent character
+          if (top > 0) 
+          {
+               maxHeap.push(top);
+          }
+          k--;
+     }
+
+     // Step 4: Calculate the sum of squares of remaining frequencies
      int ans = 0;
-     unordered_map<char, int> mp;
-     for(char c : s)
+     while (!maxHeap.empty()) 
      {
-          mp[c]++;
+          int count = maxHeap.top();
+          maxHeap.pop();
+          ans += count * count;
      }
-     vector<int> cnt;
-     for(auto& m : mp)
-     {
-          cnt.push_back(m.second);
-     }
-     sort(cnt.begin(), cnt.end());
-     for(int i=0;i<cnt.size();i++)
-     {
-          if(i == cnt.size()-1)
-               ans += (cnt[i]-k)*(cnt[i]-k);
-          else
-               ans += cnt[i]*cnt[i];
-     }
+
      return ans;
 }
 
