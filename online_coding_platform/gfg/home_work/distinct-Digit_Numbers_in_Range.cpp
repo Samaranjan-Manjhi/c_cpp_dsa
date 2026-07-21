@@ -1,8 +1,8 @@
 /*
 
-Distinct-Digit Numbers in Range
+   Distinct-Digit Numbers in Range
 
-Given two positive integers l and r, find all numbers in the range [l, r] whose digits are all distinct, with no digit repeated. return them in ascending order.
+   Given two positive integers l and r, find all numbers in the range [l, r] whose digits are all distinct, with no digit repeated. return them in ascending order.
 
 Examples:
 
@@ -17,9 +17,56 @@ Explanation: Every number from 1 to 9 is a single digit, so each one trivially h
 Constraints:
 1 ≤ l ≤ r ≤ 105
 
-*/
+ */
 
-vector<int> uniqueNumbers(int l, int r) {
-        // code here
-        
-    }
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+bool isUnique(int num)
+{
+     vector<bool> visited(10, false);
+     while(num > 0)
+     {
+          int digit = num%10;
+          if(visited[digit])
+               return false;
+
+          visited[digit] = true;
+          num /= 10;
+     }
+     return true;
+}
+
+vector<int> uniqueNumbers(int l, int r) 
+{
+     // code here
+     vector<int> res;
+     for(int i=l;i<=r;i++)
+     {
+          if(isUnique(i))
+               res.push_back(i);
+     }
+
+     return res;
+}
+
+int main()
+{
+     int l, r;
+     cout << "Enter left and right range: ";
+     cin >> l >> r;
+
+     vector<int> res = uniqueNumbers(l, r);
+     cout << "    Result:-  ";
+     if(!res.empty())
+     {
+          for(int x : res)
+               cout << x << " ";
+          cout << endl;
+     }
+
+     return 0;
+}
