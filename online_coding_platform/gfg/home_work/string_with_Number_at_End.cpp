@@ -27,10 +27,25 @@ using namespace std;
 int isSame(string &s) 
 {
      // code here
-     int cnt = 0;
      int n = s.length();
-     cnt = s[n-1] - '0';
-     if(n-1 == cnt)
+     string res = "";
+     string num = "";
+     for(int i=0;i<n;i++)
+     {
+          if(s[i] >= 'a' && s[i] <= 'z')
+               res += s[i];
+          else
+               num += s[i];
+     }
+
+     int r = res.length();
+     int cnt = 0;
+     for(int i=0;i<num.size();i++)
+     {
+          cnt = cnt*10+num[i]-'0';
+     }
+
+     if(cnt == r)
           return 1;
 
      return 0;
