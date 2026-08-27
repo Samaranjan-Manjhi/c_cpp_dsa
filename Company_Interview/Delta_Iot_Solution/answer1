@@ -1,0 +1,331 @@
+=====================================================================
+DEBUGGING TOOLS, KERNEL DEBUGGERS, OTP, SQLITE & REGEX
+=====================================================================
+
+=====================================================================
+A. VALGRIND
+=====================================================================
+"Valgrind isn't an acronym - it's the name of a dynamic binary
+instrumentation framework, a suite of tools that run your program on
+a synthetic CPU, letting it inspect every memory access. The tool I
+use most within it is Memcheck, which detects memory leaks,
+use-after-free, uninitialized reads, and buffer overflows - it
+catches these at the exact instruction that caused them, with a
+stack trace, rather than letting the bug manifest as a mysterious
+crash somewhere else later. The trade-off is it runs the program
+10-30x slower, since it's emulating every instruction, so it's a
+debugging/CI tool, not something you run in production."
+
+COMMON USAGE:
+    valgrind --leak-check=full --show-leak-kinds=all ./my_program
+    # --leak-check=full: reports each individual leak location
+    # --show-leak-kinds=all: includes "still reachable" blocks too
+
+    valgrind --tool=helgrind ./my_program
+    # Helgrind: detects race conditions and lock-order violations in
+    # multithreaded code - a different tool within the Valgrind suite
+
+READING OUTPUT (say this if asked):
+"A typical leak report gives you the number of bytes leaked, how
+many allocation blocks, and a stack trace back to the exact malloc/
+new call that allocated the never-freed memory - that stack trace is
+the important part, since it tells you exactly where to add the
+missing delete or switch to a smart pointer."
+
+=====================================================================
+B. GDB (GNU Debugger)
+=====================================================================
+"GDB - GNU Debugger - is the standard debugger for compiled
+C/C++ on Linux. It lets you set breakpoints, step through code line
+by line, inspect variable values and memory, examine the call stack,
+and even attach to an already-running process to debug it live -
+critical for daemons and services you can't easily restart with a
+debugger attached from the start."
+
+ESSENTIAL COMMANDS (know these cold):
+    gdb ./my_program              # start gdb on a binary
+    gdb -p <pid>                  # attach to an already-running process
+    break main                    # set breakpoint at function main
+    break file.cpp:42             # set breakpoint at a specific line
+    run                           # start/continue execution
+    next  (n)                     # step over (don't enter function calls)
+    step  (s)                     # step into function calls
+    continue (c)                  # resume until next breakpoint
+    print variable_name (p)       # inspect a variable's value
+    backtrace (bt)                # show the full call stack
+    watch variable_name           # break whenever this variable changes
+    bt full                       # backtrace with local variables at each frame
+
+DEBUGGING A CRASH FROM A CORE DUMP:
+    gdb ./my_program core
+    bt                            # shows exactly where it crashed
+
+Say this if asked "how do you debug a segfault": "First I'd check if
+a core dump was generated, load it with gdb, and run backtrace to
+see the exact call stack at the moment of the crash - that usually
+points straight at the null/dangling pointer dereference. If no core
+dump, I'd run the program directly under gdb and let it break
+automatically on the signal."
+
+=====================================================================
+C. KDB / KGDB (Kernel-level debugging)
+=====================================================================
+Full forms:
+- KDB = Kernel Debugger
+- KGDB = Kernel GNU Debugger (also sometimes read as "Kernel-mode
+  GDB")
+
+SPOKEN ANSWER:
+"Both are for debugging the Linux kernel itself, not userspace
+programs - relevant when you're working below the level GDB alone
+can reach, like your own kernel modules or drivers. KDB is a
+lightweight, built-in kernel debugger - you interact with it
+directly at the machine's console (keyboard/monitor attached to the
+box being debugged), useful for quick inspection without needing a
+second machine. KGDB is more powerful: it lets you connect a
+*separate* development machine running regular GDB, over a serial
+line or network, to debug the target kernel remotely - so you get
+GDB's full symbolic debugging, breakpoints, and stepping capability,
+but applied to kernel code instead of a userspace process. In
+practice, KGDB is the one you'd reach for during actual kernel
+module development, since it's far more capable than KDB's basic
+console commands."
+
+WHY THIS MATTERS FOR YOUR BACKGROUND:
+"Since I've worked with eBPF and fanotify-based kernel monitoring,
+KGDB is the natural tool when eBPF's own verifier/tracing tools
+(like bpftrace or bpftool) aren't enough and I need to step through
+actual kernel-side code path behavior directly."
+
+=====================================================================
+D. HOTP vs TOTP (One-Time Password algorithms)
+=====================================================================
+Full forms:
+- HOTP = HMAC-based One-Time Password
+- TOTP = Time-based One-Time Password
+
+SPOKEN ANSWER:
+"Both generate a short one-time code from a shared secret key, used
+for 2FA - relevant directly to your SSH 2FA project. HOTP derives
+the code from the secret key plus a counter that increments every
+time a code is generated - so the server and device just need to
+stay in sync on the counter value, incrementing together each use.
+TOTP is essentially HOTP but replaces the counter with the current
+Unix time divided into fixed windows, usually 30 seconds - so
+instead of an explicit counter, both sides independently compute
+'what time-window are we in right now' and derive the same code, as
+long as their clocks are reasonably in sync. TOTP is far more common
+today - it's what Google Authenticator, Authy, and most 2FA apps
+use - because it self-syncs without needing counter-state
+persistence, and a code naturally expires after its time window
+instead of staying valid until manually invalidated."
+
+THE ALGORITHM UNDERNEATH (say if pushed further):
+"Both are built on HMAC - a keyed hash, typically HMAC-SHA1 for
+these - applied to the secret key and the moving factor (counter for
+HOTP, time-window for TOTP). The HMAC output is then run through
+'dynamic truncation' to extract a short, human-typeable numeric
+code, usually 6 digits, from the full hash output."
+
+TIE-IN TO YOUR PROJECT:
+"My 2FA-for-SSH work was a fork of google-authenticator-libpam with
+a custom policy layer - that PAM module implements TOTP verification
+against a shared secret stored per user, checking the code the user
+enters against what the server independently computes for the
+current time window, typically allowing one window of clock drift
+tolerance on either side."
+
+=====================================================================
+E. SQLITE - BASIC QUERIES
+=====================================================================
+SPOKEN INTRO:
+"SQLite is a lightweight, serverless, file-based relational
+database - the entire database is just one file, no separate server
+process, which is exactly why it's popular for embedded and IoT
+applications like local device state or offline logging."
+
+E.1 CREATE TABLE
+--------------------
+    CREATE TABLE users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        age INTEGER,
+        department TEXT
+    );
+
+E.2 INSERT (add a row)
+---------------------------
+    INSERT INTO users (name, age, department) VALUES ('Samar', 28, 'Engineering');
+
+E.3 SELECT (read data)
+---------------------------
+    SELECT * FROM users;                          -- all columns, all rows
+    SELECT name, age FROM users;                  -- specific columns
+    SELECT * FROM users WHERE age > 25;            -- filtered
+    SELECT * FROM users ORDER BY age DESC;         -- sorted
+    SELECT * FROM users LIMIT 10;                  -- capped result count
+    SELECT department, COUNT(*) FROM users GROUP BY department; -- aggregation
+
+E.4 UPDATE (modify existing rows)
+--------------------------------------
+    UPDATE users SET age = 29 WHERE name = 'Samar';
+    -- WARNING: omitting WHERE updates EVERY row in the table -
+    -- a classic, costly mistake to mention you're careful about.
+
+E.5 DELETE (remove rows)
+-----------------------------
+    DELETE FROM users WHERE age < 18;
+    -- Same WHERE-clause warning as UPDATE - no WHERE deletes everything.
+
+E.6 ALTER TABLE (modify table structure, not data)
+--------------------------------------------------------
+    ALTER TABLE users ADD COLUMN email TEXT;
+    -- SQLite has limited ALTER support compared to other databases -
+    -- e.g. it can't drop a column directly in older versions; you'd
+    -- typically recreate the table without that column instead.
+
+E.7 JOIN (combine rows from multiple tables)
+--------------------------------------------------
+SPOKEN ANSWER:
+"A JOIN combines rows from two or more tables based on a related
+column. INNER JOIN returns only rows that have a match in both
+tables. LEFT JOIN returns every row from the left table, plus
+matched data from the right table where it exists, and NULLs where
+it doesn't. SQLite doesn't support RIGHT JOIN or FULL OUTER JOIN
+directly - you'd simulate a RIGHT JOIN by swapping table order in a
+LEFT JOIN instead."
+
+    -- Example: users table + orders table, linked by user_id
+
+    -- INNER JOIN: only users who have at least one order
+    SELECT users.name, orders.item
+    FROM users
+    INNER JOIN orders ON users.id = orders.user_id;
+
+    -- LEFT JOIN: all users, with order info if it exists (NULL if not)
+    SELECT users.name, orders.item
+    FROM users
+    LEFT JOIN orders ON users.id = orders.user_id;
+
+E.8 Basic WHERE clause operators (quick recall)
+------------------------------------------------------
+    =, !=, <, >, <=, >=      standard comparisons
+    LIKE '%pattern%'          pattern matching (% = any chars, _ = one char)
+    IN (1, 2, 3)              matches any value in a list
+    BETWEEN 10 AND 20         inclusive range
+    IS NULL / IS NOT NULL     null checks (can't use = NULL)
+    AND / OR / NOT            combine conditions
+
+=====================================================================
+F. REGEX - WHY USE IT (AND WHEN NOT TO)
+=====================================================================
+This connects directly to your Content Scanner CLI project, which
+uses PCRE2 with JIT compilation - a great story to tell if they ask
+"why regex instead of X."
+
+SPOKEN ANSWER (why regex at all):
+"Regex gives you a declarative, compact way to describe a pattern -
+'find something that looks like an email' or 'match any line
+containing a credit card number format' - without hand-writing a
+custom parser for every pattern shape. For a content scanner
+inspecting arbitrary file content for sensitive-data patterns, the
+alternative would be writing bespoke string-matching logic per
+pattern type, which doesn't scale as new pattern types get added and
+is much easier to get subtly wrong."
+
+WHY PCRE2 SPECIFICALLY (vs std::regex, Boost.Regex, manual parsing):
+"std::regex, part of the C++ standard library, is convenient since
+it needs no external dependency, but it's known to be significantly
+slower than PCRE2 in practice - std::regex implementations
+generally don't JIT-compile the pattern, they interpret it on every
+match. PCRE2 - Perl Compatible Regular Expressions, version 2 - adds
+a genuine JIT compiler: it compiles the regex pattern down to native
+machine code once, then reuses that compiled matcher on every
+subsequent scan, which is a large speedup for something like a
+content scanner running the same set of patterns repeatedly over
+many files. Boost.Regex is a reasonable middle ground, but adds a
+Boost dependency without PCRE2's speed advantage. For a real-time
+scanning daemon where I'm running potentially dozens of patterns
+against every file event, that JIT compilation is the deciding
+factor - it's the difference between a scan adding negligible
+latency versus becoming a bottleneck."
+
+WHEN NOT TO USE REGEX (worth saying to show judgment, not just
+default enthusiasm for the tool):
+"Regex is the wrong tool when the pattern isn't actually
+regular in structure - e.g. matching balanced/nested brackets or
+parsing a full structured format like JSON or XML, which regex
+handles poorly or not at all; a real parser is correct there. It's
+also overkill for a trivial fixed-string search - a plain substring
+search like strstr or std::string::find is faster and clearer when
+you're not actually matching a pattern, just a literal string. And
+for extremely hot loops where even PCRE2's JIT-compiled matching is
+too slow, a hand-written finite state machine for one specific
+pattern can outperform a general regex engine, at the cost of losing
+flexibility to easily add new patterns later."
+
+CODE EXAMPLE (PCRE2 JIT compile-once, match-many pattern):
+    #include <pcre2.h>
+
+    pcre2_code* compilePattern(const char* pattern) {
+        int errorcode;
+        PCRE2_SIZE erroroffset;
+        pcre2_code* re = pcre2_compile(
+            (PCRE2_SPTR)pattern, PCRE2_ZERO_TERMINATED,
+            0, &errorcode, &erroroffset, NULL);
+
+        if (re != NULL) {
+            pcre2_jit_compile(re, PCRE2_JIT_COMPLETE);  // JIT-compile once
+        }
+        return re;  // reuse this compiled pattern across many match() calls
+    }
+
+    bool matchAgainst(pcre2_code* re, const char* subject) {
+        pcre2_match_data* match_data =
+            pcre2_match_data_create_from_pattern(re, NULL);
+        int rc = pcre2_match(re, (PCRE2_SPTR)subject, strlen(subject),
+                              0, 0, match_data, NULL);
+        pcre2_match_data_free(match_data);
+        return rc >= 0;
+    }
+    // Compile once at startup, call matchAgainst() repeatedly per file -
+    // this compile-once/match-many pattern is exactly why PCRE2 JIT wins
+
+=====================================================================
+G. RESUME TOOLS - QUICK-RECALL GLOSSARY
+=====================================================================
+One-liner each, mapped to why you'd know it from your actual
+projects - useful if they rapid-fire "what is X" down your resume's
+tools list.
+
+- Git: Distributed version control - tracks changes, branches, and
+  enables collaboration across your security-tooling codebases.
+- CMake: Cross-platform build-system generator - writes a single
+  CMakeLists.txt that generates native build files (Makefiles,
+  Xcode projects, etc.) per platform - useful when your tools target
+  both macOS and Linux.
+- Make: The classic build automation tool - reads a Makefile
+  describing target dependencies and the commands to build them,
+  only rebuilding what's changed based on file timestamps.
+- Xcode: Apple's IDE - used for building/debugging macOS-targeted
+  tools like your FSEvents-based File Integrity Monitor or the
+  Printer Control/DLP app using Apple's Endpoint Security Framework.
+- GDB: (see Section B above) - Linux/general C++ debugger.
+- Valgrind: (see Section A above) - memory error/leak detection.
+- KDB/KGDB: (see Section C above) - kernel-level debugging.
+- SQLite: (see Section E above) - lightweight embedded relational
+  database, useful for local state/log storage in your tools.
+- pugixml: A lightweight, fast C++ XML parsing library - useful when
+  a tool needs to read/write config or report data in XML without
+  pulling in a heavier XML library.
+- Boost: A large collection of peer-reviewed C++ libraries extending
+  the standard library - things like Boost.Asio for networking,
+  Boost.Filesystem (pre-C++17), or Boost.Regex, commonly used in
+  systems-level C++ before certain features were standardized.
+- Nano: A simple terminal-based text editor - quick edits on a
+  remote Linux box or embedded target over SSH without needing a
+  full IDE.
+
+=====================================================================
+END OF FILE
+=====================================================================

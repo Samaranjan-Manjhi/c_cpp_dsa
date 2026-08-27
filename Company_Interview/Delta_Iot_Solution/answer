@@ -1,0 +1,1067 @@
+=====================================================================
+DELTA IOT SOLUTIONS - MASTER C++/QT INTERVIEW PREP
+Consolidated + De-duplicated + Networking Section Added
+=====================================================================
+TABLE OF CONTENTS
+  1. Core C++ Fundamentals
+  2. STL Containers, Complexity & Container Choice ("X vs Y")
+  3. Memory Management (RAII / Smart Pointers)
+  4. Multithreading & Concurrency
+  5. Sorting Algorithms
+  6. Qt Core (Signals/Slots, QObject, Threading)
+  7. QML
+  8. Networking - TCP/UDP/IP/HTTP (NEW)
+  9. Coding Problems (with solutions)
+ 10. Version Control & Practical/Process Questions
+ 11. General & Behavioral Questions (quick-answer form)
+=====================================================================
+
+=====================================================================
+1. CORE C++ FUNDAMENTALS
+=====================================================================
+
+1.1 const int* vs int* const
+----------------------------
+"const int* is a pointer to a constant integer - I can repoint it,
+but can't modify the value through it. int* const is a constant
+pointer to an int - I can modify the value, but can't repoint it.
+Read right-to-left: const int* = 'pointer to const int'; int* const
+= 'const pointer to int'. const int* const locks both."
+
+    int a = 5, b = 10;
+    const int* p1 = &a;   p1 = &b;         // OK: repoint; *p1=20 ERROR
+    int* const p2 = &a;   *p2 = 20;        // OK: modify value; p2=&b ERROR
+    const int* const p3 = &a;              // neither can change
+
+1.2 int** arr vs int* arr
+--------------------------
+"int* is one pointer to a contiguous block - a 1D array. int** is a
+pointer to a pointer - typically a matrix, where each row can be a
+separately-allocated block. A flattened int* array (single
+contiguous block) has better cache locality than int** and is
+usually preferred in performance-sensitive code."
+
+    int** matrix = new int*[rows];
+    for (int i=0;i<rows;i++) matrix[i] = new int[cols];
+    matrix[1][2] = 42;
+    // vs flattened:
+    int* flat = new int[rows*cols];
+    flat[1*cols+2] = 42;   // row 1, col 2
+
+1.3 Pointer vs Reference
+-------------------------
+"A pointer stores a memory address, can be reassigned, and can be
+null. A reference is an alias to an existing variable - it can't be
+null and must be bound at declaration. Use references by default
+for function parameters when null isn't a valid state; use pointers
+when you need reassignment, null-as-a-sentinel, or pointer
+arithmetic."
+
+1.4 virtual, volatile, friend, protected, const_cast
+------------------------------------------------------
+"virtual makes a function resolve at runtime via the vtable, based on
+actual object type - the mechanism behind polymorphism.
+
+volatile tells the compiler not to cache a variable in a register
+because it can change unexpectedly - e.g. a memory-mapped hardware
+register. It is NOT for thread safety - that needs atomics/mutexes.
+
+friend grants a specific function/class access to another class's
+private/protected members - commonly used for operator<< overloads.
+
+protected is accessible within the class and its derived classes,
+but not from outside the hierarchy.
+
+const_cast adds/removes const. It's the dangerous cast - modifying
+something that was truly declared const via a const_cast is
+undefined behavior. Mainly used against legacy, non-const-correct
+APIs."
+
+    class Base { public: virtual void speak(){ cout<<"Base\n"; } };
+    class Derived: public Base { public: void speak() override { cout<<"Derived\n"; } };
+    Base* b = new Derived();
+    b->speak();  // "Derived" - resolved at runtime via vtable
+
+1.5 Class vs Struct
+--------------------
+"Default access is the main difference - struct members are public
+by default, class members are private by default; same for default
+inheritance type. Both support constructors, destructors, virtual
+functions, templates - there's no functional limitation on struct.
+By convention: struct for plain data aggregates, class when you want
+encapsulation and enforced invariants."
+
+1.6 What is a Namespace
+-------------------------
+"A declarative region that scopes identifiers to avoid name
+collisions in large projects. Access members via `::`, e.g.
+std::cout. Namespaces can nest, and `using namespace X` lets you
+omit the prefix (avoid this in headers - it pollutes every file that
+includes them)."
+
+1.7 C vs C++
+-------------
+"C is procedural only. C++ adds object-oriented and generic
+programming: classes, function overloading, templates, the STL,
+exception handling (try/catch vs C's error codes), and stronger type
+checking. Most valid C compiles under C++ with minor changes."
+
+1.8 Compiled vs Interpreted Languages
+----------------------------------------
+"Compiled languages (C, C++) are translated to machine code ahead of
+time, giving faster execution but platform-specific binaries.
+Interpreted languages (Python, JS) are executed line-by-line by an
+interpreter at runtime - slower, but portable across any platform
+with that interpreter, and often easier to debug interactively."
+
+1.9 OOP Concepts in C++ (full answer)
+----------------------------------------
+"Encapsulation: bundling data and methods in a class, controlling
+access via private/protected/public - e.g. a class Account with
+private balance and public deposit/withdraw.
+Abstraction: hiding implementation, exposing only necessary
+behavior - pure virtual functions (virtual void f() = 0) define a
+contract that derived classes implement.
+Inheritance: reuse/extend behavior from an existing class - C++
+supports single, multiple, and multilevel inheritance. Use virtual
+inheritance to resolve the diamond problem.
+Polymorphism: one interface, multiple implementations - runtime
+polymorphism via virtual functions and base pointers/references
+(dynamic dispatch); compile-time polymorphism via overloading,
+operator overloading, and templates (static dispatch)."
+
+1.10 Real-Time (Runtime) Polymorphism - how to implement it
+----------------------------------------------------------------
+"Achieved through method overriding using virtual functions. When a
+derived class overrides a base method, C++ decides which version to
+call at runtime based on the actual object type the pointer/
+reference points to, not the static pointer type - implemented via
+the VTABLE mechanism." (see 1.4 code example above)
+
+1.11 Virtual Destructors - why they matter
+---------------------------------------------
+"If you delete a derived object through a base class pointer, and
+the base destructor isn't virtual, the behavior is undefined -
+typically only the base destructor runs, leaking any resources the
+derived class allocated. Declaring the base destructor virtual
+ensures the full destruction chain runs, derived up through base.
+Rule of thumb: any class intended to be used polymorphically through
+a base pointer needs a virtual destructor."
+
+    class Base { public: virtual ~Base() {} };  // correct
+    class Derived : public Base {
+        int* data;
+    public:
+        Derived() { data = new int[100]; }
+        ~Derived() override { delete[] data; }  // runs correctly now
+    };
+
+1.12 OOP Simulated in Plain C (no classes)
+----------------------------------------------
+"Simulate encapsulation with structs bundling data + function
+pointers; abstraction by exposing only interface functions;
+inheritance by embedding one struct inside another (struct Derived
+contains struct Base as its first member); polymorphism via function
+pointers in a struct, called dynamically to fake virtual dispatch."
+
+=====================================================================
+2. STL CONTAINERS, COMPLEXITY & "X vs Y" CONTAINER CHOICE
+=====================================================================
+
+2.1 vector vs list vs map - internals & complexity
+------------------------------------------------------
+    Container        Access    Insert/Erase        Notes
+    vector            O(1)      O(n) middle,         contiguous, best
+                                 O(1) amortized back  cache locality
+    list              O(n)      O(1) with iterator   doubly linked,
+                                                       poor cache locality
+    map               O(log n)  O(log n)             red-black tree, sorted
+    unordered_map     O(1) avg  O(1) avg             hash table, unsorted
+
+Iterator invalidation: vector - reallocation invalidates everything;
+insert/erase invalidates from that point onward. list - insertion
+never invalidates; erase invalidates only the erased element's
+iterator. map - insertion never invalidates; erase invalidates only
+the erased element's iterator.
+
+    vector<int> v = {1,2,3,4,5};
+    for (auto it=v.begin(); it!=v.end(); ) {   // CORRECT erase pattern
+        if (*it==3) it = v.erase(it);           // erase returns next valid it
+        else ++it;
+    }
+
+2.2 Array vs Linked List
+--------------------------
+"Arrays: fixed size, contiguous, O(1) access, O(n) insert/delete
+(shifting). Linked lists: dynamic size, node-based, O(n) access
+(traversal), O(1) insert/delete once you're at the node. Arrays have
+better cache locality; lists use extra memory for pointers but avoid
+wasted unused capacity."
+
+2.3 Queue vs Vector
+----------------------
+"Vector is a dynamic array - O(1) random access, O(1) back-insert,
+but O(n) front-removal since everything shifts. Queue (built on
+deque) gives O(1) push-back AND O(1) pop-front - the right structure
+whenever you need FIFO semantics, like a BFS frontier or a job
+queue. Using vector for BFS and erasing from the front turns an
+O(V+E) algorithm into O(V^2) because every dequeue is O(n). The
+decision isn't 'which is better' - it's matching the container to
+the access pattern: vector for random access/back-insert, queue for
+FIFO with cheap front removal."
+
+    queue<int> q; q.push(1); q.push(2); q.pop(); // O(1), no shifting
+    vector<int> v={1,2,3}; v.erase(v.begin());    // O(n), shifts everything
+
+2.4 Vector vs Array (std::array / C-style)
+----------------------------------------------
+"array has a fixed, compile-time size, usually stack-allocated, zero
+heap overhead - use when size is known upfront (e.g. a 3D vector's
+xyz). vector grows dynamically and manages its own heap memory - use
+whenever size isn't fixed. Trade-off: vector has allocation/
+reallocation overhead; array has none but zero flexibility."
+
+2.5 Vector vs List
+---------------------
+"Default to vector - contiguous memory means better cache locality,
+so even O(n) middle-insertion often beats list's 'O(1)' insertion in
+practice due to list's cache misses on scattered nodes. Only use
+list when you have frequent middle insertion/deletion with an
+iterator already in hand, and don't need random access - a fairly
+rare real-world pattern."
+
+2.6 Deque vs Vector
+----------------------
+"deque gives O(1) insert/remove at BOTH ends, unlike vector (O(1)
+only at back). Internally it's chunked, not one contiguous block, so
+it avoids full reallocation on growth but is slightly less
+cache-friendly than vector for pure iteration. Use deque when you
+need efficient push/pop at both ends - e.g. a sliding window."
+
+2.7 Map vs Unordered_map
+----------------------------
+"map: red-black tree, O(log n), sorted iteration, supports range
+queries. unordered_map: hash table, average O(1), worst-case O(n) on
+collisions, no ordering. Default to unordered_map for pure lookups;
+use map when you need sorted order or range queries."
+
+2.8 Set vs Vector (membership checking)
+--------------------------------------------
+"Vector membership check is O(n) linear scan (or O(log n) binary
+search if kept sorted). set/unordered_set give O(log n) or average
+O(1) lookup automatically. For repeated existence checks, set beats
+vector; vector only wins if you need insertion order, duplicates, or
+index-based access."
+
+2.9 Stack (STL) vs Recursion (call stack)
+----------------------------------------------
+"Recursion uses the implicit call stack - clean for naturally
+recursive problems (tree traversal) but risks stack overflow on deep
+or unbalanced recursion. An explicit std::stack moves that same
+state to the heap, converting recursion to iteration - avoids
+overflow, more control, usually less readable. Use it when depth is
+unpredictable or potentially very large (e.g. deeply nested,
+untrusted JSON)."
+
+2.10 unique_ptr vs shared_ptr vs raw pointer
+------------------------------------------------
+"Default to unique_ptr - exclusive ownership, zero overhead,
+automatic cleanup. Use shared_ptr only when ownership is genuinely
+shared across multiple independent owners - it has real atomic
+reference-counting overhead. Use raw pointers only for non-owning
+observation of an object managed elsewhere - never as an owning type
+in modern C++."
+
+=====================================================================
+3. MEMORY MANAGEMENT (RAII / SMART POINTERS)
+=====================================================================
+
+3.1 RAII & Smart Pointers
+------------------------------
+"RAII ties a resource's lifetime to an object's scope - acquire in
+the constructor, release in the destructor, so cleanup happens
+automatically even during exception unwinding. unique_ptr: exclusive
+ownership, move-only, near-zero overhead. shared_ptr: shared
+ownership via reference counting - deleted when the last owner goes
+away. weak_ptr: non-owning reference to a shared_ptr'd object, used
+to break reference cycles (e.g. a child holding a weak_ptr back to
+its parent instead of a shared_ptr, which would leak both)."
+
+    class FileHandle {          // RAII wrapping a raw fd
+        int fd;
+    public:
+        FileHandle(const char* path) { fd = open(path, O_RDONLY); }
+        ~FileHandle() { if (fd >= 0) close(fd); }
+    };
+
+    struct Child;
+    struct Parent { shared_ptr<Child> child; };
+    struct Child  { weak_ptr<Parent> parent; };  // weak_ptr breaks the cycle
+
+3.2 Manual new/delete Pitfalls
+------------------------------------
+"Forgetting delete (leak), double-delete (UB), using a pointer after
+delete (dangling pointer/UB), and mismatching new/delete[] with
+delete/new[] (UB). Modern C++ avoids all of these structurally by
+using smart pointers and containers instead of raw new/delete."
+
+3.3 Leak Detection
+----------------------
+"Valgrind and AddressSanitizer for Linux userspace. At the
+kernel/eBPF level those tools aren't available the same way, so
+instrumenting allocation paths and careful manual auditing matters
+more. General rule: if tempted to write a raw `new`, first check if
+a smart pointer or container already solves it."
+
+=====================================================================
+4. MULTITHREADING & CONCURRENCY
+=====================================================================
+
+4.1 Race Condition
+----------------------
+"Two or more threads access shared data concurrently, at least one
+writing, without synchronization - outcome depends on unpredictable
+timing. Fix: protect shared data with a mutex, or use atomics."
+
+4.2 Deadlock
+----------------
+"Two or more threads each wait on a resource the other holds, so
+neither proceeds - e.g. thread A holds lock1 wants lock2, thread B
+holds lock2 wants lock1. Fix: acquire locks in a consistent global
+order, or use std::scoped_lock, which acquires multiple mutexes
+atomically without ordering risk."
+
+    mutex m1, m2;
+    void threadA_fixed() { scoped_lock lock(m1, m2); } // deadlock-safe
+
+4.3 Livelock vs Deadlock
+------------------------------
+"Livelock: threads aren't blocked but keep actively responding to
+each other without making progress - like two people repeatedly
+stepping aside in a hallway. Still a failure to progress, just an
+active one rather than frozen."
+
+4.4 Thread-Safe Singleton (common coding task)
+----------------------------------------------------
+"Industrial software leans on singletons for hardware managers (e.g.
+Modbus/serial loggers) - the interviewer wants to see std::mutex
+used correctly."
+
+    class LogManager {
+        LogManager() = default;
+        static LogManager* instance;
+        static mutex mutex_;
+    public:
+        LogManager(LogManager&) = delete;
+        void operator=(const LogManager&) = delete;
+        static LogManager* getInstance() {
+            lock_guard<mutex> lock(mutex_);
+            if (instance == nullptr) instance = new LogManager();
+            return instance;
+        }
+    };
+    LogManager* LogManager::instance = nullptr;
+    mutex LogManager::mutex_;
+
+(Note: modern C++11+ has a simpler thread-safe alternative - a
+function-local static, guaranteed thread-safe initialization by the
+standard, no manual mutex needed:
+    static LogManager& getInstance() {
+        static LogManager instance;   // initialized once, thread-safe
+        return instance;
+    }
+Mention both - the mutex version if asked to demonstrate mutex
+usage explicitly, the local-static version if asked for the
+"modern/idiomatic" approach.)
+
+=====================================================================
+5. SORTING ALGORITHMS
+=====================================================================
+
+QUICK REFERENCE TABLE:
+    Algorithm       Best        Average     Worst       Space    Stable?
+    Bubble Sort     O(n)        O(n^2)      O(n^2)      O(1)     Yes
+    Selection Sort  O(n^2)      O(n^2)      O(n^2)      O(1)     No
+    Insertion Sort  O(n)        O(n^2)      O(n^2)      O(1)     Yes
+    Merge Sort      O(n log n)  O(n log n)  O(n log n)  O(n)     Yes
+    Quick Sort      O(n log n)  O(n log n)  O(n^2)      O(log n) No
+    Heap Sort       O(n log n)  O(n log n)  O(n log n)  O(1)     No
+    Counting Sort   O(n+k)      O(n+k)      O(n+k)      O(n+k)   Yes
+    Radix Sort      O(nk)       O(nk)       O(nk)       O(n+k)   Yes
+
+5.1 Bubble Sort - "repeatedly swap adjacent out-of-order elements,
+largest bubbles to the end each pass. O(n^2), only useful as a
+baseline or with an early-exit flag on nearly-sorted tiny arrays."
+
+    void bubbleSort(vector<int>& a){
+        for(int i=0;i<a.size()-1;i++){
+            bool swapped=false;
+            for(int j=0;j<a.size()-i-1;j++)
+                if(a[j]>a[j+1]){ swap(a[j],a[j+1]); swapped=true; }
+            if(!swapped) break;
+        }
+    }
+
+5.2 Selection Sort - "repeatedly find the min of the unsorted part,
+swap into place. Always O(n^2), but does the fewest swaps (O(n)
+total) - useful when swap cost is expensive, e.g. flash writes."
+
+    void selectionSort(vector<int>& a){
+        for(int i=0;i<a.size()-1;i++){
+            int m=i;
+            for(int j=i+1;j<a.size();j++) if(a[j]<a[m]) m=j;
+            swap(a[i],a[m]);
+        }
+    }
+
+5.3 Insertion Sort - "build the sorted array one element at a time,
+inserting each new element into its correct spot among what's
+already sorted. O(n) best case on nearly-sorted data - this is why
+std::sort/introsort switches to insertion sort for small (<16
+element) partitions."
+
+    void insertionSort(vector<int>& a){
+        for(int i=1;i<a.size();i++){
+            int key=a[i], j=i-1;
+            while(j>=0 && a[j]>key){ a[j+1]=a[j]; j--; }
+            a[j+1]=key;
+        }
+    }
+
+5.4 Merge Sort - "divide-and-conquer: split until single elements,
+merge sorted halves back. Guaranteed O(n log n) in all cases, stable,
+but O(n) extra space since it's not in-place. Right choice for
+guaranteed performance or stability requirements, and for sorting
+linked lists (no random access needed)."
+
+    void merge(vector<int>&a,int l,int m,int r){
+        vector<int> L(a.begin()+l,a.begin()+m+1), R(a.begin()+m+1,a.begin()+r+1);
+        int i=0,j=0,k=l;
+        while(i<L.size()&&j<R.size()) a[k++]=(L[i]<=R[j])?L[i++]:R[j++];
+        while(i<L.size()) a[k++]=L[i++];
+        while(j<R.size()) a[k++]=R[j++];
+    }
+    void mergeSort(vector<int>&a,int l,int r){
+        if(l>=r) return;
+        int m=l+(r-l)/2;
+        mergeSort(a,l,m); mergeSort(a,m+1,r); merge(a,l,m,r);
+    }
+
+5.5 Quick Sort - "pick a pivot, partition smaller-left/larger-right,
+recurse. Average O(n log n), in-place, better cache locality than
+merge sort in practice - but worst case O(n^2) on a bad pivot choice
+(fixed via randomized pivot or median-of-three). Not stable."
+
+    int partition(vector<int>&a,int lo,int hi){
+        int pivot=a[hi], i=lo-1;
+        for(int j=lo;j<hi;j++) if(a[j]<pivot) swap(a[++i],a[j]);
+        swap(a[i+1],a[hi]); return i+1;
+    }
+    void quickSort(vector<int>&a,int lo,int hi){
+        if(lo>=hi) return;
+        int p=partition(a,lo,hi);
+        quickSort(a,lo,p-1); quickSort(a,p+1,hi);
+    }
+
+5.6 Heap Sort - "build a max-heap, repeatedly swap root (max) with
+last unsorted element, re-heapify. Guaranteed O(n log n) like merge
+sort but in-place (O(1) space) - worse cache locality than quicksort
+in practice, and not stable. Use when you need guaranteed worst-case
+AND can't afford merge sort's extra memory (e.g. embedded)."
+
+5.7 Counting Sort - "non-comparison; counts occurrences per value,
+places directly. O(n+k), k=value range. Beats O(n log n) but only
+when k isn't much bigger than n - e.g. sorting exam scores 0-100."
+
+5.8 Radix Sort - "sorts digit-by-digit, least-to-most significant,
+using a stable sort as a subroutine each pass. O(n*k), k=digit
+count - good for fixed-width keys like IPs or phone numbers."
+
+5.9 Rapid-fire "which sort for X?"
+---------------------------------------
+- Nearly sorted -> Insertion sort
+- Guaranteed O(n log n) + stable -> Merge sort
+- Guaranteed O(n log n) + no extra memory -> Heap sort
+- Fastest in practice, general purpose -> Quick sort (randomized pivot)
+- Sorting linked lists -> Merge sort (no random access needed)
+- Small bounded integer range -> Counting sort
+- Minimize writes (flash memory) -> Selection sort
+- std::sort uses -> Introsort (quicksort -> heapsort on deep
+  recursion -> insertion sort on small partitions)
+- std::stable_sort uses -> typically merge sort (guarantees stability)
+
+=====================================================================
+6. QT CORE (SIGNALS/SLOTS, QOBJECT, THREADING)
+=====================================================================
+
+6.1 Signals & Slots + MOC
+------------------------------
+"Signals/slots decouple sender from receiver for object
+communication. Qt's MOC (Meta-Object Compiler) preprocesses any class
+with Q_OBJECT, generating extra C++ code registering signals/slots
+in a meta-object system. `emit` isn't a real function call - it
+looks up connected slots and invokes them, directly or via a queued
+event for cross-thread connections."
+
+6.2 What is a .moc file? Can it handle templates?
+------------------------------------------------------
+"A .moc file is the MOC's generated C++ source - containing signal/
+slot tables and string metadata for runtime reflection. No, MOC
+cannot handle template classes - macro expansion and template
+instantiation conflict at compile stages, so a class template can't
+directly carry Q_OBJECT with signals/slots."
+
+6.3 Direct vs Queued Connection
+------------------------------------
+"Auto-detected by thread affinity. Same thread -> Direct (synchronous,
+like a normal call). Different threads -> Queued (packaged as an
+event, posted to the receiver's event loop, executed async). Can
+force either with Qt::DirectConnection / Qt::QueuedConnection."
+
+6.4 QObject Parent-Child Ownership
+----------------------------------------
+"Every QObject can have a parent; deleting the parent auto-deletes
+all children. Qt's alternative to manual memory tracking for
+widgets/objects - but you must be intentional about which class is
+the true owner, since parent-child isn't C++ composition or
+inheritance."
+
+6.5 How Qt's Memory Model Differs from Standard C++ Smart Pointers
+------------------------------------------------------------------------
+"Qt uses an Object Tree Model via QObject: pass a parent pointer in
+the constructor, and the parent owns and auto-deletes the child when
+it's destroyed - achieving leak prevention without relying on
+unique_ptr/shared_ptr specifically for QObject hierarchies."
+
+6.6 Safely Sending Data from a Worker Thread to the GUI Thread
+--------------------------------------------------------------------
+"Only the GUI thread may safely touch UI widgets. Use Queued
+Connections via signals/slots - Qt copies the data, packages it as
+an event, and safely moves it across the thread boundary into the
+main GUI event loop. This is automatic when sender/receiver are on
+different threads, but can also be forced explicitly."
+
+6.7 QThread::run() vs Worker Objects with moveToThread()
+--------------------------------------------------------------
+"Subclassing QThread and overriding run() is the older approach -
+fine for isolated linear code blocks with no active event loop
+needed. Modern approach: create a QObject-derived worker class,
+instantiate a plain QThread, call worker->moveToThread(&thread) -
+the worker then safely processes signals via the thread's native
+event loop. Prefer moveToThread() for anything that needs to keep
+responding to signals."
+
+6.8 Problem with raw std::thread inside a Qt app
+-------------------------------------------------------
+"A raw std::thread doesn't spawn a Qt event loop (QEventLoop), so you
+can't safely use signals/slots across that thread boundary via
+standard queued connections. Safer to wrap long-running work in a
+QThread or use QtConcurrent::run()."
+
+6.9 Why pass signal arguments as const QString& rather than by value?
+--------------------------------------------------------------------------
+"Pass-by-value causes deep copying. In high-frequency IoT streaming,
+copying large strings/vectors across objects every millisecond
+degrades CPU and fragments the heap. const& avoids the copy while
+still guaranteeing read-only safety for the receiver."
+
+6.10 qFuzzyCompare Missing in a Custom Q_PROPERTY Setter
+--------------------------------------------------------------
+"Can cause an infinite loop: QML modifies the property -> setter
+runs -> setter emits changed() -> a QML binding listening to that
+change tries to update again -> recurses until stack exhaustion.
+The fix is to compare old vs new value (with qFuzzyCompare for
+floating point) inside the setter and only emit the signal, and only
+write the new value, if it actually changed."
+
+6.11 Qt's Cross-Platform Model
+------------------------------------
+"Qt gives one API surface, but core modules (QtCore/QtGui/
+QtWidgets) run against platform-specific backends via a platform
+abstraction layer - the same signal/slot and widget code compiles
+against different native backends per OS. Unlike Java's VM approach,
+Qt compiles to native code per platform while the app-facing API
+stays uniform."
+
+6.12 Unit Testing C++ Modules (industrial context)
+--------------------------------------------------------
+"Delta IoT-style interviews often look for GTest exposure - write
+independent test benches with TEST() or TEST_F() macros for
+isolated functions/logic/algorithms. Use GMock to isolate components
+from real hardware by simulating hardware registers or protocol
+streams."
+
+6.13 Custom String Parsing Task (no STL regex/QString::split)
+--------------------------------------------------------------------
+"Asked to check manual pointer/memory handling for low-overhead IoT
+gateways."
+
+    vector<string> splitHardwareBuffer(const string& rawData, char delim) {
+        vector<string> tokens;
+        string token;
+        for (char ch : rawData) {
+            if (ch == delim) {
+                if (!token.empty()) { tokens.push_back(token); token.clear(); }
+            } else token += ch;
+        }
+        if (!token.empty()) tokens.push_back(token);
+        return tokens;
+    }
+
+=====================================================================
+7. QML
+=====================================================================
+
+7.1 QML vs Qt Widgets
+--------------------------
+"QML is declarative - you describe *what* the UI looks like and how
+it reacts to state, part of Qt Quick, GPU-accelerated via a scene
+graph - suited to fluid, animated, touch UIs common in embedded/
+mobile. Qt Widgets is the older imperative C++ toolkit, better for
+traditional desktop apps with native look-and-feel. For IoT
+touchscreen HMI panels specifically, QML/Qt Quick is preferred for
+GPU acceleration and easier animation; QWidget suits static,
+data-heavy desktop layouts."
+
+7.2 Property Binding
+-------------------------
+"A declarative relationship where one property's value is expressed
+via others - QML auto-re-evaluates it whenever a dependency changes,
+no manual signal/slot wiring needed."
+
+    Rectangle {
+        width: parent.width / 2            // auto-updates on resize
+        color: isActive ? "green" : "red"
+    }
+
+7.3 QML Memory Management vs C++
+--------------------------------------
+"Pure-QML objects are managed by the JS engine's garbage collector
+(reference counting + cycle collector). QML objects with a C++
+parent, or exposed from C++, follow QObject parent-child ownership
+instead - a mixed model that's a common bug source if ownership
+isn't explicit. QQmlEngine::setObjectOwnership() lets you force
+CppOwnership or JavaScriptOwnership when Qt's default guess is
+wrong."
+
+7.4 qmlRegisterType vs setContextProperty
+------------------------------------------------
+"setContextProperty exposes one existing C++ instance to QML under a
+name - good for singletons like a backend controller. qmlRegisterType
+registers a C++ class as a new QML *type*, so QML can instantiate it
+directly, potentially many times - good for reusable C++-backed QML
+components."
+
+    engine.rootContext()->setContextProperty("backend", &backendInstance);
+    qmlRegisterType<SensorReading>("MyModule", 1, 0, "SensorReading");
+
+7.5 Loader
+--------------
+"Dynamically loads a QML component/file at runtime rather than
+upfront - lazy-loads heavy UI not immediately visible (settings
+panel, rare dialog) to cut startup time/memory. Setting source to
+empty unloads and destroys the previously-loaded item."
+
+7.6 States & Transitions
+------------------------------
+"States declare named property configurations (e.g. 'expanded' vs
+'collapsed') instead of manually setting many properties
+imperatively. Transitions define how properties animate between
+states - smooth changes for free instead of instant jumps."
+
+7.7 ListView/Repeater Delegate Lifecycle
+----------------------------------------------
+"ListView only instantiates delegates for currently-visible items
+(plus buffer), destroying/recreating on scroll - don't store
+important state in a delegate's local properties, keep it in the
+model. Repeater typically instantiates all items upfront - better
+for small, fixed-size lists."
+
+7.8 Calling C++ from QML Asynchronously
+----------------------------------------------
+"Move real work to a QThread or QtConcurrent::run, have the worker
+emit a signal back to a QObject exposed to QML, updating a bound
+property. WorkerScript exists for plain JS off the main thread, but
+for C++ heavy lifting, QThread + signals is the standard UI-safe
+pattern - blocking directly in a QML-invokable function freezes the
+UI event loop."
+
+7.9 Q_PROPERTY vs Plain QML property
+------------------------------------------
+"Q_PROPERTY is declared on a C++ QObject - exposes a C++ member to
+Qt's meta-object system with getter/setter/NOTIFY, bindable from
+QML. A plain QML `property` is declared directly in .qml with no C++
+involved. Q_PROPERTY is the bridge letting QML observe C++-side
+changes."
+
+7.10 QML Singleton
+-----------------------
+"Instantiated once, shared engine-wide - good for a theme/settings
+object or app-wide event bus. Declare via `pragma Singleton` in QML,
+or register a C++ class via qmlRegisterSingletonType/
+qmlRegisterSingletonInstance."
+
+=====================================================================
+8. NETWORKING - TCP / UDP / IP / HTTP (NEW SECTION)
+=====================================================================
+For an IoT role specifically, expect at least one networking
+question - IoT devices constantly talk to gateways/cloud over these
+exact protocols.
+
+8.1 TCP vs UDP
+------------------
+"TCP - Transmission Control Protocol - is connection-oriented: it
+establishes a connection via a 3-way handshake (SYN, SYN-ACK, ACK)
+before sending data, guarantees delivery through acknowledgments and
+retransmission, preserves ordering, and does flow/congestion
+control. The cost is overhead and latency. UDP - User Datagram
+Protocol - is connectionless: no handshake, no guaranteed delivery,
+no ordering guarantee, just fire-and-forget datagrams - but much
+lower latency and overhead. Use TCP when correctness and completeness
+matter more than speed - file transfer, HTTP, database connections.
+Use UDP when speed matters more than occasional loss - video
+streaming, VoIP, DNS lookups, and a lot of real-time IoT sensor
+telemetry where a dropped reading now is less costly than the delay
+of retransmission."
+
+    TCP: 3-way handshake -> reliable, ordered, slower, more overhead
+    UDP: no handshake    -> unreliable, unordered, faster, low overhead
+
+8.2 TCP 3-Way Handshake (protocol rules)
+----------------------------------------------
+"Client sends SYN (synchronize) with an initial sequence number.
+Server responds SYN-ACK, acknowledging the client's sequence number
+and sending its own. Client responds ACK, acknowledging the server's
+sequence number. Connection is now established both ways. Teardown
+uses a 4-way handshake with FIN/ACK in each direction since TCP is
+full-duplex and each side must close independently."
+
+8.3 Common Port Numbers (worth knowing cold)
+--------------------------------------------------
+    Port    Protocol           Port    Protocol
+    20/21   FTP (data/control) 80      HTTP
+    22      SSH                443     HTTPS
+    23      Telnet             3306    MySQL
+    25      SMTP                5432    PostgreSQL
+    53      DNS                1883    MQTT (very common in IoT!)
+    67/68   DHCP               8883    MQTT over TLS
+
+"MQTT specifically is worth knowing for an IoT role - it's a
+lightweight publish/subscribe protocol built on top of TCP, designed
+for constrained devices and unreliable networks, commonly used for
+sensor telemetry to a broker."
+
+8.4 HTTP vs HTTPS
+---------------------
+"HTTP sends data in plaintext - anyone intercepting the traffic
+(man-in-the-middle) can read or modify it. HTTPS is HTTP layered over
+TLS/SSL - it encrypts the data in transit, authenticates the server
+via a certificate (so you know you're actually talking to who you
+think), and ensures integrity (data wasn't tampered with in
+transit). The trade-off is a small amount of extra latency and CPU
+overhead for the TLS handshake and encryption/decryption, which is
+negligible on modern hardware. HTTPS uses port 443 by default vs
+HTTP's port 80."
+
+8.5 What happens during a TLS/HTTPS Handshake (brief)
+------------------------------------------------------------
+"Client Hello (supported TLS versions/ciphers) -> Server Hello + its
+certificate -> client verifies the certificate against a trusted
+Certificate Authority -> client and server derive a shared symmetric
+session key (via asymmetric key exchange, e.g. Diffie-Hellman) ->
+all further communication is encrypted with that fast symmetric key.
+Asymmetric crypto is used only briefly to set up the connection,
+since it's much slower than symmetric crypto for bulk data."
+
+8.6 IP Addressing & Ranges
+-------------------------------
+"IPv4 addresses are 32-bit, written as 4 octets (e.g. 192.168.1.1),
+giving about 4.3 billion addresses total - which is why IPv6 (128-bit)
+exists for the long-term. Private IP ranges, reserved by IANA for
+use inside private networks and never routed on the public internet:"
+
+    Class A private range: 10.0.0.0    - 10.255.255.255
+    Class B private range: 172.16.0.0  - 172.31.255.255
+    Class C private range: 192.168.0.0 - 192.168.255.255
+    Loopback:               127.0.0.0   - 127.255.255.255 (127.0.0.1 = localhost)
+    Link-local (APIPA):     169.254.0.0 - 169.254.255.255
+
+"Devices on a private range reach the internet via NAT (Network
+Address Translation) on a router, which maps many private addresses
+to one public IP."
+
+8.7 IP Address Classes (older, mostly historical but still asked)
+------------------------------------------------------------------------
+    Class A: 0.0.0.0   - 127.255.255.255  (first bit 0)
+    Class B: 128.0.0.0 - 191.255.255.255  (first 2 bits 10)
+    Class C: 192.0.0.0 - 223.255.255.255  (first 3 bits 110)
+    Class D: 224.0.0.0 - 239.255.255.255  (multicast)
+    Class E: 240.0.0.0 - 255.255.255.255  (reserved/experimental)
+
+"In practice, classful addressing is obsolete - modern networks use
+CIDR (Classless Inter-Domain Routing) notation instead, like
+192.168.1.0/24, where /24 means the first 24 bits are the network
+portion, leaving 8 bits (256 addresses) for hosts."
+
+8.8 Subnet Mask - what it does
+------------------------------------
+"A subnet mask splits an IP address into network and host portions.
+255.255.255.0 (/24) means the first 3 octets identify the network,
+the last octet identifies the host on that network - giving 254
+usable host addresses (256 minus the network address and broadcast
+address)."
+
+8.9 DNS - what it does
+---------------------------
+"Domain Name System translates human-readable domain names (like
+example.com) into IP addresses. It's hierarchical and cached at
+multiple levels (browser, OS, ISP resolver) for performance. Runs
+primarily over UDP port 53 for speed, falling back to TCP for larger
+responses like zone transfers."
+
+8.10 OSI Model (7 layers) - already may know, quick recall
+------------------------------------------------------------------
+"Physical, Data Link, Network, Transport, Session, Presentation,
+Application - bottom to top. Mnemonic: 'Please Do Not Throw Sausage
+Pizza Away.' TCP/UDP live at the Transport layer; IP lives at the
+Network layer; HTTP/HTTPS/DNS/MQTT live at the Application layer."
+
+8.11 Socket Programming - quick concept check
+----------------------------------------------------
+"A socket is an endpoint for network communication, identified by an
+IP address + port number. TCP sockets: socket() -> bind() -> listen()
+-> accept() on the server side; socket() -> connect() on the client
+side, then send()/recv() on both. UDP sockets skip listen()/accept()/
+connect() entirely - just bind() and sendto()/recvfrom(), since
+there's no persistent connection to establish."
+
+=====================================================================
+9. CODING PROBLEMS (WITH FULL SOLUTIONS)
+=====================================================================
+
+9.1 Hourglass Pattern
+--------------------------
+    void printHourglass(int n) {
+        for (int i = n; i >= 1; i--) {                 // top: n..1
+            for (int s = 0; s < (n - i); s++) cout << "  ";
+            for (int j = 0; j < i; j++) cout << "* ";
+            cout << "\n";
+        }
+        for (int i = 2; i <= n; i++) {                  // bottom: 2..n
+            for (int s = 0; s < (n - i); s++) cout << "  ";
+            for (int j = 0; j < i; j++) cout << "* ";
+            cout << "\n";
+        }
+    }
+Complexity: O(n^2) time, O(1) space.
+
+9.2 BFS Traversal (undirected, disconnected, start at 0)
+--------------------------------------------------------------
+    vector<int> bfsTraversal(int V, vector<vector<int>>& adj) {
+        vector<bool> visited(V, false);
+        vector<int> result;
+        for (int start = 0; start < V; start++) {
+            if (visited[start]) continue;
+            queue<int> q; q.push(start); visited[start] = true;
+            while (!q.empty()) {
+                int node = q.front(); q.pop();
+                result.push_back(node);
+                for (int nb : adj[node])
+                    if (!visited[nb]) { visited[nb] = true; q.push(nb); }
+            }
+        }
+        return result;
+    }
+Complexity: O(V+E) time, O(V) space.
+
+9.3 Sort a Stack (push/pop + one extra stack)
+---------------------------------------------------
+    void sortStack(stack<int>& input) {
+        stack<int> temp;
+        while (!input.empty()) {
+            int tmp = input.top(); input.pop();
+            while (!temp.empty() && temp.top() > tmp) {
+                input.push(temp.top()); temp.pop();
+            }
+            temp.push(tmp);
+        }
+        while (!temp.empty()) { input.push(temp.top()); temp.pop(); }
+    }
+Complexity: O(n^2) worst case, O(n) space.
+
+9.4 Next Smaller Palindrome (largest palindrome strictly < S)
+--------------------------------------------------------------------
+    pair<string,bool> decrementStr(string s) {
+        int i = s.size() - 1;
+        while (i >= 0 && s[i] == '0') { s[i] = '9'; i--; }
+        if (i >= 0) s[i] = s[i] - 1;
+        bool borrowed = false;
+        if (s[0] == '0' && s.size() > 1) { s = s.substr(1); borrowed = true; }
+        return {s, borrowed};
+    }
+    string prevPalindrome(string S) {
+        int n = S.size(), halfLen = (n + 1) / 2;
+        auto [dec, borrowed] = decrementStr(S.substr(0, halfLen));
+        if (borrowed) return string(n - 1, '9');
+        string result = dec;
+        if (n % 2 == 0) for (int i=dec.size()-1;i>=0;i--) result += dec[i];
+        else            for (int i=dec.size()-2;i>=0;i--) result += dec[i];
+        return result;
+    }
+Example: S="999" -> half"99"->"98" -> "989". S="10001" -> half"100"
+borrows -> return "9999" (length n-1, all 9s).
+Complexity: O(n) time/space.
+
+9.5 Rotting Oranges (multi-source BFS)
+--------------------------------------------
+    int orangesRotting(vector<vector<int>>& grid) {
+        int rows=grid.size(), cols=grid[0].size(), fresh=0;
+        queue<pair<int,int>> q;
+        for (int i=0;i<rows;i++) for (int j=0;j<cols;j++) {
+            if (grid[i][j]==2) q.push({i,j});
+            else if (grid[i][j]==1) fresh++;
+        }
+        if (fresh==0) return 0;
+        int minutes=0;
+        vector<pair<int,int>> dirs={{0,1},{0,-1},{1,0},{-1,0}};
+        while (!q.empty() && fresh>0) {
+            int sz=q.size();
+            for (int k=0;k<sz;k++) {
+                auto [r,c]=q.front(); q.pop();
+                for (auto& d: dirs) {
+                    int nr=r+d.first, nc=c+d.second;
+                    if (nr>=0&&nr<rows&&nc>=0&&nc<cols&&grid[nr][nc]==1) {
+                        grid[nr][nc]=2; fresh--; q.push({nr,nc});
+                    }
+                }
+            }
+            minutes++;
+        }
+        return fresh==0 ? minutes : -1;
+    }
+Complexity: O(rows*cols) time/space.
+
+9.6 String to Integer (atoi) with overflow handling
+----------------------------------------------------------
+    int myAtoi(const string& s) {
+        int i=0, n=s.size();
+        while (i<n && s[i]==' ') i++;
+        int sign=1;
+        if (i<n && (s[i]=='+'||s[i]=='-')) { sign=(s[i]=='-')?-1:1; i++; }
+        long result=0;
+        while (i<n && isdigit(s[i])) {
+            result = result*10 + (s[i]-'0');
+            if (sign*result > INT_MAX) return INT_MAX;
+            if (sign*result < INT_MIN) return INT_MIN;
+            i++;
+        }
+        return sign*result;
+    }
+Key trick: use `long` for the running total to detect overflow
+BEFORE it happens in the int type (checking after is undefined
+behavior).
+
+9.7 Adding Very Large Numbers (bigger than any int type)
+----------------------------------------------------------------
+"Past ~19 digits, no native type holds the value - keep it as a
+string and do digit-by-digit arithmetic with carry, same as doing it
+by hand."
+    string addStrings(string a, string b) {
+        string result; int i=a.size()-1, j=b.size()-1, carry=0;
+        while (i>=0||j>=0||carry) {
+            int da=(i>=0)?a[i--]-'0':0, db=(j>=0)?b[j--]-'0':0;
+            int sum=da+db+carry;
+            carry=sum/10;
+            result.push_back('0'+(sum%10));
+        }
+        reverse(result.begin(), result.end());
+        return result;
+    }
+
+9.8 tail -f (polling version, no inotify)
+------------------------------------------------
+    FILE *fp = fopen(argv[1], "r");
+    fseek(fp, 0, SEEK_END);
+    char buf[4096];
+    while (1) {
+        size_t n;
+        while ((n = fread(buf, 1, sizeof(buf), fp)) > 0) {
+            fwrite(buf, 1, n, stdout); fflush(stdout);
+        }
+        clearerr(fp);       // reset EOF flag or fread stops forever
+        usleep(200000);     // poll every 200ms
+    }
+Gotcha to say out loud: without clearerr(), the stream latches EOF
+and never tries reading again even after new data is appended.
+
+=====================================================================
+10. VERSION CONTROL & PRACTICAL/PROCESS QUESTIONS
+=====================================================================
+
+10.1 Git Pull vs Git Fetch
+--------------------------------
+"git pull = git fetch + git merge combined - downloads AND
+integrates remote changes into your current branch immediately. git
+fetch only downloads, without merging - lets you review incoming
+changes before integrating. Use fetch when you want to inspect
+first; pull when you're ready to integrate immediately."
+
+10.2 Git Workflow / Merge Conflicts
+------------------------------------------
+"Feature-branch workflow off main/develop, PR-based review before
+merge. Conflicts show up marked with <<<<<<<, =======, >>>>>>> -
+resolve manually, stage, commit. Use rebase to keep feature-branch
+history linear before merging, carefully avoiding rebase on shared/
+already-pushed branches since it rewrites history."
+
+10.3 Debugging Approach (general)
+----------------------------------------
+"Reproduce reliably first. Read error messages/logs. Use a debugger
+(GDB) with breakpoints to inspect state, or targeted print
+statements if a debugger isn't practical. Isolate via a minimal
+reproducible example. Consult docs for correct API usage. Once
+fixed, write a regression test so it doesn't silently return."
+
+10.4 Fixing a Slow Application
+-------------------------------------
+"Profile first to find the actual bottleneck (don't guess) - tools
+like Valgrind/perf for C++, or platform profilers. Common fixes:
+optimize hot-path algorithms (e.g. O(n^2)->O(n log n)), reduce
+unnecessary copies (pass by reference, move semantics), add caching
+for repeated expensive lookups, and check for lock contention if
+multithreaded."
+
+10.5 Software Development Life Cycle (brief)
+--------------------------------------------------
+"Requirement analysis -> Design -> Development -> Testing ->
+Deployment -> Maintenance -> Retirement. In an embedded/IoT context,
+add hardware-in-the-loop testing and firmware versioning/OTA update
+considerations at the deployment/maintenance stages."
+
+=====================================================================
+11. GENERAL & BEHAVIORAL QUESTIONS (quick-answer form)
+=====================================================================
+These came up in your AmbitionBox collection as generic HR-adjacent
+questions. Keep answers short, specific to YOUR actual background
+(kernel security, eBPF, fanotify, DLP), not generic filler:
+
+- "Where do you see yourself in 5 years?" -> Tie to growing technical
+  depth in the exact stack this role uses (embedded C++/Qt), not a
+  generic "team lead" answer - shows genuine interest in this
+  specific role's trajectory.
+- "Why do you want to be a software developer?" -> Anchor in a real
+  example from your work (e.g. building the eBPF scanner) rather
+  than abstract passion statements.
+- "How do you ensure your code is clean/maintainable?" -> Coding
+  standards, modular design, unit tests, code review, refactoring -
+  give one concrete example from a resume project.
+- "How do you handle errors/exceptions?" -> try/catch where
+  appropriate, input validation, RAII for cleanup guarantees even on
+  exception, logging for diagnosis.
+- "Are you willing to work in a strict environment?" -> Yes, and
+  point to your security-tooling background where strict coding
+  standards and compliance are already the norm.
+
+=====================================================================
+END OF MASTER FILE
+=====================================================================

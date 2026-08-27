@@ -1,0 +1,259 @@
+=====================================================================
+USING SQLITE FROM C++ - BASIC LEVEL (sqlite3 C API)
+=====================================================================
+SQLite ships as a C library (libsqlite3), so C++ code calls it
+directly through its C API - no separate C++ wrapper needed for
+basic use, though libraries like SQLiteCpp exist if you want a more
+RAII-friendly interface later.
+
+Compile with:
+    g++ -std=c++17 sqlite_demo.cpp -lsqlite3 -o sqlite_demo
+
+SPOKEN SUMMARY (say this if asked "how do you use SQLite in C++"):
+"SQLite's C API is call-based: sqlite3_open() gets you a database
+handle, then you either use sqlite3_exec() for simple one-off
+statements with no user input, or the safer prepared-statement path
+- sqlite3_prepare_v2() to compile the SQL once, sqlite3_bind_*() to
+safely insert values without SQL injection risk, sqlite3_step() to
+execute and walk through result rows one at a time, and
+sqlite3_finalize() to release the statement. Always sqlite3_close()
+the handle when done - this is a textbook RAII candidate, so in real
+code I'd wrap the handle in a class with the open in the constructor
+and close in the destructor."
+
+=====================================================================
+FULL WORKING EXAMPLE
+=====================================================================
+
+#include <sqlite3.h>
+#include <iostream>
+#include <string>
+
+/* ---------------------------------------------------------------
+ * Helper: check a sqlite3 return code and print the error if any
+ * --------------------------------------------------------------- */
+void checkError(int rc, sqlite3* db, const std::string& context) {
+    if (rc != SQLITE_OK && rc != SQLITE_DONE && rc != SQLITE_ROW) {
+        std::cerr << context << " failed: " << sqlite3_errmsg(db) << "\n";
+    }
+}
+
+int main() {
+    sqlite3* db;
+    int rc = sqlite3_open("example.db", &db);   // creates the file if
+                                                  // it doesn't exist
+    if (rc != SQLITE_OK) {
+        std::cerr << "Cannot open database: " << sqlite3_errmsg(db) << "\n";
+        return 1;
+    }
+
+    /* -----------------------------------------------------------
+     * 1. CREATE TABLE - sqlite3_exec() is fine here since there's
+     *    no user input involved, just a fixed schema statement.
+     * ----------------------------------------------------------- */
+    const char* createSql =
+        "CREATE TABLE IF NOT EXISTS users ("
+        "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+        "name TEXT NOT NULL, "
+        "age INTEGER, "
+        "department TEXT);";
+
+    char* errMsg = nullptr;
+    rc = sqlite3_exec(db, createSql, nullptr, nullptr, &errMsg);
+    if (rc != SQLITE_OK) {
+        std::cerr << "CREATE TABLE error: " << errMsg << "\n";
+        sqlite3_free(errMsg);
+    }
+
+    /* -----------------------------------------------------------
+     * 2. INSERT - using a PREPARED STATEMENT, not sqlite3_exec()
+     *    with string concatenation. This is the important habit:
+     *    never build SQL by concatenating user input directly into
+     *    the query string - that's how SQL injection happens. Bind
+     *    parameters instead.
+     * ----------------------------------------------------------- */
+    const char* insertSql =
+        "INSERT INTO users (name, age, department) VALUES (?, ?, ?);";
+
+    sqlite3_stmt* stmt;
+    rc = sqlite3_prepare_v2(db, insertSql, -1, &stmt, nullptr);
+    checkError(rc, db, "prepare INSERT");
+
+    // Bind values - index starts at 1, not 0
+    sqlite3_bind_text(stmt, 1, "Samar", -1, SQLITE_TRANSIENT);
+    sqlite3_bind_int(stmt, 2, 28);
+    sqlite3_bind_text(stmt, 3, "Engineering", -1, SQLITE_TRANSIENT);
+
+    rc = sqlite3_step(stmt);          // actually executes the INSERT
+    checkError(rc, db, "step INSERT");
+    sqlite3_finalize(stmt);            // release the compiled statement
+
+    // Insert a second row so JOIN/SELECT examples below have more data
+    sqlite3_prepare_v2(db, insertSql, -1, &stmt, nullptr);
+    sqlite3_bind_text(stmt, 1, "Priya", -1, SQLITE_TRANSIENT);
+    sqlite3_bind_int(stmt, 2, 24);
+    sqlite3_bind_text(stmt, 3, "QA", -1, SQLITE_TRANSIENT);
+    sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+
+    /* -----------------------------------------------------------
+     * 3. SELECT - sqlite3_step() returns SQLITE_ROW once per
+     *    result row; loop until it returns SQLITE_DONE.
+     * ----------------------------------------------------------- */
+    const char* selectSql = "SELECT id, name, age, department FROM users;";
+    rc = sqlite3_prepare_v2(db, selectSql, -1, &stmt, nullptr);
+    checkError(rc, db, "prepare SELECT");
+
+    std::cout << "\n--- All users ---\n";
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        int id = sqlite3_column_int(stmt, 0);
+        // sqlite3_column_text returns unsigned char* - cast to reinterpret
+        const char* name = reinterpret_cast<const char*>(
+                                sqlite3_column_text(stmt, 1));
+        int age = sqlite3_column_int(stmt, 2);
+        const char* dept = reinterpret_cast<const char*>(
+                                sqlite3_column_text(stmt, 3));
+
+        std::cout << id << " | " << name << " | " << age
+                   << " | " << dept << "\n";
+    }
+    sqlite3_finalize(stmt);
+
+    /* -----------------------------------------------------------
+     * 4. SELECT with WHERE (bound parameter, not string-concatenated)
+     * ----------------------------------------------------------- */
+    const char* selectWhereSql = "SELECT name, age FROM users WHERE age > ?;";
+    sqlite3_prepare_v2(db, selectWhereSql, -1, &stmt, nullptr);
+    sqlite3_bind_int(stmt, 1, 25);   // the "?" placeholder gets this value
+
+    std::cout << "\n--- Users older than 25 ---\n";
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        const char* name = reinterpret_cast<const char*>(
+                                sqlite3_column_text(stmt, 0));
+        int age = sqlite3_column_int(stmt, 1);
+        std::cout << name << " | " << age << "\n";
+    }
+    sqlite3_finalize(stmt);
+
+    /* -----------------------------------------------------------
+     * 5. UPDATE - same prepared-statement + bind pattern
+     * ----------------------------------------------------------- */
+    const char* updateSql = "UPDATE users SET age = ? WHERE name = ?;";
+    sqlite3_prepare_v2(db, updateSql, -1, &stmt, nullptr);
+    sqlite3_bind_int(stmt, 1, 29);
+    sqlite3_bind_text(stmt, 2, "Samar", -1, SQLITE_TRANSIENT);
+    rc = sqlite3_step(stmt);
+    checkError(rc, db, "step UPDATE");
+    sqlite3_finalize(stmt);
+
+    /* -----------------------------------------------------------
+     * 6. DELETE - again bound, not concatenated
+     * ----------------------------------------------------------- */
+    const char* deleteSql = "DELETE FROM users WHERE name = ?;";
+    sqlite3_prepare_v2(db, deleteSql, -1, &stmt, nullptr);
+    sqlite3_bind_text(stmt, 1, "Priya", -1, SQLITE_TRANSIENT);
+    rc = sqlite3_step(stmt);
+    checkError(rc, db, "step DELETE");
+    sqlite3_finalize(stmt);
+
+    /* -----------------------------------------------------------
+     * 7. JOIN example - needs a second table to actually demonstrate
+     * ----------------------------------------------------------- */
+    sqlite3_exec(db,
+        "CREATE TABLE IF NOT EXISTS orders ("
+        "id INTEGER PRIMARY KEY, user_id INTEGER, item TEXT);",
+        nullptr, nullptr, &errMsg);
+
+    sqlite3_exec(db,
+        "INSERT INTO orders (user_id, item) VALUES (1, 'Laptop');",
+        nullptr, nullptr, &errMsg);
+
+    const char* joinSql =
+        "SELECT users.name, orders.item "
+        "FROM users "
+        "INNER JOIN orders ON users.id = orders.user_id;";
+
+    sqlite3_prepare_v2(db, joinSql, -1, &stmt, nullptr);
+    std::cout << "\n--- Users with orders (INNER JOIN) ---\n";
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        const char* name = reinterpret_cast<const char*>(
+                                sqlite3_column_text(stmt, 0));
+        const char* item = reinterpret_cast<const char*>(
+                                sqlite3_column_text(stmt, 1));
+        std::cout << name << " ordered " << item << "\n";
+    }
+    sqlite3_finalize(stmt);
+
+    /* -----------------------------------------------------------
+     * 8. Always close the database handle when done
+     * ----------------------------------------------------------- */
+    sqlite3_close(db);
+
+    return 0;
+}
+
+=====================================================================
+KEY POINTS TO SAY IN THE INTERVIEW
+=====================================================================
+
+1. "I always use prepared statements with bound parameters for
+   anything involving user or external input - never string-
+   concatenate values into the SQL text, since that's the classic
+   SQL injection vulnerability. sqlite3_exec() is fine ONLY for
+   fixed, hardcoded statements like CREATE TABLE."
+
+2. "sqlite3_step() does double duty - it executes the statement AND
+   advances to the next result row for SELECTs. It returns
+   SQLITE_ROW when there's a row ready to read, SQLITE_DONE when
+   there's nothing more (or the statement was a non-SELECT that
+   completed), and an error code otherwise."
+
+3. "Bind parameter indices start at 1, not 0 - a common off-by-one
+   mistake."
+
+4. "sqlite3_column_text() returns an unsigned char*, so it needs a
+   reinterpret_cast to const char* to use with normal C++ string
+   handling."
+
+5. "SQLITE_TRANSIENT vs SQLITE_STATIC in sqlite3_bind_text(): TRANSIENT
+   tells SQLite to make its own internal copy of the string
+   immediately, safe when the source data might go out of scope
+   before the statement executes. STATIC tells SQLite the pointer
+   will remain valid without copying - a small optimization when you
+   know the string outlives the statement, but riskier if you get
+   that lifetime assumption wrong."
+
+6. "In production I'd wrap the raw sqlite3* handle and sqlite3_stmt*
+   in RAII classes - constructor opens/prepares, destructor closes/
+   finalizes - so cleanup happens automatically even if an exception
+   is thrown partway through, same RAII principle as everywhere else
+   in modern C++."
+
+=====================================================================
+MINIMAL RAII WRAPPER (mention this if asked "how would you make this
+more idiomatic C++")
+=====================================================================
+
+    class SQLiteDB {
+        sqlite3* db_ = nullptr;
+    public:
+        explicit SQLiteDB(const std::string& path) {
+            if (sqlite3_open(path.c_str(), &db_) != SQLITE_OK) {
+                throw std::runtime_error(sqlite3_errmsg(db_));
+            }
+        }
+        ~SQLiteDB() { if (db_) sqlite3_close(db_); }
+
+        // non-copyable - only one owner of the handle
+        SQLiteDB(const SQLiteDB&) = delete;
+        SQLiteDB& operator=(const SQLiteDB&) = delete;
+
+        sqlite3* handle() const { return db_; }
+    };
+    // Usage: SQLiteDB db("example.db");  -> auto-closes when it
+    // goes out of scope, even on an exception - no manual
+    // sqlite3_close() call to remember.
+
+=====================================================================
+END OF FILE
+=====================================================================
