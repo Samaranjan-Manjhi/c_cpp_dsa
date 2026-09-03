@@ -1,0 +1,2577 @@
+-------------------------------------  Intro  -------------------------------------
+I'm currently a Systems and Cyber Security Software Engineer at MicroWorld Software Services in Mumbai. Over the past three years, I've specialized in building C/C++ production-grade endpoint security tools, kernel monitors, and Data Loss Prevention (DLP) engines across macOS and Linux endpoints.  In my current role, I've designed and delivered over 10 enterprise security modules. Most recently, I built a real-time antivirus scanning daemon using eBPF kernel tracing, an execution gating framework using kernel permission events, and a custom PAM module adding 2FA to SSH logins. My work focused on constructing cross-platform security daemons that reduced system memory overhead by 25% and boosted event detection throughput by 40%.  Moving forward, I’m looking to bring my deep expertise in kernel-level monitoring, cryptographic security, and low-level system architecture to this role, and I’m really excited about the high-scale engineering challenges your team is tackling.
+
+
+### --->  C language fundamentals
+C LANGUAGE FUNDAMENTALS - QUICK REFERENCE
+(Type | One-line explanation | One-line code)
+================================================================
+
+1. POINTERS
+================================================================
+Normal Pointer        | Stores the address of a variable.
+                       | int *p = &x;
+
+Pointer Arithmetic     | Moves by sizeof(type), not by 1 byte.
+                       | p = p + 1;   // moves 4 bytes if int*
+
+Function Pointer       | Stores the address of a function to call indirectly.
+                       | int (*fp)(int, int) = add;
+
+Pointer-to-Pointer     | A pointer that stores the address of another pointer.
+                       | int **pp = &p;
+
+Void Pointer           | Generic pointer that can hold any type's address.
+                       | void *vp = &x;
+
+NULL Pointer           | Pointer explicitly set to point to nothing.
+                       | int *p = NULL;
+
+Wild Pointer           | Uninitialized pointer pointing to a garbage address.
+                       | int *p;   // uninitialized - wild pointer
+
+Array Pointer          | A pointer to the first element / whole array.
+                       | int *p = arr;   // arr decays to &arr[0]
+
+Const Pointer          | Pointer whose address itself can't be changed.
+                       | int *const p = &x;
+
+Pointer to Const       | Pointer whose pointed-to value can't be modified.
+                       | const int *p = &x;
+
+
+2. MEMORY MANAGEMENT
+================================================================
+malloc                 | Allocates uninitialized heap memory.
+                       | int *p = malloc(5 * sizeof(int));
+
+calloc                 | Allocates zero-initialized heap memory.
+                       | int *p = calloc(5, sizeof(int));
+
+realloc                | Resizes a previously allocated memory block.
+                       | p = realloc(p, 10 * sizeof(int));
+
+free                   | Releases heap memory back to the system.
+                       | free(p);
+
+Memory Leak            | Allocated memory never freed, wasting resources.
+                       | malloc(10);   // never freed - leak
+
+Dangling Pointer       | Pointer still pointing to memory that's been freed.
+                       | free(p); /* p is now dangling */
+
+Double Free            | Calling free() twice on the same pointer - undefined behavior.
+                       | free(p); free(p);   // BUG
+
+Buffer Overflow        | Writing beyond the bounds of allocated memory.
+                       | char buf[4]; strcpy(buf, "hello");  // overflow
+
+
+3. STRUCTS, UNIONS, BIT-FIELDS
+================================================================
+Struct                 | Groups variables of different types under one name, each with separate memory.
+                       | struct Point { int x, y; };
+
+Union                  | All members share the same memory; only one is valid at a time.
+                       | union Data { int i; float f; };
+
+Bit-Field              | Packs a member into a specific number of bits inside an int.
+                       | struct Flags { unsigned int isSet : 1; };
+
+Nested Struct          | A struct containing another struct as a member.
+                       | struct Line { struct Point a, b; };
+
+Anonymous Union        | A union without a tag name, accessed directly by member.
+                       | union { int i; float f; };   // members used directly
+
+typedef struct         | Gives a struct a shorter alias name for reuse.
+                       | typedef struct { int x; } Point;
+
+
+4. VOLATILE, CONST, STATIC
+================================================================
+const (variable)       | Value cannot be modified after initialization.
+                       | const int x = 5;
+
+const pointer          | The pointer address is fixed, value can change.
+                       | int *const p = &x;
+
+pointer to const       | The value pointed to is fixed, pointer can change.
+                       | const int *p = &x;
+
+static (local var)     | Local variable retains its value between function calls.
+                       | static int count = 0;
+
+static (global var)    | Restricts visibility to the file it's declared in (internal linkage).
+                       | static int fileOnly = 10;
+
+static (function)      | Function is only callable within its own source file.
+                       | static void helper(void) { }
+
+volatile               | Tells compiler the value may change unexpectedly (signal/thread/hardware); disables optimization on it.
+                       | volatile int flag = 0;
+
+
+5. STACK vs HEAP
+================================================================
+Stack                  | Fast, automatically managed, limited size, scope-bound.
+                       | int x = 5;   // stored on stack
+
+Heap                   | Manually managed, larger, persists until freed.
+                       | int *p = malloc(sizeof(int));   // stored on heap
+
+
+6. UNDEFINED BEHAVIOR (UB) EXAMPLES
+================================================================
+Null Pointer Deref     | Dereferencing a NULL pointer.
+                       | int *p = NULL; *p = 5;   // UB - crash
+
+Array Out of Bounds    | Accessing an index outside the array's valid range.
+                       | int arr[5]; arr[10] = 1;   // UB
+
+Uninitialized Variable | Using a variable before it's assigned a value.
+                       | int x; printf("%d", x);   // UB - garbage value
+
+Signed Integer Overflow| Signed int exceeding its representable range.
+                       | int x = INT_MAX; x = x + 1;   // UB
+
+Division by Zero       | Dividing an integer by zero.
+                       | int y = 10 / 0;   // UB - crash
+
+Use After Free         | Accessing memory after it has been freed.
+                       | free(p); printf("%d", *p);   // UB
+
+================================================================
+END OF FILE
+================================================================
+
+
+LINUX/UNIX SYSTEMS PROGRAMMING - QUICK REFERENCE
+(Kept brief - JD doesn't explicitly call out these topics by name,
+so know them at this level, don't over-prepare deep internals.)
+(Type | One-line explanation | One-line code)
+================================================================
+
+1. PROCESS vs THREAD, FORK/EXEC
+================================================================
+Process                | Independent program in execution with its own isolated memory space.
+                       | pid_t pid = getpid();
+
+Thread                 | Lightweight execution unit sharing memory with other threads in the same process.
+                       | pthread_create(&tid, NULL, func, NULL);
+
+fork()                 | Creates a near-identical copy of the calling process (child).
+                       | pid_t pid = fork();
+
+exec() family          | Replaces the current process image with a new program.
+                       | execl("/bin/ls", "ls", NULL);
+
+fork() + exec()        | Common pattern: child forks, then replaces itself with a new program.
+                       | if (fork() == 0) execl("/bin/ls", "ls", NULL);
+
+wait()/waitpid()       | Parent blocks until a child process finishes, to reap it.
+                       | waitpid(pid, &status, 0);
+
+Zombie Process         | Child that finished but parent hasn't called wait() yet.
+                       | // occurs if parent skips waitpid()
+
+Orphan Process         | Child whose parent exited before it did; reparented to init.
+                       | // occurs if parent dies first
+
+
+2. IPC MECHANISMS
+================================================================
+Pipe                   | One-way byte stream between related (parent-child) processes.
+                       | pipe(fd);   // fd[0]=read, fd[1]=write
+
+Named Pipe (FIFO)      | Pipe with a filesystem path, usable by unrelated processes.
+                       | mkfifo("/tmp/myfifo", 0666);
+
+Unix Domain Socket     | Local bidirectional IPC using a filesystem path, supports FD passing.
+                       | socket(AF_UNIX, SOCK_STREAM, 0);
+
+Shared Memory          | Fastest IPC - multiple processes map the same memory region directly.
+                       | shmget(key, size, IPC_CREAT | 0666);
+
+Message Queue          | Kernel-managed queue of discrete, typed messages between processes.
+                       | msgget(key, IPC_CREAT | 0666);
+
+Signals (as IPC)       | Simple async notification between processes (e.g., kill a process).
+                       | kill(pid, SIGTERM);
+
+
+3. MULTITHREADING
+================================================================
+Mutex                  | Lock ensuring only one thread accesses a resource at a time.
+                       | pthread_mutex_lock(&lock);
+
+Semaphore              | Counter-based lock allowing N threads concurrent access.
+                       | sem_wait(&sem);
+
+Race Condition         | Bug where outcome depends on unpredictable thread scheduling order.
+                       | counter++;   // unsafe if unprotected across threads
+
+Deadlock               | Two+ threads waiting on locks the other holds - permanent stall.
+                       | // Thread A: lock(L1) then lock(L2); Thread B: lock(L2) then lock(L1)
+
+Condition Variable     | Lets a thread sleep until another thread signals a condition is true.
+                       | pthread_cond_wait(&cond, &lock);
+
+Thread Join            | Main/caller thread waits for a spawned thread to finish.
+                       | pthread_join(tid, NULL);
+
+False Sharing          | Threads updating different vars on the same cache line slow each other down.
+                       | // fix: pad struct so hot vars land on separate cache lines
+
+
+4. FILE I/O INTERNALS, FILE DESCRIPTORS
+================================================================
+File Descriptor        | Integer handle the OS uses to reference an open file/socket/pipe.
+                       | int fd = open("file.txt", O_RDONLY);
+
+open()                 | Opens a file and returns a file descriptor.
+                       | int fd = open("file.txt", O_RDWR);
+
+read()/write()         | Low-level syscalls to read/write bytes via a file descriptor.
+                       | read(fd, buf, sizeof(buf));
+
+close()                | Releases a file descriptor back to the OS.
+                       | close(fd);
+
+lseek()                | Moves the read/write offset within an open file.
+                       | lseek(fd, 0, SEEK_SET);
+
+Standard FDs           | 0 = stdin, 1 = stdout, 2 = stderr - always open by default.
+                       | write(1, "hi\n", 3);   // writes to stdout
+
+
+5. SIGNAL HANDLING
+================================================================
+Signal                 | Async notification sent to a process (e.g., interrupt, crash, terminate).
+                       | kill(pid, SIGINT);
+
+signal()/sigaction()   | Registers a custom handler function for a given signal.
+                       | signal(SIGINT, handler);
+
+SIGSEGV                | Sent on invalid memory access (segmentation fault).
+                       | // e.g., dereferencing NULL triggers SIGSEGV
+
+SIGTERM                | Polite request asking a process to terminate gracefully.
+                       | kill(pid, SIGTERM);
+
+SIGKILL                | Forcefully kills a process immediately - cannot be caught/ignored.
+                       | kill(pid, SIGKILL);
+
+Async-Signal-Safe      | Rule: signal handlers should do minimal work (e.g., set a flag only).
+                       | volatile sig_atomic_t flag = 0;  // set inside handler
+
+
+6. SYSTEM CALLS vs LIBRARY CALLS
+================================================================
+System Call            | Direct request to the kernel (e.g., read, write, fork) - causes a context switch.
+                       | ssize_t n = read(fd, buf, size);
+
+Library Call           | Higher-level function in a library (e.g., libc) that may wrap a syscall.
+                       | fread(buf, 1, size, filePtr);   // wraps read() internally
+
+Key Difference         | Syscalls cross into kernel mode (slower); library calls run in user space unless they wrap a syscall.
+                       | printf() -> buffers in user space -> eventually calls write() syscall
+
+================================================================
+END OF FILE
+================================================================
+
+
+DEBUGGING SKILLS - QUICK REFERENCE
+(Explicitly called out in JD - "Strong debugging skills" - know this
+section well, don't just skim it.)
+(Type | One-line explanation | One-line code/command)
+================================================================
+
+1. GDB - BREAKPOINTS, WATCHPOINTS, CORE DUMP ANALYSIS
+================================================================
+Start GDB                | Launches GDB on a compiled binary for debugging.
+                         | gdb ./myprogram
+
+Breakpoint               | Pauses execution at a specific line/function.
+                         | break main
+
+Run                      | Starts program execution inside GDB.
+                         | run
+
+Next                     | Executes the next line, stepping OVER function calls.
+                         | next
+
+Step                     | Executes the next line, stepping INTO function calls.
+                         | step
+
+Continue                 | Resumes execution until the next breakpoint.
+                         | continue
+
+Watchpoint                | Pauses execution whenever a variable's value changes.
+                         | watch myVar
+
+Print                    | Displays the current value of a variable.
+                         | print myVar
+
+Backtrace                | Shows the call stack at the current point of execution.
+                         | bt
+
+Enable Core Dumps        | Allows the OS to save program memory state on crash.
+                         | ulimit -c unlimited
+
+Analyze Core Dump         | Loads a crashed program's core dump for post-mortem analysis.
+                         | gdb ./myprogram core
+
+Thread Backtrace (all)     | Shows call stacks of all threads - useful for deadlock analysis.
+                         | thread apply all bt
+
+
+2. VALGRIND - MEMORY LEAK DETECTION
+================================================================
+Run Valgrind (memcheck)    | Detects memory leaks and invalid memory access.
+                         | valgrind --leak-check=full ./myprogram
+
+Leak Summary              | Reports how much memory was leaked and where it was allocated.
+                         | // shown automatically at program exit under valgrind
+
+Invalid Read/Write        | Flags access to memory outside allocated bounds.
+                         | // valgrind reports "Invalid write of size X"
+
+Uninitialized Value Use    | Flags use of a variable before it was assigned a value.
+                         | // valgrind reports "Conditional jump depends on uninitialised value"
+
+Limitation                | Valgrind slows execution heavily, so it's poor for catching race conditions (timing-based bugs).
+                         | // use ThreadSanitizer (-fsanitize=thread) for races instead
+
+
+3. DEBUGGING A CRASH/SEGFAULT WITH NO REPRO STEPS
+================================================================
+Step 1: Enable Core Dump   | Make sure a core dump is captured next time it crashes.
+                         | ulimit -c unlimited
+
+Step 2: Analyze Core        | Load the dump in GDB to see exact crash location and state.
+                         | gdb ./myprogram core
+
+Step 3: Check Common Causes | Look for null deref, out-of-bounds access, or use-after-free first.
+                         | print *ptr   // check if ptr is NULL/garbage
+
+Step 4: Run Under Valgrind  | Reproduce under Valgrind if possible to catch memory corruption earlier than the actual crash point.
+                         | valgrind ./myprogram
+
+Step 5: Add Logging         | If intermittent (suspected race condition), add logging around suspected shared state.
+                         | fprintf(stderr, "state=%d\n", state);
+
+Step 6: Check Recent Changes | Correlate crash onset with recent code/config changes as a hypothesis source.
+                         | git log --since="1 week ago"
+
+
+4. ROOT CAUSE ANALYSIS (RCA) APPROACH
+================================================================
+Reproduce                | Try to reliably trigger the issue in a safe/test environment first.
+                         | // run the same input/load that triggered production issue
+
+Gather Evidence           | Collect logs, core dumps, and metrics from the actual incident.
+                         | tail -n 500 /var/log/myapp.log
+
+Form Hypothesis           | Propose a likely cause based on evidence and recent changes.
+                         | // e.g., "likely a race condition introduced in last deploy"
+
+Validate Hypothesis        | Test the hypothesis with a targeted, isolated test - don't guess-fix.
+                         | // write a minimal repro test case
+
+Fix Root Cause             | Fix the underlying issue, not just the visible symptom.
+                         | // e.g., add proper locking, not just a retry wrapper
+
+Add Regression Safeguard   | Add a test or monitoring/alert so the same bug is caught earlier next time.
+                         | // add unit test + log-based alert for the condition
+
+Document                 | Write up cause, fix, and prevention for the team (postmortem).
+                         | // short RCA doc: what happened, why, fix, prevention
+
+================================================================
+END OF FILE
+================================================================
+
+
+DATABASE / SQL - QUICK REFERENCE
+(Explicitly called out in JD - "Very good knowledge of database
+concepts... SQL, relational algebra, and query optimization" -
+know this section well.)
+(Type | One-line explanation | One-line code)
+================================================================
+
+1. JOINS
+================================================================
+INNER JOIN              | Returns only rows with matching values in both tables.
+                        | SELECT * FROM A INNER JOIN B ON A.id = B.a_id;
+
+LEFT JOIN               | Returns all rows from left table, matched rows from right (NULL if no match).
+                        | SELECT * FROM A LEFT JOIN B ON A.id = B.a_id;
+
+RIGHT JOIN              | Returns all rows from right table, matched rows from left (NULL if no match).
+                        | SELECT * FROM A RIGHT JOIN B ON A.id = B.a_id;
+
+FULL OUTER JOIN         | Returns all rows from both tables, NULLs where no match on either side.
+                        | SELECT * FROM A FULL OUTER JOIN B ON A.id = B.a_id;
+
+SELF JOIN               | Joins a table to itself, usually to compare rows within the same table.
+                        | SELECT a1.name FROM Emp a1, Emp a2 WHERE a1.mgr_id = a2.id;
+
+CROSS JOIN              | Returns the Cartesian product - every row of A paired with every row of B.
+                        | SELECT * FROM A CROSS JOIN B;
+
+
+2. INDEXES
+================================================================
+Index                  | Data structure (usually B-tree) that speeds up lookups on a column.
+                        | CREATE INDEX idx_name ON Employees(name);
+
+Primary Key Index      | Automatically created unique index enforcing row identity.
+                        | CREATE TABLE T (id INT PRIMARY KEY);
+
+Unique Index            | Ensures no duplicate values exist in the indexed column.
+                        | CREATE UNIQUE INDEX idx_email ON Users(email);
+
+Composite Index         | Index built on multiple columns together, ordered left-to-right.
+                        | CREATE INDEX idx_name_dept ON Employees(name, dept);
+
+Clustered Index          | Determines the physical storage order of table rows (usually the PK).
+                        | -- e.g., PRIMARY KEY often creates the clustered index by default
+
+Non-Clustered Index      | Separate structure pointing to row locations; table order unaffected.
+                        | CREATE INDEX idx_dept ON Employees(dept);   -- non-clustered by default
+
+Index Tradeoff           | Speeds up reads (SELECT) but slows down writes (INSERT/UPDATE/DELETE).
+                        | -- every write must also update the index structure
+
+
+3. QUERY OPTIMIZATION BASICS
+================================================================
+EXPLAIN Plan             | Shows how the database engine will execute a query (scan type, index use).
+                        | EXPLAIN SELECT * FROM Employees WHERE dept = 'IT';
+
+Full Table Scan          | Engine reads every row - slow, usually means a missing/unused index.
+                        | -- happens when WHERE column has no index
+
+Avoid SELECT *           | Fetch only needed columns to reduce I/O and network transfer.
+                        | SELECT name, dept FROM Employees;   -- not SELECT *
+
+WHERE Filter Order       | Put the most selective condition first to reduce rows early.
+                        | WHERE dept = 'IT' AND status = 'active';
+
+Avoid Functions on Indexed Columns | Wrapping an indexed column in a function prevents index use.
+                        | -- BAD: WHERE YEAR(join_date) = 2024 (skips index)
+
+Query Caching            | Reusing results of a previously executed identical query.
+                        | -- handled by DB engine automatically for repeated identical queries
+
+N+1 Query Problem         | Running one query per row in a loop instead of one batched query - major performance killer.
+                        | -- fix: use a single JOIN instead of a query-per-row loop
+
+
+4. NORMALIZATION
+================================================================
+1NF (First Normal Form)   | Each column holds atomic (indivisible) values, no repeating groups.
+                        | -- BAD: phone = "123,456"  → split into separate rows/columns
+
+2NF (Second Normal Form)  | 1NF + no partial dependency (non-key column depends on part of a composite key).
+                        | -- move data depending only on part of the key into its own table
+
+3NF (Third Normal Form)   | 2NF + no transitive dependency (non-key column depends on another non-key column).
+                        | -- e.g., move "city depends on zip" into a separate ZipCode table
+
+Denormalization           | Intentionally adding redundancy to speed up reads, trading off write complexity.
+                        | -- e.g., storing total_amount directly on Orders instead of recalculating via JOIN
+
+Foreign Key                | Column referencing the primary key of another table, enforcing referential integrity.
+                        | FOREIGN KEY (dept_id) REFERENCES Departments(id);
+
+
+5. RELATIONAL ALGEBRA CONCEPTS
+================================================================
+Selection (σ)             | Filters rows based on a condition - maps to SQL WHERE.
+                        | σ(dept='IT')(Employees)   →  SQL: WHERE dept='IT'
+
+Projection (π)             | Selects specific columns - maps to SQL SELECT column list.
+                        | π(name, dept)(Employees)  →  SQL: SELECT name, dept
+
+Union (∪)                  | Combines rows from two compatible relations, removing duplicates.
+                        | A ∪ B   →  SQL: SELECT * FROM A UNION SELECT * FROM B;
+
+Set Difference (−)          | Rows in one relation but not in another.
+                        | A − B   →  SQL: SELECT * FROM A EXCEPT SELECT * FROM B;
+
+Cartesian Product (×)        | Every row of one relation paired with every row of another.
+                        | A × B   →  SQL: SELECT * FROM A CROSS JOIN B;
+
+Join (⋈)                   | Combines rows from two relations based on a related column.
+                        | A ⋈ B   →  SQL: SELECT * FROM A JOIN B ON A.id = B.a_id;
+
+================================================================
+END OF FILE
+================================================================
+
+
+DATABASE / SQL - HANDS-ON PRACTICE
+THREE SAMPLE DATABASES + QUERIES EXPLAINING EACH CONCEPT
+================================================================
+Use these to actually RUN queries (SQLite/MySQL) before the
+interview - explaining a concept while pointing at real output
+lands much better than reciting theory.
+================================================================
+
+
+================================================================
+DATABASE 1: "CompanyDB" - for JOINS, INDEXES, SELF-JOIN
+================================================================
+
+-- SCHEMA
+CREATE TABLE Departments (
+    dept_id   INT PRIMARY KEY,
+    dept_name VARCHAR(50)
+);
+
+CREATE TABLE Employees (
+    emp_id    INT PRIMARY KEY,
+    name      VARCHAR(50),
+    dept_id   INT,
+    mgr_id    INT,          -- manager's emp_id (for self-join)
+    salary    INT,
+    FOREIGN KEY (dept_id) REFERENCES Departments(dept_id)
+);
+
+-- SAMPLE DATA
+INSERT INTO Departments VALUES (1, 'Engineering'), (2, 'Sales'), (3, 'HR');
+
+INSERT INTO Employees VALUES
+(101, 'Ravi',   1, NULL, 90000),   -- Ravi is a manager, no mgr himself
+(102, 'Anita',  1, 101,  70000),
+(103, 'Suresh', 2, NULL, 60000),
+(104, 'Meena',  2, 103,  50000),
+(105, 'Farhan', NULL, NULL, 55000); -- no department assigned (for LEFT/RIGHT demo)
+
+--------------------------------------------------------------
+Q1: INNER JOIN - "show employees with their department names"
+--------------------------------------------------------------
+SELECT e.name, d.dept_name
+FROM Employees e
+INNER JOIN Departments d ON e.dept_id = d.dept_id;
+-- EXPLANATION: only returns rows where dept_id matches in BOTH
+-- tables. Farhan (dept_id = NULL) is excluded from the result.
+
+--------------------------------------------------------------
+Q2: LEFT JOIN - "show ALL employees, even those with no department"
+--------------------------------------------------------------
+SELECT e.name, d.dept_name
+FROM Employees e
+LEFT JOIN Departments d ON e.dept_id = d.dept_id;
+-- EXPLANATION: keeps every row from Employees; Farhan appears
+-- with dept_name = NULL since he has no matching department.
+
+--------------------------------------------------------------
+Q3: RIGHT JOIN - "show all departments, even ones with no employees"
+--------------------------------------------------------------
+SELECT e.name, d.dept_name
+FROM Employees e
+RIGHT JOIN Departments d ON e.dept_id = d.dept_id;
+-- EXPLANATION: keeps every row from Departments; HR (dept_id=3)
+-- would show up with name = NULL since no employee is in HR.
+
+--------------------------------------------------------------
+Q4: SELF JOIN - "show each employee alongside their manager's name"
+--------------------------------------------------------------
+SELECT a1.name AS employee, a2.name AS manager
+FROM Employees a1
+LEFT JOIN Employees a2 ON a1.mgr_id = a2.emp_id;
+-- EXPLANATION: joins the Employees table to itself using mgr_id,
+-- so we can resolve a manager's ID into their actual name.
+
+--------------------------------------------------------------
+Q5: INDEX - "speed up lookups by department"
+--------------------------------------------------------------
+CREATE INDEX idx_emp_dept ON Employees(dept_id);
+-- EXPLANATION: without this, filtering WHERE dept_id = X requires
+-- scanning every row (full table scan). With the index, the
+-- engine can jump directly to matching rows via a B-tree lookup.
+
+--------------------------------------------------------------
+Q6: COMPOSITE INDEX - "speed up lookups by dept AND salary together"
+--------------------------------------------------------------
+CREATE INDEX idx_dept_salary ON Employees(dept_id, salary);
+-- EXPLANATION: useful for queries filtering/sorting on BOTH
+-- columns together, e.g., WHERE dept_id=1 ORDER BY salary DESC;
+-- column order matters - this index doesn't help a salary-only filter.
+
+
+================================================================
+DATABASE 2: "ECommerceDB" - for QUERY OPTIMIZATION, RELATIONAL ALGEBRA
+================================================================
+
+-- SCHEMA
+CREATE TABLE Customers (
+    cust_id   INT PRIMARY KEY,
+    name      VARCHAR(50),
+    city      VARCHAR(50)
+);
+
+CREATE TABLE Products (
+    product_id INT PRIMARY KEY,
+    name       VARCHAR(50),
+    price      DECIMAL(10,2)
+);
+
+CREATE TABLE Orders (
+    order_id   INT PRIMARY KEY,
+    cust_id    INT,
+    order_date DATE,
+    FOREIGN KEY (cust_id) REFERENCES Customers(cust_id)
+);
+
+CREATE TABLE OrderItems (
+    order_id   INT,
+    product_id INT,
+    quantity   INT,
+    FOREIGN KEY (order_id) REFERENCES Orders(order_id),
+    FOREIGN KEY (product_id) REFERENCES Products(product_id)
+);
+
+-- SAMPLE DATA
+INSERT INTO Customers VALUES (1,'Rahul','Mumbai'), (2,'Sneha','Pune');
+INSERT INTO Products VALUES (10,'Laptop',60000.00), (11,'Mouse',500.00);
+INSERT INTO Orders VALUES (100, 1, '2026-08-01'), (101, 2, '2026-08-15');
+INSERT INTO OrderItems VALUES (100,10,1), (100,11,2), (101,11,1);
+
+--------------------------------------------------------------
+Q1: BAD PRACTICE - "SELECT * fetches unnecessary data"
+--------------------------------------------------------------
+SELECT * FROM Orders WHERE cust_id = 1;
+-- EXPLANATION: fetches ALL columns even if you only need order_id
+-- and order_date - wastes I/O and network bandwidth at scale.
+
+--------------------------------------------------------------
+Q1 FIX: "fetch only needed columns"
+--------------------------------------------------------------
+SELECT order_id, order_date FROM Orders WHERE cust_id = 1;
+-- EXPLANATION: reduces the amount of data read and transferred,
+-- especially important on large tables with many columns.
+
+--------------------------------------------------------------
+Q2: EXPLAIN PLAN - "see how the engine will execute a query"
+--------------------------------------------------------------
+EXPLAIN SELECT * FROM Orders WHERE cust_id = 1;
+-- EXPLANATION: shows whether the engine does a full table scan
+-- or uses an index - tells you if you need to add an index here.
+
+--------------------------------------------------------------
+Q3: FUNCTION ON INDEXED COLUMN - "why this skips the index"
+--------------------------------------------------------------
+-- BAD:
+SELECT * FROM Orders WHERE YEAR(order_date) = 2026;
+-- GOOD:
+SELECT * FROM Orders WHERE order_date >= '2026-01-01' AND order_date < '2027-01-01';
+-- EXPLANATION: wrapping the column in YEAR() forces the engine to
+-- evaluate the function on every row, bypassing any index on
+-- order_date. The range version can use the index directly.
+
+--------------------------------------------------------------
+Q4: N+1 PROBLEM - "bad: querying items per order in a loop"
+--------------------------------------------------------------
+-- BAD (pseudo-loop, one query PER order):
+-- for each order: SELECT * FROM OrderItems WHERE order_id = ?
+-- GOOD (single batched query):
+SELECT o.order_id, oi.product_id, oi.quantity
+FROM Orders o
+JOIN OrderItems oi ON o.order_id = oi.order_id;
+-- EXPLANATION: the loop version runs N extra queries for N orders;
+-- the JOIN version fetches everything needed in a single round-trip.
+
+--------------------------------------------------------------
+Q5: RELATIONAL ALGEBRA - Selection (σ) and Projection (π) together
+--------------------------------------------------------------
+SELECT name FROM Customers WHERE city = 'Mumbai';
+-- EXPLANATION: this is π(name)( σ(city='Mumbai')(Customers) ) -
+-- Selection filters rows first, Projection then picks the column.
+
+--------------------------------------------------------------
+Q6: RELATIONAL ALGEBRA - Join (⋈)
+--------------------------------------------------------------
+SELECT c.name, p.name AS product, oi.quantity
+FROM Customers c
+JOIN Orders o ON c.cust_id = o.cust_id
+JOIN OrderItems oi ON o.order_id = oi.order_id
+JOIN Products p ON oi.product_id = p.product_id;
+-- EXPLANATION: chains multiple joins (⋈) across four relations to
+-- reconstruct "which customer bought which product."
+
+
+================================================================
+DATABASE 3: "NormalizationDemo" - for NORMALIZATION (1NF, 2NF, 3NF)
+================================================================
+
+--------------------------------------------------------------
+STEP 0: THE UNNORMALIZED TABLE (violates 1NF)
+--------------------------------------------------------------
+CREATE TABLE StudentCourses_BAD (
+    student_id   INT,
+    student_name VARCHAR(50),
+    courses      VARCHAR(200)   -- e.g., "Math,Science,English" - repeating group!
+);
+-- PROBLEM: 'courses' stores multiple values in one column - not
+-- atomic, violates 1NF, and makes searching for one course painful.
+
+--------------------------------------------------------------
+STEP 1: FIX TO 1NF - atomic values, one course per row
+--------------------------------------------------------------
+CREATE TABLE StudentCourses_1NF (
+    student_id   INT,
+    student_name VARCHAR(50),
+    course_id    INT,
+    course_name  VARCHAR(50),
+    instructor   VARCHAR(50)
+);
+-- Now each row has ONE course - atomic values achieved.
+-- PROBLEM REMAINING: student_name repeats for every course row
+-- (redundancy), and course_name/instructor repeat per course too.
+
+--------------------------------------------------------------
+STEP 2: FIX TO 2NF - remove partial dependency
+--------------------------------------------------------------
+-- Composite key here would be (student_id, course_id).
+-- student_name depends only on student_id (partial dependency) -
+-- so split it out:
+CREATE TABLE Students (
+    student_id   INT PRIMARY KEY,
+    student_name VARCHAR(50)
+);
+
+CREATE TABLE Enrollments_2NF (
+    student_id   INT,
+    course_id    INT,
+    course_name  VARCHAR(50),
+    instructor   VARCHAR(50),
+    PRIMARY KEY (student_id, course_id),
+    FOREIGN KEY (student_id) REFERENCES Students(student_id)
+);
+-- Now student_name is stored once per student, not once per
+-- enrollment row - partial dependency removed.
+
+--------------------------------------------------------------
+STEP 3: FIX TO 3NF - remove transitive dependency
+--------------------------------------------------------------
+-- instructor depends on course_id, NOT on the (student,course)
+-- key directly - that's a transitive dependency. Split it out:
+CREATE TABLE Courses (
+    course_id   INT PRIMARY KEY,
+    course_name VARCHAR(50),
+    instructor  VARCHAR(50)
+);
+
+CREATE TABLE Enrollments_3NF (
+    student_id INT,
+    course_id  INT,
+    PRIMARY KEY (student_id, course_id),
+    FOREIGN KEY (student_id) REFERENCES Students(student_id),
+    FOREIGN KEY (course_id) REFERENCES Courses(course_id)
+);
+-- Now instructor/course_name live in ONE place (Courses table),
+-- not duplicated across every enrollment - fully 3NF.
+
+--------------------------------------------------------------
+QUERY TO PROVE IT STILL WORKS AFTER NORMALIZING (via JOIN)
+--------------------------------------------------------------
+SELECT s.student_name, c.course_name, c.instructor
+FROM Students s
+JOIN Enrollments_3NF e ON s.student_id = e.student_id
+JOIN Courses c ON e.course_id = c.course_id;
+-- EXPLANATION: this is the tradeoff of normalization - data is no
+-- longer duplicated, but reading it back together now requires
+-- JOINs. This is the exact point to make if asked about the
+-- normalization vs read-performance tradeoff in a low-latency
+-- financial system.
+
+================================================================
+END OF FILE
+================================================================
+
+
+CHELLA SOFTWARE - C DEVELOPER INTERVIEW PREP
+(Mumbai, Financial Markets / Low-Latency Trading Systems)
+================================================================
+
+SECTION 1: C LANGUAGE FUNDAMENTALS
+================================================================
+
+Q1: Explain pointers and pointer arithmetic.
+A: A pointer holds the memory address of a variable. Pointer arithmetic moves
+by the size of the pointed-to type, not by raw bytes — e.g., int* p; p+1
+advances 4 bytes on most systems, not 1. This matters when walking arrays or
+buffers manually, which is common in low-level protocol/message parsing code.
+
+Q2: What is a function pointer and where would you use one?
+A: A function pointer stores the address of a function so it can be called
+indirectly. Common uses: callback mechanisms, dispatch tables (e.g., mapping
+message types to handler functions in a trading engine), and plugin-style
+architectures where behavior is selected at runtime instead of compile time.
+
+Q3: Pointer-to-pointer — when is it needed?
+A: Used when a function needs to modify the caller's pointer itself, not just
+the data it points to — e.g., a function that allocates memory and needs to
+hand the new address back via an output parameter: void alloc(int** out).
+
+Q4: Explain malloc/free and common memory bugs.
+A: malloc reserves heap memory; free releases it back. Common bugs: memory
+leaks (forgetting free), dangling pointers (using memory after free), and
+double-free (freeing the same pointer twice, which corrupts heap metadata).
+In performance-critical systems, excessive malloc/free calls also hurt
+latency, so many low-latency codebases pre-allocate or use memory pools.
+
+Q5: Structs vs unions, and what are bit-fields?
+A: A struct allocates separate memory for each member; a union overlays all
+members on the same memory, so only one is valid at a time — useful for
+memory-efficient variant types. Bit-fields let you pack multiple small values
+into specific bit-widths within an int, which is common when parsing tightly
+packed binary protocol headers (e.g., FIX/ITCH-style market data messages).
+
+Q6: What does 'volatile' do, and when do you need it?
+A: 'volatile' tells the compiler not to optimize away or cache reads/writes
+to a variable, because its value can change outside the program's normal
+flow — e.g., a variable modified by a signal handler, another thread, or
+memory-mapped hardware. Without it, the compiler might cache a stale value
+in a register.
+
+Q7: const vs static — practical difference.
+A: const means the value can't be modified after initialization (compile-time
+enforced immutability). static, on a local variable, makes it persist across
+function calls (retains value); on a global/function, it restricts linkage to
+the current file (internal linkage) — useful for hiding helper functions.
+
+Q8: Stack vs heap — how do you choose?
+A: Stack: fast, automatic cleanup, limited size, scope-bound (local vars).
+Heap: manual management, larger capacity, needed when data must outlive the
+function or size isn't known at compile time. In low-latency code, heavy
+stack use is often preferred because heap allocation is comparatively slow
+and unpredictable (fragmentation, allocator locks).
+
+
+SECTION 2: LINUX / UNIX SYSTEMS PROGRAMMING
+================================================================
+
+Q9: Process vs thread — key differences.
+A: A process has its own isolated memory space; threads within a process
+share the same memory space (heap, globals) but have separate stacks.
+Threads are cheaper to create and communicate faster (shared memory) but
+require synchronization to avoid data races. Processes are safer/isolated
+but communication needs IPC.
+
+Q10: Explain fork() and exec().
+A: fork() creates a near-identical copy of the calling process (child gets
+a copy of the parent's memory, same code, separate PID). exec() replaces
+the current process image with a new program. The classic pattern is
+fork() then exec() in the child — used by shells to launch new programs
+while the parent continues running.
+
+Q11: What IPC mechanisms do you know, and when would you pick each?
+A: Pipes — simple parent-child byte stream, low setup cost. Unix domain
+sockets — bidirectional, supports multiple clients, can pass file
+descriptors, good for local daemon-to-client communication (I used this in
+my 2FA-for-SSH project). Shared memory — fastest, avoids copying data
+between processes, best for high-throughput/low-latency needs like market
+data feeds. Message queues — structured, discrete messages with built-in
+queuing. Choice depends on throughput needs, number of peers, and whether
+data needs to be copied or shared directly.
+
+Q12: Explain mutex vs semaphore.
+A: A mutex enforces mutual exclusion — only one thread can hold it at a
+time, and typically only the thread that locked it can unlock it (ownership
+semantics). A semaphore is a counter that allows N threads through
+simultaneously; it doesn't have ownership, so any thread can signal it.
+Use a mutex to protect a shared resource; use a semaphore to limit
+concurrent access to a pool of N resources (e.g., N worker slots).
+
+Q13: What is deadlock, and how do you avoid it?
+A: Deadlock happens when two or more threads each hold a lock the other
+needs, so neither can proceed — classic case: Thread A holds Lock1 and
+waits for Lock2, Thread B holds Lock2 and waits for Lock1. Avoidance:
+always acquire locks in a fixed global order, use timeouts (trylock), or
+minimize the number of locks held simultaneously.
+
+Q14: What is a race condition, and how do condition variables help?
+A: A race condition occurs when the outcome depends on unpredictable
+thread scheduling — e.g., two threads incrementing a shared counter
+without synchronization, causing lost updates. Condition variables let a
+thread sleep until a specific condition becomes true (signaled by another
+thread), avoiding busy-waiting — used together with a mutex to safely
+check and wait on shared state (e.g., a producer-consumer queue).
+
+Q15: What is false sharing?
+A: When two threads modify different variables that happen to sit on the
+same CPU cache line, each write invalidates the other core's cached copy,
+causing unnecessary cache-coherency traffic and slowing both threads down —
+even though there's no actual logical data conflict. Fix: pad/align
+shared structures so hot variables used by different threads land on
+separate cache lines. This is a real concern in low-latency trading code.
+
+Q16: What are signals, and how do you handle them safely?
+A: Signals are asynchronous notifications delivered to a process (e.g.,
+SIGINT, SIGSEGV, SIGTERM). A signal handler should do minimal, async-signal-
+safe work (e.g., just set a flag) rather than calling non-reentrant
+functions like malloc or printf inside the handler, since the signal can
+interrupt the program at any point, including mid-allocation.
+
+
+SECTION 3: DEBUGGING (explicitly listed in the JD)
+================================================================
+
+Q17: Walk me through debugging a segfault with no clear repro steps.
+A: First, reproduce reliably if possible; if not, examine a core dump with
+GDB (`gdb ./binary core`) to get the crash backtrace and inspect variable
+state at the point of failure. Check for null/dangling pointer dereference,
+out-of-bounds array access, or use-after-free. Run under Valgrind to catch
+memory issues that don't always crash immediately but corrupt state
+earlier. Add targeted logging around the suspected area if the issue is
+intermittent (possible race condition) rather than deterministic.
+
+Q18: How do you use GDB day to day?
+A: Breakpoints (`break`) to pause execution at a function/line, `watch` to
+break when a variable's value changes (useful for tracking down unexpected
+mutation), `bt` for backtrace to see the call stack, `print` to inspect
+variable values, and stepping with `next`/`step` to trace execution flow
+line by line.
+
+Q19: How does Valgrind help, and what are its limitations?
+A: Valgrind (memcheck) detects memory leaks, invalid reads/writes, and
+use of uninitialized memory by running the program in an instrumented
+virtual environment. Limitation: it slows execution significantly (10-50x),
+so it's not suitable for catching timing-dependent bugs like race
+conditions — for those, tools like ThreadSanitizer are more appropriate.
+
+Q20: Describe your root-cause-analysis approach for a production incident.
+A: Reproduce in a safe environment if possible, gather logs/core dumps from
+the actual incident, form a hypothesis based on recent changes or known
+weak points, and validate the hypothesis with targeted tests rather than
+guessing. Fix the immediate issue, then add regression tests or monitoring
+so the same class of bug is caught earlier next time.
+
+
+SECTION 4: ALGORITHMS
+================================================================
+
+Q21: How do you approach time/space complexity in interviews?
+A: State the brute-force approach and its complexity first, then optimize —
+e.g., trade space for time using a hash map to avoid nested loops. In a
+low-latency context, also mention that Big-O isn't the whole story:
+constant factors, cache locality, and avoiding allocations in hot paths
+often matter more in practice than asymptotic complexity alone.
+
+Q22: What kind of live coding should you expect?
+A: Based on similar Chella technical rounds, expect an easy-to-medium
+program — array/string manipulation, searching/sorting, or a small parsing
+task — rather than hard DSA. Given the domain, a task involving efficient
+buffer/message parsing wouldn't be surprising. Write clean, correct code
+first; only optimize if asked, and narrate your thought process out loud.
+
+
+SECTION 5: DATABASE / SQL (explicitly in JD)
+================================================================
+
+Q23: Explain joins (INNER, LEFT, RIGHT).
+A: INNER JOIN returns only matching rows from both tables. LEFT JOIN
+returns all rows from the left table plus matches from the right (NULL
+where no match). RIGHT JOIN is the mirror of LEFT. Choice depends on
+whether you need to preserve unmatched rows from one side.
+
+Q24: What is an index, and what's the tradeoff?
+A: An index is a data structure (usually a B-tree) that speeds up lookups
+on a column by avoiding full table scans. Tradeoff: indexes speed up reads
+but slow down writes (insert/update/delete), since the index must be
+maintained too — so you index columns that are frequently queried, not
+every column.
+
+Q25: What is normalization, briefly?
+A: Organizing tables to reduce data redundancy and avoid update anomalies,
+typically by splitting data into related tables linked by foreign keys
+(e.g., 3NF removes transitive dependencies). Tradeoff: highly normalized
+schemas can require more joins, which can hurt read performance in
+latency-sensitive systems — sometimes selective denormalization is used
+for hot-path queries.
+
+
+SECTION 6: BEHAVIORAL / DOMAIN
+================================================================
+
+Q26: Why does fintech/trading systems work interest you?
+A: Frame around your existing strengths: you already work close to the
+system (kernel-level security tooling, performance-conscious C/C++), and
+trading systems are one of the purest applications of "every microsecond
+and every allocation matters" — a natural extension of the low-level,
+performance-driven work you already do.
+
+Q27: Describe a challenging technical problem you solved.
+A: Use one of your real projects — e.g., building the eBPF real-time virus
+scanner or the MW Guardian binary integrity daemon. Structure it: the
+problem, why it was hard (e.g., needing to intercept file operations with
+minimal performance overhead), the approach you took, and the outcome.
+Keep it to 30-45 seconds, then let them ask follow-ups.
+
+Q28: Why are you leaving your current role?
+A: Keep it neutral and forward-looking — e.g., you're looking for a role
+with deeper focus on high-performance, low-level systems work, and
+Chella's domain (ultra-high-performance, low-latency financial systems)
+lines up directly with the systems programming background you've built.
+Avoid negative framing of your current employer.
+
+Q29: Working with end-users (traders) — communication under pressure.
+A: Emphasize translating urgent, sometimes vague, business-side requests
+("this is slow" / "this trade didn't go through") into precise technical
+root causes, and communicating status/ETAs clearly back to non-technical
+stakeholders while the investigation is ongoing.
+
+Q30: What steps do you take when troubleshooting an issue? (commonly asked)
+A: Reproduce → isolate scope (which component/layer) → check logs/traces →
+form and test a hypothesis → fix → verify the fix doesn't introduce
+regressions → document root cause. Mention you prioritize root-cause fixes
+over quick patches, especially in production financial systems where a
+recurring bug has real cost.
+
+================================================================
+QUICK REMINDER: Tie answers back to your resume projects wherever
+possible (eBPF scanner, MW Guardian, 2FA-for-SSH, FSEvents file integrity
+monitor) — Chella's low-latency/high-performance domain rewards concrete
+systems-level examples over generic textbook answers.
+================================================================
+
+CHELLA INTERVIEW PREP - PART 2
+LINUX RESUME PROJECTS + C DYNAMIC MEMORY ALLOCATION CODE
+================================================================
+
+SECTION 1: YOUR LINUX PROJECTS (30-45 sec verbal versions)
+================================================================
+(Only Linux-based projects included, as requested. Your macOS
+projects - Printer Control/DLP with Endpoint Security Framework,
+and the FSEvents-based File Integrity Monitor - are excluded here.)
+
+--------------------------------------------------------------
+PROJECT 1: eBPF Real-Time Virus Scanner
+--------------------------------------------------------------
+WHAT IT IS: A kernel-level real-time file scanning system built using
+eBPF to intercept file operations as they happen, rather than scanning
+on a schedule.
+
+TALKING POINTS:
+- Why eBPF: lets you run sandboxed, verified code inside the kernel
+  without writing a full kernel module, hooking into events like file
+  opens/writes with very low overhead compared to userspace polling.
+- Architecture: an eBPF program attached to relevant kernel hooks
+  (e.g., file open/exec paths) feeds events up to a userspace agent
+  via a ring buffer / perf buffer, which then triggers the actual
+  scan logic.
+- Key challenge: keeping the kernel-side hook lightweight (since eBPF
+  programs run in a hot path and are verifier-constrained - no
+  unbounded loops, limited stack) while still capturing enough
+  context to make scanning decisions in userspace.
+- Performance angle: intercepting at the kernel level avoids the
+  race condition/overhead of a userspace-only watcher trying to catch
+  a file before it's fully written or executed.
+
+SAMPLE 30-SEC ANSWER:
+"I built a real-time virus scanner using eBPF to hook into file
+operations at the kernel level - so instead of periodically scanning
+the filesystem, we catch files as they're opened or written, pass
+that event up to a userspace agent through a ring buffer, and trigger
+scanning immediately. The main challenge was keeping the eBPF program
+itself minimal since it runs in a performance-sensitive kernel path
+and has verifier restrictions, so the heavy logic lives in userspace."
+
+--------------------------------------------------------------
+PROJECT 2: MW Guardian - Binary Integrity Daemon
+--------------------------------------------------------------
+WHAT IT IS: A daemon that monitors binaries on disk for unauthorized
+modification/tampering, likely using fanotify to watch filesystem
+events tied to executables.
+
+TALKING POINTS:
+- Why fanotify: it's designed for filesystem-wide monitoring and
+  can give access decisions (permission events) before an operation
+  completes, not just notifications after the fact - useful for
+  integrity enforcement, not just logging.
+- Architecture: daemon runs as a background service, watches
+  execution/write events on monitored binaries, computes/compares
+  a hash or signature against a known-good baseline, and flags or
+  blocks tampered binaries.
+- Key challenge: balancing coverage (watching enough paths) against
+  performance overhead, and handling the daemon's own reliability
+  (what happens if it crashes - does the system fail open or closed).
+
+SAMPLE 30-SEC ANSWER:
+"MW Guardian is a binary integrity daemon that watches executables
+on disk using fanotify, so we get notified - or can even block -
+when a monitored binary is modified or about to run. It compares
+against a known-good hash baseline to detect tampering. The
+interesting design decision was around fail-open vs fail-closed
+behavior if the daemon itself goes down, since that directly affects
+system security posture."
+
+--------------------------------------------------------------
+PROJECT 3: 2FA for SSH (fork of google-authenticator-libpam)
+--------------------------------------------------------------
+WHAT IT IS: A modified/extended version of Google's PAM module for
+SSH two-factor authentication, adding custom behavior on top of the
+existing TOTP-based flow.
+
+TALKING POINTS:
+- PAM (Pluggable Authentication Modules): a Linux framework that lets
+  you plug custom authentication logic into system-level auth flows
+  (login, sshd, sudo) without modifying those programs directly.
+- Why this project is relevant to IPC: PAM modules often need to
+  communicate with the parent process or other system components -
+  this is where your IPC knowledge (Unix domain sockets) becomes
+  relevant if you extended it to talk to another service/daemon.
+- Key challenge: PAM modules run with elevated privilege in a
+  security-critical path (SSH login), so correctness and fail-safe
+  behavior matter more than almost anywhere else in the stack - a
+  bug here can either lock everyone out or let unauthorized access
+  through.
+
+SAMPLE 30-SEC ANSWER:
+"I forked and extended google-authenticator-libpam to customize the
+two-factor SSH login flow. Since PAM modules plug directly into
+privileged authentication paths, the main engineering constraint was
+being extremely careful about fail-safe behavior - a mistake there
+either locks out legitimate users or lets someone bypass 2FA
+entirely, so I focused heavily on testing edge cases around failure
+and timeout handling."
+
+--------------------------------------------------------------
+IF THEY ASK "WHICH PROJECT IS CLOSEST TO WHAT WE DO HERE?"
+--------------------------------------------------------------
+Say the eBPF scanner or MW Guardian - both are about intercepting
+system-level events with minimal overhead and making fast decisions,
+which is conceptually similar to intercepting market events/orders
+and making low-latency decisions in a trading system.
+
+
+SECTION 2: C - DYNAMIC MEMORY ALLOCATION (LIVE CODING PREP)
+================================================================
+
+Q: What functions are used for dynamic memory in C?
+A: malloc, calloc, realloc, free - all declared in <stdlib.h>.
+
+--------------------------------------------------------------
+2.1 malloc - allocate uninitialized memory
+--------------------------------------------------------------
+#include <stdlib.h>
+#include <stdio.h>
+
+int main(void) {
+    int *arr = (int *)malloc(5 * sizeof(int));  // 5 ints, uninitialized
+    if (arr == NULL) {
+        // ALWAYS check the return value - malloc can fail
+        fprintf(stderr, "Allocation failed\n");
+        return 1;
+    }
+
+    for (int i = 0; i < 5; i++)
+        arr[i] = i * i;
+
+    for (int i = 0; i < 5; i++)
+        printf("%d ", arr[i]);
+
+    free(arr);      // release memory
+    arr = NULL;     // avoid dangling pointer - good practice
+    return 0;
+}
+
+KEY POINTS TO SAY OUT LOUD:
+- malloc's memory is uninitialized (garbage values) - unlike calloc.
+- Always check for NULL before using the returned pointer.
+- Always free what you malloc, and set the pointer to NULL after,
+  to avoid accidental use-after-free (dangling pointer).
+
+--------------------------------------------------------------
+2.2 calloc - allocate zero-initialized memory
+--------------------------------------------------------------
+int *arr = (int *)calloc(5, sizeof(int));  // 5 ints, all zeroed
+if (arr == NULL) { /* handle error */ }
+// arr[0] through arr[4] are guaranteed to be 0
+
+KEY POINT: calloc(n, size) takes two arguments and zero-initializes
+the memory - useful when you need a clean starting state, at a small
+extra cost vs malloc for the zeroing step.
+
+--------------------------------------------------------------
+2.3 realloc - resize an existing allocation
+--------------------------------------------------------------
+int *arr = (int *)malloc(5 * sizeof(int));
+// ... use arr ...
+
+int *temp = (int *)realloc(arr, 10 * sizeof(int));  // grow to 10 ints
+if (temp == NULL) {
+    // realloc failed - ORIGINAL arr is still valid and must be freed
+    free(arr);
+    return 1;
+}
+arr = temp;  // safe to reassign now
+
+KEY POINT (common interview trap): never do
+    arr = realloc(arr, newSize);
+directly - if realloc fails and returns NULL, you lose the original
+pointer and leak memory. Always assign to a temporary variable first.
+
+--------------------------------------------------------------
+2.4 free - release memory
+--------------------------------------------------------------
+free(arr);
+arr = NULL;
+
+COMMON BUGS TO MENTION PROACTIVELY:
+1. Memory leak - forgetting to free() allocated memory.
+2. Double free - calling free() twice on the same pointer (undefined
+   behavior, can corrupt the heap allocator's internal structures).
+3. Dangling pointer - using a pointer after it's been freed.
+4. Freeing memory not allocated by malloc/calloc/realloc (e.g.,
+   freeing a stack variable's address) - undefined behavior.
+
+--------------------------------------------------------------
+2.5 Small worked example: dynamic array that grows (likely style
+    of "easy-to-medium" live coding question)
+--------------------------------------------------------------
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    int size;      // current number of elements
+    int capacity;  // allocated capacity
+} DynArray;
+
+void initArray(DynArray *a, int initialCapacity) {
+    a->data = (int *)malloc(initialCapacity * sizeof(int));
+    a->size = 0;
+    a->capacity = initialCapacity;
+}
+
+void pushBack(DynArray *a, int value) {
+    if (a->size == a->capacity) {
+        int newCapacity = a->capacity * 2;
+        int *temp = (int *)realloc(a->data, newCapacity * sizeof(int));
+        if (temp == NULL) {
+            fprintf(stderr, "Reallocation failed\n");
+            return;
+        }
+        a->data = temp;
+        a->capacity = newCapacity;
+    }
+    a->data[a->size++] = value;
+}
+
+void freeArray(DynArray *a) {
+    free(a->data);
+    a->data = NULL;
+    a->size = 0;
+    a->capacity = 0;
+}
+
+int main(void) {
+    DynArray a;
+    initArray(&a, 2);
+
+    for (int i = 0; i < 10; i++)
+        pushBack(&a, i);
+
+    for (int i = 0; i < a.size; i++)
+        printf("%d ", a.data[i]);
+    printf("\n");
+
+    freeArray(&a);
+    return 0;
+}
+
+WHY THIS IS A GOOD ANSWER TO KNOW: it demonstrates malloc, realloc
+with the safe temp-variable pattern, struct usage, and proper cleanup
+all together - a realistic "write me a simple dynamic array" prompt.
+
+--------------------------------------------------------------
+2.6 If they ask about memory pools / avoiding malloc in hot paths
+    (likely follow-up given the low-latency trading domain)
+--------------------------------------------------------------
+TALKING POINT: In latency-sensitive systems, frequent malloc/free
+calls are avoided in the hot path because the allocator can involve
+locking, fragmentation, and unpredictable timing. Common alternative:
+pre-allocate a fixed-size memory pool at startup and hand out/reclaim
+fixed-size blocks from it during runtime, avoiding calls into the
+general-purpose allocator during time-critical operations.
+
+================================================================
+END OF PART 2
+================================================================
+
+
+CHELLA INTERVIEW PREP - PART 3
+PROJECT-TIED IPC/MULTITHREADING/DEBUGGING ANSWERS + TCP vs UDP IN C
+================================================================
+NOTE: Project details below are reconstructed from general
+eBPF/fanotify/PAM patterns + memory of past discussion, not your
+live source code (not available in this session). Verify specifics
+against your actual implementation before the interview.
+================================================================
+
+SECTION 1: IPC - TIED TO YOUR PROJECTS
+================================================================
+
+Q: "Tell me about a project where you used IPC."
+A (30-45 sec): "In my 2FA-for-SSH project, which forks
+google-authenticator-libpam, the PAM module runs inside the sshd
+process itself, but any extended verification logic - like checking
+a second factor against an external service - needs to talk outside
+that process boundary. That's where IPC comes in: a Unix domain
+socket is a natural fit here because it's local-only, fast, and can
+pass file descriptors or credentials securely between the PAM module
+and a helper daemon, without the overhead of TCP/IP for something
+that never leaves the machine."
+
+Q: "Why Unix domain sockets over other IPC methods for that use case?"
+A: "Because everything is on the same host - PAM module and the
+verification daemon - so we don't need network stack overhead. Unix
+domain sockets also support SO_PEERCRED, which lets the daemon verify
+the credentials (UID/PID) of the process connecting to it, which
+matters a lot in a security-critical path like SSH authentication."
+
+Q: "How does the eBPF scanner move data from kernel to userspace -
+is that a form of IPC?"
+A: "Yes, effectively - the eBPF program running in kernel space
+writes events into a ring buffer (or perf buffer), and a userspace
+agent reads from that buffer. It's a producer-consumer pattern across
+the kernel/userspace boundary, similar in spirit to IPC even though
+it's not a traditional socket or pipe - the kernel is the producer,
+userspace is the consumer."
+
+Q: "What would happen if the userspace consumer falls behind the
+kernel producer in the eBPF scanner?"
+A: "The ring buffer would fill up, and depending on configuration,
+either the oldest events get overwritten (data loss) or the kernel
+side blocks/drops new events - so sizing the buffer and keeping the
+userspace consumer fast enough not to bottleneck is a real design
+concern, similar to backpressure handling in any producer-consumer
+system."
+
+CODE TALKING POINT - Unix domain socket (server side skeleton):
+--------------------------------------------------------------
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+
+int main(void) {
+    int server_fd = socket(AF_UNIX, SOCK_STREAM, 0);
+    struct sockaddr_un addr;
+    memset(&addr, 0, sizeof(addr));
+    addr.sun_family = AF_UNIX;
+    strncpy(addr.sun_path, "/tmp/mydaemon.sock", sizeof(addr.sun_path) - 1);
+
+    bind(server_fd, (struct sockaddr *)&addr, sizeof(addr));
+    listen(server_fd, 5);
+
+    int client_fd = accept(server_fd, NULL, NULL);
+    char buf[256];
+    ssize_t n = read(client_fd, buf, sizeof(buf) - 1);
+    if (n > 0) {
+        buf[n] = '\0';
+        printf("Received: %s\n", buf);
+    }
+
+    close(client_fd);
+    close(server_fd);
+    return 0;
+}
+
+KEY POINT TO SAY: AF_UNIX + a filesystem path instead of an IP/port -
+this is what makes it local-only IPC rather than network communication.
+
+
+SECTION 2: MULTITHREADING - TIED TO YOUR PROJECTS
+================================================================
+
+Q: "Where would multithreading show up in something like MW Guardian
+or the eBPF scanner?"
+A: "In MW Guardian, the daemon likely needs to watch multiple
+binaries/paths concurrently via fanotify while also computing hash
+comparisons - you don't want a slow hash computation on one file to
+block detection of an event on another file. A natural design is one
+thread reading fanotify events and pushing them into a queue, and a
+pool of worker threads picking up events from that queue to do the
+actual hashing/comparison - a classic producer-consumer pattern."
+
+Q: "How would you protect that shared queue between threads?"
+A: "With a mutex to guard the queue's internal state during
+push/pop, and a condition variable so worker threads can sleep
+efficiently when the queue is empty instead of busy-waiting/polling,
+waking up only when the producer thread signals that new work is
+available."
+
+CODE TALKING POINT - producer/consumer pattern with mutex + condition
+variable (this is a very likely live-coding-adjacent question):
+--------------------------------------------------------------
+#include <pthread.h>
+#include <stdio.h>
+
+#define QUEUE_SIZE 10
+
+int queue[QUEUE_SIZE];
+int count = 0, in = 0, out = 0;
+
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t not_empty = PTHREAD_COND_INITIALIZER;
+pthread_cond_t not_full  = PTHREAD_COND_INITIALIZER;
+
+void *producer(void *arg) {
+    for (int i = 0; i < 20; i++) {
+        pthread_mutex_lock(&lock);
+        while (count == QUEUE_SIZE)          // queue full - wait
+            pthread_cond_wait(&not_full, &lock);
+
+        queue[in] = i;
+        in = (in + 1) % QUEUE_SIZE;
+        count++;
+        printf("Produced: %d\n", i);
+
+        pthread_cond_signal(&not_empty);     // wake a consumer
+        pthread_mutex_unlock(&lock);
+    }
+    return NULL;
+}
+
+void *consumer(void *arg) {
+    for (int i = 0; i < 20; i++) {
+        pthread_mutex_lock(&lock);
+        while (count == 0)                   // queue empty - wait
+            pthread_cond_wait(&not_empty, &lock);
+
+        int val = queue[out];
+        out = (out + 1) % QUEUE_SIZE;
+        count--;
+        printf("Consumed: %d\n", val);
+
+        pthread_cond_signal(&not_full);      // wake the producer
+        pthread_mutex_unlock(&lock);
+    }
+    return NULL;
+}
+
+int main(void) {
+    pthread_t t1, t2;
+    pthread_create(&t1, NULL, producer, NULL);
+    pthread_create(&t2, NULL, consumer, NULL);
+    pthread_join(t1, NULL);
+    pthread_join(t2, NULL);
+    return 0;
+}
+
+KEY POINTS TO SAY OUT LOUD:
+- Always check the wait condition in a while loop, not an if - spurious
+  wakeups can occur, and multiple consumers might race to grab the item.
+- mutex protects the shared queue state; condition variable avoids
+  busy-waiting/polling, which wastes CPU.
+- This maps directly to "fanotify thread produces events, worker
+  threads consume and hash" in a project like MW Guardian.
+
+Q: "How would you avoid false sharing if multiple worker threads are
+updating per-thread counters/stats?"
+A: "Pad each thread's counter struct so it occupies its own cache
+line - e.g., align to 64 bytes - so that one thread updating its
+counter doesn't invalidate the cache line for another thread's
+counter, which would otherwise cause unnecessary cache-coherency
+traffic between cores."
+
+
+SECTION 3: DEBUGGING - TIED TO YOUR PROJECTS
+================================================================
+
+Q: "How would you debug MW Guardian if it's intermittently missing
+file modification events?"
+A: "First check whether it's a coverage issue - is fanotify actually
+watching the right mount points/paths, since fanotify has mount-level
+vs path-level watching modes and it's easy to miss events outside the
+watched scope. If coverage is correct, I'd suspect the ring/event
+buffer between the kernel notification and the userspace handler is
+overflowing under load, dropping events - I'd check for a backlog/
+overflow counter and add logging around buffer capacity."
+
+Q: "How would you debug a crash in the eBPF userspace agent under
+load?"
+A: "Get a core dump and run it through GDB to get the backtrace,
+check if it's happening in the ring buffer read path (common if the
+consumer isn't keeping up and overwrites data mid-read), and run
+under Valgrind or ASan in a lower-load test environment first since
+those tools slow things down and can hide timing-dependent issues
+present only under real load."
+
+Q: "How would you debug a deadlock in the multithreaded worker pool?"
+A: "Use GDB to attach to the running process, then 'thread apply all
+bt' to get backtraces of every thread at once - this shows exactly
+which locks each thread is waiting on and holding, which usually
+reveals the circular wait directly. Prevention going forward: enforce
+a consistent lock acquisition order across the codebase."
+
+
+SECTION 4: TCP vs UDP - CODE + WHY
+================================================================
+
+CORE DIFFERENCE (say this first, then code if asked):
+- TCP: connection-oriented, reliable, ordered, has flow/congestion
+  control. Higher overhead (handshake, acks, retransmission) but
+  guarantees delivery and order.
+- UDP: connectionless, no reliability/ordering guarantee, minimal
+  overhead - just send and hope. Lower latency, no handshake.
+
+WHY THIS MATTERS IN TRADING/FINANCIAL SYSTEMS (important framing):
+Market data feeds are very often UDP (sometimes multicast UDP) because
+speed matters more than guaranteed delivery of every single packet -
+a slightly stale price is worse to wait for than to occasionally miss
+one update that gets corrected by the next tick. Order entry/execution
+paths (placing an actual trade), by contrast, need TCP or an
+equivalent reliable protocol, because losing an order message is
+unacceptable - you need guaranteed, ordered delivery even at the cost
+of some latency.
+
+--------------------------------------------------------------
+4.1 TCP - simple client/server in C
+--------------------------------------------------------------
+// --- TCP SERVER ---
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+
+int main(void) {
+    int server_fd = socket(AF_INET, SOCK_STREAM, 0);   // TCP = SOCK_STREAM
+
+    struct sockaddr_in addr;
+    memset(&addr, 0, sizeof(addr));
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = INADDR_ANY;
+    addr.sin_port = htons(8080);
+
+    bind(server_fd, (struct sockaddr *)&addr, sizeof(addr));
+    listen(server_fd, 5);          // start listening, backlog of 5
+
+    int client_fd = accept(server_fd, NULL, NULL);  // blocks until connect
+
+    char buf[256];
+    ssize_t n = read(client_fd, buf, sizeof(buf) - 1);
+    buf[n] = '\0';
+    printf("Received: %s\n", buf);
+
+    write(client_fd, "ACK", 3);    // reliable, ordered response
+
+    close(client_fd);
+    close(server_fd);
+    return 0;
+}
+
+// --- TCP CLIENT ---
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+
+int main(void) {
+    int sock = socket(AF_INET, SOCK_STREAM, 0);
+
+    struct sockaddr_in addr;
+    memset(&addr, 0, sizeof(addr));
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(8080);
+    inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
+
+    connect(sock, (struct sockaddr *)&addr, sizeof(addr));  // handshake
+    write(sock, "Hello TCP", 9);
+
+    char buf[256];
+    ssize_t n = read(sock, buf, sizeof(buf) - 1);
+    buf[n] = '\0';
+    printf("Server replied: %s\n", buf);
+
+    close(sock);
+    return 0;
+}
+
+KEY POINTS TO SAY: connect() performs the 3-way handshake; the socket
+type SOCK_STREAM signals TCP; read/write behave like a continuous
+byte stream, not discrete messages.
+
+--------------------------------------------------------------
+4.2 UDP - simple client/server in C
+--------------------------------------------------------------
+// --- UDP SERVER ---
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+
+int main(void) {
+    int sock = socket(AF_INET, SOCK_DGRAM, 0);   // UDP = SOCK_DGRAM
+
+    struct sockaddr_in addr;
+    memset(&addr, 0, sizeof(addr));
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = INADDR_ANY;
+    addr.sin_port = htons(9090);
+
+    bind(sock, (struct sockaddr *)&addr, sizeof(addr));
+    // NOTE: no listen()/accept() - UDP is connectionless
+
+    char buf[256];
+    struct sockaddr_in client_addr;
+    socklen_t len = sizeof(client_addr);
+
+    ssize_t n = recvfrom(sock, buf, sizeof(buf) - 1, 0,
+                          (struct sockaddr *)&client_addr, &len);
+    buf[n] = '\0';
+    printf("Received: %s\n", buf);
+
+    sendto(sock, "ACK", 3, 0, (struct sockaddr *)&client_addr, len);
+
+    close(sock);
+    return 0;
+}
+
+// --- UDP CLIENT ---
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+
+int main(void) {
+    int sock = socket(AF_INET, SOCK_DGRAM, 0);
+
+    struct sockaddr_in addr;
+    memset(&addr, 0, sizeof(addr));
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(9090);
+    inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
+
+    sendto(sock, "Hello UDP", 9, 0, (struct sockaddr *)&addr, sizeof(addr));
+
+    char buf[256];
+    socklen_t len = sizeof(addr);
+    ssize_t n = recvfrom(sock, buf, sizeof(buf) - 1, 0,
+                          (struct sockaddr *)&addr, &len);
+    buf[n] = '\0';
+    printf("Server replied: %s\n", buf);
+
+    close(sock);
+    return 0;
+}
+
+KEY POINTS TO SAY: no connect()/handshake needed (though connect()
+CAN optionally be used with UDP to fix the peer address); sendto/
+recvfrom carry the destination/source address per-packet since
+there's no persistent connection; each sendto is a discrete
+datagram, not a byte stream - message boundaries are preserved,
+unlike TCP.
+
+--------------------------------------------------------------
+4.3 Likely follow-up: "How do you handle reliability if you must
+    use UDP for speed but still need to know a packet was lost?"
+--------------------------------------------------------------
+A: "Add a lightweight application-level sequence number to each UDP
+packet. The receiver tracks the last sequence number seen - if it
+detects a gap, it knows a packet was lost and can either request a
+retransmit or simply note the gap and move on, depending on whether
+the data is a self-correcting stream (like market data ticks, where
+the next update supersedes the missed one) or something that
+actually requires recovery."
+
+================================================================
+END OF PART 3
+================================================================
+
+
+DOMAIN / BEHAVIORAL - QUICK REFERENCE
++ QUESTIONS TO ASK THE INTERVIEWER AT THE END
+================================================================
+
+1. WHY FINTECH / TRADING SYSTEMS INTEREST YOU
+================================================================
+SAMPLE 30-45 SEC ANSWER:
+"I've spent my career working close to the system - kernel-level
+security tooling, performance-conscious C/C++, things like eBPF and
+fanotify where every bit of overhead matters. Trading systems are
+one of the purest applications of that same mindset - every
+microsecond, every allocation, every syscall has a real cost. It
+feels like a natural extension of the low-level, performance-driven
+work I already do, just applied to a domain where the stakes and
+the precision required are even higher."
+
+KEY POINT TO HIT: connect your OWN technical identity (systems/perf)
+to their domain - don't just say "I find finance interesting."
+
+
+2. WORKING WITH END-USERS (TRADERS) - COMMUNICATION UNDER PRESSURE
+================================================================
+SAMPLE 30-45 SEC ANSWER:
+"In security tooling, I've dealt with a similar dynamic - a non-
+technical stakeholder reports something urgent and vague, like 'this
+is blocking me' or 'this flagged something it shouldn't have,' and I
+have to quickly translate that into a precise technical question,
+investigate, and communicate status back in plain terms while the
+investigation is still ongoing. With traders, I'd expect that same
+loop but with tighter time pressure since a delay can directly cost
+money, so staying calm, giving frequent short status updates instead
+of going silent, and triaging fast would be the priority."
+
+KEY POINT TO HIT: acknowledge the urgency/stakes are HIGHER with
+traders (money on the line, not just internal tooling) - shows
+domain awareness even without direct trading floor experience.
+
+
+3. A CHALLENGING TECHNICAL PROBLEM YOU SOLVED
+================================================================
+STRUCTURE TO USE (situation -> challenge -> action -> result):
+1. What was the project/problem
+2. Why it was hard (performance constraint, security constraint,
+   race condition, etc.)
+3. What you actually did
+4. The outcome / what you learned
+
+SAMPLE 30-45 SEC ANSWER (using eBPF scanner):
+"One of the harder problems I worked on was building a real-time
+file scanner using eBPF. The challenge was that eBPF programs run
+directly in a performance-sensitive kernel path and have strict
+verifier constraints - no unbounded loops, limited stack space - so
+I couldn't just put scanning logic in the kernel hook itself. I
+designed it so the eBPF program only captured the minimal event data
+and pushed it into a ring buffer, while all the actual scanning
+logic ran in a userspace agent consuming from that buffer. That kept
+the kernel-side overhead low while still catching file operations
+in real time, which was the whole point of the project."
+
+ALTERNATE (using MW Guardian, if they've already heard the eBPF one):
+"On MW Guardian, a binary integrity daemon, the hard part was
+deciding fail-open vs fail-closed behavior - if the daemon itself
+crashes or falls behind, do you let operations through (risking a
+tampered binary running) or block everything (risking a false
+system-wide lockout)? I had to think through that tradeoff carefully
+since it's a direct security-vs-availability decision, not just a
+coding problem."
+
+KEY POINT TO HIT: pick the story based on what's already come up
+earlier in the interview - don't repeat the same project three times.
+
+
+4. WHY YOU'RE LEAVING YOUR CURRENT ROLE
+================================================================
+SAMPLE 30-45 SEC ANSWER (neutral, forward-looking):
+"I've built strong depth in low-level systems and security work -
+kernel-level tooling, performance-critical C/C++ - and I'm looking
+for a role where that background applies even more directly, ideally
+somewhere the performance and correctness bar is even higher. Chella's
+focus on ultra-high-performance, low-latency financial systems is
+exactly that kind of environment, so it felt like a strong next step
+rather than a move away from something."
+
+RULES TO FOLLOW:
+- Never criticize your current employer, manager, or team.
+- Don't mention resignation logistics (notice period, F&F, exit
+  paperwork) unless directly asked about your timeline/availability.
+- If asked your last working day / notice period, answer directly
+  and factually - don't over-explain.
+- Keep the tone: "moving toward something," not "moving away from
+  something."
+
+
+================================================================
+QUESTIONS TO ASK THE INTERVIEWER AT THE END
+================================================================
+(Pick 2-3 depending on time - don't ask all of them. Mix of
+technical + role-fit shows genuine interest without sounding scripted.)
+
+TECHNICAL / ROLE-FIT
+- "What does the C codebase look like day-to-day - is it more focused
+  on core trading/matching logic, or more on the infrastructure and
+  tooling around it?"
+- "What does the team's approach to debugging production issues look
+  like - is it mostly log-based, or do you rely heavily on tools like
+  GDB/core dumps for the kind of low-latency systems you're running?"
+- "Since the JD mentions both Linux and Windows - is a given
+  engineer expected to work across both, or are teams usually
+  platform-specialized?"
+
+DOMAIN / TEAM
+- "How closely does the engineering team sit with the trading desk
+  day-to-day - is feedback from traders immediate, or does it go
+  through a more structured request process?"
+- "What does a typical production incident look like here - how is
+  root cause analysis usually run, and who's involved?"
+
+GROWTH / EXPECTATIONS
+- "What would success look like for someone in this role at the
+  3-month and 6-month mark?"
+- "What's the biggest technical challenge the team is currently
+  working through?"
+
+CLOSING QUESTION (good one to end on)
+- "Is there anything about my background so far that makes you
+  hesitant, that I could address now?"
+  (This one signals confidence and gives you a chance to correct any
+  misunderstanding on the spot - use it only if the conversation felt
+  natural enough for it.)
+
+AVOID ASKING (at this stage)
+- Salary/compensation specifics - save for HR round unless they raise
+  it first.
+- "What does the company do?" - you already know this from the JD/
+  website, asking this signals you didn't prepare.
+
+
+In 6-7 years, I'd like to be the person the team turns to for the hardest performance and concurrency problems in the system — someone with real depth in low-latency, low-level engineering. I'm also open to growing into more technical leadership over time, but only once that depth is earned, not just from tenure."
+
+================================================================
+END OF FILE
+================================================================
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the node structure
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Function to create a new node
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("Memory allocation failed\n");
+        exit(1);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to print the linked list
+void printList(struct Node* head) {
+    struct Node* temp = head;
+    while (temp != NULL) {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    // Create head node
+    struct Node* head = createNode(10);
+
+    // Link subsequent nodes
+    head->next = createNode(20);
+    head->next->next = createNode(30);
+
+    // Print the linked list
+    printList(head);
+
+    // Free allocated memory
+    struct Node* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+
+    return 0;
+}
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the node structure
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Function to create a new node
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("Memory allocation failed\n");
+        exit(1);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to reverse the linked list
+struct Node* reverseList(struct Node* head) {
+    struct Node* prev = NULL;
+    struct Node* current = head;
+    struct Node* next = NULL;
+
+    while (current != NULL) {
+        next = current->next; // Store the next node
+        current->next = prev; // Reverse the current node's pointer
+        prev = current;       // Move prev one step forward
+        current = next;       // Move current one step forward
+    }
+    
+    return prev; // prev is the new head of the reversed list
+}
+
+// Function to print the linked list
+void printList(struct Node* head) {
+    struct Node* temp = head;
+    while (temp != NULL) {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    // Create head node and subsequent nodes
+    struct Node* head = createNode(10);
+    head->next = createNode(20);
+    head->next->next = createNode(30);
+
+    printf("Original List:\n");
+    printList(head);
+
+    // Reverse the linked list
+    head = reverseList(head);
+
+    printf("Reversed List:\n");
+    printList(head);
+
+    // Free allocated memory
+    struct Node* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+
+    return 0;
+}
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the node structure
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Function to create a new node
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("Memory allocation failed\n");
+        exit(1);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to detect cycle, get its length, and remove it
+void detectAndHandleCycle(struct Node* head) {
+    struct Node *slow = head, *fast = head;
+    int hasCycle = 0;
+
+    // 1. Detect cycle using Floyd's Tortoise and Hare Algorithm
+    while (fast != NULL && fast->next != NULL) {
+        slow = slow->next;
+        fast = fast->next->next;
+        if (slow == fast) {
+            hasCycle = 1;
+            break;
+        }
+    }
+
+    if (!hasCycle) {
+        printf("No cycle detected in the linked list.\n");
+        return;
+    }
+
+    printf("Cycle detected!\n");
+
+    // 2. Calculate cycle length
+    int length = 1;
+    struct Node* temp = slow;
+    while (temp->next != slow) {
+        length++;
+        temp = temp->next;
+    }
+    printf("Cycle length: %d\n", length);
+
+    // 3. Remove the cycle
+    slow = head;
+    if (slow == fast) {
+        // Special case: Cycle starts at the head node
+        while (fast->next != slow) {
+            fast = fast->next;
+        }
+        fast->next = NULL;
+    } else {
+        // Standard case: Find the node just before the start of the cycle
+        while (slow->next != fast->next) {
+            slow = slow->next;
+            fast = fast->next;
+        }
+        fast->next = NULL; // Break the cycle
+    }
+    printf("Cycle has been successfully removed.\n");
+}
+
+// Function to print the linked list safely (prevents infinite loop if cycle exists)
+void printListSafe(struct Node* head) {
+    struct Node* temp = head;
+    int count = 0;
+    while (temp != NULL && count < 20) { // Limit iterations to avoid infinite loop
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+        count++;
+    }
+    if (temp != NULL) {
+        printf("... (Cycle detected, stopping print)\n");
+    } else {
+        printf("NULL\n");
+    }
+}
+
+int main() {
+    // Create nodes
+    struct Node* head = createNode(10);
+    head->next = createNode(20);
+    head->next->next = createNode(30);
+    head->next->next->next = createNode(40);
+    head->next->next->next->next = createNode(50);
+
+    // Intentionally create a cycle: point node 50 back to node 30
+    head->next->next->next->next->next = head->next->next;
+
+    // Attempt to detect, measure, and delete the cycle
+    detectAndHandleCycle(head);
+
+    // Verify the list after cycle removal
+    printf("List after removing cycle:\n");
+    printListSafe(head);
+
+    // Free allocated memory
+    struct Node* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+
+    return 0;
+}
+
+
+C DATABASE OPERATIONS (SQLite via C) + COMPLETE SQL REFERENCE
+================================================================
+NOTE: Plain C has no built-in database - it uses a library. SQLite
+is the most common one to demonstrate in an interview since it's a
+single C API (sqlite3.h) with no separate server needed.
+================================================================
+
+
+PART A: C CODE - DATABASE OPERATIONS USING SQLITE
+================================================================
+Compile with: gcc file.c -lsqlite3 -o file
+
+--------------------------------------------------------------
+A1. CREATE / OPEN A DATABASE
+--------------------------------------------------------------
+Opening a DB file creates it if it doesn't already exist.
+sqlite3_open() returns a connection handle used for all operations.
+
+#include <sqlite3.h>
+#include <stdio.h>
+
+int main(void) {
+    sqlite3 *db;
+    int rc = sqlite3_open("company.db", &db);   // creates file if missing
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "Cannot open DB: %s\n", sqlite3_errmsg(db));
+        return 1;
+    }
+    printf("Database opened successfully\n");
+    sqlite3_close(db);
+    return 0;
+}
+
+--------------------------------------------------------------
+A2. CREATE TABLE
+--------------------------------------------------------------
+sqlite3_exec() runs a raw SQL string directly against the DB.
+Good for one-shot statements like CREATE TABLE that need no input data.
+
+char *errMsg = 0;
+const char *sql = "CREATE TABLE Employees(id INT PRIMARY KEY, name TEXT, salary INT);";
+int rc = sqlite3_exec(db, sql, 0, 0, &errMsg);
+if (rc != SQLITE_OK) {
+    fprintf(stderr, "SQL error: %s\n", errMsg);
+    sqlite3_free(errMsg);
+}
+
+--------------------------------------------------------------
+A3. INSERT VALUE (using prepared statement - safer than sqlite3_exec)
+--------------------------------------------------------------
+Prepared statements avoid SQL injection and let you bind values
+safely instead of building raw SQL strings by concatenation.
+
+sqlite3_stmt *stmt;
+const char *sql = "INSERT INTO Employees(id, name, salary) VALUES(?, ?, ?);";
+
+sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+sqlite3_bind_int(stmt, 1, 101);
+sqlite3_bind_text(stmt, 2, "Ravi", -1, SQLITE_STATIC);
+sqlite3_bind_int(stmt, 3, 90000);
+
+if (sqlite3_step(stmt) != SQLITE_DONE)
+    fprintf(stderr, "Insert failed: %s\n", sqlite3_errmsg(db));
+
+sqlite3_finalize(stmt);   // always finalize to free the statement
+
+--------------------------------------------------------------
+A4. SELECT / READ VALUES (using a callback function)
+--------------------------------------------------------------
+sqlite3_exec() with a callback runs SELECT and invokes your
+function once per returned row, giving column names/values as arrays.
+
+int callback(void *unused, int argc, char **argv, char **colName) {
+    for (int i = 0; i < argc; i++)
+        printf("%s = %s\n", colName[i], argv[i] ? argv[i] : "NULL");
+    printf("---\n");
+    return 0;
+}
+
+sqlite3_exec(db, "SELECT * FROM Employees;", callback, 0, &errMsg);
+
+--------------------------------------------------------------
+A5. UPDATE VALUE
+--------------------------------------------------------------
+Same prepared-statement pattern as INSERT - bind new value and
+the WHERE condition value, then execute with sqlite3_step().
+
+const char *sql = "UPDATE Employees SET salary = ? WHERE id = ?;";
+sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+sqlite3_bind_int(stmt, 1, 95000);
+sqlite3_bind_int(stmt, 2, 101);
+sqlite3_step(stmt);
+sqlite3_finalize(stmt);
+
+--------------------------------------------------------------
+A6. DELETE A ROW
+--------------------------------------------------------------
+Deletes matching rows only; table structure remains untouched.
+Same prepared-statement pattern, just with a DELETE SQL string.
+
+const char *sql = "DELETE FROM Employees WHERE id = ?;";
+sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+sqlite3_bind_int(stmt, 1, 101);
+sqlite3_step(stmt);
+sqlite3_finalize(stmt);
+
+--------------------------------------------------------------
+A7. DROP TABLE / CLOSE DATABASE
+--------------------------------------------------------------
+DROP TABLE removes the table and its data entirely (structure gone).
+sqlite3_close() releases the connection - always call it before exit.
+
+sqlite3_exec(db, "DROP TABLE Employees;", 0, 0, &errMsg);
+sqlite3_close(db);
+
+
+================================================================
+PART B: COMPLETE SQL REFERENCE
+(Type | 2-line explanation | Query)
+================================================================
+
+--------------------------------------------------------------
+B1. DATABASE-LEVEL OPERATIONS
+--------------------------------------------------------------
+Create Database   | Creates a new named database on the server.
+                  | Used once per project/environment setup.
+                  | CREATE DATABASE CompanyDB;
+
+Drop Database     | Permanently deletes an entire database and all its data.
+                  | Irreversible - no undo once run.
+                  | DROP DATABASE CompanyDB;
+
+Rename Database   | Changes a database's name (syntax varies by engine).
+                  | MySQL has no direct RENAME DATABASE - typically done via dump/restore.
+                  | ALTER DATABASE CompanyDB MODIFY NAME = NewCompanyDB;  -- SQL Server syntax
+
+Select Database   | Switches the active database context for subsequent queries.
+                  | Needed before running table-level commands in some engines.
+                  | USE CompanyDB;
+
+--------------------------------------------------------------
+B2. TABLE-LEVEL OPERATIONS
+--------------------------------------------------------------
+Create Table      | Defines a new table with named columns and data types.
+                  | Structure only - no data yet.
+                  | CREATE TABLE Employees(id INT, name VARCHAR(50));
+
+Drop Table        | Removes the table completely, including its structure and data.
+                  | Cannot be rolled back in most engines once committed.
+                  | DROP TABLE Employees;
+
+Delete Table      | Not a real distinct SQL command - usually means DROP TABLE (structure gone) or DELETE FROM (rows only).
+                  | Be precise about which one you mean in an interview.
+                  | DROP TABLE Employees;  -- removes structure + data
+
+Rename Table      | Changes a table's name without touching its data.
+                  | Existing data and indexes are preserved.
+                  | ALTER TABLE Employees RENAME TO Staff;
+
+Truncate Table    | Removes ALL rows instantly but keeps the table structure.
+                  | Faster than DELETE since it doesn't log individual row deletions.
+                  | TRUNCATE TABLE Employees;
+
+Copy Table        | Creates a new table pre-filled with data from an existing one.
+                  | Structure + data are copied together in one statement.
+                  | CREATE TABLE Employees_Copy AS SELECT * FROM Employees;
+
+Temp Table        | A table that exists only for the current session/connection.
+                  | Automatically dropped when the session ends.
+                  | CREATE TEMPORARY TABLE TempResults(id INT, total INT);
+
+Alter Table       | Modifies an existing table's structure (add/drop/modify columns).
+                  | Data in unaffected columns is preserved.
+                  | ALTER TABLE Employees ADD COLUMN email VARCHAR(100);
+
+--------------------------------------------------------------
+B3. SELECT - BASICS
+--------------------------------------------------------------
+Select Statement  | Retrieves data from one or more tables.
+                  | The most frequently used SQL command.
+                  | SELECT name, salary FROM Employees;
+
+Select Unique     | Not a real keyword - achieved via DISTINCT (see below).
+                  | Interviewers sometimes use "unique" loosely for DISTINCT.
+                  | SELECT DISTINCT dept_id FROM Employees;
+
+Select Distinct   | Removes duplicate rows from the result set.
+                  | Applies to the full row of selected columns, not just one column.
+                  | SELECT DISTINCT dept_id FROM Employees;
+
+Select Count      | Returns the number of rows matching a condition.
+                  | COUNT(*) counts all rows; COUNT(col) skips NULLs in that column.
+                  | SELECT COUNT(*) FROM Employees;
+
+Select Top        | Limits result to the first N rows (SQL Server / MS Access syntax).
+                  | Different engines use different keywords for this.
+                  | SELECT TOP 5 * FROM Employees;
+
+Select First       | Not a standard keyword - achieved with LIMIT 1 + ORDER BY (MySQL/Postgres).
+                  | "First" only makes sense with an explicit ordering.
+                  | SELECT * FROM Employees ORDER BY id ASC LIMIT 1;
+
+Select Last        | Same idea as First, but order descending instead.
+                  | Again depends entirely on what column defines "last."
+                  | SELECT * FROM Employees ORDER BY id DESC LIMIT 1;
+
+Select Random      | Returns row(s) in random order rather than a fixed order.
+                  | RAND()/RANDOM() syntax differs by engine.
+                  | SELECT * FROM Employees ORDER BY RANDOM() LIMIT 1;
+
+Select In          | Filters rows where a column matches any value in a given list.
+                  | Shorthand for multiple OR conditions.
+                  | SELECT * FROM Employees WHERE dept_id IN (1, 2, 3);
+
+Select Multiple    | Selecting more than one column at once, comma-separated.
+                  | Order of columns in output matches order listed.
+                  | SELECT name, dept_id, salary FROM Employees;
+
+Select Date        | Retrieves date-type columns, often combined with formatting/filtering.
+                  | Date functions vary by engine (DATE(), CAST, etc.).
+                  | SELECT order_date FROM Orders WHERE order_date = '2026-08-01';
+
+Select Sum         | Aggregates a numeric column, returning the total.
+                  | Often combined with GROUP BY for per-group totals.
+                  | SELECT SUM(salary) FROM Employees;
+
+Select Null        | Filters for rows where a column has no value (NULL check).
+                  | Must use IS NULL, NOT '= NULL' (equality doesn't work with NULL).
+                  | SELECT * FROM Employees WHERE dept_id IS NULL;
+
+--------------------------------------------------------------
+B4. CLAUSES
+--------------------------------------------------------------
+Where Clause      | Filters rows BEFORE grouping, based on a condition.
+                  | Cannot reference aggregate functions directly (use HAVING for that).
+                  | SELECT * FROM Employees WHERE salary > 50000;
+
+And Clause        | Combines multiple conditions - ALL must be true.
+                  | Narrows results further with each added condition.
+                  | SELECT * FROM Employees WHERE dept_id = 1 AND salary > 50000;
+
+Or Clause         | Combines multiple conditions - ANY can be true.
+                  | Broadens results compared to AND.
+                  | SELECT * FROM Employees WHERE dept_id = 1 OR dept_id = 2;
+
+With Clause (CTE) | Defines a named temporary result set usable within the main query.
+                  | Improves readability for complex/nested queries.
+                  | WITH HighEarners AS (SELECT * FROM Employees WHERE salary > 80000) SELECT * FROM HighEarners;
+
+As Clause         | Gives a column or table a temporary alias name.
+                  | Purely for readability - doesn't change the data.
+                  | SELECT name AS employee_name FROM Employees;
+
+Having Clause     | Filters groups AFTER aggregation (unlike WHERE, which filters before).
+                  | Used specifically alongside GROUP BY.
+                  | SELECT dept_id, SUM(salary) FROM Employees GROUP BY dept_id HAVING SUM(salary) > 100000;
+
+--------------------------------------------------------------
+B5. ORDER BY VARIATIONS
+--------------------------------------------------------------
+Order By Clause   | Sorts the result set by one or more columns.
+                  | Default sort direction is ascending.
+                  | SELECT * FROM Employees ORDER BY salary;
+
+Order By Asc      | Sorts smallest/earliest to largest/latest (default behavior).
+                  | ASC keyword is optional since it's the default.
+                  | SELECT * FROM Employees ORDER BY salary ASC;
+
+Order By Desc     | Sorts largest/latest to smallest/earliest.
+                  | Must specify DESC explicitly.
+                  | SELECT * FROM Employees ORDER BY salary DESC;
+
+Order By Random   | Sorts rows in random order each time the query runs.
+                  | Same as "Select Random" pattern above.
+                  | SELECT * FROM Employees ORDER BY RANDOM();
+
+Order By Limit    | Restricts sorted results to a fixed number of rows.
+                  | Commonly combined with ORDER BY to get "top N."
+                  | SELECT * FROM Employees ORDER BY salary DESC LIMIT 3;
+
+Order By Multiple Cols | Sorts first by one column, then breaks ties using the next.
+                  | Each column can have its own ASC/DESC direction.
+                  | SELECT * FROM Employees ORDER BY dept_id ASC, salary DESC;
+
+--------------------------------------------------------------
+B6. INSERT / UPDATE / DELETE
+--------------------------------------------------------------
+Insert Into       | Adds a new row of data into a table.
+                  | Column list is optional if values match table's column order.
+                  | INSERT INTO Employees(id, name) VALUES (106, 'Kiran');
+
+Insert Multiple Rows | Adds several rows in a single statement.
+                  | More efficient than multiple separate INSERT calls.
+                  | INSERT INTO Employees(id, name) VALUES (107,'A'), (108,'B');
+
+Update Statement  | Modifies existing row(s) matching a condition.
+                  | Without a WHERE clause, it updates EVERY row - be careful.
+                  | UPDATE Employees SET salary = 95000 WHERE id = 101;
+
+Update Join       | Updates a table using values pulled from a joined table.
+                  | Syntax differs across MySQL/SQL Server/Postgres.
+                  | UPDATE Employees e JOIN Departments d ON e.dept_id=d.dept_id SET e.name = CONCAT(e.name,' - ',d.dept_name);
+
+Update Date       | Sets a date/datetime column, often to the current timestamp.
+                  | NOW()/CURRENT_DATE syntax differs by engine.
+                  | UPDATE Orders SET order_date = CURRENT_DATE WHERE order_id = 100;
+
+Delete Statement  | Removes row(s) matching a condition; table structure stays intact.
+                  | Slower than TRUNCATE since each row deletion can be logged.
+                  | DELETE FROM Employees WHERE id = 101;
+
+Delete Row        | Same as Delete Statement - removes one specific row via WHERE.
+                  | Precision depends entirely on the WHERE condition.
+                  | DELETE FROM Employees WHERE id = 101;
+
+Delete All Rows   | Removes every row but keeps the table structure.
+                  | DELETE without WHERE does this; TRUNCATE is the faster alternative.
+                  | DELETE FROM Employees;
+
+Delete Duplicate Rows | Removes redundant rows, usually keeping one copy per duplicate group.
+                  | Typically done using a subquery with ROW_NUMBER() or MIN/MAX(id).
+                  | DELETE FROM Employees WHERE id NOT IN (SELECT MIN(id) FROM Employees GROUP BY name, salary);
+
+Delete Database   | Not a real distinct term - this means DROP DATABASE (see B1).
+                  | Removes the entire database, not just rows.
+                  | DROP DATABASE CompanyDB;
+
+Delete View       | Removes a saved virtual table (view) definition.
+                  | Doesn't affect the underlying base tables' data.
+                  | DROP VIEW HighEarnersView;
+
+Delete Join       | Deletes rows from one table based on a condition matched via a JOIN.
+                  | Useful for removing orphaned/related records across tables.
+                  | DELETE e FROM Employees e JOIN Departments d ON e.dept_id=d.dept_id WHERE d.dept_name='HR';
+
+--------------------------------------------------------------
+B7. JOINS
+--------------------------------------------------------------
+Join              | General term for combining rows from two or more tables based on a related column.
+                  | INNER JOIN is the default meaning if "join" is unqualified.
+                  | SELECT * FROM A JOIN B ON A.id = B.a_id;
+
+Outer Join        | Umbrella term for LEFT, RIGHT, or FULL joins - keeps unmatched rows too.
+                  | Opposite of INNER JOIN, which drops unmatched rows.
+                  | SELECT * FROM A LEFT OUTER JOIN B ON A.id = B.a_id;
+
+Left Join         | Keeps all rows from the left table, NULLs where no right-side match.
+                  | Same as LEFT OUTER JOIN (OUTER keyword is optional).
+                  | SELECT * FROM A LEFT JOIN B ON A.id = B.a_id;
+
+Right Join        | Keeps all rows from the right table, NULLs where no left-side match.
+                  | Mirror image of LEFT JOIN.
+                  | SELECT * FROM A RIGHT JOIN B ON A.id = B.a_id;
+
+Full Join         | Keeps all rows from BOTH tables, NULLs on whichever side has no match.
+                  | Not supported directly in MySQL - emulated via UNION of LEFT+RIGHT.
+                  | SELECT * FROM A FULL OUTER JOIN B ON A.id = B.a_id;
+
+Cross Join        | Returns the Cartesian product - every row of A paired with every row of B.
+                  | No ON condition needed/used; result size = rows(A) x rows(B).
+                  | SELECT * FROM A CROSS JOIN B;
+
+Self Join         | Joins a table to itself, typically to compare related rows within it.
+                  | Requires table aliases since both sides reference the same table.
+                  | SELECT a1.name, a2.name AS manager FROM Employees a1 JOIN Employees a2 ON a1.mgr_id = a2.emp_id;
+
+Left Outer Join   | Explicit full name for LEFT JOIN - identical behavior.
+                  | The OUTER keyword is purely optional syntax.
+                  | SELECT * FROM A LEFT OUTER JOIN B ON A.id = B.a_id;
+
+--------------------------------------------------------------
+B8. KEYS
+--------------------------------------------------------------
+Primary Key       | Uniquely identifies each row in a table; cannot be NULL.
+                  | Only one primary key allowed per table (can be composite).
+                  | CREATE TABLE Employees(id INT PRIMARY KEY, name VARCHAR(50));
+
+Foreign Key       | A column referencing the primary key of another table, enforcing referential integrity.
+                  | Prevents inserting a value that doesn't exist in the parent table.
+                  | FOREIGN KEY (dept_id) REFERENCES Departments(dept_id);
+
+Composite Key     | A primary key made up of TWO OR MORE columns together.
+                  | Uniqueness is enforced on the combination, not each column alone.
+                  | PRIMARY KEY (student_id, course_id);
+
+Unique Key        | Ensures all values in a column are distinct, but unlike PK, allows one NULL.
+                  | A table can have multiple unique keys, but only one primary key.
+                  | ALTER TABLE Employees ADD CONSTRAINT uq_email UNIQUE(email);
+
+Alternate Key     | Any candidate key NOT chosen as the primary key.
+                  | Often implemented as a UNIQUE constraint in practice.
+                  | -- e.g., if 'id' is PK, 'email' (also unique) is an alternate key
+
+
+================================================================
+PART C: DROP vs DELETE vs TRUNCATE - THE CLASSIC COMPARISON
+================================================================
+This exact comparison is a VERY common interview question - know it cold.
+
+DROP:
+- Removes the entire table (or database) - structure AND data both gone.
+- Cannot be rolled back in most engines (DDL auto-commits).
+- Also removes indexes, constraints, and triggers tied to the table.
+| DROP TABLE Employees;
+
+DELETE:
+- Removes rows matching a WHERE condition (or all rows if no WHERE).
+- Table structure remains; can be rolled back if inside a transaction.
+- Slower than TRUNCATE - typically logs each row deletion individually.
+| DELETE FROM Employees WHERE id = 101;
+
+TRUNCATE:
+- Removes ALL rows instantly; table structure remains.
+- Faster than DELETE (minimal logging, resets auto-increment counters).
+- Cannot use a WHERE clause - it's all-or-nothing.
+| TRUNCATE TABLE Employees;
+
+ONE-LINE SUMMARY TO SAY IN THE INTERVIEW:
+"DROP removes the table itself, TRUNCATE empties the table fast with
+no WHERE clause, and DELETE removes specific rows with a WHERE
+clause and can be rolled back — DROP and TRUNCATE generally can't."
+
+================================================================
+END OF FILE
+================================================================
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+void tail_f(const char *filename) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        perror("Error opening file");
+        exit(EXIT_FAILURE);
+    }
+
+    // Move to the end of the file to follow only new changes
+    fseek(file, 0, SEEK_END);
+
+    char buffer[1024];
+    while (1) {
+        // Read and print any new lines written to the file
+        while (fgets(buffer, sizeof(buffer), file) != NULL) {
+            printf("%s", buffer);
+            fflush(stdout);
+        }
+
+        // Clear the EOF indicator so we can continue reading newly appended data
+        clearerr(file);
+
+        // Sleep briefly to prevent 100% CPU utilization
+        usleep(100000); // 100 milliseconds
+    }
+
+    fclose(file);
+}
+
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <filename>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    tail_f(argv[1]);
+    return EXIT_SUCCESS;
+}
+
+Core Keywords and Concepts
+Prepared Statement (sqlite3_stmt*, sqlite3_prepare_v2)
+What it is: A compiled representation of a SQL query stored in a binary form.
+Why use it: It optimizes performance by parsing and compiling the SQL syntax only once, even if executed multiple times with different values. It also safely separates SQL code from user data.
+
+Parameter Binding (sqlite3_bind_text, sqlite3_bind_int64)
+What it is: The process of safely inserting variables into the placeholders (?) of a prepared statement.
+Why use it: It completely prevents SQL Injection attacks because SQLite treats bound parameters strictly as data, never as executable code. It also handles automatic type mapping and character escaping.
+
+Database Connection Pooling vs. Single Global Connection (static sqlite3* db)
+What it is: Your code relies on a single global database pointer (static sqlite3* db) managed by helper functions, while several local functions (like getBaselineInfoForFile) open and close separate, localized connections to dbPath.
+Why use it: Local connections open isolated database sessions for specific lookup tasks, whereas the global connection handles stateful insertions. An interviewer might ask about concurrency tradeoffs here (e.g., SQLite allows multiple concurrent readers, but only one writer at a time).
+
+Mutex and Thread Safety (std::mutex, std::lock_guard)
+What it is: A synchronization primitive used to protect shared data (db) from simultaneous access by multiple threads. std::lock_guard provides RAII-style locking (acquires the lock on creation and automatically releases it when it goes out of scope).
+Why use it: SQLite is thread-safe by default (depending on compilation flags), but sharing a single connection pointer across multi-threaded operations without synchronization causes data corruption or crashes.
+
+Memory Management Flags (SQLITE_STATIC vs. SQLITE_TRANSIENT)
+What it is: Flags passed during parameter binding telling SQLite how to handle the memory of text strings.
+Why use it: SQLITE_STATIC tells SQLite that the pointer will remain valid until the statement finishes executing (great for std::string::c_str() while the string is in scope). SQLITE_TRANSIENT forces SQLite to make its own internal copy of the data immediately (crucial if the source string might be modified or destroyed before the query runs).
+
+RAII and Resource Cleanup (sqlite3_finalize, sqlite3_close)
+What it is: Ensuring that system resources (statements, database handles) are properly released when they are no longer needed.
+Why use it: Forgetting to call sqlite3_finalize on statements or sqlite3_close on connections causes severe memory leaks and can leave database files locked.
+
+Raw String Literals (R"SQL(...)SQL")
+What it is: A C++11 feature allowing multi-line strings without needing manual newline escapes (\n) or quote escaping.
+Why use it: It makes complex, multi-line SQL queries clean, readable, and easy to maintain directly inside C++ source files.

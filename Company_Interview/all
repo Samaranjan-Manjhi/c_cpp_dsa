@@ -1,0 +1,17 @@
+
+I'm currently a Systems and Cyber Security Software Engineer at MicroWorld Software Services in Mumbai. Over the past three years, I've specialized in building C/C++ production-grade endpoint security tools, kernel monitors, and Data Loss Prevention (DLP) engines across macOS and Linux endpoints.  In my current role, I've designed and delivered over 10 enterprise security modules. Most recently, I built a real-time antivirus scanning daemon using eBPF kernel tracing, an execution gating framework using kernel permission events, and a custom PAM module adding 2FA to SSH logins. My work focused on constructing cross-platform security daemons that reduced system memory overhead by 25% and boosted event detection throughput by 40%.  Moving forward, I’m looking to bring my deep expertise in kernel-level monitoring, cryptographic security, and low-level system architecture to this role, and I’m really excited about the high-scale engineering challenges your team is tackling.
+
+
+
+Team & Role Fit: 
+	Can you describe the day-to-day responsibilities and what success looks like in the first 6–12 months for this role?
+Product & Priorities: 
+	What are the current top priorities or biggest challenges the team is addressing right now?
+Measurement: 
+	How is performance measured for this role and the team? Which metrics or KPIs are most important?
+Collaboration: 
+	Which teams will I work most closely with, and what is the preferred mode of collaboration (agile ceremonies, documentation, async)?
+Growth & Development: 
+	What career progression and learning opportunities do you provide, and how do you support engineers in gaining new skills?
+Culture & Feedback: 
+	How would you describe the team culture here, and how is feedback given and acted upon within the team?

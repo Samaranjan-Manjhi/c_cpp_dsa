@@ -1,0 +1,1352 @@
+# C Linux Developer Interview Prep — REARRANGED (your original content, resequenced)
+Everything below is your original material, reordered to match JD priority (Must Have skills first, C++ deep-dives last). Blocks marked **[ADDED]** are the code that was missing for topics your file only listed as bullets.
+
+---
+
+# SECTION 1: C CORE & MEMORY MANAGEMENT
+
+## 1.1 Topic bullets
+Since C is a must-have, they will test your understanding of how memory works under the hood.
+- Pointers: Deep understanding of pointer arithmetic, function pointers (often used for callbacks in frameworks), void*, and double pointers.
+- Memory Management: Mechanics of malloc, calloc, realloc, and free. Expect questions on memory leaks, dangling pointers, wild pointers, and how to detect them using tools like Valgrind.
+- Storage Classes: Differences between static, extern, auto, and register. How static changes the scope of functions and global variables.
+- Keywords: The exact behavior of volatile (crucial for hardware/embedded or signal handling) and const.
+- Structures: Structure padding and data alignment. How the compiler adds padding bytes and how to use #pragma pack to optimize memory space.
+
+## 1.2 Dynamic Memory Allocation Syntax
+**In C (stdlib.h)**
+- malloc (Memory Allocation): Allocates raw memory bytes; leaves contents uninitialized (contains garbage values).
+```c
+// Syntax: (cast_type*) malloc(size_in_bytes)
+int *ptr = (int*) malloc(5 * sizeof(int)); // Allocates space for 5 integers
+```
+- calloc (Contiguous Allocation): Allocates memory and initializes all bits to zero.
+```c
+// Syntax: (cast_type*) calloc(number_of_elements, size_of_each_element)
+int *ptr = (int*) calloc(5, sizeof(int));
+```
+- realloc (Re-allocation): Resizes previously allocated memory. It may move the memory block to a new location.
+```c
+// Syntax: (cast_type*) realloc(old_pointer, new_size_in_bytes)
+int *new_ptr = (int*) realloc(ptr, 10 * sizeof(int)); // Resizes to 10 integers
+```
+- free: Releases allocated heap memory back to the OS to prevent memory leaks.
+```c
+free(ptr);
+ptr = NULL; // Good practice: Avoids dangling pointers
+```
+
+**In C++ (Operators)**
+- new and delete (Single Object): Allocates memory and calls the object's constructor.
+```cpp
+int *p = new int(10); // Allocates an integer and initializes it to 10
+delete p;             // Deallocates memory and calls destructor
+```
+- new[] and delete[] (Arrays):
+```cpp
+int *arr = new int[5]; // Allocates an array of 5 integers
+delete[] arr;          // Freeing arrays requires brackets []
+```
+
+## 1.3 Pointer Arithmetic Syntax
+Pointer operations scale automatically based on the data type the pointer points to.
+```c
+int arr[5] = {10, 20, 30, 40, 50};
+int *ptr = arr; // ptr points to arr[0] (e.g., address 1000)
+
+ptr++;          // Moves to next element: address becomes 1004 (1000 + 1 * sizeof(int))
+ptr = ptr + 2;  // Moves forward 2 elements (points to arr[3])
+int diff = ptr - arr; // Subtracting two pointers gives the number of elements between them (Returns 3)
+```
+
+## 1.4 Generic Void Pointers (void*)
+A void* is a raw memory address with no associated data type. You cannot dereference or perform arithmetic on it without explicit casting.
+```c
+int data = 100;
+void *vptr = &data; // Valid: void pointer can hold any address
+
+// Dereferencing requires explicit type casting:
+int value = *( (int*) vptr );
+```
+
+## 1.5 Passing Pointers: Value vs. Reference Syntax
+**In C (Simulating Reference using Pointers)**
+To modify the actual pointer address or the variable it points to from inside a function, you must pass its address.
+
+| Method | Function Definition | Function Call | Inside the Function |
+|---|---|---|---|
+| Pass Pointer by Value (Modifies data, cannot change original pointer address) | `void modify(int *ptr)` | `modify(p);` | `*ptr = 50;` |
+| Pass Pointer by Reference (Can update the address the original pointer points to) | `void update_ptr(int **ptr)` | `update_ptr(&p);` | `*ptr = malloc(...);` |
+
+**In C++ (Native References)**
+C++ introduces clean syntax using the & symbol, completely avoiding ugly double pointers (**).
+```cpp
+// 1. Modifying the value pointed to (Pass pointer by value)
+void modifyValue(int* ptr) {
+    *ptr = 99;
+}
+
+// 2. Modifying the pointer's target address (Pass pointer by reference)
+void changeAddress(int*& ptrRef) {
+    ptrRef = new int(500); // Changes the actual pointer passed from main
+}
+
+// Usage in main:
+int* myPtr = new int(10);
+modifyValue(myPtr);     // Updates value to 99
+changeAddress(myPtr);   // myPtr now points to a completely new memory location
+```
+
+## 1.6 Memory leak Q&A
+**What is a memory leak, and how do you detect and fix it in Linux?**
+A memory leak occurs when dynamically allocated memory (malloc, calloc, new) is not freed before a program loses its reference to it. Over time, this consumes system resources and can crash the application.
+- Detection: Use Valgrind (`valgrind --leak-check=full ./your_program`) to pinpoint the exact line where leakages occur.
+- Fix: Ensure every allocation path has a matching free() or delete. In C++, use Smart Pointers (std::unique_ptr, std::shared_ptr) to automate resource cleanup.
+
+**What is the difference between a pointer and a reference in C++?**
+- Pointers: A variable storing a memory address. It can be initialized to NULL, reassigned to point to different variables, and requires pointer arithmetic to navigate blocks.
+- References: An alias for an existing variable. It must be initialized when created, cannot be null, and cannot be changed to reference another variable later.
+
+**Explain the difference between malloc/free and new/delete.**
+- malloc and free are standard library functions in C. They allocate raw bytes from the heap but do not call object constructors or destructors.
+- new and delete are operators in C++. They allocate memory and automatically invoke object constructors and destructors.
+
+## 1.7 [ADDED] Structure padding — worked example (JD lists this, your file only had it as a bullet)
+```c
+struct Example {
+    char  a;   // 1 byte
+    int   b;   // 4 bytes
+    char  c;   // 1 byte
+};
+// Naive size = 6, actual sizeof(struct Example) = 12 on most 64-bit systems
+// Why: compiler aligns each member to its own size boundary.
+// Layout: a(1) + pad(3) + b(4) + c(1) + pad(3) = 12
+// Fix: reorder largest-to-smallest to minimize padding:
+struct Optimized {
+    int  b;   // 4 bytes
+    char a;   // 1 byte
+    char c;   // 1 byte
+    // 2 bytes trailing pad → total = 8
+};
+#pragma pack(push, 1)
+struct Packed { char a; int b; char c; };  // sizeof = 6, no padding
+#pragma pack(pop)
+```
+
+---
+
+# SECTION 2: LINUX SYSTEMS PROGRAMMING & INTERNALS
+
+## 2.1 Topic bullets
+You need to show you understand how code talks to the Linux kernel.
+- Process vs. Thread: The difference from a Linux OS perspective (e.g., how the kernel treats them via clone()), shared memory vs. isolated memory spaces.
+- Multi-threading: Writing thread-safe code using pthread. Understanding race conditions, deadlocks, and how to use mutex, rwlock, and semaphores to prevent them.
+- Virtual Memory: How Linux handles pages, page faults, and the layout of a process memory image (Text, Data, BSS, Heap, Stack).
+- Linux Internals: How fork(), exec(), and wait() work. What a zombie process and an orphan process are, and how to prevent them.
+
+## 2.2 Linux Internals & Process Management Q&A
+**What is the difference between a process and a thread?**
+- Process: An independent executing program with its own dedicated memory space (virtual address space). Switching between processes requires a heavy context switch by the OS kernel.
+- Thread: A lightweight unit of execution within a process. Multiple threads share the same memory space, file descriptors, and global variables, making context switching much faster but requiring explicit synchronization.
+
+**What are Zombie and Orphan processes? How do you handle them?**
+- Zombie: A child process that has completed execution but still has an entry in the process table because its parent hasn't read its exit status via wait(). To clear them, the parent must call wait() or waitpid(). If the parent hangs, killing the parent forces the init process to clean them up.
+- Orphan: A child process whose parent died while it was still running. The system automatically re-parents orphans to the init process (PID 1), which periodically cleans up after them.
+
+**What happens behind the scenes during a Linux context switch?**
+The CPU halts the current executing thread or process, saves its current execution state (CPU registers, program counter, and stack pointer) into its Process Control Block (PCB), loads the saved state of the next process from its PCB into the CPU, and resumes execution.
+
+---
+
+# SECTION 3: INTER-PROCESS COMMUNICATION (IPC) & NETWORKING
+
+## 3.1 Topic bullets
+Since this involves distributed high-performance applications, IPC is a major evaluation pillar.
+- IPC Mechanisms: When to use Shared Memory, Pipes/Named Pipes (FIFOs), Message Queues, or Unix Domain Sockets. Be ready to explain which is the fastest (Shared Memory) and why.
+- Socket Programming: Writing a basic TCP/UDP client-server layout. Knowing the exact sequence of system calls (socket(), bind(), listen(), accept(), connect(), send(), recv()).
+- TCP vs. UDP: Deep dive into the 3-way handshake, 4-way connection teardown, flow control, windowing, and why a trading/securities system might prefer UDP (multicast) over TCP for speed despite data loss risks.
+- I/O Multiplexing: How to handle thousands of connections simultaneously using select(), poll(), or epoll(). Understand why epoll is preferred for high-performance Linux servers.
+
+## 3.2 What is IPC and why is it needed
+Inter-Process Communication (IPC) is a set of architectural mechanisms provided by the operating system kernel that allows two or more independent processes to exchange data, share resources, and synchronize their execution state.
+
+**Why is IPC Needed?**
+- Data Sharing: Passing info between distinct services (e.g., a web server sending requests to a database manager).
+- Distributed Processing: Splitting heavy workloads across multiple processes to utilize multi-core CPUs.
+- Modularity: Constructing large software architectures out of smaller, specialized components (microservices).
+
+## 3.3 The 5 Most Common IPC Mechanisms (With Examples)
+Here is a breakdown of how processes communicate in Linux, moving from local mechanisms to network-ready ones.
+
+**1. Pipes (Anonymous & Named)**
+Pipes allow unidirectional (one-way) data flow. Data written to one end of the pipe is read from the other end using a first-in, first-out (FIFO) queue structure.
+- Anonymous Pipes: Used only between related processes (like a parent and child).
+- Named Pipes (FIFOs): Exist as actual files on the disk, allowing entirely unrelated processes to talk.
+- 💡 Production Example: Command line piping. When you run `ls | grep "main.c"` in a Linux terminal, the output of ls is passed straight into the input of grep via an anonymous pipe.
+
+**2. Shared Memory**
+The OS kernel maps a single physical memory block into the virtual address spaces of two different processes. Both processes can read and write to this zone directly without copying data back and forth through the kernel.
+- ⚠️ Critical Requirement: Because there are no restrictions, developers must use synchronization tools like Mutexes or Semaphores to stop processes from writing over each other's data at the same time.
+- 💡 Production Example: High-Frequency Trading (HFT) platforms. A fast market-feed handler process writes incoming stock prices into shared memory, and a separate algorithmic trading process reads them instantly with sub-microsecond latency.
+
+**3. Message Queues**
+A message queue is a linked list of messages stored inside the kernel memory. Processes can write structured messages to the queue and read them out later. Unlike pipes, messages don't have to be read immediately; they stay in the queue even if the receiving process is busy or restarts.
+- 💡 Production Example: System logging handlers. A light background application creates error tracking logs and dumps them into a message queue. A heavy processing application grabs items from the queue whenever it has the CPU cycles to analyze them.
+
+**4. Signals**
+Signals are asynchronous notifications sent by the kernel (or another process) to inform a target process that a specific event has occurred. They do not pass data buffers; they just interrupt execution to force an action.
+- 💡 Production Example: Stopping a frozen application. When you press Ctrl + C in a terminal or type `kill -9 <PID>`, you are using the OS to send a termination signal (SIGINT or SIGKILL) to force that process to stop.
+
+**5. Sockets (Network & Unix Domain)**
+Sockets enable bidirectional (two-way) data streams. They are unique because they can connect processes running on the exact same computer or on entirely separate servers across the world.
+- Unix Domain Sockets: Optimized purely for communication inside the same machine (bypasses the networking hardware layer entirely for speed).
+- Network Sockets (TCP/IP): Used for communicating across a network.
+- 💡 Production Example: Microservices or Database client connections. Your C/C++ backend connects to a local database system (like Redis or PostgreSQL) using a socket to query records.
+
+## 3.4 C Code: IPC Using Anonymous Pipes
+Here is a complete, compilation-ready C program demonstrating Pipes and process creation using fork(). This is a classic question for systems engineering roles in companies like Smart Analytica.
+
+This code creates a parent process and a child process. The parent writes a message into the pipe, and the child reads it out and prints it to the console.
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
+int main() {
+    // fd[0] will be the read end of the pipe
+    // fd[1] will be the write end of the pipe
+    int fd[2];
+    pid_t pid;
+    char write_msg[] = "Hello from the Parent process!";
+    char read_msg[100];
+
+    // 1. Create the pipe before calling fork()
+    if (pipe(fd) == -1) {
+        perror("Pipe creation failed");
+        return 1;
+    }
+
+    // 2. Create a child process
+    pid = fork();
+
+    if (pid < 0) {
+        perror("Fork failed");
+        return 1;
+    }
+
+    if (pid > 0) {
+        // --- PARENT PROCESS ---
+        // The parent only writes, so it's best practice to close the unused read end
+        close(fd[0]);
+
+        printf("[Parent]: Sending message to child...\n");
+        write(fd[1], write_msg, strlen(write_msg) + 1);
+
+        // Close the write end after finishing
+        close(fd[1]);
+
+        // Wait for the child to finish executing to avoid a zombie process
+        wait(NULL);
+    }
+    else {
+        // --- CHILD PROCESS ---
+        // The child only reads, so it's best practice to close the unused write end
+        close(fd[1]);
+
+        // Read the incoming bytes from the pipe
+        read(fd[0], read_msg, sizeof(read_msg));
+        printf("[Child]: Received message: \"%s\"\n", read_msg);
+
+        // Close the read end after finishing
+        close(fd[0]);
+        exit(0);
+    }
+
+    return 0;
+}
+```
+
+## 3.5 Concurrency, IPC & Networking Q&A
+**What is a race condition, and how do you prevent it?**
+A race condition happens when multiple threads simultaneously read and write to a shared memory location, causing unpredictable data output based on scheduling order. You prevent it by enclosing the critical section of code inside synchronization mechanisms like mutexes, semaphores, or by using atomic operations.
+
+**Compare Mutex vs. Counting Semaphore.**
+| Feature | Mutex | Counting Semaphore |
+|---|---|---|
+| Ownership | Owned by the specific thread that locked it. Only that thread can unlock it. | No ownership. Any thread can signal or wait on it. |
+| Capacity | Binary (0 or 1 lock state). | Numeric counter initialized to a specific value (N). |
+| Use Case | Mutual exclusion for protecting a shared resource. | Controlling access to a finite pool of identical resources. |
+
+**What is the difference between blocking and non-blocking sockets?**
+- Blocking Sockets: Network calls like recv() or accept() suspend thread execution until data arrives or a connection is established.
+- Non-blocking Sockets: These calls return immediately. If no data is available, they yield an error code like EWOULDBLOCK or EAGAIN. Developers pair these with I/O multiplexing functions like epoll or select to handle thousands of connections efficiently.
+
+## 3.6 [ADDED] TCP echo server — full working code
+Your file's "Expected Coding Questions" list item #4 was "Write a basic TCP echo server using socket API" — but no code was provided anywhere in the file. Here it is:
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+
+#define PORT 8080
+#define BUF_SIZE 1024
+
+int main() {
+    int server_fd, client_fd;
+    struct sockaddr_in addr;
+    char buffer[BUF_SIZE];
+
+    server_fd = socket(AF_INET, SOCK_STREAM, 0);          // 1. create socket
+    int opt = 1;
+    setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = INADDR_ANY;
+    addr.sin_port = htons(PORT);
+
+    bind(server_fd, (struct sockaddr*)&addr, sizeof(addr)); // 2. bind
+    listen(server_fd, 5);                                    // 3. listen (backlog=5)
+
+    printf("Listening on port %d...\n", PORT);
+    socklen_t addrlen = sizeof(addr);
+    client_fd = accept(server_fd, (struct sockaddr*)&addr, &addrlen); // 4. accept
+
+    int n;
+    while ((n = recv(client_fd, buffer, BUF_SIZE, 0)) > 0) {  // 5. recv
+        send(client_fd, buffer, n, 0);                        // 6. echo back
+    }
+
+    close(client_fd);
+    close(server_fd);
+    return 0;
+}
+// Sequence to say out loud: socket() -> bind() -> listen() -> accept()
+// -> recv()/send() loop -> close(). Client side skips bind/listen/accept
+// and instead calls connect().
+```
+
+## 3.7 [ADDED] epoll — I/O multiplexing pattern
+Your file only had this as a bullet ("How to handle thousands of connections... using select(), poll(), or epoll()"). Here's the actual code pattern:
+```c
+#include <sys/epoll.h>
+
+int epfd = epoll_create1(0);
+struct epoll_event ev, events[64];
+ev.events = EPOLLIN;             // interested in "ready to read"
+ev.data.fd = listen_fd;
+epoll_ctl(epfd, EPOLL_CTL_ADD, listen_fd, &ev);
+
+while (1) {
+    int n = epoll_wait(epfd, events, 64, -1);  // blocks until events ready
+    for (int i = 0; i < n; i++) {
+        if (events[i].data.fd == listen_fd) {
+            // accept new connection, add its fd to epoll
+        } else {
+            // read/write on events[i].data.fd
+        }
+    }
+}
+// WHY epoll > select/poll for high-performance servers:
+// select/poll are O(n) — they re-scan the ENTIRE fd list every call.
+// epoll is O(1) amortized — kernel maintains the interest list and
+// only returns fds that are actually ready.
+```
+
+---
+
+# SECTION 4: DATA STRUCTURES & ALGORITHMS
+
+## 4.1 Topic bullets
+For a C backend developer, you must know how to implement data structures manually.
+- Core Structures: Implementation and manipulation of Singly/Doubly Linked Lists, Binary Trees, Hash Maps, and Circular Queues/Ring Buffers (commonly used in high-frequency data streaming).
+- Common Code Logic: Reversing a linked list, detecting cycles in a list, implementing a stack using arrays or pointers, and binary search.
+- Bit Manipulation: Clearing, setting, and toggling specific bits. Checking if a number is a power of two.
+
+## 4.2 Bit Manipulation — Conceptual & Trick Questions
+These test your understanding of how signed/unsigned numbers and bitwise operators behave under the hood.
+- Left Shift vs. Right Shift Pitfalls: What is the difference between arithmetic and logical right shifts?
+  - Answer: A logical right shift fills the empty spaces with 0 (used for unsigned numbers). An arithmetic right shift preserves the sign bit (fills with 1 if the number is negative). In C, right-shifting a signed negative integer is implementation-defined.
+- The ~ (NOT) Operator: What is the value of ~0 on a 32-bit machine?
+  - Answer: 0xFFFFFFFF (or -1 in 2's complement).
+- Multiplying/Dividing by Powers of 2: How do you quickly multiply or divide an integer by 8 using bitwise operators?
+  - Answer: Multiply: x << 3. Divide: x >> 3.
+
+## 4.3 Core Bit Tweaking Questions (The Basics)
+```c
+// Set the k-th bit: Turn a specific bit to 1
+n = n | (1 << k);
+
+// Clear the k-th bit: Turn a specific bit to 0
+n = n & ~(1 << k);
+
+// Toggle the k-th bit: Flip a bit from 0 to 1 or 1 to 0
+n = n ^ (1 << k);
+
+// Check if the k-th bit is set:
+if (n & (1 << k)) { /* Bit is 1 */ }
+```
+
+## 4.4 Intermediate Patterns (Brian Kernighan's & Power of 2)
+These are standard industry filters to check if you know classic optimization techniques.
+- Check if a number is a Power of 2:
+  - Concept: A power of two has exactly one bit set (e.g., 8 is 1000). If you subtract 1, all lower bits become 1 (e.g., 7 is 0111).
+  - Code: `return (n > 0) && ((n & (n - 1)) == 0);`
+- Count the number of set bits (Hamming Weight):
+  - Naive approach: Loop 32 times, shifting and checking the last bit.
+  - Optimized approach (Brian Kernighan's Algorithm): `n & (n - 1)` clears the lowest set bit. Loop only as many times as there are set bits.
+```c
+int count = 0;
+while (n) {
+    n &= (n - 1);
+    count++;
+}
+```
+
+## 4.5 Algorithmic Coding Problems (XOR Riddles)
+XOR is a powerful tool because A⊕A = 0 and A⊕0 = A.
+- Find the Unique Element: "Given an array of integers where every element appears twice except for one, find that unique element in O(N) time and O(1) space."
+  - Solution: XOR all elements together. The duplicates cancel out, leaving the unique number.
+- Missing Number: "Given an array containing n distinct numbers taken from 0, 1, 2, ..., n, find the one that is missing."
+  - Solution: XOR all numbers from 0 to n, then XOR that result with all numbers present in the array.
+- Swap two numbers without a temporary variable:
+```c
+a = a ^ b;
+b = a ^ b; // b now becomes original a
+a = a ^ b; // a now becomes original b
+```
+
+## 4.6 High-Performance & Systems Domain Questions (Crucial for BKC Mumbai FinTech)
+Because this is a high-performance role handling binary data streams, they will likely ask:
+- Endianness Conversion (Byte Swapping): How do you convert a 32-bit integer from Big Endian (Network Byte Order) to Little Endian (X86 CPU Host Order) using bit manipulation?
+  - Solution: Mask and shift each byte into position.
+```c
+uint32_t swap_uint32(uint32_t val) {
+    return ((val & 0xFF000000) >> 24) |
+           ((val & 0x00FF0000) >> 8)  |
+           ((val & 0x0000FF00) << 8)  |
+           ((val & 0x000000FF) << 24);
+}
+```
+
+## 4.7 [ADDED] Custom memcpy/memmove implementation
+Your file's "Expected Coding Questions" list item #3 was "Implement your own version of memcpy() or strcpy(), keeping memory overlap in mind" — no code was provided anywhere. Here it is:
+```c
+void *my_memcpy(void *dest, const void *src, size_t n) {
+    char *d = dest; const char *s = src;
+    for (size_t i = 0; i < n; i++) d[i] = s[i];   // no overlap handling
+    return dest;
+}
+
+void *my_memmove(void *dest, const void *src, size_t n) {
+    char *d = dest; const char *s = src;
+    if (d < s) {
+        for (size_t i = 0; i < n; i++) d[i] = s[i];         // copy forward
+    } else {
+        for (size_t i = n; i > 0; i--) d[i-1] = s[i-1];     // copy backward
+    }
+    return dest;
+    // memmove handles overlapping regions correctly by choosing
+    // copy direction based on relative pointer position; memcpy does not
+    // guarantee correct behavior on overlap.
+}
+```
+
+## 4.8 [ADDED] Reverse a singly linked list (in place, O(1) space)
+Item #2 of your coding-questions list — also no code in the file:
+```c
+struct Node* reverse(struct Node* head) {
+    struct Node *prev = NULL, *curr = head, *next;
+    while (curr) {
+        next = curr->next;
+        curr->next = prev;
+        prev = curr;
+        curr = next;
+    }
+    return prev;
+}
+```
+
+---
+
+# SECTION 5: GNU TOOLCHAIN, DEBUGGING & SCRIPTING
+
+## 5.1 Topic bullets
+A working developer must know how to build, test, and debug their code.
+- Compilation Process: The 4 stages of compilation: Preprocessing (gcc -E), Compilation (gcc -S), Assembly (gcc -c), and Linking.
+- GDB Techniques: How to start a process in GDB, set breakpoints, step through code (step, next), print variables, view the call stack (bt), and debug a core dump file to find where a segmentation fault occurred.
+- Build Systems: Basic writing of a Makefile. Static (.a) vs. Dynamic (.so) linking.
+- Shell Scripting: Basic Bash commands, regex parsing using grep, awk, or sed to filter log files.
+
+## 5.2 [ADDED] Compilation stages — with actual gcc commands
+Your file only listed the stage names as a bullet. Here's the runnable command sequence:
+```bash
+gcc -E main.c -o main.i     # 1. Preprocessing: macro expansion, #include resolution
+gcc -S main.i -o main.s     # 2. Compilation: .i -> assembly (.s)
+gcc -c main.s -o main.o     # 3. Assembly: .s -> machine code object file (.o)
+gcc main.o -o main          # 4. Linking: resolves symbols, combines with libs -> executable
+```
+
+## 5.3 [ADDED] GDB — concrete command cheat sheet
+Your file mentioned GDB techniques as a bullet with no actual commands. Here they are:
+```
+gdb ./a.out              # start
+break main                # set breakpoint at function
+break file.c:42           # set breakpoint at line
+run                        # start execution
+next / n                   # step over (don't enter function calls)
+step / s                   # step into function calls
+print var / p var          # inspect a variable
+bt                         # backtrace — full call stack
+continue / c               # resume until next breakpoint
+watch var                  # break when var's value changes
+
+# Debugging a core dump (segfault post-mortem):
+gdb ./a.out core
+bt          # shows exact line where it crashed
+frame N     # jump to stack frame N to inspect local variables there
+```
+
+## 5.4 Your Makefile example (kept as-is)
+```makefile
+# Variables make code clean and reusable
+CC = gcc
+CFLAGS = -Wall -Wextra -g
+
+# The default target that runs when you just type 'make'
+all: my_program
+
+# Target executable depends on object files
+my_program: main.o utils.o
+	$(CC) $(CFLAGS) main.o utils.o -o my_program
+
+# How to build main.o
+main.o: main.c utils.h
+	$(CC) $(CFLAGS) -c main.c
+
+# How to build utils.o
+utils.o: utils.c utils.h
+	$(CC) $(CFLAGS) -c utils.c
+
+# Target to clean up generated build files
+clean:
+	rm -f *.o my_program
+```
+
+## 5.5 Static vs Dynamic linking (from bullets, expanded)
+`.a` (static) — code copied into the executable at link time, larger binary, no runtime dependency. `.so` (dynamic/shared) — loaded at runtime, smaller binary, shared across processes, but needs the `.so` present on the target machine.
+
+## 5.6 [ADDED] Shell / grep / awk / sed for log filtering
+Listed as a bullet in your file with no examples:
+```bash
+grep "ERROR" app.log                      # find lines with ERROR
+grep -c "ERROR" app.log                   # count matches
+awk '{print $1, $4}' app.log              # print columns 1 and 4
+sed -n '10,20p' app.log                   # print lines 10-20
+sed 's/foo/bar/g' app.log                 # replace foo with bar
+```
+
+---
+
+# SECTION 6: EXPECTED CODING QUESTIONS (your original list — now all have code above)
+During the technical rounds, you will likely be asked to write code on a whiteboard or a shared editor. Practice these:
+1. "Write a thread-safe Queue implementation in C." (Requires mutexes and condition variables). → **See Section 7 below [ADDED]**
+2. "Write a C program to reverse a singly linked list without using extra memory." → **See Section 4.8**
+3. "Implement your own version of memcpy() or strcpy(), keeping memory overlap in mind." (Understanding memmove). → **See Section 4.7**
+4. "Write a basic TCP echo server using socket API." → **See Section 3.6**
+5. "Given a packed structure, calculate its size manually and explain how compiler alignment alters it." → **See Section 1.7**
+
+## 6.1 [ADDED] Thread-safe Queue in C (item #1 above — was completely missing)
+```c
+#include <pthread.h>
+#include <stdlib.h>
+
+typedef struct Node { int data; struct Node* next; } Node;
+
+typedef struct {
+    Node *head, *tail;
+    pthread_mutex_t lock;
+    pthread_cond_t not_empty;
+} SafeQueue;
+
+void queue_init(SafeQueue *q) {
+    q->head = q->tail = NULL;
+    pthread_mutex_init(&q->lock, NULL);
+    pthread_cond_init(&q->not_empty, NULL);
+}
+
+void queue_push(SafeQueue *q, int val) {
+    Node *n = malloc(sizeof(Node));
+    n->data = val; n->next = NULL;
+
+    pthread_mutex_lock(&q->lock);
+    if (q->tail) q->tail->next = n; else q->head = n;
+    q->tail = n;
+    pthread_cond_signal(&q->not_empty);   // wake one waiting consumer
+    pthread_mutex_unlock(&q->lock);
+}
+
+int queue_pop(SafeQueue *q) {
+    pthread_mutex_lock(&q->lock);
+    while (q->head == NULL) {
+        pthread_cond_wait(&q->not_empty, &q->lock); // sleeps, releases lock
+    }
+    Node *n = q->head;
+    int val = n->data;
+    q->head = n->next;
+    if (!q->head) q->tail = NULL;
+    pthread_mutex_unlock(&q->lock);
+    free(n);
+    return val;
+}
+// Key talking point: condition variable avoids busy-waiting/polling —
+// consumer thread sleeps until producer signals, instead of spinning
+// on a while(empty) loop burning CPU.
+```
+
+---
+
+# SECTION 7: C++ TYPE CASTING
+
+In C and C++, type casting is the method used to convert a variable from one data type to another. C uses a single, blunt casting style, while C++ introduces four specialized type-safe casting operators to prevent subtle programming bugs.
+
+## 7.1 C-Style Casting
+This is the traditional cast used in C. It forces the compiler to convert data types without running strict safety checks.
+```c
+int a = 10;
+double b = (double)a; // Explicit C-style cast
+```
+
+## 7.2 C++ Named Casts
+C++ introduces four specific casting operators. They tell the compiler exactly why you are casting, making your code safer and much easier to search for during code reviews.
+
+**static_cast** — go-to cast for safe, well-defined conversions at compile time. Handles standard conversions like turning an integer into a float, or converting pointers up and down an inheritance hierarchy.
+```cpp
+float f = 3.14;
+int i = static_cast<int>(f); // Compiles cleanly, truncates to 3
+```
+
+**dynamic_cast** — used exclusively for handling inheritance hierarchies at runtime. Safely converts a base class pointer or reference to a derived class pointer or reference. Relies on RTTI, meaning it only works if your base class has at least one virtual function.
+- Best use case: Safe downcasting. If the cast is impossible, a pointer cast returns nullptr, while a reference cast throws a std::bad_cast exception.
+```cpp
+Base* b = new Derived();
+Derived* d = dynamic_cast<Derived*>(b);
+if (d) {
+    // Cast succeeded! Safe to use Derived methods.
+}
+```
+
+**const_cast** — the only cast in C++ that can add or remove the const modifier from a variable.
+- Best use case: Passing a constant variable into an older, third-party legacy function that accepts a non-const pointer but doesn't actually alter the underlying data.
+```cpp
+void legacy_function(char* str);
+const char* text = "Hello";
+legacy_function(const_cast<char*>(text)); // Drops const safety
+```
+
+**reinterpret_cast** — low-level, high-risk cast that instructs the compiler to treat the underlying raw binary bit pattern of an object as an entirely different type. Zero structural or safety checks.
+```cpp
+int* p = new int(65);
+char* ch = reinterpret_cast<char*>(p); // Treats the int bits as a char buffer
+```
+
+**Quick Comparison Matrix**
+| Cast Type | When it Happens | Safety Level | Primary Purpose |
+|---|---|---|---|
+| static_cast | Compile-time | High | Standard implicit conversions & safe up/down casts. |
+| dynamic_cast | Run-time | High | Safe navigation of polymorphic class structures. |
+| const_cast | Compile-time | Medium | Stripping away or adding const or volatile properties. |
+| reinterpret_cast | Compile-time | Low | Raw binary conversions (e.g., matching pointers with hardware addresses). |
+
+---
+
+# SECTION 8: C++ OOP FOUR PILLARS
+
+OOP is a programming paradigm centered around objects (data) rather than actions (logic). C++ natively supports OOP, whereas pure C does not (though you can mimic it using structures and function pointers).
+
+## 8.1 Encapsulation (Data Hiding)
+Encapsulation is the process of bundling data (variables) and the methods (functions) that operate on that data into a single unit called a Class. It restricts direct access to some of an object's components to prevent accidental corruption.
+- Access Specifiers: Controls the visibility of class members.
+  - public: Accessible from anywhere outside the class.
+  - private: Accessible only from within the class (achieves data hiding).
+  - protected: Accessible within the class and its derived (child) classes.
+- Getters and Setters: Public methods used to safely read and modify private variables, allowing you to validate data before updating it.
+
+## 8.2 Abstraction (Hiding Complexity)
+Abstraction means hiding internal implementation details and showing only the essential features to the outside world. While Encapsulation hides data, Abstraction hides complexity (the "how").
+- Abstract Class: A class that cannot be instantiated directly and serves as a blueprint for other classes. In C++, a class becomes abstract if it contains at least one Pure Virtual Function.
+- Pure Virtual Function: A function with no implementation in the base class, forced to be overridden by derived classes. Written as: `virtual void display() = 0;`.
+- Interfaces: A class containing only pure virtual functions and no data members. It dictates a strict contract of what a derived class must implement.
+
+## 8.3 Inheritance (Code Reusability)
+Inheritance allows a new class (Derived/Child Class) to acquire the properties and behaviors of an existing class (Base/Parent Class). This establishes an "Is-A" relationship (e.g., a Dog is a Animal).
+- Types of Inheritance:
+  - Single: One child inherits from one parent.
+  - Multiple: One child inherits from more than one parent class (supported in C++, but can lead to the Diamond Problem).
+  - Multilevel: A chain of inheritance (Grandparent → Parent → Child).
+  - Hierarchical: One parent class has multiple child classes.
+  - Hybrid: A combination of multiple and multilevel inheritance.
+- The Diamond Problem & Virtual Inheritance: If Class B and C inherit from A, and Class D inherits from both B and C, Class D gets two copies of Class A's members. C++ solves this ambiguity using virtual inheritance (`class B : virtual public A`).
+
+## 8.4 Polymorphism (Many Forms)
+Polymorphism allows a single interface to execute different underlying logic depending on how it is invoked. Split into two types:
+
+**A. Compile-Time Polymorphism (Static Binding)** — compiler determines which function to call during compilation.
+- Function Overloading: Multiple functions in the same scope have the same name but different parameters.
+- Operator Overloading: Giving special meaning to standard operators (like +, -, <<) when used with user-defined object types.
+
+**B. Runtime Polymorphism (Dynamic Binding)** — the exact function to call is determined at execution time based on the actual object type, not the pointer type.
+- Function Overriding: A child class provides a specific implementation for a function that is already defined in its parent class.
+- Virtual Functions & Vtables: To enable overriding, the base class function must be marked with the virtual keyword.
+  - Vtable (Virtual Table): A hidden static array created by the compiler for every class containing virtual functions. It holds pointers to the virtual functions.
+  - Vptr (Virtual Pointer): A hidden pointer added to every object instance that points to the class's Vtable, resolving function calls at runtime.
+
+## 8.5 Essential Structural Subtopics
+- Class vs. Object: A Class is a user-defined data type or blueprint; an Object is a physical instance of that class allocated in memory.
+- Constructors: Special member functions called automatically when an object is created.
+  - Default Constructor: Takes no arguments.
+  - Parameterized Constructor: Takes arguments to initialize fields.
+  - Copy Constructor: Initializes an object using another existing object of the same class (`ClassName(const ClassName &obj)`).
+- Destructors: Called automatically when an object goes out of scope or is deleted.
+  - Critical Interview Concept: Always make your base class destructor virtual (`virtual ~Base()`). If you don't, deleting a derived class object through a base pointer will cause a memory leak, as the derived class destructor won't be called.
+- Composition vs. Inheritance: Inheritance represents an "Is-A" relationship, while Composition represents a "Has-A" relationship (e.g., a Car has an Engine object inside it). Senior developers generally prefer composition over inheritance for flexibility.
+
+## 8.6 Diamond Problem — full working code
+The Diamond Problem occurs in multiple inheritance when a class inherits from two classes that both share a common grandparent. Without virtual inheritance, the grandparent's members are duplicated, causing compiler ambiguity and memory waste.
+```cpp
+#include <iostream>
+
+// Grandparent Class
+class Device {
+public:
+    int power_rating;
+    Device() : power_rating(100) {
+        std::cout << "Device (Grandparent) Constructor Called\n";
+    }
+    virtual ~Device() = default;
+};
+
+// Parent 1 - Inherits virtually
+class Scanner : virtual public Device {
+public:
+    Scanner() {
+        std::cout << "Scanner (Parent 1) Constructor Called\n";
+    }
+};
+
+// Parent 2 - Inherits virtually
+class Printer : virtual public Device {
+public:
+    Printer() {
+        std::cout << "Printer (Parent 2) Constructor Called\n";
+    }
+};
+
+// Child Class - Inherits from both Parents
+class AllInOnePrinter : public Scanner, public Printer {
+public:
+    AllInOnePrinter() {
+        std::cout << "AllInOnePrinter (Child) Constructor Called\n";
+    }
+
+    void printPower() {
+        // Without 'virtual' above, this next line would fail to compile!
+        // The compiler wouldn't know whether to access Scanner::power_rating or Printer::power_rating.
+        std::cout << "Current Power Rating: " << power_rating << "W\n";
+    }
+};
+
+int main() {
+    std::cout << "--- Creating AllInOnePrinter Object ---\n";
+    AllInOnePrinter machine;
+
+    std::cout << "\n--- Accessing Inherited Member ---\n";
+    machine.printPower();
+
+    // Verifying memory allocation efficiency
+    std::cout << "\nSize of AllInOnePrinter object: " << sizeof(machine) << " bytes\n";
+    return 0;
+}
+```
+
+---
+
+# SECTION 9: VTABLE / VPTR — MEMORY LAYOUT & MECHANISM (both of your original explanations, kept)
+
+## 9.1 Memory Layout of Vtable and Vptr
+When a class in C++ declares a virtual function, the compiler inserts a hidden pointer called vptr (virtual pointer) into the object's layout. This vptr points to a static array of function pointers called the vtable (virtual table).
+
+Here is exactly how it looks in memory when a base pointer calls an overridden function:
+```
+    Object Layout in Memory (Stack/Heap)
+   +------------------------------------+
+   |  vptr (Virtual Pointer)  ----------|----+
+   +------------------------------------+    |
+   |  int data_member1                  |    |
+   +------------------------------------+    |
+   |  int data_member2                  |    |
+   +------------------------------------+    |
+                                             |
+    Vtable Layout (Shared in Read-Only Data) |
+   +------------------------------------+<---+
+   |  &Derived::function1()            |  --> Points to actual code of overridden function
+   +------------------------------------+
+   |  &Base::function2()                |  --> Points to Base function (if not overridden)
+   +------------------------------------+
+```
+
+**Step-by-Step Resolution Process at Runtime:**
+1. The Call: You invoke a method via a base pointer: `base_ptr->function1();`
+2. Dereference vptr: The CPU reads the first few bytes of the object instance to find the vptr.
+3. Index Lookup: The compiler already knows the array index for function1 (e.g., Slot 0). It looks up slot 0 in that specific vtable.
+4. Jump to Address: The CPU jumps to the address stored in that slot (&Derived::function1()), executing the derived implementation.
+
+## 9.2 Virtual Functions & Destructors Syntax
+To achieve runtime polymorphism, you must declare the target function as virtual in the base class. In the derived class, it is best practice to use the override keyword (C++11) to let the compiler catch signature mismatches.
+```cpp
+class Base {
+public:
+    // Virtual Destructor: ALWAYS required if a class has virtual functions
+    virtual ~Base() {
+        // Cleanup code
+    }
+
+    // Virtual Function
+    virtual void display() {
+        // Base logic
+    }
+};
+
+class Derived : public Base {
+public:
+    ~Derived() override {
+        // Derived cleanup code
+    }
+
+    // Overriding the virtual function
+    void display() override {
+        // Derived logic
+    }
+};
+```
+
+## 9.3 Performance Overhead Breakdown
+In high-frequency trading or distributed real-time engines (like systems built in BKC, Mumbai), interviewers will ask you to quantify the exact latency costs of virtual functions:
+- Memory Overhead: Every object size increases by 8 bytes (on a 64-bit Linux architecture) due to the addition of the hidden vptr.
+- Indirection Costs: A normal function call is a direct branch to a fixed code address. A virtual call requires two pointer dereferences: Object -> VPTR -> VTABLE -> Function Address. This pipeline indirection breaks compiler inlining and increases the probability of CPU cache misses.
+
+**Full example — the danger of a non-virtual destructor:**
+```cpp
+#include <iostream>
+
+class Base {
+public:
+    Base() { std::cout << "Base Constructor\n"; }
+
+    // CRUCIAL: Try removing the 'virtual' keyword to see the memory leak!
+    virtual ~Base() { std::cout << "Base Destructor (Memory Cleaned)\n"; }
+
+    virtual void processData() {
+        std::cout << "Processing data inside Base context\n";
+    }
+};
+
+class Derived : public Base {
+private:
+    int* heavyBuffer; // Dynamic memory allocated inside derived class
+
+public:
+    Derived() {
+        std::cout << "Derived Constructor\n";
+        heavyBuffer = new int[1000]; // Allocating dynamic buffer
+    }
+
+    ~Derived() override {
+        std::cout << "Derived Destructor\n";
+        delete[] heavyBuffer; // Freeing derived resource
+    }
+
+    void processData() override {
+        std::cout << "Processing data inside High-Performance Derived context\n";
+    }
+};
+
+int main() {
+    std::cout << "--- 1. Polymorphic Object Initialization ---\n";
+    Base* polyPtr = new Derived();
+
+    std::cout << "\n--- 2. Executing Overridden Method (VTABLE lookup) ---\n";
+    polyPtr->processData();
+
+    std::cout << "\n--- 3. Deleting Object via Base Pointer ---\n";
+    // If ~Base() is virtual, the compiler executes Derived destructor, then Base destructor.
+    // If ~Base() is NOT virtual, ONLY the Base destructor executes, causing a massive memory leak!
+    delete polyPtr;
+
+    return 0;
+}
+```
+
+**Crucial Interview Questions on this Topic**
+- Q: Can a virtual function be inlined?
+  Answer: Generally, no. The compiler cannot inline a virtual function because the exact target function cannot be resolved until runtime. However, if the compiler can definitively resolve the object type at compile time (e.g., calling it through a direct object instance `obj.display()` rather than a pointer `ptr->display()`), it may apply an optimization called devirtualization and inline the call.
+- Q: What is a Pure Virtual Destructor? Is it valid?
+  Answer: Yes, it is valid syntax (`virtual ~Base() = 0;`), often used to force a class to become abstract. However, unlike pure virtual functions, you must provide a body definition for a pure virtual destructor outside the class declaration, because derived destructors implicitly call their base class destructor up the chain during object destruction.
+
+---
+
+# SECTION 10: SHALLOW COPY VS. DEEP COPY
+
+## 10.1 Conceptual Breakdown
+The difference between a Shallow Copy and a Deep Copy comes down to how memory addresses (pointers) are handled during data duplication.
+- Shallow Copy: Copies all member field values directly from one object to another. If an object contains a pointer to heap memory, only the memory address is copied. Both the original and copied objects now point to the exact same memory location.
+  - The Danger: If one object modifies the data, it changes for both. When one object goes out of scope, it frees the memory, leaving the other object with a dangling pointer. When the second object is destroyed, it attempts to free the same memory address again, triggering a fatal double-free runtime crash.
+- Deep Copy: Allocates a brand-new, independent block of memory on the heap for the destination object, then copies the actual content over. Modifying or destroying one object has zero impact on the other.
+
+## 10.2 Implementation Syntax (C++)
+By default, the C++ compiler automatically generates a shallow copy constructor and assignment operator. To achieve a deep copy, you must explicitly define them.
+```cpp
+#include <iostream>
+#include <cstring>
+
+class SecurityToken {
+private:
+    char* tokenID;
+
+public:
+    // Standard Constructor
+    SecurityToken(const char* id) {
+        tokenID = new char[strlen(id) + 1];
+        strcpy(tokenID, id);
+    }
+
+    // Destructor
+    ~SecurityToken() {
+        delete[] tokenID;
+    }
+
+    // DEEP COPY CONSTRUCTOR SYNTAX
+    SecurityToken(const SecurityToken& other) {
+        // 1. Allocate completely new heap memory
+        tokenID = new char[strlen(other.tokenID) + 1];
+        // 2. Copy the actual data inside the memory block
+        strcpy(tokenID, other.tokenID);
+    }
+
+    // DEEP COPY ASSIGNMENT OPERATOR SYNTAX
+    SecurityToken& operator=(const SecurityToken& other) {
+        // 1. Guard against self-assignment (e.g., t1 = t1)
+        if (this != &other) {
+            // 2. Clear out our own existing heap memory to prevent a memory leak
+            delete[] tokenID;
+            // 3. Allocate new memory matching the size of the source object
+            tokenID = new char[strlen(other.tokenID) + 1];
+            // 4. Copy the raw contents over
+            strcpy(tokenID, other.tokenID);
+        }
+        return *this; // Return reference to allow chaining (e.g., t3 = t2 = t1)
+    }
+};
+```
+
+## 10.3 Comparison Matrix
+| Attribute | Shallow Copy (Compiler Default) | Deep Copy (User-Defined) |
+|---|---|---|
+| Memory Allocation | Does not allocate new heap memory. | Allocates a new distinct block on the heap. |
+| Pointer Behavior | Copies only the raw address pointer. | Copies the actual data the pointer references. |
+| Independence | Objects are dependent on each other. | Objects are completely isolated. |
+| Performance Cost | Extremely fast (O(1) complexity). | Slower (O(N) complexity) due to memory allocation and data copying. |
+| Common Crash Risk | High risk of double-free errors or dangling pointers. | Safe from cross-object memory corruption. |
+
+**Crucial Interview Questions on this Topic**
+- Q: If Shallow Copy is fast and Deep Copy is safe but slow, how does modern C++ balance speed and safety when returning objects from functions?
+  Answer: Modern C++ uses Move Semantics (Rule of 5). Instead of performing a slow deep copy of a temporary object's data, the compiler executes a shallow copy of the resource pointer and then sets the temporary object's pointer to nullptr. This acts as a blazing-fast "ownership transfer" without risking a double-free crash.
+- Q: How do you implement a Shallow Copy vs. Deep Copy concept in pure C?
+  Answer: In C, a shallow copy is simply a structure assignment (`struct1 = struct2;`). If the structure has pointers, they will copy blindly. To implement a deep copy, you must pass the destination structure pointer to a dedicated utility function that manually uses malloc() and memcpy() for every internal pointer.
+
+---
+
+# SECTION 11: RULE OF 5 (Copy/Move Constructors & Assignment) — all three of your original code examples, kept
+
+## 11.1 Concept
+- Copy Constructor & Copy Assignment Operator: A copy constructor creates a new object as an exact copy of an existing object. A copy assignment operator (=) copies the contents of an already existing object into another already existing object.
+  - Deep Copy vs. Shallow Copy: If a class manages raw heap memory, a shallow copy (default bitwise copy) just copies the pointer address, leading to multiple objects freeing the same memory (double-free corruption). A deep copy allocates new memory and copies the actual data.
+- Move Constructor & Move Assignment Operator (C++11): A move constructor "steals" resources from a temporary object (rvalue) rather than allocating new memory and copying data. Instead of duplicating a large block of heap memory, it simply copies the pointer address, sets the temporary object's pointer to nullptr, and avoids expensive memory allocation. This drastically improves performance.
+
+## 11.2 Rule of 5 Syntax
+```cpp
+class MyClass {
+private:
+    int* data; // Dynamically allocated resource
+
+public:
+    // 1. Destructor
+    ~MyClass();
+
+    // 2. Copy Constructor
+    MyClass(const MyClass& other);
+
+    // 3. Copy Assignment Operator
+    MyClass& operator=(const MyClass& other);
+
+    // 4. Move Constructor (C++11)
+    MyClass(MyClass&& other) noexcept;
+
+    // 5. Move Assignment Operator (C++11)
+    MyClass& operator=(MyClass&& other) noexcept;
+};
+```
+
+## 11.3 Example 1 — SimpleBuffer (int array)
+```cpp
+#include <iostream>
+#include <algorithm>
+#include <cstring>
+
+class SimpleBuffer {
+private:
+    size_t size;
+    int* data;
+
+public:
+    // 1. Constructor
+    SimpleBuffer(size_t s) : size(s), data(new int[s]) {
+        std::cout << "Constructor: Allocated " << size << " ints.\n";
+    }
+
+    // 2. Destructor
+    ~SimpleBuffer() {
+        delete[] data;
+        std::cout << "Destructor: Freed memory.\n";
+    }
+
+    // 3. Copy Constructor (Deep Copy)
+    SimpleBuffer(const SimpleBuffer& other) : size(other.size), data(new int[other.size]) {
+        std::copy(other.data, other.data + other.size, data);
+        std::cout << "Copy Constructor: Deep copied data.\n";
+    }
+
+    // 4. Copy Assignment Operator
+    SimpleBuffer& operator=(const SimpleBuffer& other) {
+        if (this == &other) return *this; // Handle self-assignment
+
+        int* newData = new int[other.size]; // Allocate first to ensure strong exception safety
+        std::copy(other.data, other.data + other.size, newData);
+
+        delete[] data; // Free old resource
+        data = newData;
+        size = other.size;
+
+        std::cout << "Copy Assignment: Copied data.\n";
+        return *this;
+    }
+
+    // 5. Move Constructor (Steals resources)
+    SimpleBuffer(SimpleBuffer&& other) noexcept : size(other.size), data(other.data) {
+        other.size = 0;
+        other.data = nullptr; // Nullify source pointer
+        std::cout << "Move Constructor: Stole resources.\n";
+    }
+
+    // 6. Move Assignment Operator
+    SimpleBuffer& operator=(SimpleBuffer&& other) noexcept {
+        if (this == &other) return *this;
+
+        delete[] data; // Free current resource
+
+        // Steal
+        size = other.size;
+        data = other.data;
+
+        // Nullify source
+        other.size = 0;
+        other.data = nullptr;
+
+        std::cout << "Move Assignment: Stole resources.\n";
+        return *this;
+    }
+
+    void print() const {
+        std::cout << "Buffer size: " << size << ", Data address: " << data << "\n";
+    }
+};
+
+int main() {
+    SimpleBuffer buf1(1000);             // Calls standard constructor
+    SimpleBuffer buf2 = buf1;            // Calls Copy Constructor (Deep copy)
+
+    SimpleBuffer buf3(500);              // Calls standard constructor
+    buf3 = std::move(buf1);              // Calls Move Assignment Operator
+
+    SimpleBuffer buf4 = std::move(buf2); // Calls Move Constructor
+
+    return 0;
+}
+```
+
+## 11.4 Example 2 — Person (char* name)
+```cpp
+#include <iostream>
+#include <algorithm>
+#include <cstring>
+
+class Person {
+private:
+    char* name;
+    size_t length;
+
+public:
+    // 1. Constructor
+    Person(const char* str) {
+        if (str) {
+            length = std::strlen(str);
+            name = new char[length + 1];
+            std::strcpy(name, str);
+        } else {
+            length = 0;
+            name = new char[1];
+            name[0] = '\0';
+        }
+        std::cout << "Constructor: Allocated memory for name.\n";
+    }
+
+    // 2. Destructor
+    ~Person() {
+        delete[] name;
+        std::cout << "Destructor: Freed memory for name.\n";
+    }
+
+    // 3. Copy Constructor (Deep Copy)
+    Person(const Person& other) : length(other.length), name(new char[other.length + 1]) {
+        std::strcpy(name, other.name);
+        std::cout << "Copy Constructor: Deep copied name string.\n";
+    }
+
+    // 4. Copy Assignment Operator
+    Person& operator=(const Person& other) {
+        if (this == &other) return *this; // Handle self-assignment
+
+        char* newName = new char[other.length + 1];
+        std::strcpy(newName, other.name);
+
+        delete[] name; // Free old memory
+        name = newName;
+        length = other.length;
+
+        std::cout << "Copy Assignment: Copied name string.\n";
+        return *this;
+    }
+
+    // 5. Move Constructor (Steals pointer)
+    Person(Person&& other) noexcept : name(other.name), length(other.length) {
+        other.name = nullptr;
+        other.length = 0;
+        std::cout << "Move Constructor: Stole name pointer.\n";
+    }
+
+    // 6. Move Assignment Operator
+    Person& operator=(Person&& other) noexcept {
+        if (this == &other) return *this;
+
+        delete[] name; // Free current resource
+
+        // Steal resources
+        name = other.name;
+        length = other.length;
+
+        // Nullify source object
+        other.name = nullptr;
+        other.length = 0;
+
+        std::cout << "Move Assignment: Stole name pointer.\n";
+        return *this;
+    }
+
+    void print() const {
+        std::cout << "Name: " << (name ? name : "nullptr") << ", Length: " << length << "\n";
+    }
+};
+
+int main() {
+    Person p1("Alice");                 // Calls Constructor
+    Person p2 = p1;                     // Calls Copy Constructor (Deep copy)
+
+    Person p3("Bob");                   // Calls Constructor
+    p3 = std::move(p1);                 // Calls Move Assignment Operator
+
+    Person p4 = std::move(p2);          // Calls Move Constructor
+
+    return 0;
+}
+```
+
+## 11.5 Example 3 — Buffer (with noexcept discussion)
+```cpp
+#include <iostream>
+#include <utility>
+
+class Buffer {
+private:
+    int* data;
+    size_t size;
+
+public:
+    // Regular Constructor
+    Buffer(size_t s) : size(s), data(new int[s]) {
+        std::cout << "Allocated buffer of size " << size << "\n";
+    }
+
+    // 1. Destructor
+    ~Buffer() {
+        delete[] data;
+        std::cout << "Destroyed buffer, memory freed\n";
+    }
+
+    // 2. Copy Constructor (Deep Copy)
+    Buffer(const Buffer& other) : size(other.size), data(new int[other.size]) {
+        for (size_t i = 0; i < size; ++i) {
+            data[i] = other.data[i];
+        }
+        std::cout << "Copy Constructor: Deep copy completed\n";
+    }
+
+    // 3. Copy Assignment Operator (Deep Copy with cleanup)
+    Buffer& operator=(const Buffer& other) {
+        std::cout << "Copy Assignment Operator called\n";
+        if (this != &other) { // Guard against self-assignment (e.g., b1 = b1)
+            delete[] data;    // Free existing resource
+
+            size = other.size;
+            data = new int[size];
+            for (size_t i = 0; i < size; ++i) {
+                data[i] = other.data[i];
+            }
+        }
+        return *this;
+    }
+
+    // 4. Move Constructor (Shallow Copy + Stealing Resources)
+    Buffer(Buffer&& other) noexcept : data(other.data), size(other.size) {
+        std::cout << "Move Constructor: Resource stolen!\n";
+
+        // CRUCIAL STEP: Nullify the original pointer so its destructor doesn't delete our stolen memory
+        other.data = nullptr;
+        other.size = 0;
+    }
+
+    // 5. Move Assignment Operator (Clean existing + Steal resources)
+    Buffer& operator=(Buffer&& other) noexcept {
+        std::cout << "Move Assignment Operator called\n";
+        if (this != &other) { // Guard against self-assignment
+            delete[] data;    // Free our existing resource
+
+            data = other.data; // Steal the source data pointer
+            size = other.size;
+
+            other.data = nullptr; // Nullify source to avoid double-free
+            other.size = 0;
+        }
+        return *this;
+    }
+};
+
+int main() {
+    std::cout << "--- Creating b1 ---\n";
+    Buffer b1(100);
+
+    std::cout << "\n--- Copying b1 to b2 (Copy Constructor) ---\n";
+    Buffer b2 = b1; // Performs slow deep copy of 100 elements
+
+    std::cout << "\n--- Moving b1 to b3 (Move Constructor) ---\n";
+    // std::move casts b1 to an rvalue reference, telling the compiler it's safe to steal its data
+    Buffer b3 = std::move(b1);
+
+    std::cout << "\n--- Exiting Program ---\n";
+    return 0;
+}
+```
+
+**Crucial Interview Questions on this Code**
+- Q: Why is noexcept critical for Move Constructors/Assignment operators?
+  Answer: If a move constructor throws an exception midway, the object state becomes corrupt. Standard library containers like std::vector will default back to copying elements during a resize unless your move operations are explicitly marked noexcept. For high-performance backend systems, omitting noexcept causes massive performance bottlenecks.
+- Q: What happens if you forget to set other.data = nullptr inside the move constructor?
+  Answer: A fatal double-free runtime error occurs. When the temporary/old object (other) goes out of scope, its destructor (`delete[] data`) executes and frees the exact same memory pointer that your new object just stole.
+
+---
+
+# SECTION 12: SMART POINTERS
+
+## 12.1 Syntax
+Smart pointers are included in the `<memory>` header. They automatically free heap memory when they go out of scope, preventing memory leaks.
+- `std::unique_ptr` (Exclusive Ownership) — Syntax: `std::unique_ptr<Type> ptr = std::make_unique<Type>(args);` Key Rule: Cannot be copied. It can only be moved using std::move().
+- `std::shared_ptr` (Shared Ownership) — Syntax: `std::shared_ptr<Type> ptr = std::make_shared<Type>(args);` Key Rule: Keeps a reference count. Memory is deleted only when the last shared_ptr pointing to it is destroyed.
+- `std::weak_ptr` (Non-owning Observer) — Syntax: `std::weak_ptr<Type> wptr = shared_ptr_instance;` Key Rule: Does not increase the reference count. Used to prevent circular dependencies. To access the data, you must temporarily convert it back to a shared_ptr using `.lock()`.
+
+## 12.2 Concise Code Example
+```cpp
+#include <iostream>
+#include <memory>
+
+class Resource {
+public:
+    Resource() { std::cout << "Resource Created\n"; }
+    ~Resource() { std::cout << "Resource Destroyed\n"; }
+    void sayHello() { std::cout << "Hello from Resource!\n"; }
+};
+
+int main() {
+    std::cout << "--- 1. Unique Pointer ---\n";
+    {
+        // Allocation
+        std::unique_ptr<Resource> uptr1 = std::make_unique<Resource>();
+
+        // std::unique_ptr<Resource> uptr2 = uptr1; // ERROR: Copying is banned!
+        std::unique_ptr<Resource> uptr2 = std::move(uptr1); // Valid: Ownership transferred
+    } // uptr2 goes out of scope here -> Resource is automatically Destroyed
+
+    std::cout << "\n--- 2. Shared & Weak Pointer ---\n";
+    std::weak_ptr<Resource> wptr;
+    {
+        // Allocation
+        std::shared_ptr<Resource> sptr1 = std::make_shared<Resource>();
+        std::cout << "Reference Count: " << sptr1.use_count() << "\n"; // Prints 1
+
+        {
+            std::shared_ptr<Resource> sptr2 = sptr1; // Valid: Ownership shared
+            std::cout << "Reference Count: " << sptr1.use_count() << "\n"; // Prints 2
+
+            wptr = sptr1; // Weak pointer observes, does NOT increase count
+            std::cout << "Reference Count (with weak): " << sptr1.use_count() << "\n"; // Still 2
+        } // sptr2 goes out of scope -> Reference count drops to 1
+
+        std::cout << "Reference Count: " << sptr1.use_count() << "\n"; // Prints 1
+    } // sptr1 goes out of scope -> Count becomes 0 -> Resource is automatically Destroyed
+
+    std::cout << "\n--- 3. Checking Weak Pointer Validity ---\n";
+    if (wptr.expired()) {
+        std::cout << "Resource no longer exists! Weak pointer safely detected expiration.\n";
+    }
+
+    return 0;
+}
+```
+
+**Crucial Interview Question on this Code**
+- Q: Why should you prefer std::make_shared over `std::shared_ptr<Resource>(new Resource())`?
+  Answer: Performance and memory optimization. std::make_shared performs a single heap allocation for both the object itself and its internal control block (which stores the reference count). Using new forces two separate heap allocations, which increases memory fragmentation and tracking overhead.
+
+---
+
+# SECTION 13: NICE-TO-HAVE (JD marks these optional — only if time remains)
+- CI-CD Knowledge
+- Python
+- Securities domain (business knowledge, optional)
+- Testing Automation (business knowledge, optional)
+
+---
+
+**A note (not in your original file):** the sequence above follows exactly the JD's "Must Have" order — C core → Linux internals → IPC/networking → DSA → GNU toolchain → C++ OOP — so you can study top-to-bottom in interview-relevance order. Every `[ADDED]` block fills a spot your file explicitly named as an expected question but left as a bullet point with no code.

@@ -1,0 +1,364 @@
+INTERVIEW PREP CHECKLIST — C/C++ / LINUX / CYBERSECURITY / QT
+(Consolidated: original list + gap topics added)
+================================================================
+
+1. C++ (VERY IMPORTANT)
+------------------------
+Core C++
+  - OOP concepts: Encapsulation, Inheritance, Polymorphism, Abstraction, Virtual functions
+  - Constructors & destructors
+  - Copy constructor / Move constructor
+  - Copy assignment operator / Move assignment operator
+  - Rule of 3/5
+  - Friend functions/classes
+  - [ADDED] Diamond problem & virtual inheritance
+  - [ADDED] Multiple inheritance ambiguity resolution
+  - [ADDED] Virtual table / vptr mechanics (how polymorphism works internally)
+  - [ADDED] Object slicing
+  - [ADDED] Pure virtual functions vs abstract class vs "interface" in C++
+  - [ADDED] Static vs dynamic binding
+  - [ADDED] Function overloading vs overriding vs name hiding
+  - [ADDED] const correctness - const member functions, const_cast, const/non-const overload pairs
+  - [ADDED] explicit keyword
+  - [ADDED] Exception handling + RAII interaction (destructor throwing during stack unwinding)
+  - [ADDED] Delegating constructors; initializer list vs constructor-body assignment
+
+Memory Management
+  - Stack vs Heap
+  - malloc/free vs new/delete
+  - Memory leaks
+  - Dangling pointers
+  - Smart pointers: unique_ptr, shared_ptr, weak_ptr
+  - RAII
+
+STL
+  - vector, list, deque, map, unordered_map, set, unordered_set, priority_queue
+  - Algorithms: sort, binary_search, lower_bound, upper_bound
+  - [ADDED] Iterators and iterator invalidation rules
+  - [ADDED] Custom comparators/functors for sort, priority_queue
+  - [ADDED] std::pair, std::tuple, std::optional, std::variant
+
+Modern C++
+  - auto, lambda, constexpr, move semantics, rvalue references, templates
+  - [ADDED] std::move vs std::forward (perfect forwarding)
+  - [ADDED] Universal/forwarding references
+  - [ADDED] Variadic templates
+  - [ADDED] noexcept and why it matters for move constructors
+
+Design Patterns [NEW SECTION]
+  - Singleton (including thread-safe lazy init)
+  - Factory
+  - Observer
+  - Strategy
+
+
+2. DATA STRUCTURES & ALGORITHMS (VERY IMPORTANT)
+--------------------------------------------------
+Data Structures
+  - Arrays, Linked Lists, Stack, Queue, Hash Table, Heap, Tree, BST, Graph
+  - [ADDED] Trie
+  - [ADDED] Union-Find / Disjoint Set
+
+Algorithms
+  - Binary Search, DFS, BFS, Sliding Window, Two Pointers, Recursion, Backtracking, DP basics
+  - [ADDED] Bit manipulation
+  - [ADDED] Greedy algorithms
+  - [ADDED] Graph algorithms: Dijkstra, Topological Sort, Kruskal/Prim (MST)
+  - [ADDED] Basic string matching (KMP)
+
+Must Practice
+  - Top 100 LeetCode questions
+  - Medium-level problems
+
+
+3. OPERATING SYSTEMS (EXTREMELY IMPORTANT)
+--------------------------------------------
+Processes
+  - Process lifecycle, Process states, Context switching
+  - [ADDED] Zombie vs orphan process
+  - [ADDED] Copy-on-write fork()
+
+Threads
+  - Process vs Thread, User vs Kernel thread, Thread scheduling
+  - [ADDED] CPU scheduling algorithms: FCFS, SJF, Round Robin, Priority
+
+Synchronization
+  - Mutex, Semaphore, Spinlock, Condition Variable, Deadlock, Race Condition
+  - [ADDED] Deadlock detection/avoidance (Banker's algorithm)
+
+Memory
+  - Virtual Memory, Paging, Segmentation, Memory Mapping
+  - [ADDED] Page replacement algorithms: LRU, FIFO, Optimal
+  - [ADDED] Belady's anomaly
+
+Linux Internals
+  - fork(), exec(), wait(), signals, shared memory, pipes
+
+
+4. MULTITHREADING & CONCURRENCY (VERY IMPORTANT)
+---------------------------------------------------
+Topics
+  - Thread creation, Mutex, Locks, Atomic operations
+  - Producer-Consumer, Reader-Writer problem
+  - Deadlock prevention, Lock-free concepts
+
+C++ Specific
+  - std::thread, std::mutex, std::condition_variable, std::atomic, futures/promises
+
+
+5. LINUX (VERY IMPORTANT)
+---------------------------
+Commands
+  - ps, top, grep, awk, sed, find, lsof, netstat, ss
+
+System Programming
+  - File descriptors, Poll, Select, Epoll, Signals, Shared memory, Pipes, Socket programming
+
+Debugging
+  - gdb, valgrind, strace
+
+
+6. NETWORKING (VERY IMPORTANT)
+---------------------------------
+Fundamentals
+  - OSI model, TCP/IP
+
+TCP
+  - 3-way handshake, 4-way termination, Retransmission, Flow control, Congestion control
+  - [ADDED] Nagle's algorithm
+
+Sockets (expanded - known resume gap area)
+  - [ADDED] Full socket API sequence: socket() -> bind() -> listen() -> accept() -> connect()
+  - [ADDED] TCP socket vs UDP socket code differences
+  - [ADDED] Blocking vs non-blocking I/O
+  - [ADDED] select vs poll vs epoll - direct comparison, not just definitions
+
+Protocols
+  - HTTP/HTTPS, DNS, DHCP, ARP, ICMP
+
+Security
+  - TLS basics, Certificates, Public Key Infrastructure
+
+
+7. CYBERSECURITY BASICS (IMPORTANT)
+---------------------------------------
+Topics
+  - Symmetric encryption, Asymmetric encryption, Hashing, Digital signatures, TLS/SSL
+  - Authentication vs Authorization
+  - Common vulnerabilities: Buffer Overflow, SQL Injection, XSS, CSRF
+  - [ADDED] Exploit mitigations: Stack canaries, ASLR, DEP/NX
+  - [ADDED] Code signing / signature verification (maps to MW Guardian Ed25519 work)
+
+Endpoint Security
+  - Malware detection concepts, Process monitoring, File monitoring, Behavioral analysis
+  - [ADDED] Static vs dynamic malware analysis
+
+
+8. SYSTEM DESIGN (3 YEARS EXPERIENCE)
+-----------------------------------------
+Basics
+  - Scalability, Load Balancer, Cache, Database basics, Message Queue
+
+Design Questions
+  - Design a logging system
+  - Design URL shortener
+  - Design file scanning service
+  - Design antivirus agent architecture
+
+
+9. DATABASE BASICS
+----------------------
+SQL
+  - Joins, Indexes, Normalization, Transactions, ACID
+
+
+10. QT TOPICS TO PREPARE
+----------------------------
+Core Qt Framework
+  - QObject, Parent-child ownership model, Event loop, Event handling, Meta-object system
+
+Signals & Slots
+  - How signals and slots work
+  - Connection types: Direct Connection, Queued Connection, Blocking Queued Connection
+  - Thread-safe signal-slot communication
+  - Interview Q: What happens when a signal is emitted from one thread and the slot
+    executes in another thread?
+
+Widgets
+  - QWidget, QMainWindow, Dialogs, Layouts, Custom widgets
+  - Be ready to explain: screen design decisions, widget communication, UI update handling
+
+Model-View Architecture
+  - Model, View, Delegate, Proxy Models
+  - Classes: QAbstractItemModel, QTableView, QListView, QTreeView
+  - Interview Q: Difference between MVC and Qt's Model/View framework?
+
+Multithreading in Qt
+  - QThread, QRunnable, QThreadPool, QtConcurrent
+  - Interview Q: Why should GUI updates not be performed from worker threads?
+
+Memory Management
+  - Parent-child ownership, QObject destruction, Smart pointers with Qt, Avoiding memory leaks
+  - Interview Q: When does Qt automatically delete an object?
+
+Networking
+  - QTcpSocket, QUdpSocket, QNetworkAccessManager
+
+IPC and System Integration
+  - QProcess, Shared Memory, Local Sockets, D-Bus (Linux)
+
+Qt Build System
+  - qmake, CMake with Qt, MOC (Meta Object Compiler), UI Compiler
+  - Interview Q: What is MOC and why does Qt need it?
+
+Qt Debugging
+  - Qt Creator debugger, Logging, Profiling, Memory leak debugging
+
+Questions You Should Definitely Be Able to Answer
+  1. What is the purpose of QObject?
+  2. How do signals and slots work internally?
+  3. Difference between std::thread and QThread?
+  4. Why is the GUI thread special?
+  5. What is an event loop?
+  6. What is MOC?
+  7. How does parent-child memory management work?
+  8. How do you communicate between threads in Qt?
+  9. How do you create a custom widget?
+  10. How would you design a large desktop application using Qt?
+
+
+11. RESUME PROJECT DEEP-DIVE [NEW SECTION - CRITICAL]
+---------------------------------------------------------
+Be ready to explain architecture, design decisions, and trade-offs for:
+  - eBPF real-time virus scanner - why eBPF, kernel-side map design, "lock-free" claim scope
+  - MW Guardian - fanotify + Ed25519 flow, why Ed25519 over generic ECC/ECDSA
+  - 2FA for SSH - fork of google-authenticator-libpam, custom policy layer
+  - Printer Control / DLP - Apple Endpoint Security Framework integration
+  - File Integrity Monitor - FSEvents + MD5 flow (not kqueue/SHA-256)
+  - Content Scanner CLI - PCRE2 with JIT, performance reasoning
+
+12. FINTECH / LOW-LATENCY TRADING SPECIFIC (NSE, Chella, similar) [NEW SECTION]
+------------------------------------------------------------------------------
+Categories of questions to expect:
+
+A) Live Production Debugging (scenario-based, always with a constraint like
+   "can't restart," "can't add logs," "market is live")
+B) Latency-Focused Systems
+   - Latency sources in trade path: NIC -> kernel -> application -> order send
+   - Kernel bypass concepts: DPDK, RDMA, Solarflare/OpenOnload
+   - Cache locality, false sharing, branch prediction
+   - Lock-free queues, SPSC (single-producer-single-consumer) ring buffers
+   - Why malloc in hot path is dangerous; pre-allocation strategies
+C) Networking/Sockets with a Trading Lens
+   - TCP vs UDP tradeoffs for market data feeds (UDP multicast standard for feeds)
+   - Nagle's algorithm - why disabled (TCP_NODELAY) in trading systems
+   - Handling out-of-order / dropped UDP packets in a feed handler
+   - Socket buffer tuning, kernel bypass sockets
+D) Concurrency Under Real-Time Constraints
+   - Lock-free vs mutex tradeoffs at microsecond scale
+   - Busy-wait/spin-lock vs blocking wait - why spin-locks common in HFT
+   - Thread pinning / CPU affinity / avoiding context switches
+E) "What Would You Do If" Operational Scenarios (see bank below)
+F) Resume-Specific Deep Dives
+   - Expect probing on kernel-level tooling comfort (eBPF, fanotify) - directly
+     transferable to live-process diagnosis questions; reference this experience
+     explicitly in answers.
+
+
+13. PRODUCTION INCIDENT SCENARIO BANK [NEW SECTION]
+-----------------------------------------------------
+For each: think "diagnose without disturbing the live process."
+
+Q1. CPU utilization spiking on a live trading process, no logs added by the
+    programmer, cannot stop the binary (market is running) - find root cause.
+    MODEL APPROACH:
+      1. Confirm which thread is hot: `top -H -p <pid>` (per-thread CPU, not
+         just per-process)
+      2. Attach perf non-intrusively: `perf top -p <pid>` or
+         `perf record -p <pid> -g -- sleep 10` - live CPU profile without
+         stopping the binary. This is the strongest opening answer.
+      3. Check syscalls with minimal overhead: `strace -p <pid> -c` (summary
+         mode; avoid full strace with no -c under high syscall rates - it
+         slows the process significantly)
+      4. Inspect stack: `gdb -p <pid>` CAN attach without killing, but it
+         pauses the process momentarily while attached - mention this
+         tradeoff explicitly. Safer: /proc/<pid>/task/*/stat for thread
+         states without pausing.
+      5. Common root causes to check for given "no logs":
+         - Busy-wait loop with a bad exit condition
+         - Lock contention (one thread spinning on a mutex never released -
+           high time in pthread_mutex_lock internals via perf is the giveaway)
+         - Unbounded retry loop (e.g., reconnect logic looping on failure)
+         - O(n^2) hot path that only appears under high message rate
+      6. Correlate CPU spike timing with market events (open, burst of ticks,
+         specific symbol) using perf sample timestamps vs exchange feed
+         timestamps
+      7. Last resort: `gcore <pid>` for a live core dump - captures full
+         process state without killing it; do offline post-mortem with gdb
+         on the dump while original process keeps running untouched.
+      KEY SCORING POINT: distinguish observe-only tools (perf, strace -c,
+      /proc, gcore) from stop-required tools (gdb breakpoints, restart with
+      logging). Lead with perf top.
+
+Q2. Market data feed handler is falling behind (increasing lag) during a
+    high-volume session - how do you detect and confirm this live?
+    THINK ABOUT: comparing feed handler's last-processed sequence number vs
+    exchange's current sequence number; monitoring UDP socket receive buffer
+    fill level (netstat -su for UDP drops, ss -u for socket queue depth);
+    checking if the consumer thread is CPU-bound (perf) or blocked on
+    downstream writes (strace -c to see time in write()/send()).
+
+Q3. A trading process has a suspected memory leak but is live and cannot be
+    restarted mid-session - how do you confirm and locate it without
+    restarting?
+    THINK ABOUT: /proc/<pid>/status (VmRSS growth over time, sampled
+    periodically); /proc/<pid>/smaps for per-mapping growth; valgrind is NOT
+    an option live (too much overhead, requires restart) - mention this
+    explicitly as a wrong tool for this scenario; gcore + offline analysis
+    with tools like `pmap` or heap analyzers on the dump if available.
+
+Q4. An order was sent but never acknowledged by the exchange - how do you
+    trace it end-to-end without adding new logging?
+    THINK ABOUT: existing structured logs/sequence IDs if any exist;
+    correlating local send timestamp (from socket send() return or a
+    hardware timestamp if available) against exchange ack timestamps;
+    checking for packet loss at the OS level (ss -i for TCP retransmits, or
+    netstat -s for UDP errors); ruling out application bug (order dropped
+    before send call) vs network issue (dropped in transit) vs exchange-side
+    delay.
+
+Q5. One core is pinned at 100% while others are idle on a multi-threaded
+    trading application - what does this suggest and how do you confirm?
+    THINK ABOUT: likely a single thread doing spin-wait or stuck in a tight
+    loop, or CPU affinity misconfiguration pinning too many threads onto one
+    core; confirm via `top -H` sorted by CPU, cross-check with
+    `taskset -p <tid>` to see actual affinity mask, then `perf top -p <tid>`
+    scoped to that specific thread ID.
+
+Q6. Latency for order execution has crept up gradually over days/weeks, not
+    a sudden spike - how do you approach root-causing a gradual regression?
+    THINK ABOUT: this is different from a spike - look for gradual resource
+    exhaustion (memory fragmentation, growing data structures, log file
+    growth affecting I/O), or a change correlated with a deployment/config
+    change; compare historical perf profiles or metrics if available;
+    consider cache/TLB effects from larger working set as data grows.
+
+Q7. GC-like pauses or unpredictable latency spikes appear randomly in an
+    otherwise low-latency C++ application (no actual GC in C++, so what's
+    causing the pause pattern)?
+    THINK ABOUT: page faults from lazy memory allocation (mitigated by
+    pre-touching/pre-allocating memory at startup); malloc/free causing lock
+    contention in the allocator (consider why hot-path allocation is
+    avoided); mmap/munmap calls; kernel scheduling jitter from a
+    non-isolated core; huge page vs regular page effects.
+
+Q8. You're asked to explain why TCP_NODELAY is typically set in trading
+    applications - what's the tradeoff?
+    THINK ABOUT: Nagle's algorithm batches small packets to reduce network
+    overhead, which is great for throughput but adds up to ~40ms latency
+    waiting to batch - unacceptable for order messages where every
+    microsecond counts; the tradeoff is more packets on the wire (slightly
+    higher bandwidth use) in exchange for immediate send.
+
+================================================================
+END OF CHECKLIST
