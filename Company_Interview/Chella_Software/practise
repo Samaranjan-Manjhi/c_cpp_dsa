@@ -1,6 +1,550 @@
 -------------------------------------  Intro  -------------------------------------
 I'm currently a Systems and Cyber Security Software Engineer at MicroWorld Software Services in Mumbai. Over the past three years, I've specialized in building C/C++ production-grade endpoint security tools, kernel monitors, and Data Loss Prevention (DLP) engines across macOS and Linux endpoints.  In my current role, I've designed and delivered over 10 enterprise security modules. Most recently, I built a real-time antivirus scanning daemon using eBPF kernel tracing, an execution gating framework using kernel permission events, and a custom PAM module adding 2FA to SSH logins. My work focused on constructing cross-platform security daemons that reduced system memory overhead by 25% and boosted event detection throughput by 40%.  Moving forward, I’m looking to bring my deep expertise in kernel-level monitoring, cryptographic security, and low-level system architecture to this role, and I’m really excited about the high-scale engineering challenges your team is tackling.
 
+********************************************************************************************************************
+Chella Softwares — Full Interview Q&A (Based on Shared Experience Sheet)
+This covers every question in the document you shared, grouped by topic, with explanations and code (C/C++/SQL) where relevant.
+
+1. Self-Introduction
+Structure: Name → current role/experience → core tech strengths → what you're looking for next. Example skeleton (fill in specifics from your resume — eBPF virus scanner, MW Guardian, endpoint security tooling, PAM, Apple Endpoint Security Framework):
+
+"I'm a systems and cybersecurity software engineer with about 3 years of experience, mainly working in C/C++ on Linux. My recent work has been kernel-level and endpoint-security tooling — things like real-time monitoring using eBPF and fanotify, and PAM-based authentication modules. I enjoy performance-conscious, systems-level design, and I'm looking for a role where I can keep working close to the OS and take on more scale/production-critical systems."
+
+Keep it under 60–90 seconds. Don't list every project — name 1–2, save details for follow-ups.
+
+2. Aptitude / Math Questions
+Q: If 35 was mistakenly entered as 53, and the resulting product increased by 540, what is the new product? Let the other multiplier be x. Correct product = 35x, mistaken product = 53x. Difference: 53x − 35x = 18x = 540 → x = 30. New (mistaken) product = 53 × 30 = 1590. (Correct product would've been 35 × 30 = 1050.)
+
+Q: A product gets 25% off on day 1, then an additional 50% off the reduced price on day 2. Final price ₹60 — what was the original price? Let original = P. After day 1: 0.75P. After day 2: 0.5 × 0.75P = 0.375P. 0.375P = 60 → P = 160.
+
+General tip: These are always "work backwards from the final value" problems — set up one variable, translate each sentence into an equation, solve last-to-first.
+
+3. Pattern Program
+Q: For n=3, print concentric square rings (n=3 example given: 5×5 grid)
+
+33333
+32223
+32123
+32223
+33333
+Logic: grid size = 2n−1. Each cell's value = n − (distance from nearest edge).
+
+#include <stdio.h>
+
+int min4(int a, int b, int c, int d) {
+    int m = a;
+    if (b < m) m = b;
+    if (c < m) m = c;
+    if (d < m) m = d;
+    return m;
+}
+
+int main(void) {
+    int n = 3;
+    int size = 2 * n - 1;
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            int dist_from_edge = min4(i, size - 1 - i, j, size - 1 - j);
+            printf("%d", n - dist_from_edge);
+        }
+        printf("\n");
+    }
+    return 0;
+}
+Explain while writing: outer ring is always n, and each ring inward decreases by 1, down to 1 at the center.
+
+4. SQL / Database
+Q: Write queries based on employee data (general). Practice these patterns cold:
+
+-- Second highest salary
+SELECT MAX(salary) FROM employees WHERE salary < (SELECT MAX(salary) FROM employees);
+
+-- Employees earning more than department average
+SELECT e.name FROM employees e
+WHERE e.salary > (SELECT AVG(salary) FROM employees WHERE department = e.department);
+
+-- Count of employees per manager
+SELECT manager_id, COUNT(*) FROM employees GROUP BY manager_id;
+Q: How to create a database / structure it?
+
+CREATE DATABASE company;
+USE company;
+
+CREATE TABLE employees (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    manager_id INT,
+    salary DECIMAL(10,2),
+    FOREIGN KEY (manager_id) REFERENCES employees(id)
+);
+Talking points: normalize to avoid redundancy (1NF/2NF/3NF), pick sensible primary/foreign keys, index columns you filter/join on frequently (e.g. manager_id), choose data types that match the domain (don't store money as float).
+
+Q: How to delete duplicate entries in a table?
+
+DELETE FROM employee
+WHERE id NOT IN (
+    SELECT MIN(id)
+    FROM employee
+    GROUP BY name, age
+);
+Explanation: groups rows by the columns that define a "duplicate" (name, age), keeps the lowest id in each group, deletes everything else. If the table has no unique key at all, you'd first add a surrogate key or use ROW_NUMBER() (SQL Server/Postgres):
+
+DELETE FROM employee
+WHERE id IN (
+    SELECT id FROM (
+        SELECT id, ROW_NUMBER() OVER (PARTITION BY name, age ORDER BY id) AS rn
+        FROM employee
+    ) t WHERE rn > 1
+);
+Q: How do you inspect which SQL query is taking time?
+
+EXPLAIN / EXPLAIN ANALYZE on the query to see the execution plan — look for full table scans where an index should be used.
+Enable the slow query log (MySQL: slow_query_log) to capture queries above a time threshold.
+Check for missing indexes on WHERE/JOIN/ORDER BY columns.
+Q: DB has multiple inserts/updates and is slow — how do you improve it?
+
+Batch inserts (INSERT INTO t VALUES (...), (...), (...) instead of one INSERT per row).
+Wrap the batch in a single transaction — committing per-row is expensive (disk sync on every commit).
+Add indexes for lookups, but don't over-index — every index slows down inserts/updates.
+Use prepared statements so the query isn't re-parsed/re-planned each time.
+For very large loads, consider bulk-load utilities (LOAD DATA INFILE in MySQL) instead of row-by-row inserts.
+5. Multithreading
+Q: Explain multithreading, and what to watch for. Multiple threads share the same address space and run concurrently. Constraints to manage:
+
+Race conditions — protect shared state with mutexes.
+Deadlock — always acquire multiple locks in the same global order.
+Oversubscription — don't spawn far more threads than CPU cores for CPU-bound work; use a thread pool.
+Thread-unsafe library calls — e.g. strtok isn't thread-safe (strtok_r is); check any C library function you call.
+When to use it: independent, parallelizable work, or I/O-bound tasks where threads can overlap waiting time (e.g. one thread waits on a socket while another processes data). When not to: the task is small enough that thread creation/sync overhead exceeds the benefit, or there's heavy contention on one shared resource anyway (serializes regardless of thread count).
+
+Q: Explain lock and condition variables in C.
+
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+int ready = 0;
+
+void *waiter(void *arg) {
+    pthread_mutex_lock(&lock);
+    while (!ready)
+        pthread_cond_wait(&cond, &lock);   // releases lock while waiting, reacquires on wake
+    printf("Condition met, proceeding\n");
+    pthread_mutex_unlock(&lock);
+    return NULL;
+}
+
+void *signaler(void *arg) {
+    pthread_mutex_lock(&lock);
+    ready = 1;
+    pthread_cond_signal(&cond);
+    pthread_mutex_unlock(&lock);
+    return NULL;
+}
+A mutex alone only protects data; a condition variable lets a thread sleep efficiently until some condition becomes true, instead of busy-polling. Always check the condition in a while loop (not if) — spurious wakeups are possible.
+
+Q: What are "joins" (in a threading context)? pthread_join(thread_id, NULL) blocks the calling thread until the specified thread finishes — used to wait for worker threads to complete before the main thread proceeds (e.g., before reading their results or exiting).
+
+pthread_t t1;
+pthread_create(&t1, NULL, worker_fn, NULL);
+// ... do other work ...
+pthread_join(t1, NULL); // wait for t1 to finish
+(If they instead meant SQL joins: INNER JOIN returns matching rows in both tables; LEFT JOIN returns all rows from the left table plus matches from the right, NULL where no match.)
+
+Q: Explain race condition. Occurs when two or more threads access shared data concurrently, at least one writes, and the outcome depends on the timing/interleaving of execution. Classic example: counter++ is not atomic — it's really read, increment, write. If two threads interleave these three steps, one increment can be lost.
+
+// UNSAFE without a lock:
+counter++;   // read counter, add 1, write back — three separate steps
+Fix: wrap in a mutex, or use atomic_int with atomic_fetch_add.
+
+Q: Deadlock walkthrough — what happens in this code?
+
+std::mutex m1, m2;
+
+void Thread1() {
+    m1.lock();
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    m2.lock();      // Thread1 now waits for m2
+    m2.unlock();
+    m1.unlock();
+}
+
+void Thread2() {
+    m2.lock();
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    m1.lock();      // Thread2 now waits for m1
+    m1.unlock();
+    m2.unlock();
+}
+Thread1 holds m1 and waits for m2; Thread2 holds m2 and waits for m1. The 1-second sleep guarantees both threads are holding their first lock before trying for the second — classic deadlock (circular wait). Neither thread can ever proceed. Fix: always lock in the same global order in every thread (e.g. always m1 before m2), or use std::lock(m1, m2) which acquires both atomically without risk of this ordering issue.
+
+6. Lock-Free Data Structures
+Q: What are lock-free data structures, and why use them in multithreaded applications? Structures where threads coordinate using atomic hardware instructions (like compare-and-swap) instead of mutexes, so no thread ever blocks another. Used because:
+
+Avoids context-switch and priority-inversion costs of locks.
+No risk of deadlock (no locks to circularly wait on).
+Better throughput/latency under high contention — important in low-latency systems (trading engines, real-time monitoring, which is close to your eBPF background).
+#include <stdatomic.h>
+atomic_int counter = 0;
+
+void safe_increment(void) {
+    int old_val, new_val;
+    do {
+        old_val = atomic_load(&counter);
+        new_val = old_val + 1;
+    } while (!atomic_compare_exchange_weak(&counter, &old_val, new_val));
+}
+Trade-off to mention: harder to implement correctly (ABA problem, memory ordering), so used selectively — usually in hot paths, not everywhere.
+
+7. Client-Server / Socket Programming
+Q: In a multi-client server, how does the server identify which client sent data? Each accept() call returns a distinct socket file descriptor for that connection. The server keeps a map/array from fd → client state (client ID, buffer, session info). When select/poll/epoll reports a ready fd, the server looks up that fd's associated client struct — the fd itself is the identity.
+
+Q: How does a server continuously monitor and receive from multiple clients? Register every client socket (non-blocking) with epoll (Linux) or select/poll. The event loop blocks in epoll_wait, which returns only the fds that actually have data — the server then reads just those, so no client stalls another.
+
+struct epoll_event events[MAX_EVENTS];
+while (1) {
+    int n = epoll_wait(epfd, events, MAX_EVENTS, -1);
+    for (int i = 0; i < n; i++) {
+        int fd = events[i].data.fd;
+        if (fd == listen_fd) {
+            int client_fd = accept(listen_fd, NULL, NULL);
+            make_nonblocking(client_fd);
+            struct epoll_event cev = {.events = EPOLLIN, .data.fd = client_fd};
+            epoll_ctl(epfd, EPOLL_CTL_ADD, client_fd, &cev);
+        } else {
+            char buf[4096];
+            ssize_t n_read = recv(fd, buf, sizeof(buf), 0);
+            if (n_read <= 0) {
+                epoll_ctl(epfd, EPOLL_CTL_DEL, fd, NULL);
+                close(fd);
+            } else {
+                // process buf, feed into that client's message-assembly state
+            }
+        }
+    }
+}
+Q: How would you handle partial/incomplete TCP messages? TCP is a byte stream — one recv() may return only part of a logical message. Fix with length-prefix framing: send a fixed-size header with the payload length, buffer bytes per-client until the full length is received.
+
+typedef struct {
+    uint8_t header[4];
+    size_t header_have;
+    uint8_t *payload;
+    uint32_t payload_len;
+    size_t payload_have;
+} client_msg_state;
+
+int feed_data(client_msg_state *s, const uint8_t *data, size_t len) {
+    size_t off = 0;
+    while (off < len) {
+        if (s->header_have < 4) {
+            size_t need = 4 - s->header_have;
+            size_t take = (len - off < need) ? (len - off) : need;
+            memcpy(s->header + s->header_have, data + off, take);
+            s->header_have += take; off += take;
+            if (s->header_have == 4) {
+                s->payload_len = ntohl(*(uint32_t *)s->header);
+                s->payload = malloc(s->payload_len);
+                s->payload_have = 0;
+            }
+            continue;
+        }
+        size_t need = s->payload_len - s->payload_have;
+        size_t take = (len - off < need) ? (len - off) : need;
+        memcpy(s->payload + s->payload_have, data + off, take);
+        s->payload_have += take; off += take;
+        if (s->payload_have == s->payload_len) return 1; // message complete
+    }
+    return 0; // wait for more data
+}
+Also mention: validate the length header before malloc-ing (cap it) so a malicious/corrupt client can't force a huge allocation.
+
+Q: Practical experience with socket programming / file transfer? Be ready to describe: opening a listening socket, accept() loop, sending a file in fixed-size chunks with send()/read() loops (handling partial writes the same way as partial reads), and optionally a checksum (CRC32/MD5) to verify integrity after transfer — tie this to your FIM project's MD5 usage if relevant.
+
+8. Pointers, Memory Management & Structs in C
+Q: Why are pointers important in C? Where would you use them? They let you: work directly with memory addresses (needed for dynamic allocation), pass large structures to functions by reference (avoid copying), build linked data structures (linked lists, trees, hash maps), and implement callbacks via function pointers. Central to systems programming — most of your OS/kernel-adjacent work depends on pointer manipulation.
+
+Q: Represent employee records fetched from a DB, in C.
+
+typedef struct {
+    int id;
+    char name[64];
+    float salary;
+} Employee;
+
+Employee *employees = malloc(100 * sizeof(Employee));
+int count = 0;
+// fill via DB fetch loop:
+// employees[count].id = ...; strcpy(employees[count].name, ...); count++;
+Q: You allocated space for 100 records but got more — how do you handle it?
+
+if (count == capacity) {
+    capacity *= 2;
+    Employee *tmp = realloc(employees, capacity * sizeof(Employee));
+    if (tmp == NULL) {
+        // realloc failed — original block is untouched, still valid
+        perror("realloc failed");
+        // handle gracefully: stop, or free(employees) and abort
+    } else {
+        employees = tmp;
+    }
+}
+Key point interviewers want: never write employees = realloc(employees, ...) directly — if realloc fails and returns NULL, you lose the pointer to the original (still-valid) block, causing a memory leak.
+
+Q: malloc() vs calloc() vs realloc()?
+
+malloc(size) — allocates uninitialized memory.
+calloc(n, size) — allocates n * size bytes, zero-initialized, also guards against multiplication overflow internally.
+realloc(ptr, new_size) — resizes a previous allocation, preserving existing content up to the smaller of old/new size; may move the block.
+Q: Precautions with realloc()? Always assign to a temporary pointer first (see above), check for NULL on failure, and remember the pointer may have moved — don't keep old pointers/pointers-into-the-old-block around after a successful realloc.
+
+Q: What if realloc() fails? It returns NULL and the original block remains valid and unchanged. Your code must check for this and decide: retry with a smaller size, free the original and report an error, or abort — but never silently overwrite your only pointer to the original data.
+
+Q: Dynamic memory allocation with a struct — code?
+
+typedef struct {
+    int id;
+    char name[50];
+} Employee;
+
+Employee *e = malloc(sizeof(Employee));
+if (e == NULL) { /* handle allocation failure */ }
+e->id = 1;
+strcpy(e->name, "Raghav");
+// ... use e ...
+free(e);
+9. String Handling
+Q: How would you split a string like "Raghav_Chopra" using _ as the delimiter?
+
+#include <stdio.h>
+#include <string.h>
+
+int main(void) {
+    char str[] = "Raghav_Chopra";
+    char *token = strtok(str, "_");
+    while (token != NULL) {
+        printf("%s\n", token);
+        token = strtok(NULL, "_");
+    }
+    return 0;
+}
+Q: Count words with a specific delimiter.
+
+#include <stdio.h>
+#include <string.h>
+
+int main(void) {
+    char str[100];
+    scanf("%[^\n]", str);
+    char *word = strtok(str, " ,.-");
+    while (word != NULL) {
+        printf("%s = %lu\n", word, strlen(word));
+        word = strtok(NULL, " ,.-");
+    }
+    return 0;
+}
+Worth mentioning: strtok modifies the original string in place (inserts \0 at each delimiter) and keeps internal state, so it's not thread-safe or reentrant. strtok_r takes an explicit saveptr argument and is the safe alternative in multithreaded code.
+
+10. File Processing at Scale
+Q: Given a huge file of EmployeeID, ManagerID, generate ManagerID → count of reports. Stream the file line by line (don't load it all into memory), and accumulate counts in a hash map keyed by manager ID.
+
+#include <stdio.h>
+#include <string.h>
+#include "uthash.h"   // common C hash table library
+
+typedef struct {
+    int manager_id;
+    int count;
+    UT_hash_handle hh;
+} ManagerCount;
+
+int main(void) {
+    FILE *f = fopen("employees.txt", "r");
+    ManagerCount *counts = NULL;
+    int emp_id, mgr_id;
+
+    while (fscanf(f, "%d,%d", &emp_id, &mgr_id) == 2) {
+        ManagerCount *entry;
+        HASH_FIND_INT(counts, &mgr_id, entry);
+        if (!entry) {
+            entry = malloc(sizeof(ManagerCount));
+            entry->manager_id = mgr_id;
+            entry->count = 0;
+            HASH_ADD_INT(counts, manager_id, entry);
+        }
+        entry->count++;
+    }
+    fclose(f);
+
+    FILE *out = fopen("manager_counts.txt", "w");
+    ManagerCount *cur, *tmp;
+    HASH_ITER(hh, counts, cur, tmp) {
+        fprintf(out, "%d,%d\n", cur->manager_id, cur->count);
+    }
+    fclose(out);
+    return 0;
+}
+This is the same pattern for: "trades per trading manager" and "products per category" — stream, hash-map-aggregate, write once at the end.
+
+Q: How do you check whether a Manager ID already exists while processing?
+
+Hash table (as above) — average O(1) lookup, best choice for streaming data.
+If memory is very constrained: keep a sorted array and use binary search — O(log n) lookup, but O(n) insert unless you batch-sort at the end.
+Q: If using linear search, how do you improve average lookup performance? Sort the data once and binary-search (O(log n) instead of O(n)), or switch to a hash table for O(1) average lookup — hashing is almost always the better answer for this exact scenario.
+
+Q: Big file with product_name, category — read efficiently, return total products per category. Same streaming + hash-map-by-category pattern as above; read with a buffered fgets/fscanf loop rather than reading the whole file into memory, so the memory footprint stays proportional to the number of distinct categories, not file size.
+
+11. Segmentation Faults
+Q: How do you detect and solve a segfault?
+
+Reproduce under gdb, get a backtrace (bt) at the crash point.
+Use AddressSanitizer (-fsanitize=address) or Valgrind to catch invalid memory access (use-after-free, buffer overflow, out-of-bounds) — often before it actually crashes.
+Check for classic causes: NULL pointer dereference, use-after-free, buffer overflow, uninitialized pointer, stack overflow from deep/unbounded recursion.
+Q: How can you detect it even when the program runs fine and gives no error? This describes silent memory corruption — the invalid write lands in memory that isn't "hot" yet, so no immediate crash. Detect it with AddressSanitizer/Valgrind (they flag the invalid access itself, not just eventual visible corruption), add bounds-checking/assertions in debug builds, and run under varied loads/inputs — heap layout differences can expose the bug that a "lucky" layout hides.
+
+Q: Real situation where a segfault can occur? Use-after-free (freeing a struct, then a stale pointer elsewhere still writes to it later); writing past the end of a stack buffer, corrupting the return address; dereferencing a pointer that was never initialized.
+
+12. Performance / Optimization
+Q: An EOD task takes 30 minutes — how do you optimize it?
+
+Profile first — find where the time actually goes (don't guess).
+If it's DB-bound: batch inserts/updates into single transactions, add appropriate indexes, avoid N+1 query patterns.
+If it's CPU-bound and the work is parallelizable: split across threads/processes.
+If it's I/O-bound: use buffered/async I/O, avoid opening/closing files or connections repeatedly.
+Q: How would you optimize latency (general)? Profile to find the actual bottleneck; reduce lock contention (shrink critical sections, consider lock-free structures for hot paths); batch small I/O operations; cache repeated lookups; avoid unnecessary memory allocation/copies in hot paths; for a server, prefer epoll over thread-per-connection at scale.
+
+Q: We're seeing delays in bulk operations — how do you find the cause? Add timing/logging around each stage (read → parse → transform → write) to isolate which stage is slow, check DB slow-query logs, and use a profiler (perf, valgrind --tool=callgrind) to find hot functions rather than guessing.
+
+13. OOP (C++)
+Q: Example of abstraction.
+
+class Account {
+private:
+    double balance;
+public:
+    void deposit(double amt) { balance += amt; }
+    double getBalance() const { return balance; }
+};
+The caller works with deposit()/getBalance() without knowing or caring how balance is stored internally — that's abstraction (hiding implementation, exposing only necessary behavior).
+
+Q: cout << t.x; where x is private — what happens?
+
+class Test {
+private:
+    int x = 10;
+public:
+    int GetX() { return x; }
+};
+Test t;
+cout << t.x;   // ERROR
+Compilation error — x is private, inaccessible outside the class. Must go through the public accessor: cout << t.GetX();.
+
+Q: What's wrong with this code?
+
+class Employee {
+    int* salary;
+public:
+    Employee() { salary = new int(5000); }
+};
+No destructor — the memory allocated with new is never freed → memory leak. Also violates the Rule of Three: no copy constructor or copy-assignment operator defined, so copying an Employee does a shallow copy of the pointer — two objects end up pointing at the same int, and when both are destroyed (once a destructor is added), you get a double free. Fix: add a destructor (delete salary;), and either define proper copy semantics or (better in modern C++) use std::unique_ptr<int> instead of a raw pointer.
+
+Q: Public/private/protected access specifiers, and public/private keys.
+
+private — accessible only inside the class.
+protected — accessible in the class and derived classes.
+public — accessible from anywhere. If they meant cryptographic keys (plausible in a fintech context): public-key (asymmetric) cryptography uses a public key to encrypt/verify and a private key to decrypt/sign — used for TLS handshakes, digital signatures on transactions, etc.
+14. Behavioral / Resume-Based
+These need your real specifics — use the STAR format (Situation, Task, Action, Result). Frameworks below; fill in from your actual work (eBPF scanner, MW Guardian, 2FA fork, DLP tool, FIM, Content Scanner CLI):
+
+Any production issue solved? — Pick one real incident: what broke, how you diagnosed it (logs/gdb/strace/profiler), the fix, and the measurable outcome.
+Recent client requirement you performed — a specific feature/change a client asked for, your approach, and result.
+Why are you switching companies? — Keep it forward-looking and professional: growth, scope of systems-level work, technical challenge — avoid negative framing of your current employer.
+End-to-end roles and responsibilities — walk through your ownership from requirement → design → implementation → testing → deployment on one representative project.
+Errors/bugs you've faced — a specific tricky bug (race condition, memory corruption, etc.), and how you tracked it down.
+Experience with critical/production systems, and managing downtime — describe monitoring, rollback strategy, and communication during an incident if you've handled one; if not, describe how you'd approach it (health checks, canary deploys, quick rollback path, postmortem).
+I can help you draft the actual STAR answers if you tell me one or two real incidents/projects to build them around.
+
+15. Programming Round
+Q: Count increasing digit substring from a large number. long n = 269253001778 → Ans: 5
+
+#include <stdio.h>
+
+int main(void) {
+    long n = 269253001778;
+    int prev, curr, count = 0;
+
+    prev = n % 10;
+    n = n / 10;
+
+    while (n > 0) {
+        curr = n % 10;
+        if (curr < prev)
+            count++;
+        prev = curr;
+        n = n / 10;
+    }
+
+    printf("Count = %d", count);
+    return 0;
+}
+This walks the digits from least-significant to most-significant and counts how many times a digit is smaller than the one before it in that direction — equivalent to counting "ascending steps" when the number is read left-to-right. For this input it evaluates to 5, matching the expected answer.
+
+Q: Coding — change all 0 digits in a number to 1.
+
+#include <stdio.h>
+#include <string.h>
+
+int main(void) {
+    char num[] = "102030";
+    for (int i = 0; num[i] != '\0'; i++) {
+        if (num[i] == '0')
+            num[i] = '1';
+    }
+    printf("%s\n", num);   // 112131
+    return 0;
+}
+16. Additional Likely Follow-Up Questions
+Interviewers almost always probe one level deeper than the original question. These are natural follow-ups to what's already in this sheet — prep them too.
+
+C / Memory
+Difference between stack and heap memory? Stack: fast, fixed-size, auto-freed on function return, used for local variables. Heap: manually managed (malloc/free), larger, used for data that must outlive the function or whose size isn't known at compile time.
+What is a memory leak, and how do you detect one? Allocated memory never freed. Detect with Valgrind (--leak-check=full) or AddressSanitizer's leak detector; in long-running servers, watch RSS growth over time as a symptom.
+Difference between free() and setting a pointer to NULL? free() releases the memory but the pointer still holds the old (now invalid) address — a dangling pointer — until you explicitly set it to NULL. Best practice: free(p); p = NULL; to avoid accidental use-after-free.
+What is a dangling pointer vs a wild pointer? Dangling: pointed to valid memory that's since been freed. Wild: never initialized, points to garbage.
+Difference between const char *, char * const, and const char * const? First: pointer to constant data (can't modify the chars, can reassign the pointer). Second: constant pointer to mutable data (can modify chars, can't reassign pointer). Third: both are constant.
+What is a memory alignment / padding issue in structs? Compilers insert padding bytes so struct members align to their natural boundaries (e.g., an int on a 4-byte boundary) — can make sizeof(struct) larger than the sum of member sizes. Reorder members largest-to-smallest to minimize padding if size matters.
+Multithreading / Concurrency
+Difference between concurrency and parallelism? Concurrency: multiple tasks make progress by interleaving (even on one core). Parallelism: tasks literally execute at the same instant (needs multiple cores).
+What is a spinlock, and when would you use one over a mutex? Busy-waits instead of sleeping — cheaper than a mutex if the critical section is very short (avoids context-switch overhead), but wastes CPU if held long. Used in kernel/low-latency code where lock hold time is a few instructions.
+What is false sharing? Two threads modify different variables that happen to sit on the same CPU cache line, causing unnecessary cache invalidation traffic between cores even though there's no logical data race. Fixed by padding/aligning hot variables to separate cache lines.
+What is priority inversion? A low-priority thread holds a lock a high-priority thread needs, and a medium-priority thread preempts the low-priority one — the high-priority thread is indirectly blocked by the medium one. Fixed with priority inheritance protocols.
+How would you implement a reader-writer lock? Allow multiple concurrent readers but exclusive access for a writer — pthread_rwlock_t in C, or build one with a mutex + condition variable + reader count.
+How do you make a function thread-safe? Avoid shared mutable state where possible (prefer local variables); if state must be shared, protect it with a mutex; avoid non-reentrant library calls (strtok → strtok_r, localtime → localtime_r).
+Sockets / Networking
+TCP vs UDP — when would you choose each? TCP: reliable, ordered, connection-oriented — for anything where lost/out-of-order data breaks correctness (a financial transaction, a file transfer). UDP: no ordering/delivery guarantees but lower overhead — used for real-time data where a dropped packet is acceptable (video/audio streaming, some market-data feeds).
+What is the TCP three-way handshake? SYN → SYN-ACK → ACK — establishes a connection and synchronizes sequence numbers before any data is sent.
+What is Nagle's algorithm, and why might you disable it (TCP_NODELAY)? Nagle's batches small outgoing packets to reduce network overhead, but this adds latency — for low-latency systems (trading, interactive protocols) you disable it with setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, ...) so small messages go out immediately.
+What does SO_REUSEADDR do and why is it commonly set on a listening socket? Lets you rebind to a port still in TIME_WAIT from a previous instance of the server — avoids "address already in use" errors on quick restarts.
+How do you handle a client that disconnects unexpectedly? recv() returning 0 means an orderly close; a negative return with errno other than EAGAIN/EWOULDBLOCK means an error — either way, deregister the fd from epoll and close() it, and clean up any per-client state.
+How would you scale this server beyond one machine? Load balancer in front of multiple server instances, with client "stickiness" or shared session state (e.g., in Redis) if a client's state needs to be visible across instances.
+SQL / Database
+Difference between INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL OUTER JOIN? Inner: only matching rows in both tables. Left: all left-table rows, matched right-table columns or NULL. Right: mirror of left. Full outer: all rows from both sides, NULL where no match.
+What is an index, and what's the trade-off of adding one? A separate data structure (usually B-tree) that speeds up lookups/sorts on a column, at the cost of extra storage and slower writes (the index must be updated on every insert/update/delete).
+What is a transaction isolation level? Controls what concurrent transactions can see of each other's uncommitted/committed changes — READ UNCOMMITTED < READ COMMITTED < REPEATABLE READ < SERIALIZABLE, trading concurrency for consistency guarantees.
+What is a deadlock in a database, and how does the DB handle it? Two transactions each hold a lock the other needs. Most DBs detect this automatically and abort one transaction (deadlock victim) so the other can proceed — your application should catch that error and retry.
+Normalization vs denormalization — when would you denormalize? Normalize to eliminate redundancy/anomalies; denormalize (accept some redundancy) when read performance matters more than write simplicity — e.g., precomputing a report_count column instead of a JOIN+COUNT on every read.
+OOP / C++
+Difference between overloading and overriding? Overloading: same function name, different parameter list, resolved at compile time. Overriding: a derived class redefines a virtual function from the base class, resolved at runtime via the vtable.
+What is a virtual function, and what is a pure virtual function? Virtual: allows a derived class to override behavior, dispatched at runtime. Pure virtual (= 0): no implementation in the base class, forces derived classes to implement it, makes the base class abstract (can't be instantiated).
+What is the Rule of Three / Rule of Five in C++? If a class manages a raw resource (like the Employee/salary example above) and needs a custom destructor, it almost always also needs a custom copy constructor and copy-assignment operator (Rule of Three); modern C++ adds move constructor and move-assignment (Rule of Five) for efficient transfers.
+Difference between struct and class in C++? Only difference is default access: struct members are public by default, class members are private by default.
+Aptitude / Logic (likely more word problems)
+Ratio/percentage problems: practice translating "X% more/less than Y" and "successive discounts" into equations quickly — that's the pattern behind both examples already in this sheet.
+Speed/time/work problems: classic fintech-adjacent aptitude staple — e.g., "A can do a job in X days, B in Y days, working together how long?" (1/X + 1/Y = 1/total_days).
+Simple/compound interest: given it's fintech, brush up A = P(1 + r/n)^(nt) and simple interest I = PRT/100 — plausible given the domain.
+Quick Reference — What Chella Seems To Emphasize
+Based on this experience sheet, weight your prep toward: C fundamentals (pointers, malloc/realloc), multithreading + race conditions/deadlock, socket programming with multiple clients + TCP framing, SQL (dedup, aggregation, query tuning), large-file streaming algorithms (hash-map aggregation pattern), and basic OOP correctness (Rule of Three, access specifiers) — plus be ready for one or two aptitude/math word problems and a coding round.
+
+Want to do a timed mock next — I'll fire questions one at a time the way an interviewer would, and you answer out loud/in writing?
+********************************************************************************************************************
+
 
 ### --->  C language fundamentals
 C LANGUAGE FUNDAMENTALS - QUICK REFERENCE
@@ -2575,3 +3119,4 @@ Why use it: Forgetting to call sqlite3_finalize on statements or sqlite3_close o
 Raw String Literals (R"SQL(...)SQL")
 What it is: A C++11 feature allowing multi-line strings without needing manual newline escapes (\n) or quote escaping.
 Why use it: It makes complex, multi-line SQL queries clean, readable, and easy to maintain directly inside C++ source files.
+
