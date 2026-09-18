@@ -1,0 +1,226 @@
+================================================================================
+          PRESCIENT TECHNOLOGIES - C++ TECHNICAL INTERVIEW GUIDE
+================================================================================
+
+--------------------------------------------------------------------------------
+PART 1: DEEP-DIVE TECHNICAL THEORY & CONCEPTS
+--------------------------------------------------------------------------------
+
+1. MEMORY MANAGEMENT & POINTER INTERNALS
+-----------------------------------------
+• Memory Segments:
+  - Text/Code Segment: Stores executable instructions (read-only).
+  - Data Segment: Stores initialized global and static variables.
+  - BSS Segment: Stores uninitialized global and static variables (zero-initialized).
+  - Heap: Dynamic memory allocated at runtime via new/malloc (grows upward).
+  - Stack: Local variables, function parameters, and call stack frames (grows downward).
+
+• Stack vs. Heap:
+  - Stack allocation is fast (adjusts stack pointer register). Lifespan is tied 
+    to scope.
+  - Heap allocation requires allocator search (OS level or dynamic heap allocator).
+    Manual deallocation via delete/free is required; risk of memory leaks and fragmentation.
+
+• Dynamic Allocation (new/delete vs. malloc/free):
+  - malloc/free: C functions. Allocate raw memory block without calling constructors 
+    or destructors. Returns void*.
+  - new/delete: C++ operators. Allocate memory AND call constructors/destructors. 
+    Typesafe, throws std::bad_alloc on failure.
+
+• Pointer Arithmetic & Invalidations:
+  - Incrementing a pointer (p + 1) advances the memory address by sizeof(*p) bytes.
+  - Dangling Pointer: Pointer pointing to memory that has been deallocated.
+  - Double Free: Calling delete/free twice on the same memory address, causing heap corruption.
+
+2. OBJECT-ORIENTED PROGRAMMING & VTABLE INTERNALS
+-------------------------------------------------
+• Virtual Functions & Dynamic Polymorphism:
+  - When a class contains a virtual function, the compiler inserts a hidden pointer 
+    called the vptr (Virtual Pointer) into instances of that class.
+  - The vptr points to a static table called the vtable (Virtual Table) associated 
+    with that class.
+  - The vtable contains pointers to the actual implementations of virtual functions.
+  - Late binding (dynamic dispatch) occurs at runtime by dereferencing vptr -> vtable -> function.
+
+• Virtual Destructor:
+  - Essential when deleting a derived class object through a pointer to a base class.
+  - Without a virtual destructor, only the base class destructor is invoked, 
+    causing resource leaks in the derived class.
+
+• The Diamond Problem & Virtual Inheritance:
+  - Occurs in multiple inheritance: Base -> (DerivedA, DerivedB) -> MostDerived.
+  - MostDerived ends up with two copies of Base members.
+  - Solution: Use virtual inheritance (`class DerivedA : virtual public Base`). 
+    This ensures only a single shared instance of Base exists in MostDerived.
+
+3. MODERN C++ STANDARDS (C++11 / C++14 / C++17)
+-----------------------------------------------
+• Smart Pointers:
+  - std::unique_ptr: Exclusive ownership model. Cannot be copied, only moved.
+  - std::shared_ptr: Shared ownership via reference counting (control block). 
+    Increments count on copy, decrements on destruction.
+  - std::weak_ptr: Non-owning observer for std::shared_ptr. Prevents circular references.
+
+• Move Semantics & Rvalue References:
+  - Lvalue: Refers to an object with a persistent memory address (has a name).
+  - Rvalue: Temporary value without persistent identity (literals, temporary objects).
+  - Rvalue Reference (T&&): Binds to rvalues, allowing resources to be "stolen" 
+    instead of deep-copied.
+  - std::move: Casts an lvalue into an rvalue reference to enable move assignment/construction.
+
+4. MULTITHREADING & CONCURRENCY
+-------------------------------
+• Basic Synchronization:
+  - std::thread: Encapsulates a thread of execution. Must be join()'d or detach()'d.
+  - std::mutex: Ensures mutual exclusion to prevent data races.
+  - std::lock_guard: RAII wrapper for locking and automatically unlocking a mutex.
+  - std::unique_lock: Flexible RAII wrapper supporting deferred locking and condition variables.
+
+• Advanced Concurrency:
+  - std::condition_variable: Enables threads to sleep until notified by another thread.
+  - std::atomic: Provides lock-free atomic operations for basic types, avoiding full locks.
+  - Race Condition: Concurrent read/write access to shared memory where at least one thread modifies it.
+  - Deadlock: Two or more threads blocked forever, waiting for each other to release locks.
+
+5. DESIGN PATTERNS & BEST PRACTICES
+-----------------------------------
+• Thread-Safe Singleton (Meyers Singleton):
+  - Uses a local static object inside a function. Thread safety is guaranteed by C++11 standard.
+  
+  Example:
+  class Singleton {
+  public:
+      static Singleton& getInstance() {
+          static Singleton instance; // Guaranteed thread-safe initialization in C++11
+          return instance;
+      }
+      Singleton(const Singleton&) = delete;
+      Singleton& operator=(const Singleton&) = delete;
+  private:
+      Singleton() = default;
+  };
+
+• Factory Pattern:
+  - Creational pattern providing an interface for creating objects in a superclass, 
+    allowing subclasses to alter the type of objects created.
+
+
+--------------------------------------------------------------------------------
+PART 2: FREQUENT CODING PROBLEMS WITH FULL SOLUTIONS
+--------------------------------------------------------------------------------
+
+PROBLEM 1: BALANCED PARENTHESES
+--------------------------------
+#include <iostream>
+#include <stack>
+#include <string>
+
+bool isBalanced(const std::string& str) {
+    std::stack<char> s;
+    for (char ch : str) {
+        if (ch == '(' || ch == '{' || ch == '[') {
+            s.push(ch);
+        } else if (ch == ')' || ch == '}' || ch == ']') {
+            if (s.empty()) return false;
+            char top = s.top();
+            s.pop();
+            if ((ch == ')' && top != '(') ||
+                (ch == '}' && top != '{') ||
+                (ch == ']' && top != '[')) {
+                return false;
+            }
+        }
+    }
+    return s.empty();
+}
+
+PROBLEM 2: MOVE ZEROES TO END (O(N) Time, O(1) Space)
+-----------------------------------------------------
+#include <iostream>
+#include <vector>
+
+void moveZeroes(std::vector<int>& nums) {
+    size_t lastNonZeroFoundAt = 0;
+    for (size_t i = 0; i < nums.size(); ++i) {
+        if (nums[i] != 0) {
+            std::swap(nums[lastNonZeroFoundAt++], nums[i]);
+        }
+    }
+}
+
+PROBLEM 3: REVERSE A SINGLY LINKED LIST
+----------------------------------------
+#include <iostream>
+
+struct Node {
+    int data;
+    Node* next;
+    Node(int val) : data(val), next(nullptr) {}
+};
+
+Node* reverseLinkedList(Node* head) {
+    Node* prev = nullptr;
+    Node* current = head;
+    Node* next = nullptr;
+
+    while (current != nullptr) {
+        next = current->next; // Store next
+        current->next = prev; // Reverse current node's pointer
+        prev = current;       // Move pointers one position ahead
+        current = next;
+    }
+    return prev;
+}
+
+PROBLEM 4: LINKED LIST CYCLE DETECTION (Floyd's Cycle Detection)
+----------------------------------------------------------------
+bool hasCycle(Node* head) {
+    if (!head || !head->next) return false;
+    Node* slow = head;
+    Node* fast = head;
+
+    while (fast != nullptr && fast->next != nullptr) {
+        slow = slow->next;
+        fast = fast->next->next;
+        if (slow == fast) {
+            return true; // Cycle detected
+        }
+    }
+    return false;
+}
+
+PROBLEM 5: THREAD-SAFE PRODUCER-CONSUMER QUEUE
+----------------------------------------------
+#include <iostream>
+#include <queue>
+#include <mutex>
+#include <condition_variable>
+
+template <typename T>
+class BoundedBuffer {
+private:
+    std::queue<T> queue_;
+    std::mutex mutex_;
+    std::condition_variable cv_producer_;
+    std::condition_variable cv_consumer_;
+    size_t capacity_;
+
+public:
+    explicit BoundedBuffer(size_t capacity) : capacity_(capacity) {}
+
+    void push(const T& item) {
+        std::unique_lock<std::mutex> lock(mutex_);
+        cv_producer_.wait(lock, [this]() { return queue_.size() < capacity_; });
+        queue_.push(item);
+        cv_consumer_.notify_one();
+    }
+
+    T pop() {
+        std::unique_lock<std::mutex> lock(mutex_);
+        cv_consumer_.wait(lock, [this]() { return !queue_.empty(); });
+        T item = queue_.front();
+        queue_.pop();
+        cv_producer_.notify_one();
+        return item;
+    }
+};

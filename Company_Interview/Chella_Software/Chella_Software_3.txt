@@ -1,0 +1,252 @@
+================================================================================
+chella_software_interview_prep.txt
+Additional Interview Questions and Detailed Solutions (Chella Software Pattern)
+================================================================================
+
+--------------------------------------------------------------------------------
+SECTION 1: APTITUDE & LOGICAL REASONING
+--------------------------------------------------------------------------------
+
+1. Average Replacement Problem:
+   If the average age of a group of 5 people increases by 2 years when one person 
+   aged 24 is replaced by a new person, what is the age of the new person?
+
+   Mathematical Explanation:
+   Let the initial total age of the 5 people be 'T'.
+   Initial Average = T / 5
+   New Average = (T / 5) + 2 = (T + 10) / 5
+   New Total Age = T + 10
+
+   Let the age of the new person be 'N'.
+   New Total Age = Initial Total Age - Old Person Age + New Person Age
+   T + 10 = T - 24 + N
+   10 = -24 + N
+   N = 34
+
+   Shortcut Rule:
+   Age of New Person = Replaced Age + (Total People * Increase in Average)
+   Age of New Person = 24 + (5 * 2) = 34 years.
+
+   Final Answer:
+   The age of the new person is 34 years.
+
+
+2. Time & Work Problem:
+   A can finish a work in 12 days and B in 18 days. They work together for 4 days, 
+   after which A leaves. How long will B take to complete the remaining work?
+
+   Mathematical Explanation:
+   1-day work rate of A = 1 / 12
+   1-day work rate of B = 1 / 18
+
+   Combined 1-day work rate = (1 / 12) + (1 / 18) = (3 + 2) / 36 = 5 / 36
+   Work completed in 4 days together = 4 * (5 / 36) = 20 / 36 = 5 / 9
+
+   Remaining Work = 1 - (5 / 9) = 4 / 9
+
+   Time taken by B alone to finish 4/9 work:
+   Time = Remaining Work / B's Work Rate
+   Time = (4 / 9) / (1 / 18) = (4 / 9) * 18 = 8 days.
+
+   Final Answer:
+   B takes 8 days to finish the remaining work.
+
+
+3. Coding-Decoding Problem:
+   If 'TAPE' is coded as '3125' and 'NEAR' is coded as '4518', how is 'PEAR' coded?
+
+   Logical Mapping:
+   By direct symbol mapping from given words:
+   - T = 3, A = 1, P = 2, E = 5
+   - N = 4, E = 5, A = 1, R = 8
+
+   Extracting letters for 'PEAR':
+   P -> 2
+   E -> 5
+   A -> 1
+   R -> 8
+
+   Final Answer:
+   'PEAR' is coded as 2518.
+
+
+--------------------------------------------------------------------------------
+SECTION 2: TECHNICAL APTITUDE (C / C++ / OOPS)
+--------------------------------------------------------------------------------
+
+4. What is the difference between malloc() / free() in C and new / delete in C++?
+
+   Comparison Table:
+   -----------------------------------------------------------------------------------
+   Feature             | malloc() / free()             | new / delete
+   -----------------------------------------------------------------------------------
+   Type                | Functions (stdlib.h)          | Language Operators
+   Constructor/Destr.  | Does NOT call constructors/   | Automatically invokes constructors
+                       | destructors.                  | and destructors.
+   Type Safety         | Returns void* (requires cast) | Type-safe (returns exact pointer type)
+   Size Calculation    | Manual: `sizeof(T) * N`       | Automatic based on type requested
+   Failure Behavior    | Returns NULL                  | Throws `std::bad_alloc` exception
+   -----------------------------------------------------------------------------------
+
+
+5. What is a dangling pointer, and how can it be avoided?
+
+   Explanation:
+   A dangling pointer is a pointer that continues to point to a memory address after the 
+   allocated memory block has been deallocated/freed or goes out of scope.
+
+   Example:
+   int *ptr = (int *)malloc(sizeof(int));
+   free(ptr); // ptr is now dangling!
+   *ptr = 10; // Undefined Behavior / Crash
+
+   Prevention Strategies:
+   1. Set pointer to NULL immediately after releasing memory:
+      free(ptr);
+      ptr = NULL;
+   2. Use modern Smart Pointers in C++ (`std::unique_ptr`, `std::shared_ptr`).
+
+
+6. Pass by Value vs Pass by Reference vs Pass by Pointer
+
+   Concepts & Syntax:
+   - Pass by Value: Operates on a copy of the argument. Caller data remains unaffected.
+     `void func(int a)`
+   - Pass by Pointer: Pass memory address explicitly using pointers. Modifies caller variable.
+     `void func(int *a)` -> Called as `func(&val);`
+   - Pass by Reference (C++): Alias to original variable without explicit pointer syntax.
+     `void func(int &a)` -> Called as `func(val);`
+
+
+7. Virtual Functions and Pure Virtual Functions in C++
+
+   Explanation:
+   - Virtual Function: Declared with `virtual` keyword in a base class to allow runtime 
+     polymorphism. Derived classes can override it. Provides a default implementation.
+   - Pure Virtual Function: Declared with `= 0`. Has no body in the base class. Any class 
+     containing a pure virtual function becomes an Abstract Class and cannot be instantiated directly.
+
+   C++ Code Example:
+   ----------------------------------------------------------------------------
+   class Base {
+   public:
+       virtual void show() { std::cout << "Base Show\n"; } // Virtual
+       virtual void draw() = 0;                          // Pure Virtual
+   };
+   ----------------------------------------------------------------------------
+
+
+8. What is a Virtual Destructor and why is it necessary?
+
+   Explanation:
+   A virtual destructor guarantees that when a derived class object is deleted through 
+   a base class pointer, the derived class destructor is called first, followed by the 
+   base class destructor.
+
+   Why Necessary:
+   If the base class destructor is NOT virtual, deleting via a base pointer causes 
+   Undefined Behavior where ONLY the base destructor executes, causing severe memory leaks 
+   for resources managed inside the derived class.
+
+
+9. Compile-time vs Run-time Polymorphism
+
+   Comparison:
+   - Compile-time (Static): Resolved during compilation. Fast execution.
+     Examples: Function Overloading, Operator Overloading.
+   - Run-time (Dynamic): Resolved at runtime using Virtual Method Tables (vtables).
+     Example: Function Overriding via virtual functions.
+
+
+10. Array vs Singly Linked List
+
+    Comparison:
+    -----------------------------------------------------------------------------------
+    Attribute           | Array                         | Singly Linked List
+    -----------------------------------------------------------------------------------
+    Memory Allocation   | Contiguous memory block       | Dynamic non-contiguous nodes
+    Random Access       | O(1) time complexity          | O(N) traversal complexity
+    Insertion / Deletion| O(N) due to shifting          | O(1) if target node pointer given
+    Memory Overhead     | None                          | Extra pointer storage per node
+    -----------------------------------------------------------------------------------
+
+
+11. C Code: Reverse a Singly Linked List
+
+    Implementation:
+    ----------------------------------------------------------------------------
+    #include <stdio.h>
+    #include <stdlib.h>
+
+    struct Node {
+        int data;
+        struct Node* next;
+    };
+
+    struct Node* reverseList(struct Node* head) {
+        struct Node* prev = NULL;
+        struct Node* current = head;
+        struct Node* next = NULL;
+
+        while (current != NULL) {
+            next = current->next;
+            current->next = prev;
+            prev = current;
+            current = next;
+        }
+        return prev;
+    }
+    ----------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+SECTION 3: DATABASE & SQL
+--------------------------------------------------------------------------------
+
+12. Difference Between DELETE, DROP, and TRUNCATE
+
+    Comparison Table:
+    -----------------------------------------------------------------------------------
+    Command  | Command Type | Rollback Support | Operation / Speed
+    -----------------------------------------------------------------------------------
+    DELETE   | DML          | Yes (Logged)     | Removes selected rows via WHERE clause; Slower.
+    TRUNCATE | DDL          | No/Limited       | Deletes ALL rows by deallocating pages; Fast.
+    DROP     | DDL          | No               | Completely removes table structure & data.
+    -----------------------------------------------------------------------------------
+
+
+13. Primary Key vs Foreign Key vs Unique Key
+
+    Definitions:
+    - Primary Key: Uniquely identifies each record in a table. Cannot contain NULL values.
+    - Unique Key: Ensures all values in a column are distinct. Allows ONE NULL value.
+    - Foreign Key: Enforces referential integrity by linking a column to the Primary Key of another table.
+
+
+14. Explain ACID Properties in DBMS
+
+    Core Principles:
+    - Atomicity: "All or Nothing". All operations in a transaction complete successfully or revert completely.
+    - Consistency: Transaction moves database from one valid state to another, maintaining constraints.
+    - Isolation: Concurrent transactions execute without interfering with one another.
+    - Durability: Committed updates persist permanently on disk, even after system failure.
+
+
+--------------------------------------------------------------------------------
+SECTION 4: HR & BEHAVIORAL ANSWERS
+--------------------------------------------------------------------------------
+
+15. Why start your career at Chella Software?
+    Sample Answer:
+    "Chella Software is known for its strong focus on core technical domains like database management, 
+    financial software systems, and high-performance applications. Starting my career here gives me 
+    the opportunity to work directly on foundational technology stacks, solve complex architectural 
+    challenges, and develop strong analytical and problem-solving skills alongside industry experts."
+
+
+16. How do you handle technical roadblocks during projects?
+    Sample Answer:
+    "When faced with a technical issue, I first isolate the root cause using debugging tools and logging. 
+    I systematically test assumptions, consult official documentation, and check developer resources. 
+    If unresolved within a reasonable timeframe, I reach out to mentors or peers with clear details 
+    of what I have already tried, ensuring collaborative and fast problem resolution."

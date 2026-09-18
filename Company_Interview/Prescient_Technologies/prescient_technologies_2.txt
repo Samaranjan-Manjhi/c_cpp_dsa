@@ -1,0 +1,625 @@
+================================================================
+INTERVIEW QUICK REFERENCE — TREE TRAVERSALS + OOP + THREADING
+================================================================
+
+----------------------------------------------------------------
+1. TREE TRAVERSALS
+----------------------------------------------------------------
+
+struct Node {
+    int data;
+    Node* left;
+    Node* right;
+    Node(int val) : data(val), left(nullptr), right(nullptr) {}
+};
+
+// INORDER: Left -> Root -> Right  (gives sorted order for a BST)
+void inorder(Node* root) {
+    if (!root) return;
+    inorder(root->left);
+    cout << root->data << " ";
+    inorder(root->right);
+}
+
+// PREORDER: Root -> Left -> Right  (used to copy/serialize a tree)
+void preorder(Node* root) {
+    if (!root) return;
+    cout << root->data << " ";
+    preorder(root->left);
+    preorder(root->right);
+}
+
+// POSTORDER: Left -> Right -> Root  (used to delete a tree safely)
+void postorder(Node* root) {
+    if (!root) return;
+    postorder(root->left);
+    postorder(root->right);
+    cout << root->data << " ";
+}
+
+Memory trick: the ROOT's position in the name tells you the order.
+  PRE-order  -> root comes first
+  IN-order   -> root comes in the middle
+  POST-order -> root comes last
+
+----------------------------------------------------------------
+2. OOP — FOUR PILLARS (definitions + syntax + example)
+----------------------------------------------------------------
+
+A) ENCAPSULATION
+Definition: Bundling data and the methods that operate on it into
+one unit (class), and restricting direct access to internal data
+using access specifiers (private/protected/public).
+
+class Account {
+private:
+    int balance;              // hidden from outside
+public:
+    Account(int b) : balance(b) {}
+    void deposit(int amt) { balance += amt; }
+    int getBalance() const { return balance; }   // controlled access
+};
+
+B) ABSTRACTION
+Definition: Hiding implementation details and exposing only the
+essential interface. Achieved via abstract classes / pure virtual
+functions.
+
+class Shape {                       // abstract class
+public:
+    virtual double area() const = 0;   // pure virtual -> no body here
+    virtual ~Shape() {}
+};
+
+class Circle : public Shape {
+    double radius;
+public:
+    Circle(double r) : radius(r) {}
+    double area() const override { return 3.14159 * radius * radius; }
+};
+// You cannot do: Shape s;  (abstract classes can't be instantiated)
+
+C) INHERITANCE
+Definition: A class (derived) acquires properties/behavior of
+another class (base).
+
+Types of inheritance:
+  1. Single       - one base, one derived
+  2. Multilevel   - A -> B -> C (chain)
+  3. Multiple     - one derived class, two+ base classes
+  4. Hierarchical - one base, multiple derived classes
+  5. Hybrid       - combination of the above
+
+class Animal {
+public:
+    void eat() { cout << "eating\n"; }
+};
+class Dog : public Animal {          // single inheritance
+public:
+    void bark() { cout << "barking\n"; }
+};
+
+MULTIPLE INHERITANCE + DIAMOND PROBLEM:
+class A { public: int x; };
+class B : public A {};
+class C : public A {};
+class D : public B, public C {};     // D has TWO copies of A::x -> ambiguous!
+
+D obj;
+obj.x = 5;          // ERROR: ambiguous, compiler doesn't know B::x or C::x
+
+FIX — virtual inheritance:
+class A { public: int x; };
+class B : virtual public A {};
+class C : virtual public A {};
+class D : public B, public C {};     // now only ONE shared copy of A
+
+D obj;
+obj.x = 5;          // OK now, single unambiguous copy
+
+D) POLYMORPHISM
+Definition: Same interface, different behavior.
+  - Compile-time (static) -> function overloading, operator overloading
+  - Runtime (dynamic)     -> function overriding via virtual functions
+
+// Compile-time: overloading
+class Print {
+public:
+    void show(int i)    { cout << "int: " << i << "\n"; }
+    void show(double d) { cout << "double: " << d << "\n"; }
+};
+
+// Runtime: overriding (see Virtual Functions section below)
+
+----------------------------------------------------------------
+3. VIRTUAL FUNCTIONS & VTABLES
+----------------------------------------------------------------
+
+Definition: A virtual function lets a derived class override a
+base class function, and the CORRECT version is chosen at RUNTIME
+based on the actual object type, not the pointer/reference type.
+
+class Base {
+public:
+    virtual void speak() { cout << "Base speaking\n"; }
+    virtual ~Base() {}     // always make base destructor virtual
+};
+class Derived : public Base {
+public:
+    void speak() override { cout << "Derived speaking\n"; }
+};
+
+Base* b = new Derived();
+b->speak();      // prints "Derived speaking" -> runtime polymorphism
+
+HOW IT WORKS INTERNALLY:
+- Any class with at least one virtual function gets a hidden
+  pointer called the vptr, added to every object of that class.
+- The compiler creates one vtable (virtual table) PER CLASS — a
+  static array of function pointers, one entry per virtual function.
+- The object's vptr points to its class's vtable.
+- A virtual call is resolved as: object->vptr->vtable[index]()
+- This is why calling a virtual function costs one extra pointer
+  dereference compared to a normal (non-virtual) call.
+- Non-virtual functions are resolved at compile-time (no vtable
+  lookup needed) — that's why they're faster but can't be
+  overridden polymorphically.
+
+Why base destructor MUST be virtual:
+Base* b = new Derived();
+delete b;   // without virtual ~Base(), only ~Base() runs -> leaks
+            // Derived's members/destructor never gets called
+
+----------------------------------------------------------------
+4. CLASS WITH int / char* / ARRAY MEMBERS — RULE OF THREE/FIVE
+----------------------------------------------------------------
+
+Why this matters: if a class manages raw memory (like char*), the
+COMPILER-GENERATED copy constructor just copies the POINTER, not
+the data (shallow copy). Two objects then point to the same memory
+-> double free / dangling pointer bugs. This is the classic
+interview setup question.
+
+class MyString {
+private:
+    int length;
+    char* data;          // raw pointer -> owns dynamic memory
+    int arr[5];           // plain array member (not a pointer)
+
+public:
+    // Constructor
+    MyString(const char* str) {
+        length = strlen(str);
+        data = new char[length + 1];
+        strcpy(data, str);
+        for (int i = 0; i < 5; i++) arr[i] = i;
+    }
+
+    // 1. Destructor
+    ~MyString() {
+        delete[] data;
+    }
+
+    // 2. Copy Constructor (deep copy)
+    MyString(const MyString& other) {
+        length = other.length;
+        data = new char[length + 1];
+        strcpy(data, other.data);
+        for (int i = 0; i < 5; i++) arr[i] = other.arr[i];
+    }
+
+    // 3. Copy Assignment Operator
+    MyString& operator=(const MyString& other) {
+        if (this == &other) return *this;      // self-assignment check
+        delete[] data;                          // free old memory
+        length = other.length;
+        data = new char[length + 1];
+        strcpy(data, other.data);
+        for (int i = 0; i < 5; i++) arr[i] = other.arr[i];
+        return *this;
+    }
+
+    // 4. Move Constructor (Rule of Five, C++11)
+    MyString(MyString&& other) noexcept {
+        length = other.length;
+        data = other.data;           // steal the pointer
+        other.data = nullptr;        // null out source
+        other.length = 0;
+        for (int i = 0; i < 5; i++) arr[i] = other.arr[i];
+    }
+
+    // 5. Move Assignment Operator (Rule of Five, C++11)
+    MyString& operator=(MyString&& other) noexcept {
+        if (this == &other) return *this;
+        delete[] data;
+        length = other.length;
+        data = other.data;
+        other.data = nullptr;
+        other.length = 0;
+        for (int i = 0; i < 5; i++) arr[i] = other.arr[i];
+        return *this;
+    }
+
+    void print() const { cout << data << "\n"; }
+};
+
+RULE OF THREE: if you write ANY ONE of destructor / copy
+constructor / copy assignment operator, you almost certainly need
+all three (because it means the class manages a resource manually).
+
+RULE OF FIVE (C++11 onward): same idea, plus move constructor and
+move assignment operator, so resources can be transferred instead
+of deep-copied when the source is a temporary/rvalue.
+
+----------------------------------------------------------------
+5. OPERATOR OVERLOADING (live-codeable example)
+----------------------------------------------------------------
+
+class Complex {
+private:
+    int real, imag;
+public:
+    Complex(int r = 0, int i = 0) : real(r), imag(i) {}
+
+    // Overload + operator
+    Complex operator+(const Complex& other) const {
+        return Complex(real + other.real, imag + other.imag);
+    }
+
+    // Overload == operator
+    bool operator==(const Complex& other) const {
+        return real == other.real && imag == other.imag;
+    }
+
+    // Overload << (must be a free function / friend, not a member)
+    friend ostream& operator<<(ostream& os, const Complex& c) {
+        os << c.real << " + " << c.imag << "i";
+        return os;
+    }
+};
+
+int main() {
+    Complex a(2, 3), b(1, 4);
+    Complex c = a + b;         // uses operator+
+    cout << c << "\n";         // uses operator<<
+}
+
+----------------------------------------------------------------
+6. MULTITHREADING — MUTEX vs SEMAPHORE, DEADLOCK, RACE CONDITION
+----------------------------------------------------------------
+
+RACE CONDITION: two or more threads access shared data
+concurrently, and the final result depends on the unpredictable
+order of execution -> incorrect/inconsistent results.
+
+#include <thread>
+#include <mutex>
+int counter = 0;
+mutex mtx;
+
+void increment() {
+    for (int i = 0; i < 100000; i++) {
+        // WITHOUT a lock here -> race condition on 'counter'
+        lock_guard<mutex> lock(mtx);   // WITH lock -> safe
+        counter++;
+    }
+}
+// Two threads calling increment() without the mutex can lose
+// updates because counter++ is not atomic (read-modify-write).
+
+MUTEX (Mutual Exclusion):
+- A lock that allows only ONE thread into a critical section at a
+  time.
+- Binary in nature: locked or unlocked.
+- Owned by the thread that locked it — only that thread can unlock
+  it (in most implementations).
+- Used for protecting a single shared resource.
+
+SEMAPHORE:
+- A counter-based synchronization primitive that allows UP TO N
+  threads into a section at once (N = initial count).
+- Not owned by a specific thread — any thread can signal/release it.
+- Used to limit access to a pool of resources (e.g., N database
+  connections), or for signaling between threads (unlike mutex,
+  which is only for exclusion).
+- Binary semaphore (count = 1) looks similar to a mutex but
+  differs in ownership semantics.
+
+#include <semaphore>            // C++20
+counting_semaphore<3> sem(3);   // allow 3 threads at once
+void worker() {
+    sem.acquire();
+    // ... use one of 3 shared resources ...
+    sem.release();
+}
+
+DEADLOCK: two or more threads are each waiting on a resource held
+by the other, so none can proceed.
+
+Classic 2-mutex deadlock:
+mutex m1, m2;
+
+void threadA() {
+    lock_guard<mutex> lockA(m1);
+    // ... some work ...
+    lock_guard<mutex> lockB(m2);   // waits for m2, held by threadB
+}
+void threadB() {
+    lock_guard<mutex> lockB(m2);
+    // ... some work ...
+    lock_guard<mutex> lockA(m1);   // waits for m1, held by threadA
+}
+// threadA holds m1, wants m2. threadB holds m2, wants m1. -> DEADLOCK
+
+FIX — always lock mutexes in the SAME global order in every thread,
+or use std::lock(m1, m2) to acquire both atomically:
+    lock(m1, m2);
+    lock_guard<mutex> lockA(m1, adopt_lock);
+    lock_guard<mutex> lockB(m2, adopt_lock);
+
+Four necessary conditions for deadlock (good to state verbally):
+  1. Mutual exclusion   - resource can't be shared
+  2. Hold and wait      - thread holds one resource, waits for another
+  3. No preemption      - resource can't be forcibly taken away
+  4. Circular wait       - a cycle of threads each waiting on the next
+
+----------------------------------------------------------------
+7. MODERN C++ (11/14/17) QUICK HITS
+----------------------------------------------------------------
+
+SMART POINTERS
+#include <memory>
+
+// unique_ptr: sole ownership, cannot be copied, only moved
+unique_ptr<int> up = make_unique<int>(5);
+// unique_ptr<int> up2 = up;        // ERROR: copy not allowed
+unique_ptr<int> up2 = std::move(up); // OK: ownership transferred, up is now null
+
+// shared_ptr: shared ownership via reference counting
+shared_ptr<int> sp1 = make_shared<int>(10);
+shared_ptr<int> sp2 = sp1;          // OK, refcount now 2
+cout << sp1.use_count();            // 2
+
+// weak_ptr: non-owning observer of a shared_ptr, avoids cycles
+weak_ptr<int> wp = sp1;
+if (auto locked = wp.lock()) { /* use *locked safely */ }
+
+MOVE SEMANTICS / rvalue references
+void process(string&& s) { cout << "moved: " << s; }   // rvalue ref
+string a = "hello";
+process(std::move(a));   // std::move casts 'a' to an rvalue; 'a' is
+                          // now in a valid-but-unspecified state
+// std::move does NOT move anything itself — it's just a cast that
+// tells the compiler "this can be treated as a temporary."
+
+CONSTEXPR
+constexpr int square(int x) { return x * x; }
+constexpr int val = square(5);   // computed at COMPILE time, not runtime
+// Use when a value/function result is knowable at compile time
+// -> zero runtime cost.
+
+STD::OPTIONAL (C++17) — represents a value that may or may not exist
+#include <optional>
+optional<int> findValue(bool found) {
+    if (found) return 42;
+    return nullopt;             // no value, safer than returning -1/NULL
+}
+auto result = findValue(false);
+if (result.has_value()) cout << *result;
+else cout << "no value";
+
+STD::VARIANT (C++17) — type-safe union, holds one of several types
+#include <variant>
+variant<int, string> v = 10;
+v = "now a string";
+if (holds_alternative<string>(v)) cout << get<string>(v);
+
+AUTO / TYPE DEDUCTION
+auto x = 5;             // int
+auto y = 3.14;          // double
+auto vec = vector<int>{1,2,3};
+for (auto& elem : vec) { /* elem's type deduced, reference avoids copy */ }
+
+----------------------------------------------------------------
+8. MEMORY & POINTERS — DEEPER QUESTIONS
+----------------------------------------------------------------
+
+POINTER ARITHMETIC
+int arr[5] = {10,20,30,40,50};
+int* p = arr;
+p++;              // moves by sizeof(int) bytes, now points to arr[1]
+cout << *(p+2);   // arr[3] -> 40
+
+STACK vs HEAP
+- Stack: fast, automatic lifetime (freed when scope ends), limited
+  size, used for local variables.
+- Heap: manual lifetime (new/delete), larger, slower to allocate,
+  survives beyond the function that created it -> needed for
+  dynamically sized/long-lived data.
+
+DANGLING POINTER example (and how to avoid it):
+int* dangerous() {
+    int local = 5;
+    return &local;      // BUG: local's stack memory is gone after return
+}
+// Fix: return by value, or allocate on heap and manage with a
+// smart pointer, or pass output param by reference.
+
+VTABLE MEMORY OVERHEAD
+- A class with virtual functions gets exactly ONE extra pointer
+  (the vptr) per OBJECT — typically 8 bytes on a 64-bit system —
+  regardless of how many virtual functions it has.
+- The vtable ITSELF (the array of function pointers) exists once
+  PER CLASS, not per object, so it doesn't scale with object count.
+- So: 1 vptr per object (fixed cost) + 1 shared vtable per class
+  (size = number of virtual functions * pointer size).
+
+VIRTUAL DESTRUCTOR
+class Base {
+public:
+    virtual ~Base() { cout << "~Base\n"; }
+};
+class Derived : public Base {
+    int* data;
+public:
+    Derived() { data = new int[10]; }
+    ~Derived() override { delete[] data; cout << "~Derived\n"; }
+};
+Base* b = new Derived();
+delete b;
+// WITH virtual ~Base(): prints ~Derived then ~Base -> data is freed.
+// WITHOUT virtual: only ~Base() runs -> Derived's destructor never
+// fires -> 'data' leaks. This is undefined behavior per the standard.
+
+UNIQUE_PTR vs SHARED_PTR / make_shared OPTIMIZATION
+- unique_ptr: zero overhead over a raw pointer, single owner, moves
+  only.
+- shared_ptr: has overhead — a CONTROL BLOCK holding the reference
+  count (and weak count), typically heap-allocated separately.
+- make_shared<T>(...) allocates the control block AND the object
+  T in a SINGLE heap allocation (one malloc), whereas
+  shared_ptr<T> sp(new T(...)) does TWO separate allocations (one
+  for T, one later for the control block) -> make_shared is faster
+  and more cache-friendly. Always prefer make_shared unless you
+  need a custom deleter.
+
+NEW/DELETE vs MALLOC/FREE
+- new/delete call constructors/destructors; malloc/free just
+  allocate raw bytes.
+- new is type-safe (returns T*, no cast needed); malloc returns void*.
+- new throws std::bad_alloc on failure; malloc returns nullptr.
+- C++ keeps malloc/free for C compatibility and low-level cases
+  where you explicitly don't want construction (e.g. custom
+  allocators).
+
+OVERLOADING operator new
+class MyClass {
+public:
+    static void* operator new(size_t size) {
+        cout << "Custom allocation of " << size << " bytes\n";
+        return ::operator new(size);       // call global new
+    }
+    static void operator delete(void* ptr) {
+        cout << "Custom deallocation\n";
+        ::operator delete(ptr);
+    }
+};
+// Overloading per-class lets you route a class's allocations
+// through a custom pool/allocator without touching global new.
+
+MEMORY FRAGMENTATION & CUSTOM ALLOCATORS
+- Fragmentation: repeated alloc/free of varying sizes leaves gaps
+  of free memory too small/scattered to satisfy new requests, even
+  though total free memory is sufficient.
+- Fix in long-running apps: use a memory POOL (pre-allocate a big
+  block, hand out fixed-size chunks from it) or a custom STL
+  allocator so objects of the same size are reused from the same
+  pool instead of going back to the general heap each time —
+  avoids fragmentation and is faster (no general-purpose allocator
+  overhead).
+
+STD::VECTOR REALLOCATION
+- A vector stores size, capacity, and a pointer to a heap buffer.
+- When size() reaches capacity() and you push_back() again, the
+  vector must reallocate: it allocates a NEW, larger buffer
+  (typically ~1.5x-2x the old capacity, implementation-defined),
+  copies/moves all existing elements into it, then frees the old
+  buffer. This invalidates all existing pointers/iterators/references.
+- To minimize reallocations: call reserve(n) up front if you know
+  (or can estimate) the final size — this avoids repeated
+  copy-and-grow cycles.
+
+----------------------------------------------------------------
+9. THREAD-SAFE QUEUE (mutex + condition_variable)
+----------------------------------------------------------------
+
+#include <queue>
+#include <mutex>
+#include <condition_variable>
+
+template<typename T>
+class ThreadSafeQueue {
+    queue<T> q;
+    mutable mutex mtx;
+    condition_variable cv;
+public:
+    void push(T val) {
+        lock_guard<mutex> lock(mtx);
+        q.push(std::move(val));
+        cv.notify_one();          // wake one waiting consumer
+    }
+
+    T pop() {
+        unique_lock<mutex> lock(mtx);
+        cv.wait(lock, [this]{ return !q.empty(); });  // sleeps until non-empty
+        T val = std::move(q.front());
+        q.pop();
+        return val;
+    }
+
+    bool empty() const {
+        lock_guard<mutex> lock(mtx);
+        return q.empty();
+    }
+};
+// cv.wait() atomically unlocks the mutex while sleeping and
+// re-locks it on wakeup -> avoids missed wakeups and busy-waiting.
+
+----------------------------------------------------------------
+10. PUZZLES — WITH ANSWERS
+----------------------------------------------------------------
+
+A) TWO EGGS / 100-FLOOR BUILDING
+Question: minimum number of drops in the WORST CASE to find the
+exact floor an egg starts breaking from, using 2 eggs.
+
+Answer: 14 drops.
+Reasoning: with the first egg, don't halve — start high and reduce
+the step size by 1 each time a drop fails (since you have fewer
+attempts left with the 2nd egg to search the remaining floors
+linearly). You want the largest n such that n + (n-1) + (n-2) +
+... + 1 >= 100. That's a triangular number: 14+13+...+1 = 105 >= 100,
+so 14 is the minimum. Drop egg 1 at floor 14, then 27, then 39...
+(step decreasing by 1 each time); if it breaks, use egg 2 to walk
+up linearly from the last safe floor.
+
+B) 8L / 5L / 3L JUGS — MEASURE 4 LITERS
+Start: 8L jug full, 5L and 3L empty.
+1. Pour 8L jug -> 5L jug until 5L is full: (3, 5, 0)
+2. Pour 5L jug -> 3L jug until 3L is full: (3, 2, 3)
+3. Empty the 3L jug: (3, 2, 0)
+4. Pour 5L jug -> 3L jug: (3, 0, 2)
+5. Pour 8L jug -> 5L jug until 5L full: (0, 5, 2)
+6. Pour 5L jug -> 3L jug until 3L full (only 1L needed, 3L has 2,
+   needs 1 more): (1, 4, 3)
+Result: the 5L jug now has exactly 4 liters. (State shown as
+(8L jug, 5L jug, 3L jug) at each step.)
+
+C) 25 HORSES, RACES OF 5, NO STOPWATCH — FIND TOP 3
+Answer: 7 races minimum.
+Reasoning:
+1. Races 1-5: split 25 horses into 5 groups of 5, race each group.
+   (5 races so far) — now you know the ranking within each group.
+2. Race 6: race the 5 WINNERS of each group against each other.
+   This tells you the single fastest horse overall, and roughly
+   orders the groups by strength.
+3. Now use the race-6 result to prune: let group winners be
+   A1>B1>C1>D1>E1 (race 6 order). A1 is the overall fastest.
+   - D1, E1 and everyone in groups D and E can be eliminated
+     (their whole groups are too slow).
+   - From group C, only C1 can possibly be in the top 3 (C2 can't
+     beat B1 or A1 potentially — eliminate C2-C5).
+   - From group B, B1 and B2 are still candidates, B3-B5 eliminated.
+   - From group A, A2 and A3 are still candidates (A1 already
+     confirmed #1).
+   Remaining candidates for 2nd/3rd place: A2, A3, B1, B2, C1
+   (5 horses).
+4. Race 7: race these 5 candidates. The top 2 finishers of this
+   race are the overall 2nd and 3rd fastest horses.
+Total: 5 + 1 + 1 = 7 races.
+
+================================================================
+END OF FILE — tell me if you want anything added (linked list
+reversal, cycle detection, two-sum, recursion set, SOLID
+principles breakdown, inheritance vs composition, etc.)
+================================================================

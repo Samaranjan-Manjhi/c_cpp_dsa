@@ -1,0 +1,687 @@
+# Comprehensive Qt Interview Questions (500 Questions)
+
+---
+
+## Table of Contents
+1. [Core Framework & Architecture](#1-core-framework--architecture)
+2. [Signals, Slots & Event Loop](#2-signals-slots--event-loop)
+3. [Object Model & Memory Management](#3-object-model--memory-management)
+4. [Qt Widgets & UI Development](#4-qt-widgets--ui-development)
+5. [QML & Qt Quick](#5-qml--qt-quick)
+6. [Multithreading & Concurrency](#6-multithreading--concurrency)
+7. [Networking & IPC](#7-networking--ipc)
+8. [Graphics, 2D/3D & Painting](#8-graphics-2d3d--painting)
+9. [Data Structures & Containers](#9-data-structures--containers)
+10. [File I/O, Databases & Storage](#10-file-io-databases--storage)
+11. [Build Systems, Tools & Testing](#11-build-systems-tools--testing)
+12. [Advanced Topics, Architecture & Best Practices](#12-advanced-topics-architecture--best-practices)
+
+---
+
+## 1. Core Framework & Architecture
+
+### Beginner
+1. What is Qt, and what are its primary use cases?
+2. What is the fundamental base class for almost all non-GUI Qt classes?
+3. What macro is required in a class declaration to support Signals and Slots?
+4. What is `qmake` and how does it relate to `.pro` files?
+5. What is CMake's role in modern Qt development (Qt 6+)?
+6. What is the role of the Meta-Object Compiler (MOC)?
+7. What source files does MOC generate, and how are they linked?
+8. Explain the basic structure of a minimal Qt console application.
+9. What is `QCoreApplication` and when should it be used?
+10. What is the difference between `QGuiApplication` and `QApplication`?
+11. How do you check the current version of Qt programmatically?
+12. What are Qt modules? Give examples of three essential modules.
+13. What is `qDebug()` and how is it used for logging?
+14. How do you redirect or customize `qDebug()` output?
+15. What is `Q_DECL_OVERRIDE` / `override` in Qt C++ code?
+16. What is the difference between Commercial and Open Source (LGPL/GPL) licensing in Qt?
+17. What is `qmlplugindump` / `qmlcachegen`?
+18. What is the `QT_VERSION` macro?
+19. What is the purpose of the `Q_DISABLE_COPY` macro?
+20. How do you define custom global macros or constants in Qt?
+
+### Intermediate
+21. Explain how the Meta-Object System works behind the scenes.
+22. What information is stored in a class's `QMetaObject`?
+23. What is `Q_PROPERTY` and why is it crucial for Qt/QML integration?
+24. Explain the flags used inside `Q_PROPERTY` (e.g., `READ`, `WRITE`, `NOTIFY`, `RESET`).
+25. What is `Q_ENUM` and `Q_ENUM_NS`? How do they differ from standard C++ enums?
+26. How does Qt's dynamic property system (`setProperty`, `property`) function?
+27. What is `qobject_cast` and how does it differ from standard `dynamic_cast`?
+28. Why can't `qobject_cast` be used on classes without `Q_OBJECT`?
+29. What is the purpose of `Q_INTERFACES` in Qt's plugin system?
+30. Explain the difference between compile-time and runtime introspection in Qt.
+31. What is the `Q_DECLARE_METATYPE` macro and when is it required?
+32. What is `qRegisterMetaType()` and why is it needed for queued connections?
+33. How does Qt handle cross-platform abstractions for system paths (`QStandardPaths`)?
+34. What is `QPluginLoader` and how do you build a custom C++ plugin in Qt?
+35. How does Qt support internationalization (i18n) via `QTranslator` and `tr()`?
+36. What is the purpose of `lupdate` and `lrelease` tools?
+37. Explain how `QT_NO_KEYWORDS` impacts Qt codebases.
+38. How do custom context properties work in `tr("text", "context")`?
+39. What is the difference between Qt 5 and Qt 6 core architecture changes?
+40. What is `QVariant` and how does it achieve type safety dynamically?
+
+### Advanced
+41. How is `QMetaObject` constructed at compile time vs runtime?
+42. Deep dive into MOC generated `moc_*.cpp` code structure.
+43. How does Qt implement property bindings in C++20 with Qt 6 (`QProperty<T>`)?
+44. Explain the performance overhead of MOC introspection vs template metaprogramming.
+45. How do you expose C++ template classes to Qt's Meta-Object System?
+46. What are the memory layout implications of `QObject` deriving classes?
+47. How does Qt handle global static object initialization safely across platforms?
+48. Describe the inner workings of `QFactoryInterface` and plugin registry.
+49. How can you inspect meta-type registries programmatically at runtime?
+50. What are the limitations of MOC with respect to multiple inheritance?
+
+---
+
+## 2. Signals, Slots & Event Loop
+
+### Beginner
+51. What is a Signal in Qt?
+52. What is a Slot in Qt?
+53. Write the syntax for connecting a signal to a slot using string-based syntax (Qt 4 style).
+54. Write the syntax for connecting a signal to a slot using functor/pointer syntax (Qt 5+ style).
+55. Can a signal be connected to another signal?
+56. Can multiple slots be connected to a single signal?
+57. Can a single slot be connected to multiple signals?
+58. What happens if a signal is emitted with no connected slots?
+59. What is `emit` in Qt C++? Is it a C++ keyword?
+60. What keyword/macro marks a function as a slot in a header file?
+61. What is the main event loop in Qt?
+62. How do you start the event loop in a Qt application?
+63. What is `QEvent`?
+64. What is the function signature for overriding event processing in a `QObject`?
+65. What is `QCoreApplication::processEvents()` and when is it used?
+66. What are the dangers of calling `QCoreApplication::processEvents()`?
+67. How do you disconnect a signal from a slot?
+68. What is `sender()` inside a slot and why should its use be minimized?
+69. What is `QSignalBlocker` and when should you use it?
+70. How do you pass lambda functions into `QObject::connect`?
+
+### Intermediate
+71. Compare string-based `SIGNAL()` / `SLOT()` syntax vs Function Pointer syntax.
+72. What are the connection types in Qt (`AutoConnection`, `DirectConnection`, `QueuedConnection`, `BlockingQueuedConnection`)?
+73. Explain `Qt::UniqueConnection` and when it is useful.
+74. How does `Qt::DirectConnection` behave when signals are emitted across different threads?
+75. How does `Qt::QueuedConnection` marshal arguments across threads?
+76. What is the difference between `QCoreApplication::postEvent()` and `QCoreApplication::sendEvent()`?
+77. Which thread executes a slot connected via `Qt::AutoConnection`?
+78. How does event filtering work using `installEventFilter()` and `eventFilter()`?
+79. What is the return value of `eventFilter()` and what does `true` vs `false` signify?
+80. What is the event propagation hierarchy in Qt UI widgets?
+81. Explain `QObject::customEvent()` and how to create custom `QEvent` subclasses.
+82. How do deferred deletions work via `deleteLater()`?
+83. What happens if you call `delete` directly on a `QObject` involved in an active event loop?
+84. How do custom C++ types need to be declared to pass through `Qt::QueuedConnection`?
+85. What is `QBasicTimer` and how does it differ from `QTimer`?
+86. How do you measure time intervals accurately using `QElapsedTimer`?
+87. How does signal-slot parameter matching work (implicit casting, const references, etc.)?
+88. Can a signal have a return value? Explain how or why not.
+89. How does `QObject::blockSignals()` work?
+90. Explain how `QSocketNotifier` integrates system descriptors into the Qt Event Loop.
+
+### Advanced
+91. Under the hood, how does Qt route a signal emission to connected slots in C++?
+92. Explain the thread safety mechanisms surrounding `QObject::connect` and `QObject::disconnect`.
+93. What is the precise memory overhead per signal/slot connection in Qt 6?
+94. How does the Qt event loop integrate with native OS event loops (Win32 Message Loop, Cocoa, glib)?
+95. Describe how `QAbstractEventDispatcher` facilitates custom event dispatchers.
+96. What causes event loop starvation, and how do you diagnose and fix it?
+97. How are high-frequency events (like mouse move/paint events) compressed in the Qt event queue?
+98. What are the deadlock risks associated with `Qt::BlockingQueuedConnection`?
+99. How can you intercept ALL signals emitted by a `QObject` for profiling/debugging?
+100. How does template expansion work in modern `QObject::connect` signatures?
+
+---
+
+## 3. Object Model & Memory Management
+
+### Beginner
+101. What is parent-child ownership in the `QObject` tree?
+102. What happens to child `QObject`s when their parent `QObject` is destroyed?
+103. Can a `QObject` exist without a parent?
+104. Why are `QObject` copy constructor and assignment operator disabled?
+105. What is `QPointer` and what problem does it solve?
+106. What is `QSharedPointer` and how does it compare to `std::shared_ptr`?
+107. What is `QWeakPointer`?
+108. What is `QScopedPointer` and how does it compare to `std::unique_ptr`?
+109. What is `deleteLater()` and why is it preferred over `delete` in GUI callbacks?
+110. What happens if a child `QObject` is allocated on the stack and its parent on the heap?
+111. What happens if a parent `QObject` is allocated on the stack and its child on the stack above it?
+112. How do you find a child object by name using `findChild()`?
+113. How do you retrieve all child objects of a specific type using `findChildren()`?
+114. What is `QScopedValueRollback`?
+115. Can you store `QObject` instances directly in standard STL containers by value? Why?
+116. What is `Q_DISABLE_MOVE`?
+117. How does explicit memory management interact with `QGraphicsItem` hierarchies?
+118. What is `QExplicitlySharedDataPointer`?
+119. What is Implicit Data Sharing (Copy-on-Write) in Qt?
+120. Which standard Qt non-`QObject` classes use Implicit Sharing?
+
+### Intermediate
+121. Explain how Copy-on-Write (COW) works internally in classes like `QString` and `QVector`.
+122. What triggers a shallow copy vs a deep copy in implicitly shared Qt containers?
+123. Why is thread safety a crucial consideration when passing implicitly shared objects across threads?
+124. How does `QSharedData` and `QSharedDataPointer` facilitate implementing custom COW classes?
+125. What are the memory alignment requirements for `QObject` allocations?
+126. Explain the destruction order of `QObject` children.
+127. What happens if `setParent()` is called on an object that already has a parent?
+128. How does `QPointer` track object destruction without causing memory leaks or dangling pointers?
+129. Compare `std::unique_ptr<QObject>` vs parent-child dynamic ownership.
+130. How do guard pointers work in async callbacks?
+131. What is `QEnableSharedFromThis`?
+132. How do you avoid circular references when using `QSharedPointer`?
+133. What is object tree dump (`dumpObjectTree()`, `dumpObjectInfo()`) used for?
+134. What is the effect of moving a `QObject` to a new thread on its child objects?
+135. Can a parent and child `QObject` reside in different threads?
+136. Explain the lifetime of `QQuickItem` vs `QObject` in QML engine ownership models.
+137. How does `QQmlEngine::JavaScriptOwnership` differ from `QQmlEngine::CppOwnership`?
+138. What is `Q_DECLARE_REFCOUNT`?
+139. How do smart pointers interact with custom deleters in Qt?
+140. How do you detect memory leaks in a Qt application using toolsets (Valgrind, ASan, Qt Creator tools)?
+
+### Advanced
+141. Detailed execution path when `delete` is called on a parent `QObject`.
+142. How does atomic reference counting work in implicitly shared containers under high thread contention?
+143. Re-entrancy vs Thread-Safety in the context of Qt's object model and COW classes.
+144. How does `QPointer` maintain atomic cleanup without registering a full signal-slot connection?
+145. Compare performance and allocation overhead of `QSharedPointer` vs `std::shared_ptr`.
+146. How to write a lock-free custom implicitly shared data structure using Qt primitives?
+147. Under what conditions can object tree destruction cause stack overflow in deep hierarchies?
+148. How do custom allocators integrate with Qt containers and `QObject` instantiation?
+149. Analysis of memory fragmentation caused by frequent creation/destruction of small `QObject`s.
+150. How does Qt 6 optimize container object dynamic storage (e.g., `QAnyStringView`, `QUtf8StringView`)?
+
+---
+
+## 4. Qt Widgets & UI Development
+
+### Beginner
+151. What is the base class for all user interface objects in Qt Widgets?
+152. What is `QMainWindow` and what default regions (dock, toolbar, status bar, central widget) does it provide?
+153. What is `QWidget` vs `QFrame` vs `QDialog`?
+154. How do layouts (`QHBoxLayout`, `QVBoxLayout`, `QGridLayout`) simplify GUI development?
+155. What is the difference between a modal dialog and a modeless dialog?
+156. How do you set a widget's window title and icon?
+157. What is `QStackedWidget` and how is it used?
+158. What is `QScrollArea` and how do you enable scrollbars for custom widgets?
+159. What is Qt Designer and what file format does it generate (`.ui`)?
+160. How is the `.ui` file converted to C++ code during compilation?
+161. What is the purpose of `ui->setupUi(this)`?
+162. How do `QSizePolicy` and `sizeHint()` influence widget sizing?
+163. What is `minimumSizeHint()`?
+164. What is Style Sheets (QSS) in Qt Widgets?
+165. How do you apply CSS-like styling to a Qt application?
+166. What is `QAction` and how is it shared between menus and toolbars?
+167. What is `QListWidget` vs `QListView`?
+168. What is `QTreeWidget` vs `QTreeView`?
+169. What is `QTableWidget` vs `QTableView`?
+170. What is `QSystemTrayIcon`?
+
+### Intermediate
+171. Explain the Model-View-Controller (MVC) architecture implementation in Qt Widgets (Model/View programming).
+172. What is `QAbstractItemModel` and what mandatory methods must you override for a custom read-only model?
+173. What methods must be overridden in `QAbstractItemModel` for an editable model?
+174. What is `QModelIndex` and why shouldn't it be stored persistently?
+175. What is `QPersistentModelIndex`?
+176. What is a Delegate (`QStyledItemDelegate`) and how does it customize model item rendering and editing?
+177. Explain how `QSortFilterProxyModel` enables filtering and sorting without modifying the underlying model.
+178. What is `QDataWidgetMapper` and how does it bind models to form widgets?
+179. What is event propagation in custom widgets (`mousePressEvent`, `keyPressEvent`)?
+180. How do you mark an event as accepted or ignored (`e->accept()`, `e->ignore()`)?
+181. What is `QStyle` and `QProxyStyle`?
+182. How do custom widget paint events work (`paintEvent(QPaintEvent*)`)?
+183. How do you create custom container widgets that integrate with Qt Designer plugins?
+184. Explain geometry management: `geometry()`, `frameGeometry()`, `rect()`.
+185. How do keyboard shortcuts and accelerators (`QKeySequence`) work?
+186. What is `QSplitter` and how does dynamic resizing work?
+187. What is `QDockWidget` and how do docking areas operate?
+188. How do high-DPI displays affect Qt Widget layout rendering and scaling?
+189. What is `QRubberBand` and how is it used for selection rectangles?
+190. How does focus handling work (`Qt::FocusPolicy`, `tabKeyNavigation`)?
+
+### Advanced
+191. How do you write a high-performance custom `QAbstractItemModel` backing millions of rows?
+192. Explain model index creation via `createIndex()` and internal pointer management.
+193. How do parent-child index relations work in hierarchical tree models (`QAbstractItemModel::parent`)?
+194. How do you implement drag-and-drop support inside item views and custom widgets?
+195. What are the performance implications of updating model data (`dataChanged()`, `beginResetModel()`, `beginInsertRows()`)?
+196. How to draw complex styled elements using `QStylePainter` and `QStyleOption` primitives?
+197. Explain the rendering performance differences between Software rasterization and OpenGL-backed `QWidget` viewports.
+198. How do native window handles (`WId`, `winId()`) integrate with external UI libraries (e.g., embedding HWND/NSView)?
+199. How do you optimize widget repaint performance using dirty regions (`QRegion`)?
+200. Architectural design of a dynamic plugin-driven MDI (Multiple Document Interface) application using `QMdiArea`.
+
+---
+
+## 5. QML & Qt Quick
+
+### Beginner
+201. What is QML (Qt Modeling Language) and how does it differ from C++ Qt Widgets?
+202. What is Qt Quick?
+203. What file extension is used for QML files?
+204. What is the fundamental root item type in Qt Quick UI (`Item`, `Rectangle`, `Window`)?
+205. What is property binding in QML?
+206. How do you import Qt Quick modules in a `.qml` file?
+207. What is the purpose of `id` in QML components?
+208. Can an `id` be changed dynamically at runtime?
+209. What is `MouseArea` and how do you handle click events in QML?
+210. What is `Text`, `TextInput`, and `TextEdit` in QML?
+211. How do anchoring layout concepts work (`anchors.fill`, `anchors.centerIn`, etc.)?
+212. What are `Row`, `Column`, and `Grid` positioners?
+213. What is `Layout` attached property from `QtQuick.Layouts`?
+214. What is `Component` in QML?
+215. What is `Loader` and why is it used for dynamic loading?
+216. How do you define custom properties in QML (`property int myVal`)?
+217. What is `alias` property in QML and when is it useful?
+218. What is `States` and `Transitions` in Qt Quick?
+219. How do animations (`NumberAnimation`, `PropertyAnimation`) work in QML?
+220. What is `QQmlApplicationEngine` vs `QQuickView`?
+
+### Intermediate
+221. How do you expose a C++ class to QML using `QML_ELEMENT` / `qmlRegisterType()`?
+222. How do you pass data from C++ to QML using Context Properties (`setContextProperty`)? Why is it discouraged in modern Qt?
+223. How do you invoke C++ methods from QML (`Q_INVOKABLE` vs `public slots`)?
+224. How do signals emitted in C++ trigger JavaScript handlers in QML?
+225. How do you subclass `QQuickItem` for custom C++ visual rendering?
+226. What is the Scene Graph in Qt Quick (`QSGNode`, `QSGSimpleRectNode`)?
+227. How does the Qt Quick rendering loop work (Main Thread vs Render Thread)?
+228. What is `ListView` and `GridView` in QML, and how do delegates work?
+229. What is `ListModel` and `ListElement` in QML?
+230. How do C++ models (`QAbstractListModel`) connect to QML `ListView`?
+231. Explain role names (`roleNames()`) in C++ models for QML consumption.
+232. What is `SwipeView`, `TabBar`, and `StackView` in Qt Quick Controls?
+233. How does custom styling work in Qt Quick Controls 2?
+234. What is ECMAScript version supported by Qt QML engine?
+235. What is `QJSValue` and `QJSEngine`?
+236. What are attached properties in QML (e.g., `Keys.onPressed`, `Component.onCompleted`)?
+237. How do custom attached properties get implemented in C++?
+238. Explain singletons in QML (`QML_SINGLETON` / `qmlRegisterSingletonType`).
+239. How do property change notification signals work automatically in QML?
+240. What is JavaScript module dynamic loading (`import "script.js" as Code`)?
+
+### Advanced
+241. Explain the internal evaluation process of QML property binding expressions.
+242. How does the QML Garbage Collector manage memory and lifetime of dynamic JavaScript/QML objects?
+243. How do you create custom `QSGGeometryNode` instances for high-performance GPU-accelerated drawing?
+244. How does `ShaderEffect` and custom QSB (Qt Shader Tools) SPIR-V integration work in Qt 6?
+245. How to resolve binding loops in complex QML user interfaces?
+246. Compare performance overhead of JavaScript expressions vs compiled QML (`qmlcachegen` / `qmlsc`).
+247. How do thread boundaries operate between C++ worker threads and QML UI properties?
+248. How do you write unit tests for QML components using `TestCase` (Qt Quick Test framework)?
+249. Deep dive into `QQmlPropertyMap` and dynamic runtime object creation via `Qt.createQmlObject()`.
+250. How do multi-threaded Scene Graph render loops synchronize frame rendering with VSync on different OS targets?
+
+---
+
+## 6. Multithreading & Concurrency
+
+### Beginner
+251. What class is used to create and manage worker threads in Qt?
+252. What is the basic procedure to create a thread by subclassing `QThread`?
+253. What is the "Worker Object / MoveToThread" pattern and why is it recommended over subclassing `QThread`?
+254. What is `QRunnable` and `QThreadPool`?
+255. What is `QtConcurrent`?
+256. What is `QMutex` and how do you lock/unlock it?
+257. What is `QMutexLocker` and why is it RAII-recommended?
+258. Can GUI widgets (`QWidget`, `QQuickItem`) be created or updated directly from secondary threads?
+259. What happens if you try to update a GUI widget from a non-GUI thread?
+260. What is `QThread::currentThread()` used for?
+261. How do you stop a `QThread` gracefully (`requestInterruption()`, `isInterruptionRequested()`)?
+262. What is `QThread::msleep()`, `sleep()`, `usleep()`?
+263. What is `QWaitCondition`?
+264. What is `QSemaphore`?
+265. What is `QReadWriteLock`?
+266. What is `QReadLocker` and `QWriteLocker`?
+267. What is `QFuture` and `QFutureWatcher`?
+268. How do you run a function asynchronously using `QtConcurrent::run()`?
+269. What is `QThread::exec()` and what does it do?
+270. How do you set thread priority in Qt?
+
+### Intermediate
+271. Compare `QThread` vs `QRunnable` vs `QtConcurrent` for various background task workloads.
+272. Explain thread affinity of a `QObject` (`QObject::thread()`).
+273. How is thread affinity assigned when a `QObject` is constructed?
+274. What are the rules and constraints when calling `QObject::moveToThread()`?
+275. Explain how timer events (`QTimer`) interact with `QThread` event loops.
+276. How do you pass data safely across threads without mutexes using Qt Signals and Slots?
+277. What happens under the hood when a `Qt::QueuedConnection` crosses thread boundaries?
+278. How does `QFutureSynchronizer` simplify multi-future lifecycle management?
+279. Explain map-reduce operations using `QtConcurrent::mappedReduced()`.
+280. How do you implement worker thread pools for network requests using `QThreadPool`?
+281. How does lock-free programming interact with `QAtomicInt` and `QAtomicPointer`?
+282. What memory barrier primitives does Qt provide?
+283. What is deadlocking and how do you avoid it when acquiring multiple `QMutex` objects?
+284. How do you safely stop a thread running an infinite event loop (`quit()`, `exit()`, `wait()`)?
+285. What is the difference between `QThread::terminate()` and `QThread::quit()`? Why is `terminate()` dangerous?
+286. How do promise-like async structures work in Qt 6 using `QPromise`?
+287. How does task cancellation work in `QtConcurrent` tasks?
+288. How do thread-local storage primitives work using `QThreadStorage`?
+289. How do you process large datasets concurrently using `QtConcurrent::map()`?
+290. What is thread safety level guarantee of Qt containers when read simultaneously from multiple threads?
+
+### Advanced
+291. Detailed mechanics of `QObject` thread affinity changes and signal redirection.
+292. How does the Qt Event Loop process posted events across thread queues atomically?
+293. Implementing a lock-free Single-Producer Single-Consumer (SPSC) queue using Qt atomic operations.
+294. High-performance multi-threaded image processing pipeline using `QtConcurrent` and `QImage` shared buffers.
+295. How does `QThreadPool` dynamically spawn and prune worker threads based on system CPU core availability?
+296. Under what circumstances can cross-thread signal emission result in memory growth or queue flooding?
+297. How to write custom `QFuture` providers with `QPromise` in complex asynchronous workflows.
+298. Memory ordering guarantees (`std::memory_order`) in `QAtomic` operations across ARM and x86 architectures.
+299. Designing thread-safe dynamic C++ singletons in Qt without double-checked locking bugs.
+300. Debugging complex multi-threaded deadlocks and race conditions in Qt using Helgrind, ThreadSanitizer, and Qt Creator.
+
+---
+
+## 7. Networking & IPC
+
+### Beginner
+301. Which module provides networking functionality in Qt?
+302. What is `QNetworkAccessManager` and what is its primary purpose?
+303. How do you send an HTTP GET request using `QNetworkAccessManager`?
+304. How do you send an HTTP POST request?
+305. What class represents an HTTP response in Qt?
+306. Is `QNetworkAccessManager` asynchronous or synchronous?
+307. What is `QTcpSocket` and `QTcpServer`?
+308. What is `QUdpSocket`?
+309. What signal is emitted when `QNetworkReply` finishes receiving data?
+310. How do you read bytes from a `QNetworkReply` or `QTcpSocket`?
+311. What is `QHostAddress`?
+312. How do you handle SSL/TLS connections in Qt?
+313. What is `QSslSocket`?
+314. What class handles URL parsing and construction in Qt?
+315. What is `QNetworkCookieJar`?
+316. What is `QLocalSocket` and `QLocalServer`?
+317. What IPC mechanism does `QLocalSocket` rely on (Named Pipes / Unix Domain Sockets)?
+318. What is `QProcess` and how do you launch external executables?
+319. How do you read stdout and stderr from a `QProcess`?
+320. How do you write data to stdin of a running `QProcess`?
+
+### Intermediate
+321. Explain network proxy configuration using `QNetworkProxy`.
+322. How do you handle HTTP redirects automatically in `QNetworkRequest`?
+323. How do you monitor download/upload progress with `QNetworkReply`?
+324. What is `QNetworkCacheManager` / `QAbstractNetworkCache`?
+325. How do you manage HTTP Authentication prompts using `QNetworkAccessManager::authenticationRequired`?
+326. How do SSL certificate errors get bypassed or verified programmatically (`sslErrors` signal)?
+327. How do you implement a TCP Server handling multiple clients asynchronously?
+328. What is `QSharedMemory` and how is it used for cross-process IPC?
+329. What is `QSystemSemaphore` and how does it synchronize process access to `QSharedMemory`?
+330. What is DBus and how is it supported in Qt (`QtDBus` module)?
+331. How do you expose a C++ `QObject` over DBus using `QDBusConnection`?
+332. How do you call remote DBus interfaces using `QDBusInterface`?
+333. How does WebSockets networking work via `QWebSocket` and `QWebSocketServer`?
+334. How do you handle socket disconnects and re-connection strategies gracefully?
+335. Explain how `QProcessEnvironment` passes environment variables to child processes.
+336. How do you run synchronous network operations safely without blocking the UI thread?
+337. What is `QNetworkInformation` in Qt 6?
+338. What is `QSslConfiguration` and how do you enforce TLS 1.3?
+339. How do UDP broadcast and multicast datagrams work using `QUdpSocket`?
+340. What is `QDataStream` serialization across network sockets?
+
+### Advanced
+341. Architectural design of an enterprise network layer using `QNetworkAccessManager` singletons and worker threads.
+342. High-concurrency TCP server design using `QTcpServer` and `QThreadPool` thread-per-socket vs event-driven IO.
+343. Internal buffer management and zero-copy data streaming using `QIODevice` in low-latency networks.
+344. Shared memory IPC design with `QSharedMemory` protecting against crash states and dirty reads.
+345. Custom protocol implementation using `QDataStream` versioning and binary serialization over raw TCP sockets.
+346. How to perform asynchronous DNS resolution and cache overrides in `QNetworkAccessManager`.
+347. Cross-process RPC system design over `QLocalSocket` with dynamic method dispatch via Qt Meta-Object system.
+348. Securing WebSocket communication with client-side SSL client certificates (`QSslKey`, `QSslCertificate`).
+349. Inspecting and intercepting HTTP/2 framing and multiplexing in modern Qt network backends.
+350. Handling network interface changes dynamically using `QNetworkConfigurationManager` / `QNetworkInformation`.
+
+---
+
+## 8. Graphics, 2D/3D & Painting
+
+### Beginner
+351. What is `QPainter` and what is its primary role in Qt?
+352. What class represents a 2D canvas device that `QPainter` can draw upon (`QPaintDevice`)?
+353. Name three subclasses of `QPaintDevice`.
+354. What is `QPen` used for?
+355. What is `QBrush` used for?
+356. What is `QColor` and how do you specify alpha transparency?
+357. What is `QPixmap` vs `QImage`?
+358. When should you prefer `QPixmap` over `QImage`?
+359. What is `QBitmap`?
+360. What is `QPicture`?
+361. What event method must be overridden to render standard 2D custom visuals on a `QWidget`?
+362. What is `QPainterPath` and why is it useful?
+363. What is Graphics View Framework (`QGraphicsScene`, `QGraphicsView`, `QGraphicsItem`)?
+364. What is the responsibility of `QGraphicsScene`?
+365. What is the responsibility of `QGraphicsView`?
+366. Name three built-in `QGraphicsItem` derived classes (e.g., `QGraphicsRectItem`).
+367. How do you add custom mouse click handling to a `QGraphicsItem`?
+368. What is `QSvgRenderer` and how do you display vector graphics in Qt?
+369. What is `QTransform` used for in 2D transformations?
+370. How do you draw simple geometric shapes (lines, rects, ellipses) using `QPainter`?
+
+### Intermediate
+371. What is coordinate system transformation in `QPainter` (`translate`, `rotate`, `scale`)?
+372. Explain the difference between Item Coordinates, Scene Coordinates, and View Coordinates in Graphics View Framework.
+373. How do coordinate mappings work (`mapToScene`, `mapFromScene`, `mapToParent`)?
+374. How does `QGraphicsItem::boundingRect()` affect collision detection and repaint rendering?
+375. What is `QGraphicsItem::shape()` and how does it differ from `boundingRect()`?
+376. What is double buffering in `QWidget` painting and is it enabled by default?
+377. How do linear, radial, and conical gradients (`QGradient`) work in `QBrush`?
+378. How do composition modes (`QPainter::CompositionMode`) allow blend effects like Photoshop layers?
+379. What is `QOpenGLWidget` and how do you render custom raw OpenGL code inside Qt UI?
+380. What are the key virtual methods to override in `QOpenGLWidget` (`initializeGL`, `resizeGL`, `paintGL`)?
+381. Explain hardware acceleration support in Qt Quick rendering pipelines (RHI - Rendering Hardware Interface).
+382. What is Qt Shader Tools and `.qsb` file compilation?
+383. How do you implement custom level-of-detail (LOD) drawing using `QStyleOptionGraphicsItem`?
+384. What is `QGraphicsEffect` (e.g., `QGraphicsDropShadowEffect`, `QGraphicsBlurEffect`)?
+385. How do off-screen render targets (`QOpenGLFramebufferObject` / `QFrameBufferObject`) work?
+386. How do you export a `QGraphicsScene` or `QWidget` render into a PDF file using `QPdfWriter`?
+387. Explain antialiasing render hints in `QPainter` (`QPainter::Antialiasing`).
+388. How to optimize `QGraphicsView` performance with large numbers (100,000+) of items?
+389. What is index optimization (`QGraphicsScene::setItemIndexMethod`)?
+390. What is `Qt3D` module and what is its entity-component-system (ECS) architecture?
+
+### Advanced
+391. Deep dive into Qt 6 Rendering Hardware Interface (RHI) abstraction layer across Vulkan, Metal, Direct3D 11/12, and OpenGL.
+392. Building high-throughput real-time plotting components handling millions of data points using custom GPU shaders vs `QPainter`.
+393. Custom item spatial indexing algorithms replacing BSP trees in `QGraphicsScene` for dynamic worlds.
+394. Implementing zero-copy texture sharing between CUDA / Native Video Decoders and Qt Quick SceneGraph.
+395. How does subpixel font anti-aliasing and text rendering layout pipeline (`QTextLayout`, `QRawFont`) work internally?
+396. Optimizing CPU-to-GPU pixel transfers when updating high-resolution `QImage` textures continuously.
+397. How to implement seamless transparent window overlays with custom hardware-accelerated composition.
+398. Custom rendering pipeline integration with `QQuickRenderControl` for offscreen engine embedded rendering.
+399. Complex 3D scene graph animation with custom materials and lighting shaders using `Qt Quick 3D`.
+400. Analyzing memory footprint and GPU allocation strategies when caching large sprite sheets in `QPixmapCache`.
+
+---
+
+## 9. Data Structures & Containers
+
+### Beginner
+401. What are Qt's custom container classes (Qt Containers)?
+402. What is `QString` and how does it handle character encoding internally (UTF-16)?
+403. What is `QByteArray` and when is it used instead of `QString`?
+404. What is `QVector` (or `QList` in Qt 6) and how does it compare to `std::vector`?
+405. What is `QMap` vs `QHash`?
+406. Which container is faster for lookup operations: `QMap` or `QHash`?
+407. What are the requirement traits for keys stored inside a `QMap` vs `QHash`?
+408. What is `QSet`?
+409. What is `QQueue` and `QStack`?
+410. How do Java-style iterators (`QListIterator`, `QMapIterator`) work in Qt?
+411. How do STL-style iterators (`QVector::iterator`) work in Qt containers?
+412. What is Range-based `for` loop usage with Qt containers?
+413. What macro is used for custom key hashing in `QHash`?
+414. What is `QLatin1String` and why is it used for optimization?
+415. What is `QStringView` (introduced in Qt 5.10 / core in Qt 6)?
+416. What is `QStringView` vs `std::string_view`?
+417. What is `QVariant` and what data types can it hold?
+418. How do you convert a `QVariant` back to its concrete type?
+419. What is `QPair`?
+420. How do you perform fast string concatenations using `builder` pattern (`QStringBuilder` / `%` operator)?
+
+### Intermediate
+421. Explain container unification in Qt 6 (the merging of `QList` and `QVector`).
+422. How does Implicit Sharing impact standard C++ iteration and write operations (container detachment)?
+423. What is container "detachment" and how can accidental detachment cause performance issues?
+424. Why should you pass Qt containers by `const` reference?
+425. What is the difference between `constFirst()` / `constLast()` vs `first()` / `last()` regarding detachment?
+426. How do range-based `for` loops trigger detachment if the container is non-const?
+427. What is `QCache` and how does key-value auto-deletion work?
+428. What is `QContiguousCache` and where is it useful?
+429. What is `QMultiMap` and `QMultiHash`?
+430. How does string interpolation using `.arg()` work in `QString`?
+431. Compare memory allocation strategy of `QVector` vs `std::vector`.
+432. What is `QVarLengthArray` and when should it be used for stack memory allocation?
+433. How does `QAnyStringView` unify `QString`, `QStringView`, `QUtf8StringView`, and `QLatin1StringView` in Qt 6?
+434. What is `QBitArray` and what operations does it support?
+435. How do custom types register hash functions using `qHash()`?
+436. Explain algorithmic complexity guarantees for `QMap` (Red-Black tree) vs `QHash` (Hash Table).
+437. What is `QScopeGuard`?
+438. What is `CBOR` support in Qt (`QCborValue`, `QCborStreamReader`)?
+439. What is `QJsonDocument`, `QJsonObject`, `QJsonArray`, `QJsonValue`?
+440. Compare performance of JSON parsing vs CBOR binary protocol in Qt.
+
+### Advanced
+441. Under what precise conditions does an STL-style const iterator detach an implicitly shared Qt container?
+442. Deep dive into the internal memory layout of `QString` (Header, Reference Counter, Array data).
+443. How to avoid dynamic heap allocations completely during string manipulations in real-time control loops.
+444. Implementing zero-copy memory parsing architectures with `QByteArrayView` and custom buffer streams.
+445. Micro-benchmarking `QHash` bucket collisions and load factor performance under adversarial key inputs.
+446. How does Qt 6 implement custom allocators for `QList` header control blocks?
+447. Thread safety guarantees of `QSharedDataPointer` containers during concurrent read-only iteration vs mutation.
+448. Designing custom heterogenous compile-time meta-containers leveraging modern C++20 and Qt meta-type systems.
+449. Algorithmic efficiency of `QJsonDocument` binary format representations vs standard text-based JSON.
+450. Static compile-time string generation with `qOverload`, `QStringLiteral`, and macro expansions.
+
+---
+
+## 10. File I/O, Databases & Storage
+
+### Beginner
+451. What is `QFile` and how do you open a text file for reading?
+452. What class is used for high-level text reading and writing (`QTextStream`)?
+453. What class is used for binary data serialization (`QDataStream`)?
+454. What is `QFileInfo` and what metadata can it retrieve?
+455. What is `QDir` and how do you list files in a directory?
+456. How do you check if a file or directory exists in Qt?
+457. What is `QStandardPaths` and how do you get paths like AppData, Documents, Temp?
+458. What is the Qt Resource System (`.qrc`)?
+459. How do paths referencing the resource system start (e.g., `:/prefix/file`)?
+460. What is `QTemporaryFile`?
+461. What module handles SQL databases in Qt?
+462. What is `QSqlDatabase`?
+463. Name three database drivers supported natively by `QtSql` (e.g., `QSQLITE`).
+464. How do you execute an SQL query using `QSqlQuery`?
+465. What is `QSettings` and how is it used to persist application configurations?
+466. What storage backends does `QSettings` use on Windows vs macOS vs Linux?
+467. How do you read and write values in `QSettings`?
+468. What is `QSaveFile` and how does it ensure atomic file writes?
+469. What is `QFileSystemWatcher`?
+470. How do you stream primitive types (int, float) directly to a `QDataStream`?
+
+### Intermediate
+471. Explain schema migrations and transaction management (`transaction()`, `commit()`, `rollback()`) using `QSqlDatabase`.
+472. How do model classes `QSqlQueryModel`, `QSqlTableModel`, and `QSqlRelationalTableModel` integrate database tables with Qt Widgets/Views?
+473. How do you prevent SQL injection vulnerabilities using prepared statements and `bindValue()` in `QSqlQuery`?
+474. What is `QBuffer` and how does it allow a `QByteArray` to act as a `QIODevice`?
+475. How do binary compatibility and byte-order (endianness) work in `QDataStream` streaming across target platforms?
+476. How do you handle large text files asynchronously using `QFile` and non-blocking I/O events?
+477. How does the Qt Resource System embed binary resources into the compiled application executable?
+478. What are dynamic External Resource Files (`.rcc`) and how can they be registered dynamically at runtime via `QResource::registerResource()`?
+479. How do file locks work using `QLockFile`?
+480. What is `QDirIterator` and how does it compare to recursive directory search via `QDir`?
+481. How do you stream custom C++ struct/class objects using `operator<<` and `operator>>` with `QDataStream`?
+482. What is `QStorageInfo` and how do you check available disk space on drives?
+483. How do you monitor file modification events in subdirectories efficiently using `QFileSystemWatcher`?
+484. How do text encodings (UTF-8, UTF-16, Latin1) get managed in `QTextStream`?
+485. Explain `QSettings` scopes (`UserScope` vs `SystemScope`) and organization/application name keys.
+
+### Advanced
+486. High-performance asynchronous database processing architecture using dedicated thread pools and connection pooling in `QSqlDatabase`.
+487. Custom virtual file system (VFS) implementation by subclassing `QAbstractFileEngine` (or custom `QIODevice` abstractions).
+488. Zero-copy file mapping into process virtual memory address spaces using `QFileDevice::map()`.
+489. In-depth memory analysis and decompression performance of embedded `.qrc` resource data vs raw disk I/O.
+490. Implementing custom SQL drivers for proprietary backend databases by extending `QSqlDriver` and `QSqlResult`.
+491. Atomic safe updates to critical state files in unstable power loss environments using `QSaveFile` and flush flags.
+492. Handling multithreaded concurrent SQLite database connections safely in embedded targets.
+493. Serializing dynamic `QVariantMap` deep structures down to fast binary streams with version control.
+494. Designing cross-platform file system permissions management wrappers handling ACLs across POSIX and Windows NT systems.
+495. Memory-mapped IPC file logging engines handling high-frequency telemetry writes without dropping UI frames.
+
+---
+
+## 11. Build Systems, Tools & Testing
+
+### Beginner
+496. What is Qt Creator?
+497. What is the role of `qmake` vs `make`/`ninja`?
+498. What is the standard configuration file for `qmake` (`.pro`)?
+499. What are the basic variables in a `.pro` file (`QT`, `TARGET`, `TEMPLATE`, `SOURCES`, `HEADERS`)?
+500. How do you include a Qt module (like `network` or `sql`) in a `.pro` file?
+501. How do you add Qt modules using CMake (`find_package(Qt6 COMPONENTS ...)`)?
+502. What CMake command automatically invokes MOC, RCC, and UIC build steps (`CMAKE_AUTOMOC`, `CMAKE_AUTORCC`, `CMAKE_AUTOUIC`)?
+503. What is `uic` (User Interface Compiler)?
+504. What is `rcc` (Resource Compiler)?
+505. What unit testing framework is included natively with Qt?
+506. What macro defines a test case function in `QTest`?
+507. How do you execute a Qt unit test application?
+508. What is `QVERIFY` and `QCOMPARE` in `QTest`?
+509. What is `windeployqt` and `macdeployqt`?
+510. What is the purpose of static building in Qt?
+
+### Intermediate
+511. Compare `qmake` vs CMake for modern Qt 6 application builds.
+512. How do you create data-driven unit tests in `QTest` using `QTest::addColumn()` and `QTest::newRow()`?
+513. How do you simulate GUI mouse clicks and key presses programmatically in tests using `QTest::mouseClick` and `QTest::keyClick`?
+514. What is `QSignalSpy` and how is it used to test if signals are emitted correctly with expected parameters?
+515. How do you benchmark code performance using `QBENCHMARK` in `QTest`?
+516. Explain conditional compilation in `.pro` files based on platform (`win32`, `macx`, `unix`).
+517. How do you structure a multi-project / multi-module codebase using qmake `subdirs` template or CMake subdirectories?
+518. How do you run Qt applications in headless CI/CD environments (e.g., using offscreen QPA platform plugin `-platform offscreen`)?
+519. What is the Qt Platform Abstraction (QPA) and what are QPA plugins?
+520. How do you profile Qt applications using Qt Creator’s QML Profiler and Valgrind integrations?
+
+### Advanced
+521. Designing modular cross-platform CMake build systems supporting static/dynamic linking, Android APK generation, and iOS bundling for Qt 6.
+522. Customizing QPA (Qt Platform Abstraction) plugins for embedded non-X11/Wayland display hardware.
+523. Continuous integration pipelines (GitHub Actions / GitLab CI) setup featuring headless GUI unit testing, code coverage, and sanitizers.
+524. How to debug complex MOC macro generation errors and symbol resolution failures in large template-heavy projects.
+525. Advanced deployment and installer packaging strategies using Qt Installer Framework (QtIFW) and `cpack`.
+
+---
+
+## 12. Advanced Topics, Architecture & Best Practices
+
+### Beginner
+526. What is the Qt Platform Abstraction (QPA)?
+527. Name three standard QPA backends (`xcb`, `cocoa`, `windows`, `offscreen`, `wayland`).
+528. How do you switch the QPA platform plugin on the command line (`-platform`)?
+529. What is the overall naming convention for Qt classes and methods?
+530. Why are getters in Qt named without `get` prefix (e.g., `width()` instead of `getWidth()`)?
+
+### Intermediate
+531. Explain the Pimpl idiom (Private Implementation / Pointer to Implementation) used throughout Qt (d-pointer and q-pointer).
+532. What are `Q_D` and `Q_Q` macros and how do they function?
+533. How does the d-pointer pattern ensure binary compatibility (ABI stability) across Qt minor versions?
+534. What is the difference between Source Compatibility and Binary Compatibility?
+535. How do you write a custom UI library maintaining strict ABI stability using Qt's `Q_DECLARE_PRIVATE` pattern?
+536. Explain accessibility support in Qt (`QAccessible`) for screen readers.
+537. How does Qt handle High-DPI screen scaling factor policies (`Qt::HighDpiScaleFactorRoundingPolicy`)?
+538. What is `QScroller` and how do you enable touch kinetic scrolling on scrollable widgets?
+539. How do gesture frameworks (`QGesture`, `QGestureEvent`) work for multi-touch inputs?
+540. What is `QUndoStack` and `QUndoCommand` used for in implementing Undo/Redo architectures?
+
+### Advanced
+541. Deep dive: Recreating the `Q_DECLARE_PRIVATE` / `Q_DECLARE_PUBLIC` macro implementation from scratch.
+542. Architectural blueprint for an enterprise desktop GIS/CAD application combining Qt Widgets, custom QML dynamic overlays, and OpenGL rendering backends.
+543. Hardening Qt applications against security threats (buffer overflows, secure memory wiping, TLS pinning).
+544. Embedded Linux boot time optimization for Qt Quick applications on ARM embedded platforms (Target < 2 seconds startup).
+545. How to write a custom QPA plugin for proprietary display and touch input hardware in automotive/industrial devices.
+546. Performance tuning memory foot-prints of Qt runtime libraries for ultra-low-memory microcontrollers (Qt for MCUs).
+547. Interfacing Qt C++ applications with Rust/Go backends via C-FFI and signal bridge architectures.
+548. Managing global state and singletons safely in massive plugin-based Qt architectures without initialization ordering bugs.
+549. Detailed breakdown of WebAssembly (Wasm) compilation of Qt C++ applications using Emscripten.
+550. Future-proofing Qt codebases: Key architectural differences, migration traps, and API replacements when transitioning from Qt 5 to Qt 6.

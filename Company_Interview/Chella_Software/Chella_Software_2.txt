@@ -1,0 +1,1277 @@
+================================================================================
+technical_interview_guide.txt
+Comprehensive Technical Interview Solutions Guide
+================================================================================
+
+--------------------------------------------------------------------------------
+SECTION 1: APTITUDE & MATH
+--------------------------------------------------------------------------------
+
+13. If 35 was mistakenly entered as 53 and the product increased by 540, find the new product
+
+    Mathematical Explanation:
+    Let the initial unknown multiplier be 'x'.
+    Original Product = 35 * x
+    Mistaken Product (New Product) = 53 * x
+
+    According to the problem statement:
+    (53 * x) - (35 * x) = 540
+    18 * x = 540
+    x = 540 / 18
+    x = 30
+
+    Calculating the Products:
+    - Original Product = 35 * 30 = 1050
+    - New Product = 53 * 30 = 1590
+
+    Final Answer:
+    The new product is 1590.
+
+
+14. A product gets 25% off day 1, then 50% off the reduced price day 2, final price ₹60 — find original price
+
+    Mathematical Explanation:
+    Let 'P' be the original price of the product.
+
+    Day 1 Discount:
+    - Discount = 25% = 0.25
+    - Price after Day 1 = P * (1 - 0.25) = 0.75 * P
+
+    Day 2 Discount:
+    - Discount = 50% on reduced price = 0.50
+    - Final Price = (0.75 * P) * (1 - 0.50) = 0.75 * P * 0.50 = 0.375 * P
+
+    Given Final Price = ₹60:
+    0.375 * P = 60
+    P = 60 / 0.375
+    P = 160
+
+    Step-by-Step Verification:
+    - Original Price: ₹160
+    - Day 1 (25% off ₹160 = ₹40 off): ₹120
+    - Day 2 (50% off ₹120 = ₹60 off): ₹60 (Matches given final price)
+
+    Final Answer:
+    The original price was ₹160.
+
+
+15. Speed, Time, and Work Problems (A and B working together)
+
+    Core Principles & Formulas:
+    1. Work Rate: If a person completes a job in W days, their 1-day work rate is 1/W of the total job.
+    2. Combined Rate: If Person A takes 'a' days and Person B takes 'b' days:
+       Combined 1-day work rate = (1/a) + (1/b) = (a + b) / (a * b)
+       Total days required together = (a * b) / (a + b)
+    3. Speed, Distance, Time Equations:
+       - Speed (S) = Distance (D) / Time (T)
+       - Relative Speed (Same direction) = |S1 - S2|
+       - Relative Speed (Opposite direction) = S1 + S2
+
+    Standard Problem Walkthrough:
+    Problem: A can complete a project in 10 days, and B can complete it in 15 days. How many days will it take if they work together?
+
+    Solution:
+    - A's 1-day rate = 1/10
+    - B's 1-day rate = 1/15
+    - Combined 1-day rate = (1/10) + (1/15) = (3/30) + (2/30) = 5/30 = 1/6
+    - Total time required together = 1 / (1/6) = 6 days.
+
+
+16. Simple and Compound Interest Problems
+
+    Core Formulas:
+    1. Simple Interest (SI):
+       SI = (P * R * T) / 100
+       Total Amount (A) = P + SI = P * [1 + (R * T / 100)]
+       where P = Principal, R = Annual Interest Rate (%), T = Time in years.
+
+    2. Compound Interest (CI):
+       A = P * (1 + R / (100 * n))^(n * T)
+       CI = A - P
+       where n = compounding frequency per year (n=1 for annual, n=2 for semi-annual, n=4 for quarterly, n=12 for monthly).
+
+    Key Differences & Concept Comparison:
+    - Simple Interest is calculated solely on the initial principal amount throughout the duration.
+    - Compound Interest calculates interest on both the initial principal and accumulated interest from previous periods ("interest on interest").
+
+    Standard Problem Walkthrough:
+    Problem: Find the CI on ₹10,000 at 10% per annum for 2 years compounded annually, and compare it with SI.
+
+    Solution:
+    - SI Calculation: SI = (10000 * 10 * 2) / 100 = ₹2,000.
+    - CI Calculation:
+      A = 10000 * (1 + 10/100)^2 = 10000 * (1.1)^2 = 10000 * 1.21 = ₹12,100.
+      CI = 12100 - 10000 = ₹2,100.
+    - Difference (CI - SI) = ₹2,100 - ₹2,000 = ₹100.
+
+
+--------------------------------------------------------------------------------
+SECTION 2: PATTERN / LOGIC PROGRAM
+--------------------------------------------------------------------------------
+
+17. Print Concentric Square Rings for n=3 (5x5 Grid Pattern)
+
+    Pattern Logic:
+    For a given integer 'n', the grid size is (2*n - 1) x (2*n - 1).
+    For n = 3, size = 2(3) - 1 = 5x5 grid.
+    The outermost ring contains the value 3, the inner ring contains 2, and the center contains 1.
+
+    Mathematical Mapping:
+    For any cell at row 'i' and column 'j' (0-indexed from 0 to 2*n - 2):
+    - Distance to Top boundary = i
+    - Distance to Left boundary = j
+    - Distance to Bottom boundary = (2*n - 2) - i
+    - Distance to Right boundary = (2*n - 2) - j
+    - Layer index from border = min(i, j, (2*n - 2) - i, (2*n - 2) - j)
+    - Value at (i, j) = n - Layer index
+
+    Output Visual Matrix for n=3:
+    3 3 3 3 3
+    3 2 2 2 3
+    3 2 1 2 3
+    3 2 2 2 3
+    3 3 3 3 3
+
+    C Implementation:
+    ----------------------------------------------------------------------------
+    #include <stdio.h>
+
+    int min(int a, int b) {
+        return (a < b) ? a : b;
+    }
+
+    void printConcentricRings(int n) {
+        int size = 2 * n - 1;
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                int dist = min(min(i, j), min(size - 1 - i, size - 1 - j));
+                printf("%d ", n - dist);
+            }
+            printf("\n");
+        }
+    }
+
+    int main() {
+        printConcentricRings(3);
+        return 0;
+    }
+    ----------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+SECTION 3: SQL / DATABASE
+--------------------------------------------------------------------------------
+
+18. Write Queries Based on Employee Data
+
+    Sample Schema:
+    Employees(emp_id INT PRIMARY KEY, name VARCHAR(50), dept_id INT, salary DECIMAL(10,2), hire_date DATE);
+
+    a) Find the 2nd Highest Salary:
+       SELECT MAX(salary) AS second_highest_salary
+       FROM Employees
+       WHERE salary < (SELECT MAX(salary) FROM Employees);
+
+       -- Alternative using OFFSET (ANSI SQL / PostgreSQL / MySQL):
+       SELECT DISTINCT salary
+       FROM Employees
+       ORDER BY salary DESC
+       LIMIT 1 OFFSET 1;
+
+    b) Find Highest Salary per Department:
+       SELECT dept_id, MAX(salary) AS max_salary
+       FROM Employees
+       GROUP BY dept_id;
+
+    c) List Employees Earning Above Department Average:
+       SELECT e.emp_id, e.name, e.salary, e.dept_id
+       FROM Employees e
+       WHERE e.salary > (
+           SELECT AVG(emp.salary)
+           FROM Employees emp
+           WHERE emp.dept_id = e.dept_id
+       );
+
+
+19. How to Create a Database / Structure It
+
+    Design Lifecycle & Best Practices:
+    1. Requirements Analysis: Identify entities, attributes, and business rules.
+    2. Conceptual Model (ERD): Map Entity-Relationship diagrams.
+    3. Logical Schema Design: Normalize entities into tables (1NF, 2NF, 3NF).
+    4. Data Types & Constraints: Assign strict data types (INT, VARCHAR, TIMESTAMP), specify PRIMARY KEYs, FOREIGN KEYs, NOT NULL, and UNIQUE constraints.
+    5. Indexing Strategy: Create B-Tree or Hash indexes on frequently queried/joined fields.
+
+    DDL Script Example:
+    ----------------------------------------------------------------------------
+    CREATE DATABASE EnterpriseDB;
+    USE EnterpriseDB;
+
+    CREATE TABLE Departments (
+        dept_id INT PRIMARY KEY AUTO_INCREMENT,
+        dept_name VARCHAR(100) NOT NULL UNIQUE
+    );
+
+    CREATE TABLE Employees (
+        emp_id INT PRIMARY KEY AUTO_INCREMENT,
+        first_name VARCHAR(50) NOT NULL,
+        last_name VARCHAR(50) NOT NULL,
+        email VARCHAR(100) UNIQUE NOT NULL,
+        dept_id INT,
+        salary DECIMAL(10, 2) NOT NULL,
+        FOREIGN KEY (dept_id) REFERENCES Departments(dept_id) ON DELETE SET NULL
+    );
+    ----------------------------------------------------------------------------
+
+
+20. How to Delete Duplicate Entries in a Table
+
+    Scenario: A table `Employees` has duplicates based on `email`, retaining the record with the minimum `emp_id`.
+
+    Method 1: Using CTE with ROW_NUMBER() (Standard SQL / PostgreSQL / SQL Server / Oracle)
+    ----------------------------------------------------------------------------
+    WITH CTE AS (
+        SELECT emp_id,
+               ROW_NUMBER() OVER(PARTITION BY email ORDER BY emp_id) AS row_num
+        FROM Employees
+    )
+    DELETE FROM Employees
+    WHERE emp_id IN (
+        SELECT emp_id FROM CTE WHERE row_num > 1
+    );
+    ----------------------------------------------------------------------------
+
+    Method 2: Using Self-Join (MySQL / PostgreSQL)
+    ----------------------------------------------------------------------------
+    DELETE e1
+    FROM Employees e1
+    INNER JOIN Employees e2 
+      ON e1.email = e2.email AND e1.emp_id > e2.emp_id;
+    ----------------------------------------------------------------------------
+
+
+21. How to Inspect Which SQL Query is Taking Time
+
+    Diagnostic Tools & Methodologies:
+    1. EXPLAIN / EXPLAIN ANALYZE: Prepended to any SELECT query to inspect query execution plans, scan types (Seq Scan vs. Index Scan), row counts, and join strategies.
+    2. Slow Query Log:
+       - MySQL: Enable `slow_query_log=1` and set `long_query_time` threshold. Analyze via `mysqldumpslow`.
+       - PostgreSQL: Enable `log_min_duration_statement` in `postgresql.conf` or inspect `pg_stat_statements` view.
+    3. Performance Schema / DMV:
+       - Query SQL Server `sys.dm_exec_query_stats`.
+       - Query PostgreSQL `pg_stat_activity` to view active/blocked running queries.
+
+
+22. DB Has Multiple Inserts/Updates and is Slow — How to Improve
+
+    Optimization Strategies:
+    1. Batching & Bulk Operations: Replace single-row INSERT statements with batch inserts (e.g., `INSERT INTO table VALUES (...), (...);`) or bulk loaders (`COPY` in Postgres, `LOAD DATA INFILE` in MySQL).
+    2. Explicit Transaction Management: Group multiple write statements within explicit `BEGIN TRANSACTION; ... COMMIT;` blocks to minimize disk sync/WAL flush overhead per statement.
+    3. Index Optimization: Temporarily disable or drop non-essential indexes during massive batch imports, re-building them afterward.
+    4. Database Tuning: Increase WAL/redo log buffer sizes, tune `checkpoint_completion_target`, and allocate sufficient write-buffer capacity.
+    5. Table Partitioning & Unlogged Tables: Partition large tables horizontally by range/hash, or use unlogged staging tables for intermediate operations.
+
+
+23. Difference Between INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL OUTER JOIN
+
+    Definitions & Logical Behavior:
+    - INNER JOIN: Returns only rows where there is a matching value in BOTH joined tables.
+    - LEFT (OUTER) JOIN: Returns ALL rows from the left table, and matching rows from the right table. Unmatched right-side columns are populated with NULL.
+    - RIGHT (OUTER) JOIN: Returns ALL rows from the right table, and matching rows from the left table. Unmatched left-side columns are populated with NULL.
+    - FULL (OUTER) JOIN: Returns ALL records when there is a match in left OR right table. Non-matching sides populate columns with NULL.
+
+    Venn Diagram Mental Model:
+    - INNER JOIN: Intersection set (A ∩ B)
+    - LEFT JOIN: Entire set A + (A ∩ B)
+    - RIGHT JOIN: Entire set B + (A ∩ B)
+    - FULL OUTER JOIN: Union set (A ∪ B)
+
+
+24. What is an Index, and Its Trade-off
+
+    Definition:
+    An index is an auxiliary data structure (typically B+ Tree or Hash) that points to row locations in a table to accelerate data retrieval operations (`SELECT` with `WHERE`, `JOIN`, `ORDER BY`).
+
+    Trade-off Analysis:
+    - Pros:
+      * Dramatically speeds up read/query execution time (reduces complexity from O(N) full table scan to O(log N) tree traversal).
+      * Enforces constraints efficiently (UNIQUE, PRIMARY KEY).
+    - Cons:
+      * Overhead on Writes: Slows down `INSERT`, `UPDATE`, and `DELETE` queries because every index on the table must be updated synchronously.
+      * Storage Cost: Consumes additional memory and disk storage space.
+
+
+25. What is a Transaction Isolation Level
+
+    Definition:
+    Transaction Isolation Levels define the degree to which modifications made by one concurrent transaction are visible to other transactions, preventing concurrency anomalies.
+
+    ACID Concurrency Anomalies:
+    - Dirty Read: Transaction reads uncommitted changes from another transaction.
+    - Non-Repeatable Read: Re-reading the same row within a transaction returns different data because another transaction modified and committed it.
+    - Phantom Read: Re-executing a range query returns new "phantom" rows inserted and committed by another transaction.
+
+    Standard ANSI/ISO Isolation Levels:
+    -----------------------------------------------------------------------------------
+    Isolation Level    | Dirty Read | Non-Repeatable Read | Phantom Read
+    -----------------------------------------------------------------------------------
+    Read Uncommitted   | Allowed    | Allowed             | Allowed
+    Read Committed     | Prevented  | Allowed             | Allowed
+    Repeatable Read    | Prevented  | Prevented           | Allowed (Prevented in Postgres)
+    Serializable       | Prevented  | Prevented           | Prevented
+    -----------------------------------------------------------------------------------
+
+
+26. What is a Deadlock in a Database, and How is it Handled
+
+    Definition:
+    A database deadlock occurs when two or more transactions hold locks on resources that the other transaction needs, creating a circular wait condition where none can proceed.
+
+    Example Scenario:
+    - Txn 1 locks Row A, requests Row B.
+    - Txn 2 locks Row B, requests Row A.
+
+    Handling & Resolution Mechanisms:
+    1. Deadlock Detector: DBMS runs a background thread analyzing lock-wait graphs.
+    2. Automatic Victim Selection: Upon detecting a cycle, DBMS aborts/rolls back one transaction (the "victim"), releasing its locks and allowing the other transaction to complete.
+    3. Application-Level Prevention:
+       - Access tables/rows in a consistent, deterministic order across all application code.
+       - Keep transactions small and brief.
+       - Implement explicit timeouts (`SET lock_timeout`).
+
+
+27. Normalization vs Denormalization — When to Denormalize
+
+    Definitions:
+    - Normalization: The process of structuring a database schema (up to 3NF/BCNF) to eliminate data redundancy and ensure data integrity.
+    - Denormalization: The deliberate introduction of redundancy by combining tables or adding pre-aggregated fields to optimize read performance.
+
+    When to Denormalize:
+    1. Read-Heavy Systems: High-volume OLAP / analytical databases where expensive multi-table JOIN operations create query bottlenecks.
+    2. Real-Time Analytics Dashboard: Pre-computing and storing aggregate counts/sums to avoid scanning millions of rows per request.
+    3. Caching & Reporting: Reducing disk I/O at the expense of storage and slightly higher write complexity.
+
+
+--------------------------------------------------------------------------------
+SECTION 4: C / MEMORY MANAGEMENT
+--------------------------------------------------------------------------------
+
+28. Why are Pointers Important in C? Where Would You Use Them?
+
+    Importance:
+    Pointers provide direct memory addressing, allowing fine-grained control over system memory, hardware interfaces, and dynamic allocation.
+
+    Primary Use Cases:
+    1. Pass-by-Reference: Modifying caller variables inside functions without copying data.
+    2. Dynamic Memory Management: Allocating memory on the heap at runtime (`malloc`, `calloc`).
+    3. Efficient Data Structure Handling: Implementing linked lists, trees, and graphs without copying whole structures.
+    4. Hardware & IO Mapping: Accessing memory-mapped registers in embedded hardware.
+    5. Polymorphic Callbacks: Using function pointers for event handlers and dynamic dispatch.
+
+
+29. Represent Employee Records Fetched from a DB in C
+
+    Implementation:
+    ----------------------------------------------------------------------------
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <string.h>
+
+    typedef struct {
+        int emp_id;
+        char name[50];
+        double salary;
+    } Employee;
+
+    typedef struct {
+        Employee *records;
+        size_t count;
+        size_t capacity;
+    } EmployeeArray;
+
+    EmployeeArray* create_employee_array(size_t initial_capacity) {
+        EmployeeArray *arr = (EmployeeArray*)malloc(sizeof(EmployeeArray));
+        if (!arr) return NULL;
+        arr->records = (Employee*)malloc(initial_capacity * sizeof(Employee));
+        if (!arr->records) {
+            free(arr);
+            return NULL;
+        }
+        arr->count = 0;
+        arr->capacity = initial_capacity;
+        return arr;
+    }
+    ----------------------------------------------------------------------------
+
+
+30. You Allocated Space for 100 Records but Got More — How Do You Handle It?
+
+    Solution Approach:
+    Use dynamic array resizing via `realloc()`. Implement a growth strategy (e.g., doubling capacity) to achieve O(1) amortized insertion performance.
+
+    Handling Code Example:
+    ----------------------------------------------------------------------------
+    void add_employee(EmployeeArray *arr, Employee emp) {
+        if (arr->count >= arr->capacity) {
+            size_t new_capacity = arr->capacity * 2;
+            Employee *temp = (Employee*)realloc(arr->records, new_capacity * sizeof(Employee));
+            if (temp == NULL) {
+                fprintf(stderr, "Memory reallocation failed! Preserving old data.\n");
+                return;
+            }
+            arr->records = temp;
+            arr->capacity = new_capacity;
+        }
+        arr->records[arr->count++] = emp;
+    }
+    ----------------------------------------------------------------------------
+
+
+31. malloc() vs calloc() vs realloc()
+
+    Detailed Comparison:
+    -----------------------------------------------------------------------------------
+    Function | Allocation Behavior           | Initialization | Arguments
+    -----------------------------------------------------------------------------------
+    malloc   | Allocates N bytes             | Uninitialized  | size_t size
+             | on Heap                       | (contains garbage)|
+    calloc   | Allocates N * size bytes      | Zero-initialized| size_t num, size_t size
+             | on Heap                       | (all bits = 0) |
+    realloc  | Resizes existing memory block | Uninitialized  | void *ptr, size_t new_size
+             | (expands, shrinks, or moves)  | for new bytes  |
+    -----------------------------------------------------------------------------------
+
+
+32. Precautions with realloc()
+
+    Critical Precautions:
+    1. Never assign return value directly to original pointer: `ptr = realloc(ptr, new_size);` is dangerous. If `realloc()` fails, it returns `NULL`, overwriting your original pointer and leaking the previously allocated memory. Always use a temporary pointer.
+    2. Check for NULL return before updating.
+    3. Handle size = 0 safely (behavior can be implementation-defined).
+
+
+33. What if realloc() Fails?
+
+    Failure Behavior:
+    - `realloc()` returns `NULL`.
+    - The original memory block remains intact and untouched on the heap.
+
+    Proper Recovery Code:
+    ----------------------------------------------------------------------------
+    int *ptr = malloc(100 * sizeof(int));
+    // ... use ptr ...
+
+    int *temp = realloc(ptr, 500 * sizeof(int));
+    if (temp == NULL) {
+        // realloc failed! ptr is STILL VALID.
+        fprintf(stderr, "Reallocation failed. Existing data intact.\n");
+        // Maintain ptr, or cleanup safely:
+        free(ptr);
+        ptr = NULL;
+    } else {
+        ptr = temp; // Safe update
+    }
+    ----------------------------------------------------------------------------
+
+
+34. Dynamic Memory Allocation with a Struct — Write the Code
+
+    Complete C Example:
+    ----------------------------------------------------------------------------
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <string.h>
+
+    typedef struct {
+        int id;
+        char *name;
+    } Student;
+
+    Student* create_student(int id, const char *name) {
+        Student *s = (Student*)malloc(sizeof(Student));
+        if (!s) return NULL;
+
+        s->id = id;
+        s->name = (char*)malloc(strlen(name) + 1);
+        if (!s->name) {
+            free(s);
+            return NULL;
+        }
+        strcpy(s->name, name);
+        return s;
+    }
+
+    void free_student(Student *s) {
+        if (s) {
+            free(s->name);
+            free(s);
+        }
+    }
+
+    int main() {
+        Student *s = create_student(101, "Alice");
+        if (s) {
+            printf("Student ID: %d, Name: %s\n", s->id, s->name);
+            free_student(s);
+        }
+        return 0;
+    }
+    ----------------------------------------------------------------------------
+
+
+35. Difference Between Stack and Heap Memory
+
+    Comprehensive Comparison:
+    -----------------------------------------------------------------------------------
+    Attribute          | Stack Memory                | Heap Memory
+    -----------------------------------------------------------------------------------
+    Allocation Type    | Automatic (managed by CPU)   | Manual (programmer via malloc/free)
+    Lifetime           | Function Scope (LIFO)       | Explicit (until freed)
+    Access Speed       | Very Fast (L1/L2 cache host) | Slower (pointer dereferencing)
+    Size Limits        | OS-restricted (e.g., 2-8MB) | High (limited by System RAM/Swap)
+    Fragmentation      | None                        | Vulnerable to memory fragmentation
+    -----------------------------------------------------------------------------------
+
+
+36. What is a Memory Leak, and How Do You Detect One?
+
+    Definition:
+    A memory leak occurs when dynamically allocated heap memory (`malloc`/`calloc`) is no longer referenced by any pointer in the program and is not freed using `free()`.
+
+    Detection Tools:
+    1. Valgrind (Linux): Run `valgrind --leak-check=full ./program`.
+    2. AddressSanitizer (ASan): Compile with `-fsanitize=address -g`.
+    3. C Runtime Library Leak Detection (Visual Studio): `_CrtDumpMemoryLeaks()`.
+
+
+37. Difference Between free() and Setting a Pointer to NULL
+
+    Distinction:
+    - `free(ptr)`: Releases the memory block pointed to by `ptr` back to the operating system heap allocator. However, `ptr` still holds the original memory address (creates a dangling pointer).
+    - `ptr = NULL`: Sets the variable `ptr` to address 0 (null address). It does NOT deallocate any heap memory by itself.
+
+    Best Practice: Always execute both sequentially:
+    ----------------------------------------------------------------------------
+    free(ptr);
+    ptr = NULL; // Prevents double-free and usage after free
+    ----------------------------------------------------------------------------
+
+
+38. Dangling Pointer vs Wild Pointer
+
+    Definitions:
+    - Wild Pointer: An uninitialized pointer that holds a random/garbage memory address. Accessing it triggers undefined behavior or immediate segfault.
+      Example: `int *p; *p = 10;`
+    - Dangling Pointer: A pointer that previously held a valid memory address, but the memory it references has been freed or deallocated.
+      Example: `int *p = malloc(sizeof(int)); free(p); *p = 10;`
+
+
+39. Difference Between const char *, char * const, const char * const
+
+    Pointer Constness Rules:
+    1. `const char * p` (Pointer to Constant Char):
+       - Data is CONSTANT. Pointer is MUTABLE.
+       - Cannot modify character content: `*p = 'A';` (ERROR)
+       - Can reassign pointer: `p = "new string";` (VALID)
+    2. `char * const p` (Constant Pointer to Char):
+       - Data is MUTABLE. Pointer is CONSTANT.
+       - Can modify character content: `p[0] = 'A';` (VALID)
+       - Cannot reassign pointer: `p = "new string";` (ERROR)
+    3. `const char * const p` (Constant Pointer to Constant Char):
+       - Both Data and Pointer are CONSTANT. Neither can be modified.
+
+
+40. Memory Alignment / Padding in Structs
+
+    Concept Explanation:
+    CPUs access memory in multi-byte words (e.g., 4-byte or 8-byte aligned blocks) for speed. The compiler inserts padding bytes between struct members to align data types on memory boundaries corresponding to their sizes.
+
+    Concrete Example:
+    ----------------------------------------------------------------------------
+    struct Example {
+        char a;     // 1 byte
+        // 3 bytes of compiler padding inserted here
+        int b;      // 4 bytes
+        char c;     // 1 byte
+        // 3 bytes of compiler padding inserted here
+    };
+    // Total sizeof(struct Example) = 12 bytes (not 6 bytes!)
+    ----------------------------------------------------------------------------
+
+    Optimization Rule: Order struct members from largest to smallest size to minimize padding requirements.
+
+
+--------------------------------------------------------------------------------
+SECTION 5: STRING HANDLING
+--------------------------------------------------------------------------------
+
+41. Split a String Like "Raghav_Chopra" Using '_' as Delimiter
+
+    Implementation using standard C (`strtok`):
+    ----------------------------------------------------------------------------
+    #include <stdio.h>
+    #include <string.h>
+
+    void split_string(char *str, const char *delim) {
+        char *token = strtok(str, delim);
+        while (token != NULL) {
+            printf("Token: %s\n", token);
+            token = strtok(NULL, delim);
+        }
+    }
+
+    int main() {
+        char input[] = "Raghav_Chopra";
+        split_string(input, "_");
+        return 0;
+    }
+    ----------------------------------------------------------------------------
+
+
+42. Count Words with a Specific Delimiter
+
+    Implementation:
+    ----------------------------------------------------------------------------
+    #include <stdio.h>
+    #include <string.h>
+
+    int count_tokens(const char *str, char delim) {
+        if (str == NULL || *str == '\0') return 0;
+        int count = 0;
+        int in_token = 0;
+
+        while (*str) {
+            if (*str == delim) {
+                in_token = 0;
+            } else if (!in_token) {
+                in_token = 1;
+                count++;
+            }
+            str++;
+        }
+        return count;
+    }
+
+    int main() {
+        char text[] = "apple_banana_cherry_date";
+        printf("Word count: %d\n", count_tokens(text, '_')); // Output: 4
+        return 0;
+    }
+    ----------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+SECTION 6: MULTITHREADING / CONCURRENCY
+--------------------------------------------------------------------------------
+
+43. Explain Multithreading — Constraints, When to Use / Not Use
+
+    Overview:
+    Multithreading executes multiple execution threads concurrently within a single process, sharing the same address space.
+
+    When to Use:
+    - I/O Bound Tasks: Network streaming, database queries, file writing.
+    - Highly Parallel CPU Computation: Matrix multiplication, image processing on multi-core architectures.
+
+    When NOT to Use:
+    - Simple, sequential scripts where context switching overhead degrades performance.
+    - Highly coupled tasks dependent on continuous shared mutation where lock contention causes serialization.
+
+    Constraints:
+    - Race conditions, deadlocks, and high synchronization overhead.
+
+
+44. Explain Lock and Condition Variables in C
+
+    Concepts:
+    - Mutex (Lock): Provides mutual exclusion. Only one thread can hold a mutex at any given moment.
+    - Condition Variable (`pthread_cond_t`): Allows threads to suspend execution (sleep) until another thread signals that a specific state condition has changed.
+
+    Code Pattern:
+    ----------------------------------------------------------------------------
+    pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+    pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+    int ready = 0;
+
+    // Waiting thread:
+    pthread_mutex_lock(&lock);
+    while (!ready) { // Always use while loop to prevent spurious wakeups
+        pthread_cond_wait(&cond, &lock);
+    }
+    // Proceed with work...
+    pthread_mutex_unlock(&lock);
+
+    // Signaling thread:
+    pthread_mutex_lock(&lock);
+    ready = 1;
+    pthread_cond_signal(&cond);
+    pthread_mutex_unlock(&lock);
+    ----------------------------------------------------------------------------
+
+
+45. What are "Joins" in Threading (pthread_join)?
+
+    Explanation:
+    `pthread_join(thread_id, &retval)` blocks the calling thread until the target thread specified by `thread_id` terminates. It allows threads to synchronize completion and cleans up allocated thread resources (preventing "zombie threads").
+
+
+46. Explain Race Condition
+
+    Definition:
+    A race condition occurs when two or more threads concurrently access shared memory, and at least one access is a write, without synchronization. The outcome depends on the unpredictable execution order of the threads.
+
+    Example:
+    Thread A and Thread B both execute `counter++` concurrently.
+    1. Thread A reads `counter` (val = 5).
+    2. Thread B reads `counter` (val = 5).
+    3. Thread A increments and writes 6.
+    4. Thread B increments and writes 6.
+    Result: Counter is 6 instead of 7 (Data Loss).
+
+
+47. Deadlock Code Walkthrough (Thread1/Thread2 Mutex Example) — What Happens?
+
+    Scenario Code:
+    Thread 1 Execution:              Thread 2 Execution:
+    pthread_mutex_lock(&mutexA);     pthread_mutex_lock(&mutexB);
+    pthread_mutex_lock(&mutexB);     pthread_mutex_lock(&mutexA);
+
+    What Happens:
+    1. Thread 1 acquires `mutexA`.
+    2. Context switch occurs. Thread 2 acquires `mutexB`.
+    3. Thread 1 requests `mutexB` (blocked waiting for Thread 2).
+    4. Thread 2 requests `mutexA` (blocked waiting for Thread 1).
+    Result: Both threads freeze permanently in a circular lock wait state.
+
+
+48. Difference Between Concurrency and Parallelism
+
+    Distinction:
+    - Concurrency: Dealing with lots of things at once. Structure-focused. Tasks can interleave execution on a single CPU core via time-slicing.
+    - Parallelism: Doing lots of things at once. Execution-focused. Requires multi-core hardware to execute multiple physical CPU instructions simultaneously.
+
+
+49. What is a Spinlock, and When Over a Mutex?
+
+    Explanation:
+    - Spinlock: A lock that polls in a tight loop ("busy-wait") continuously checking if the lock is available.
+    - Mutex: A lock that puts the acquiring thread to sleep (context switch) if the lock is held.
+
+    When to choose Spinlock:
+    - When the critical section duration is shorter than the time taken by an OS context switch (~1-2 microseconds).
+    - In low-latency systems or kernel-level interrupt handlers.
+
+
+50. What is False Sharing?
+
+    Explanation:
+    False sharing occurs in multi-core systems when two independent threads running on separate CPU cores modify independent variables that reside on the SAME CPU Cache Line (typically 64 bytes).
+
+    Mechanism:
+    Whenever Core 1 writes to Variable A, the CPU hardware invalidates the entire cache line across all cores via cache-coherency protocols (MESI), forcing Core 2 to reload Variable B from main memory despite B not changing.
+
+    Prevention: Pad variables to ensure independent thread variables sit on distinct cache lines.
+
+
+51. What is Priority Inversion?
+
+    Explanation:
+    A scheduling anomaly where a high-priority thread is indirectly preempted by a low-priority thread.
+
+    Scenario:
+    1. Low-priority Thread L holds Mutex M.
+    2. High-priority Thread H requests Mutex M and blocks.
+    3. Medium-priority Thread M pre-empts Thread L (does not require M).
+    4. Result: Medium-priority Thread M runs while High-priority Thread H is blocked waiting for L to finish!
+
+    Solution: Priority Inheritance Protocol (Thread L temporarily inherits the priority of Thread H while holding the lock).
+
+
+52. How Would You Implement a Reader-Writer Lock?
+
+    Concept:
+    Allows multiple readers concurrently OR a single writer exclusively.
+
+    C Implementation Core Logic:
+    ----------------------------------------------------------------------------
+    typedef struct {
+        pthread_mutex_t lock;
+        pthread_cond_t read_cond;
+        pthread_cond_t write_cond;
+        int readers;
+        int writers_waiting;
+        int writer_active;
+    } RWLock;
+
+    void read_lock(RWLock *rw) {
+        pthread_mutex_lock(&rw->lock);
+        while (rw->writer_active || rw->writers_waiting > 0) {
+            pthread_cond_wait(&rw->read_cond, &rw->lock);
+        }
+        rw->readers++;
+        pthread_mutex_unlock(&rw->lock);
+    }
+
+    void read_unlock(RWLock *rw) {
+        pthread_mutex_lock(&rw->lock);
+        rw->readers--;
+        if (rw->readers == 0) pthread_cond_signal(&rw->write_cond);
+        pthread_mutex_unlock(&rw->lock);
+    }
+    ----------------------------------------------------------------------------
+
+
+53. How Do You Make a Function Thread-Safe?
+
+    Key Techniques:
+    1. Avoid global/static mutable state.
+    2. Guard shared resources with synchronization primitives (Mutexes, RWLocks).
+    3. Use Thread-Local Storage (`__thread` or `thread_local`).
+    4. Pass state explicitly via local thread stacks (re-entrant function design).
+    5. Use atomic operations (`stdatomic.h`).
+
+
+--------------------------------------------------------------------------------
+SECTION 7: LOCK-FREE DATA STRUCTURES
+--------------------------------------------------------------------------------
+
+54. What are Lock-Free Data Structures, and Why Use Them?
+
+    Definition:
+    A data structure is lock-free if concurrent thread executions guarantee that at least one thread makes forward system progress within a finite number of steps without locking mechanisms.
+
+    Implementation Core: Uses atomic hardware primitives like `Compare-And-Swap` (CAS / `atomic_compare_exchange`).
+
+    Benefits:
+    - High throughput under high contention.
+    - Prevents priority inversion and deadlock risks.
+    - Deterministic responsiveness suited for real-time systems.
+
+
+--------------------------------------------------------------------------------
+SECTION 8: CLIENT-SERVER / SOCKETS / NETWORKING
+--------------------------------------------------------------------------------
+
+55. How Does the Server Identify Which Client Sent Data?
+
+    Explanation:
+    In TCP, the operating system socket API creates a dedicated active socket descriptor for each accepted connection upon calling `accept()`.
+
+    Identification Mechanism:
+    - Every client connection is uniquely identified by a 4-tuple: `(Source IP, Source Port, Destination IP, Destination Port)`.
+    - The OS maps incoming TCP packets to the specific active file descriptor (`fd`) bound to that 4-tuple.
+
+
+56. How Does a Server Continuously Monitor and Receive from Multiple Connected Clients?
+
+    Explanation:
+    Servers leverage I/O Multiplexing system calls like `epoll` (Linux), `kqueue` (BSD/macOS), or `select`/`poll`.
+
+    Mechanism:
+    Instead of spawning one thread per client, a single event-loop thread registers thousands of client socket descriptors with `epoll_ctl()`. `epoll_wait()` blocks until network activity occurs, returning an array of descriptors ready for reading/writing.
+
+
+57. How Would You Handle Partial/Incomplete Messages Over TCP?
+
+    Explanation:
+    TCP is a byte-stream protocol, not a message-based protocol. Packets may arrive fragmented or concatenated.
+
+    Solution Strategies:
+    1. Fixed-Length Framing: Every message is strictly N bytes.
+    2. Delimiter-Based Framing: Delimit messages using special markers (e.g., `\r\n`).
+    3. Length-Prefixed Framing (Recommended): Prepend a 4-byte payload size header to every message.
+
+    Application Read Loop Logic:
+    Read 4 bytes first to decode payload length `L`. Continuously call `recv()` into a buffer until `L` bytes are fully collected before processing.
+
+
+58. TCP vs UDP — When Would You Choose Each?
+
+    Comparison:
+    - TCP (Transmission Control Protocol): Connection-oriented, reliable, guarantees in-order delivery via retries, flow control, and congestion control.
+      * Use Cases: Web traffic (HTTP/HTTPS), Database connections, File Transfers (FTP/SSH).
+    - UDP (User Datagram Protocol): Connectionless, lightweight, unreliable, low-overhead without guaranteed ordering.
+      * Use Cases: Video streaming, Voice over IP (VoIP), Online Multiplayer Games, DNS lookups.
+
+
+59. What is the TCP Three-Way Handshake?
+
+    Handshake Sequence:
+    1. SYN: Client sends SYN packet (seq = x) to Server to initiate connection.
+    2. SYN-ACK: Server receives SYN, responds with SYN-ACK packet (seq = y, ack = x + 1).
+    3. ACK: Client receives SYN-ACK, responds with ACK packet (ack = y + 1). Connection ESTABLISHED.
+
+
+60. What is Nagle's Algorithm, and Why Disable It (TCP_NODELAY)?
+
+    Explanation:
+    - Nagle's Algorithm buffers small outgoing network writes until a full TCP segment (MSS) can be sent, minimizing packet header overhead.
+    - Why Disable It: It introduces subtle latency delays (~40-200ms) when combined with TCP Delayed ACK.
+
+    How to Disable:
+    ----------------------------------------------------------------------------
+    int flag = 1;
+    setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, (char *)&flag, sizeof(int));
+    ----------------------------------------------------------------------------
+
+
+61. What Does SO_REUSEADDR Do?
+
+    Explanation:
+    Allows a server socket to forcibly bind to an IP address and port that is currently in the `TIME_WAIT` state following a server crash or restart. It avoids "Address already in use" binding errors.
+
+
+62. How Do You Handle a Client That Disconnects Unexpectedly?
+
+    Handling Strategies:
+    1. TCP Keep-Alive Probes: Configure socket `SO_KEEPALIVE` to send periodic heartbeats.
+    2. Read Return Value Checking: When `recv()` returns 0, it signifies orderly connection closure (EOF).
+    3. Error Handling: When `recv()` returns -1 with `ECONNRESET` or `EPIPE`, handle abrupt client termination and close socket `fd`.
+    4. Application-level Heartbeats.
+
+
+63. How Would You Scale This Server Beyond One Machine?
+
+    Scaling Architecture:
+    1. Load Balancer: Place L4 (HAProxy, NLB) or L7 (NGINX) load balancers in front of server pools.
+    2. Stateless Service Architecture: Offload session states to distributed caches (Redis/Memcached).
+    3. Database Clustering & Sharding: Use database read-replicas and horizontal sharding.
+    4. Horizontal Auto-Scaling: Spin up additional compute instances dynamically.
+
+
+--------------------------------------------------------------------------------
+SECTION 9: FILE PROCESSING AT SCALE
+--------------------------------------------------------------------------------
+
+64. Given a Huge File of EmployeeID/ManagerID, Generate ManagerID -> Report Count
+
+    Algorithm Strategy:
+    1. Stream file sequentially line-by-line using a buffer to maintain a low memory footprint.
+    2. Parse `(EmployeeID, ManagerID)`.
+    3. Maintain an in-memory Hash Table storing `ManagerID -> Integer Count`.
+    4. Increment count for each parsed record.
+
+    Python Implementation:
+    ----------------------------------------------------------------------------
+    from collections import defaultdict
+
+    def process_manager_reports(file_path):
+        manager_counts = defaultdict(int)
+        with open(file_path, 'r') as f:
+            for line in f:
+                parts = line.strip().split(',')
+                if len(parts) == 2:
+                    emp_id, mgr_id = parts[0].strip(), parts[1].strip()
+                    if mgr_id: # Ignore top-level executive without manager
+                        manager_counts[mgr_id] += 1
+        return manager_counts
+    ----------------------------------------------------------------------------
+
+
+65. How Do You Check Whether a Manager ID Already Exists While Processing?
+
+    Solutions:
+    1. In-Memory Hash Set / Hash Map: O(1) average constant lookup time.
+    2. External Sorting & Chunking: If memory is severely restricted, split file into sorted chunks and perform external merge sort.
+    3. Bloom Filter: Space-efficient probabilistic structure to test set membership rapidly before fallback checks.
+
+
+66. If Using Linear Search, How Do You Improve Average Lookup Performance?
+
+    Optimization Techniques:
+    1. Move-To-Front Heuristic: Move requested element to head of array/list upon access.
+    2. Transposition Heuristic: Swap accessed element one slot closer to head.
+    3. Frequency Sorting: Keep elements ordered by historical access counts.
+    Note: Dynamic Hash Tables should always supersede linear search for lookup heavy workloads.
+
+
+67. Big File with product_name/category — Read Efficiently, Return Total Products per Category
+
+    Solution: Stream using chunked line buffers and group counts using hash structures.
+
+    Python Streaming Code:
+    ----------------------------------------------------------------------------
+    from collections import Counter
+
+    def count_products_by_category(filename):
+        category_counts = Counter()
+        with open(filename, 'r', encoding='utf-8') as file:
+            for line in file:
+                try:
+                    product, category = line.strip().rsplit(',', 1)
+                    category_counts[category] += 1
+                except ValueError:
+                    continue # Skip malformed lines
+        return category_counts
+    ----------------------------------------------------------------------------
+
+
+68. Trades File for Trading Managers — Write Efficiently to Get Trade Counts per Manager
+
+    High-Performance Strategy:
+    1. Use memory-mapped file access (`mmap`) or multi-threaded chunk parsing.
+    2. Hash entries in thread-local storage to prevent lock contention, then aggregate results.
+
+    Python Memory Efficient Code:
+    ----------------------------------------------------------------------------
+    from collections import defaultdict
+
+    def count_trades(file_path):
+        trade_counts = defaultdict(int)
+        with open(file_path, 'r', buffering=1024*1024) as f: # 1MB buffer
+            for line in f:
+                fields = line.strip().split(',')
+                if len(fields) >= 2:
+                    mgr = fields[1]
+                    trade_counts[mgr] += 1
+        return trade_counts
+    ----------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+SECTION 10: SEGMENTATION FAULTS
+--------------------------------------------------------------------------------
+
+69. How Do You Detect and Solve a Segfault?
+
+    Detection & Solution Workflow:
+    1. Reproduce with Debug Flags: Compile with `-g` flag (`gcc -g main.c`).
+    2. Use GDB Debugger:
+       - Run `gdb ./program`.
+       - Execute `run`. Upon crash, run `backtrace` (or `bt`) to inspect crash line number and stack frame.
+    3. Use Valgrind: Execute `valgrind ./program` to spot exact invalid read/write locations.
+
+
+70. How Can You Detect It Even When the Program Runs Fine and Gives No Error?
+
+    Explanation:
+    Silent memory corruption occurs when writing out of bounds without immediately stepping into unmapped memory.
+
+    Detection Tools:
+    1. AddressSanitizer (ASan): Compile using `gcc -fsanitize=address -g program.c`.
+    2. Static Analyzers: Run `cppcheck` or Clang Static Analyzer.
+    3. Valgrind Memcheck: Catches illegal stack/heap accesses regardless of crash status.
+
+
+71. Real Situation Where a Segfault Can Occur
+
+    Common Scenarios:
+    1. Dereferencing NULL Pointer: `int *p = NULL; *p = 10;`
+    2. Buffer Overflow / Out of Bounds Array Access: `int arr[5]; arr[10] = 50;`
+    3. Stack Overflow via Infinite Recursion.
+    4. Accessing Freed Memory (Use-After-Free).
+    5. Writing to Read-Only Memory: `char *s = "Hello"; s[0] = 'h';`
+
+
+--------------------------------------------------------------------------------
+SECTION 11: PERFORMANCE / OPTIMIZATION
+--------------------------------------------------------------------------------
+
+72. An EOD Task Takes 30 Minutes — How Do You Optimize It?
+
+    Optimization Plan:
+    1. Profile First: Use profilers (`gprof`, `perf`, `py-spy`) to pinpoint bottlenecks (I/O bound vs CPU bound).
+    2. Database Tuning: Convert single inserts to batch operations; verify proper indexes are present.
+    3. Parallelization: Split EOD processing by independent partition keys across multiple threads/workers.
+    4. In-Memory Caching: Cache dynamic static lookups.
+    5. Asynchronous Pipelines: Convert sequential pipeline stages to concurrent worker queues.
+
+
+73. How Would You Optimize Latency (General)?
+
+    Latency Reduction Rules:
+    1. Reduce Network Hops: Implement connection pooling and local caching.
+    2. Optimize Algorithmic Complexity: Upgrade O(N^2) algorithms to O(N log N) or O(1).
+    3. Asynchronous I/O: Offload blocking tasks to background execution queues.
+    4. Memory Cache Locality: Structure data contiguous in memory to maximize CPU L1/L2 cache hits.
+
+
+74. Delays in Bulk Operations — How Do You Find the Cause?
+
+    Diagnosis Steps:
+    1. Measure Component Metrics: Check CPU usage, Memory Usage, Disk I/O Wait times (`iostat`), and Network Throughput.
+    2. Analyze Database Lock Waits: Inspect DB engine status for lock escalation and long-running queries.
+    3. Profiling Batch Sizes: Test bulk processing performance under varying chunk sizes (e.g., 500 vs 5,000 vs 50,000 rows).
+
+
+--------------------------------------------------------------------------------
+SECTION 12: OOP (C++)
+--------------------------------------------------------------------------------
+
+75. Example of Abstraction
+
+    Explanation:
+    Hiding complex internal implementation details and exposing a clean interface.
+
+    C++ Code Example:
+    ----------------------------------------------------------------------------
+    class BankAccount {
+    private:
+        double balance; // Hidden state
+
+    public:
+        BankAccount(double initial) : balance(initial) {}
+
+        void deposit(double amount) { // Abstract interface
+            if (amount > 0) balance += amount;
+        }
+
+        double getBalance() const { return balance; }
+    };
+    ----------------------------------------------------------------------------
+
+
+76. cout << t.x; Where x is Private — What Happens?
+
+    Result:
+    Compilation Error. Private variables cannot be accessed directly from outside the class scope.
+
+
+77. What's Wrong with the Employee Class (Raw Pointer, No Destructor)?
+
+    Issues:
+    1. Memory Leak: Heap allocated resources referenced by raw pointers won't be freed when object scope ends.
+    2. Shallow Copy Risk (Dangling Pointers / Double Free): Default copy constructor copies raw memory addresses. Deleting one object leaves the second pointer dangling; destruction of second object causes double free crash.
+
+    Fix: Implement Rule of Five (Destructor, Copy Constructor, Copy Assignment, Move Constructor, Move Assignment) or use `std::unique_ptr` / `std::shared_ptr`.
+
+
+78. Public/Private/Protected Access Specifiers (+ Public/Private Key Crypto)
+
+    Specifiers:
+    - `public`: Accessible from anywhere outside class.
+    - `private`: Accessible ONLY within declaring class.
+    - `protected`: Accessible within declaring class AND derived classes.
+
+    Public/Private Key Crypto Comparison:
+    - Public Key: Distributed openly, used to ENCRYPT data or verify signatures.
+    - Private Key: Kept secret, used to DECRYPT data or generate signatures.
+
+
+79. Difference Between Overloading and Overriding
+
+    Comparison:
+    - Method Overloading: Compile-time polymorphism. Multiple functions in same scope with same name but different signatures.
+    - Method Overriding: Run-time polymorphism. Derived class redefines virtual function of base class with identical signature.
+
+
+80. What is a Virtual Function / Pure Virtual Function?
+
+    Definitions:
+    - Virtual Function: Member function declared with `virtual` keyword, allowing derived classes to override it. Enables dynamic dispatch via vtable.
+    - Pure Virtual Function: Declared with `= 0`. Has no implementation in base class and MUST be overridden by derived classes. Makes class Abstract.
+
+    C++ Code:
+    ----------------------------------------------------------------------------
+    class Shape {
+    public:
+        virtual void draw() = 0; // Pure Virtual Function
+        virtual ~Shape() {}
+    };
+    ----------------------------------------------------------------------------
+
+
+81. Rule of Three / Rule of Five in C++
+
+    Rule Definition:
+    If a class manages dynamic resources, it must explicitly define:
+
+    Rule of Three (C++03):
+    1. Destructor
+    2. Copy Constructor
+    3. Copy Assignment Operator
+
+    Rule of Five (C++11): Adds move semantics:
+    4. Move Constructor
+    5. Move Assignment Operator
+
+
+82. Difference Between Struct and Class in C++
+
+    Comparison:
+    - Struct: Default member access modifier and inheritance visibility is `public`.
+    - Class: Default member access modifier and inheritance visibility is `private`.
+
+
+--------------------------------------------------------------------------------
+SECTION 13: PROGRAMMING ROUND
+--------------------------------------------------------------------------------
+
+83. Count Increasing Digit Substring from a Large Number (n = 269253001778, ans = 5)
+
+    Problem Statement & Clarification:
+    Count the number of non-overlapping contiguous increasing digit substrings of length > 1.
+    For n = "269253001778":
+    Sequences found:
+    - "269" (len 3)
+    - "25"  (len 2)
+    - "3"   (len 1 - ignored)
+    - "0"   (len 1 - ignored)
+    - "01778" -> Increasing sequences: "017" (len 3), "78" (len 2) -> Total count = 5.
+
+    C Implementation:
+    ----------------------------------------------------------------------------
+    #include <stdio.h>
+    #include <string.h>
+
+    int countIncreasingSubstrings(const char *num_str) {
+        int count = 0;
+        int current_len = 1;
+        int len = strlen(num_str);
+
+        for (int i = 0; i < len - 1; i++) {
+            if (num_str[i+1] > num_str[i]) {
+                current_len++;
+            } else {
+                if (current_len > 1) {
+                    count++;
+                }
+                current_len = 1;
+            }
+        }
+        if (current_len > 1) {
+            count++;
+        }
+        return count;
+    }
+
+    int main() {
+        const char *number = "269253001778";
+        printf("Total increasing substrings: %d\n", countIncreasingSubstrings(number));
+        return 0;
+    }
+    ----------------------------------------------------------------------------
+
+
+84. Coding — Change All '0' Digits in a Number to '1'
+
+    Mathematical Approach (Integer Based):
+    Reconstruct number digit by digit replacing 0 with 1.
+
+    C Implementation:
+    ----------------------------------------------------------------------------
+    #include <stdio.h>
+
+    long long replaceZerosWithOnes(long long num) {
+        if (num == 0) return 1;
+
+        long long result = 0;
+        long long place = 1;
+
+        while (num > 0) {
+            int digit = num % 10;
+            if (digit == 0) digit = 1;
+
+            result += digit * place;
+            place *= 10;
+            num /= 10;
+        }
+        return result;
+    }
+
+    int main() {
+        long long num = 1020300450LL;
+        printf("Original: %lld -> Transformed: %lld\n", num, replaceZerosWithOnes(num));
+        return 0;
+    }
+    ----------------------------------------------------------------------------
