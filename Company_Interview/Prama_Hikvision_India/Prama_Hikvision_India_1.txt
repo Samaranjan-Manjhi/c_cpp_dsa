@@ -1,0 +1,2735 @@
+===================================================================
+INTERVIEW Q&A — BATCH 1 (Sections 5–9)
+===================================================================
+
+===================================================================
+SECTION 5: MEMORY MANAGEMENT
+===================================================================
+
+Q: Difference between stack and heap.
+A: Stack is a fixed-size, LIFO region auto-managed by the compiler for local
+variables and function call frames; allocation/deallocation is O(1) via
+pointer bump, and memory is freed automatically on scope exit. Heap is a
+larger, dynamically managed region for objects with runtime-determined
+lifetime; allocation involves a heap allocator (malloc/new) searching free
+lists, is slower, and must be freed manually (or via smart pointers).
+Stack overflow occurs on deep recursion/large local arrays; heap
+fragmentation and leaks are heap-specific risks.
+
+Q: What happens when new is called?
+A: `new` first calls `operator new` to allocate raw memory (internally
+often malloc-based), then invokes the constructor on that memory via
+placement new. If construction throws, `operator delete` is called to free
+the raw memory and the exception propagates. `new[]` additionally stores
+the array size for correct destructor calls on `delete[]`.
+
+Q: Difference between new and malloc.
+A: `new` is type-safe, calls constructors, throws `std::bad_alloc` on
+failure, and can be overloaded per-class; `malloc` just allocates raw
+bytes, returns `void*`, requires an explicit cast, calls no constructor,
+and returns NULL on failure. `new` should be paired with `delete`, malloc
+with `free` — mixing them is undefined behavior.
+
+Q: Difference between delete and free.
+A: `delete` calls the destructor then releases memory (via operator
+delete); `free` only releases memory with no destructor call. Using
+`free` on a `new`-allocated object skips destruction and is UB; similarly
+`delete` on malloc'd memory is UB.
+
+Q: What is a memory leak?
+A: Memory allocated on the heap that is never freed and becomes
+unreachable, so the program can no longer release it — it stays reserved
+until process exit, gradually raising RSS in long-running processes.
+
+Q: How do you detect memory leaks in Linux?
+A: Valgrind's memcheck tool (`valgrind --leak-check=full ./app`) tracks
+every allocation and reports unfreed blocks with the call stack.
+AddressSanitizer (`-fsanitize=address`) is a faster compile-time
+instrumentation option with built-in leak detection (LeakSanitizer).
+`/proc/<pid>/status` (VmRSS growth over time) and `smem`/`valgrind
+--tool=massif` help spot leaks in production without a debugger attached.
+
+Q: What tools can be used to find memory leaks?
+A: Valgrind (memcheck), AddressSanitizer/LeakSanitizer, Dr. Memory,
+Google's tcmalloc heap profiler (gperftools), Massif (heap profiler),
+and static analyzers like Clang Static Analyzer / Coverity.
+
+Q: What is Valgrind?
+A: A dynamic binary instrumentation framework; its memcheck tool runs the
+program in a synthetic CPU emulator, tracking every memory access to
+catch leaks, invalid reads/writes, use-after-free, and uninitialized
+reads. It's thorough but slows execution 10–50x.
+
+Q: What is AddressSanitizer?
+A: A compiler-instrumented (`-fsanitize=address`) runtime memory-error
+detector that uses "redzones" around allocations and shadow memory to
+catch heap/stack buffer overflows, use-after-free, and use-after-return
+with much lower overhead (~2x) than Valgrind, making it practical for CI.
+
+Q: What is a use-after-free bug?
+A: Accessing memory after it has been freed. The memory may have been
+reused/reallocated, so the access reads/writes garbage or corrupts
+another object — classic source of exploitable security vulnerabilities.
+
+Q: What is double-free?
+A: Calling `free`/`delete` twice on the same pointer, corrupting the heap
+allocator's internal bookkeeping (freelist), often leading to crashes or
+exploitable heap corruption. Fix: set pointer to nullptr after freeing,
+or use smart pointers.
+
+Q: What is buffer overflow?
+A: Writing past the bounds of an allocated buffer, overwriting adjacent
+memory (stack canary, return address, heap metadata, or neighboring
+objects) — a leading cause of security vulnerabilities (e.g., stack
+smashing to hijack control flow).
+
+Q: How can memory corruption be debugged?
+A: Reproduce under AddressSanitizer/Valgrind to pinpoint the exact
+faulting instruction and allocation site; enable core dumps and analyze
+with gdb; use canaries (`-fstack-protector`); bisect recent changes; add
+assertions/guard pages around suspect buffers.
+
+Q: What is fragmentation?
+A: Internal fragmentation: allocated blocks larger than requested due to
+allocator rounding, wasting space inside blocks. External fragmentation:
+free memory exists but is split into non-contiguous chunks too small to
+satisfy a large request, even though total free space is sufficient.
+
+===================================================================
+SECTION 6: STL
+===================================================================
+
+Q: What is STL?
+A: The Standard Template Library — a generic, template-based C++ library
+providing containers (vector, list, map...), algorithms (sort, find...),
+iterators (uniform traversal interface), and function objects, all
+designed to compose efficiently without inheritance/virtual dispatch.
+
+Q: What are the major components of STL?
+A: Containers, Iterators, Algorithms, Function objects (functors/
+lambdas), and Allocators.
+
+Q: Difference between vector and list.
+A: `vector` is a contiguous, dynamically resized array — O(1) random
+access, amortized O(1) push_back, but O(n) insert/erase in the middle and
+possible reallocation invalidating iterators. `list` is a doubly linked
+list — O(1) insert/erase anywhere given an iterator, no reallocation, but
+O(n) random access and worse cache locality.
+
+Q: Difference between vector and deque.
+A: `deque` supports O(1) push_front and push_back (segmented/chunked
+storage) whereas `vector` only has O(1) amortized push_back and O(n)
+push_front. `vector` has strictly contiguous memory (better cache
+locality); `deque` does not guarantee full contiguity.
+
+Q: Difference between map and unordered_map.
+A: `map` is a balanced BST (red-black tree) — O(log n) ops, keys kept
+sorted. `unordered_map` is hash-table based — average O(1) ops, no
+ordering, worst case O(n) on heavy collisions.
+
+Q: Difference between set and unordered_set.
+A: Same distinction as map/unordered_map but for unique keys with no
+associated value: `set` sorted/O(log n) via tree, `unordered_set`
+hash-based/average O(1).
+
+Q: Difference between map and multimap.
+A: `map` enforces unique keys; `multimap` allows duplicate keys, storing
+multiple values per key, both ordered by key.
+
+Q: Difference between set and multiset.
+A: `set` stores unique elements; `multiset` allows duplicates, both
+ordered.
+
+Q: What is an iterator?
+A: An object generalizing a pointer to traverse container elements
+uniformly, supporting operations like `++`, `*`, `==` depending on its
+category (input, output, forward, bidirectional, random-access).
+
+Q: What is a const iterator?
+A: An iterator (`const_iterator`) through which the pointed-to element
+cannot be modified, though the iterator itself can still advance;
+different from a `const Iterator` (the iterator position is fixed but
+element mutable, if the container allows).
+
+Q: What is iterator invalidation?
+A: When a container operation (resize, insert, erase) causes previously
+obtained iterators/pointers/references to become invalid (dangling or
+pointing to wrong element) — using them afterward is undefined behavior.
+
+Q: When does inserting into a vector invalidate iterators?
+A: Any insertion that triggers reallocation invalidates ALL iterators,
+pointers, and references. Even without reallocation, insertion
+invalidates all iterators/references at or after the insertion point.
+
+Q: What is the difference between begin() and cbegin()?
+A: `begin()` returns an `iterator` (mutable, if container is non-const);
+`cbegin()` always returns a `const_iterator` regardless of container
+constness, useful to force read-only intent.
+
+Q: Difference between push_back() and emplace_back().
+A: `push_back` takes a fully constructed object and copies/moves it in;
+`emplace_back` forwards constructor arguments directly and constructs the
+object in-place inside the container, avoiding a temporary + move/copy.
+
+Q: Difference between reserve() and resize().
+A: `reserve(n)` only allocates capacity for n elements without changing
+`size()` or constructing elements. `resize(n)` changes the actual size,
+constructing (or destroying) elements as needed to reach n.
+
+Q: What is the complexity of searching in std::map?
+A: O(log n) — balanced BST lookup.
+
+Q: What is the complexity of searching in std::unordered_map?
+A: Average O(1), worst case O(n) if many keys collide into the same
+bucket.
+
+Q: How does unordered_map work internally?
+A: A hash table: keys are hashed to a bucket index (`hash(key) % bucket_
+count`); each bucket is typically a linked list of entries (separate
+chaining) to handle collisions. Load factor is monitored and the table
+rehashes (grows + redistributes) when it exceeds a threshold.
+
+Q: What is a hash collision?
+A: When two distinct keys hash to the same bucket index, requiring the
+table to store both in that bucket and disambiguate via equality checks
+during lookup.
+
+Q: How can hash collisions be handled?
+A: Separate chaining (linked list/tree per bucket — what unordered_map
+uses), or open addressing (probing for the next free slot — linear,
+quadratic, or double hashing).
+
+Q: What is a custom comparator?
+A: A user-supplied function object/lambda that defines ordering (for
+`map`/`set`/`sort`) or equality (for hash containers) instead of the
+default `operator<`/`operator==`, e.g., sorting descending or by a
+struct's specific field.
+
+Q: How do you sort a vector of custom objects?
+A: `std::sort(v.begin(), v.end(), comparator)` where comparator is a
+lambda/functor returning true if the first argument should precede the
+second, e.g. `[](const P&a,const P&b){return a.age<b.age;}`, or overload
+`operator<` on the type.
+
+===================================================================
+SECTION 7: C++11 / MODERN C++
+===================================================================
+
+Q: List the important features introduced in C++11.
+A: auto, lambda expressions, rvalue references & move semantics, smart
+pointers (unique_ptr/shared_ptr/weak_ptr), range-based for loops,
+nullptr, constexpr, variadic templates, std::thread/mutex/condition_
+variable, static_assert, enum class, override/final, initializer lists,
+and decltype.
+
+Q: What are lambda expressions?
+A: Anonymous inline function objects: `[capture](params){body}`. They
+can capture surrounding variables by value or reference and are commonly
+used with algorithms, callbacks, and thread entry points.
+
+Q: What is auto?
+A: A keyword letting the compiler deduce a variable's type from its
+initializer at compile time, reducing verbosity especially with iterators
+and template types.
+
+Q: What is decltype?
+A: An operator that yields the exact compile-time type of an expression
+without evaluating it, often used in generic/template code to declare a
+variable or return type matching another expression's type.
+
+Q: What are rvalue references?
+A: References (`T&&`) that bind to temporaries (rvalues), enabling move
+semantics — the compiler can pick an overload that "steals" resources
+from a temporary instead of copying them.
+
+Q: Explain move semantics.
+A: A mechanism to transfer ownership of resources (heap buffers, file
+handles) from a source object to a destination instead of copying, via
+move constructor/move assignment operator that take `T&&` and leave the
+source in a valid-but-unspecified (usually empty) state. Drastically
+reduces copies for temporaries and container reallocations.
+
+Q: What is perfect forwarding?
+A: Using a forwarding reference (`T&&` in a template) plus `std::forward`
+to pass arguments through a wrapper function while preserving their
+original value category (lvalue/rvalue), avoiding unnecessary copies.
+
+Q: What is std::move?
+A: A cast that converts its argument to an rvalue reference, signaling
+"this object's resources may be stolen" — it does not itself move
+anything.
+
+Q: Does std::move() actually move an object?
+A: No — it's just a static_cast to `T&&`; the actual move happens only if
+a move constructor/assignment is subsequently invoked on that cast
+result.
+
+Q: What is std::forward()?
+A: A conditional cast used in templates that preserves the value category
+of a forwarding reference argument — forwards as rvalue if the argument
+was an rvalue, as lvalue if it was an lvalue — enabling perfect
+forwarding.
+
+Q: What are range-based for loops?
+A: `for (auto& x : container)` syntax that iterates over all elements
+using the container's begin()/end(), simplifying traversal versus manual
+iterators.
+
+Q: What is constexpr?
+A: A specifier indicating an expression/function can be evaluated at
+compile time (when given constant inputs), enabling compile-time
+computation and use in contexts requiring constants (array sizes,
+template arguments).
+
+Q: What is nullptr and why was it introduced?
+A: A type-safe null pointer literal of type `std::nullptr_t`, replacing
+the macro `NULL` (usually `0`), which could ambiguously resolve to an
+integer overload in function overload resolution.
+
+Q: What are variadic templates?
+A: Templates accepting an arbitrary number of type/value parameters via
+a parameter pack (`template<typename... Args>`), used for things like
+`std::tuple`, `make_unique`, and generic forwarding functions.
+
+Q: What is std::thread?
+A: The C++11 standard class representing an independent thread of
+execution, taking a callable + arguments in its constructor and started
+immediately; must be `join()`ed or `detach()`ed before destruction.
+
+Q: What are std::mutex and std::lock_guard?
+A: `std::mutex` is a mutual-exclusion primitive to protect shared state.
+`std::lock_guard` is an RAII wrapper that locks the mutex on construction
+and unlocks it automatically on destruction (scope exit), even if an
+exception is thrown — preventing forgotten unlocks.
+
+Q: What is std::unique_lock?
+A: A more flexible RAII mutex wrapper than lock_guard — supports deferred
+locking, manual lock/unlock, timed locking, and transfer of ownership;
+required by std::condition_variable::wait.
+
+Q: What is std::condition_variable?
+A: A synchronization primitive letting threads block until notified by
+another thread, used with a unique_lock and a predicate to implement
+producer-consumer / signaling patterns without busy-waiting.
+
+Q: What are std::atomic variables?
+A: Types wrapping a value with lock-free (typically) atomic read-modify-
+write operations, guaranteeing no data race on that variable without
+needing a mutex — used for counters, flags, and simple shared state.
+
+===================================================================
+SECTION 8: MULTITHREADING
+===================================================================
+
+Q: What is a thread?
+A: An independent, schedulable sequence of execution within a process,
+sharing the process's address space/heap/file descriptors with other
+threads but having its own stack, registers, and program counter.
+
+Q: Difference between process and thread.
+A: Processes have separate address spaces (isolated, heavier context
+switch, IPC needed to communicate); threads share the same address space
+within a process (lighter weight, faster context switch, but require
+synchronization to avoid data races).
+
+Q: What is a race condition?
+A: A bug where the program's outcome depends on the non-deterministic
+timing/interleaving of concurrent threads accessing shared data, at
+least one access being a write, without proper synchronization.
+
+Q: What is a deadlock?
+A: A state where two or more threads are each waiting on a resource held
+by another, forming a cycle, so none can proceed.
+
+Q: What are the four conditions required for deadlock?
+A: Mutual exclusion, hold-and-wait, no preemption, and circular wait
+(Coffman conditions) — all four must hold simultaneously for deadlock.
+
+Q: How can deadlocks be prevented?
+A: Break any one Coffman condition: enforce a consistent global lock
+ordering (avoids circular wait), use `std::lock`/`try_lock` to acquire
+multiple locks atomically, use timeouts (`try_lock_for`), or avoid
+holding a lock while waiting for another.
+
+Q: What is a mutex?
+A: A mutual-exclusion lock ensuring only one thread executes a critical
+section at a time; other threads attempting to lock it block until it's
+released.
+
+Q: What is a recursive mutex?
+A: A mutex that the same thread can lock multiple times without
+deadlocking itself, as long as it unlocks it an equal number of times —
+useful for recursive functions needing the same lock.
+
+Q: What is a semaphore?
+A: A counting synchronization primitive allowing up to N threads to
+access a resource concurrently; `wait`/`acquire` decrements the count
+(blocking at 0), `signal`/`release` increments it. Unlike a mutex, it has
+no strict ownership.
+
+Q: What is a condition variable?
+A: (see C++11 section) A primitive letting a thread sleep until signaled
+by another thread that some condition changed, avoiding busy-polling.
+
+Q: What is thread synchronization?
+A: Coordinating access/execution order between threads (via mutexes,
+condition variables, atomics, barriers) to prevent race conditions and
+ensure correct shared-state visibility.
+
+Q: What is thread safety?
+A: A property of code that behaves correctly (no data races/corruption)
+when called concurrently from multiple threads, typically via internal
+locking or by only using immutable/thread-local data.
+
+Q: What is a critical section?
+A: The portion of code that accesses shared resources and must be
+executed by only one thread at a time.
+
+Q: What is atomic operation?
+A: An operation that completes as a single indivisible step from other
+threads' perspective — no other thread can observe it half-done.
+
+Q: Difference between mutex and atomic.
+A: A mutex protects an entire critical section (arbitrary code/multiple
+variables) via blocking locks; `std::atomic` provides lock-free (usually)
+atomicity for a single variable's read-modify-write, generally faster
+for simple counters/flags but insufficient for multi-step invariants.
+
+Q: What is producer-consumer problem?
+A: A classic concurrency problem where producer thread(s) generate data
+into a shared bounded buffer and consumer thread(s) remove it; needs
+synchronization so producers block when the buffer is full and consumers
+block when it's empty (typically via mutex + condition variables).
+
+Q: How would you implement a thread-safe queue?
+A: Wrap a `std::queue` with a `std::mutex` for push/pop and a
+`std::condition_variable` for consumers to block on `empty()` and
+producers to notify after push (`cv.notify_one()` on push, `cv.wait`
+predicate on `!queue.empty()` before pop).
+
+Q: How do you stop a worker thread safely?
+A: Use an atomic/flag `std::atomic<bool> stop_flag` checked by the
+worker's loop, set it from outside, then `join()` the thread; if the
+thread is blocked on a condition variable, notify it after setting the
+flag so it wakes and re-checks the predicate.
+
+Q: How would you communicate between two threads in Qt?
+A: Qt's signal/slot mechanism with `Qt::QueuedConnection` (or
+AutoConnection when the receiver lives in a different thread) safely
+marshals the call onto the receiver thread's event loop, avoiding manual
+locking for the call itself.
+
+===================================================================
+SECTION 9: QT — VERY HIGH PRIORITY
+===================================================================
+
+Q: What is Qt?
+A: A cross-platform C++ application framework providing GUI (Widgets/
+QML), networking, threading, I/O, and more, built around QObject, the
+meta-object system, and signals/slots for event-driven programming.
+
+Q: What are Qt's main advantages?
+A: Cross-platform (write once, deploy on Linux/Windows/macOS/embedded/
+mobile), rich widget/QML UI toolkit, signal-slot event system, extensive
+modules (networking, multimedia, SQL, Bluetooth), and mature tooling
+(Qt Creator, Qt Designer).
+
+Q: What is the Qt meta-object system?
+A: Qt's extension to standard C++ (via MOC) providing runtime type info,
+dynamic properties, signals/slots, and introspection — things standard
+C++ lacks natively — enabled by deriving from QObject and using Q_OBJECT.
+
+Q: What is QObject?
+A: The base class for most Qt classes, providing object trees (parent-
+child ownership), signal/slot support, event handling, and dynamic
+properties.
+
+Q: Why do Qt classes derive from QObject?
+A: To gain signals/slots, the meta-object system (introspection, dynamic
+properties), automatic memory management via parent-child ownership, and
+event handling — core to Qt's architecture.
+
+Q: What is Q_OBJECT?
+A: A macro placed in a QObject-derived class's private section that
+enables meta-object features (signals, slots, dynamic properties); it
+must be processed by MOC to generate the necessary boilerplate.
+
+Q: Why is the Q_OBJECT macro required?
+A: Because standard C++ has no reflection; MOC parses this macro to
+generate the meta-object code (signal/slot dispatch tables, property
+introspection) at compile time — without it, signals/slots won't work.
+
+Q: What is MOC?
+A: Meta-Object Compiler — a code generator that runs before the C++
+compiler, parsing Q_OBJECT-annotated headers and generating an
+additional .cpp file (moc_*.cpp) implementing the meta-object machinery
+(signal emission, slot invocation tables, qt_metacall).
+
+Q: What is moc in Qt?
+A: Same as above — the standalone tool (`moc`) invoked automatically by
+qmake/CMake's AUTOMOC as part of the build.
+
+Q: What is the Qt event loop?
+A: The core dispatch loop (`QCoreApplication::exec()`) that continuously
+retrieves events (input, timers, queued signals, socket notifications)
+from a queue and dispatches them to the appropriate objects'
+event()/eventFilter() handlers — Qt's GUI and QueuedConnection signals
+depend on it running.
+
+Q: What is QCoreApplication?
+A: The base application class managing the event loop and core
+application-wide settings for non-GUI Qt applications.
+
+Q: What is QApplication?
+A: The application class for Qt Widgets apps; extends QCoreApplication
+with GUI-specific event handling (widget style, palette, etc.).
+
+Q: What is QGuiApplication?
+A: The application class for QML/Qt Quick (non-widget) GUI apps; sits
+between QCoreApplication and QApplication, providing windowing system
+integration without the widget module.
+
+Q: What is a Qt event?
+A: An object (QEvent subclass) representing something that happened
+(mouse click, key press, timer fired, paint request) that gets dispatched
+to a target QObject's event() function.
+
+Q: What is an event filter?
+A: An object installed on another QObject (via installEventFilter) that
+gets first chance to intercept and optionally consume events before the
+target object's own event handler runs.
+
+Q: What is eventFilter()?
+A: The virtual function overridden to implement an event filter; returns
+true to stop the event from propagating further, false to let it
+continue to the target.
+
+===================================================================
+END OF BATCH 1 (Sections 5-9). Next batch will cover Sections 10-14
+(Signals & Slots, Qt Object Ownership, Qt Threading, Qt GUI, QML).
+===================================================================
+
+===================================================================
+INTERVIEW Q&A — BATCH 2 (Sections 10–14)
+===================================================================
+
+===================================================================
+SECTION 10: SIGNALS AND SLOTS
+===================================================================
+
+Q: [REPORTED] What are signals and slots in Qt? How are they useful?
+A: Signals and slots are Qt's mechanism for object communication:
+a signal is emitted when something happens (e.g. a button click), and
+any connected slot (a normal member function) is automatically called in
+response. They decouple the emitter from the receiver — the emitting
+object doesn't need to know who (if anyone) is listening — enabling
+loosely-coupled, event-driven design without callback boilerplate, and
+they work safely across threads via queued connections.
+
+Q: What is a Qt signal?
+A: A special member function (declared under `signals:`) that has no
+implementation body — calling it (`emit`) triggers Qt's meta-object
+system to invoke all connected slots.
+
+Q: What is a Qt slot?
+A: A normal member function (or lambda/free function) that can be
+connected to a signal and gets invoked when that signal is emitted; it
+can also be called directly like any regular function.
+
+Q: Difference between signal and slot.
+A: A signal is only ever emitted, never called directly with a body; a
+slot is an ordinary callable that can both be invoked directly and
+triggered indirectly via a signal connection.
+
+Q: How do signals and slots work internally?
+A: MOC generates a moc_*.cpp file containing metadata (signal/slot
+tables) and implements signal emission as a call into
+`QMetaObject::activate()`, which looks up the object's connection list
+and, per connection type, either calls the slot directly (same thread) or
+posts a QMetaCallEvent onto the receiver's thread's event queue (queued
+connection).
+
+Q: What is the old-style signal/slot syntax?
+A: `connect(sender, SIGNAL(clicked()), receiver, SLOT(onClicked()))` —
+string-based, resolved at runtime, so typos or signature mismatches are
+only caught at runtime (with a console warning), not compile time.
+
+Q: What is the new-style signal/slot syntax?
+A: `connect(sender, &Sender::clicked, receiver, &Receiver::onClicked)` —
+uses member function pointers, checked at compile time, supports lambdas,
+and offers better performance and IDE auto-complete/refactoring support.
+
+Q: Difference between SIGNAL()/SLOT() syntax and function-pointer syntax.
+A: SIGNAL/SLOT macros stringify the signature (runtime lookup, no
+compile-time type checking, allows implicit connecting to
+incompatible-but-string-matching signatures); function-pointer syntax is
+type-checked by the compiler, catches mismatched signatures/typos at
+compile time, and supports connecting to lambdas and free functions.
+
+Q: What is a connection type?
+A: An enum (Qt::ConnectionType) specifying how a slot is invoked relative
+to the emitting thread: AutoConnection, DirectConnection,
+QueuedConnection, or BlockingQueuedConnection.
+
+Q: Explain Qt::AutoConnection.
+A: The default: behaves as DirectConnection if sender and receiver live
+in the same thread, or QueuedConnection if they're in different threads —
+determined at emit time.
+
+Q: Explain Qt::DirectConnection.
+A: The slot is called immediately, synchronously, in the emitting
+thread's context, as a plain function call.
+
+Q: Explain Qt::QueuedConnection.
+A: The signal's arguments are copied into an event object and posted to
+the receiver's thread event queue; the slot executes later on the
+receiver's own thread when its event loop processes that event —
+essential for safe cross-thread calls.
+
+Q: Explain Qt::BlockingQueuedConnection.
+A: Like QueuedConnection, but the emitting thread blocks until the
+receiver's thread has finished executing the slot. Must never be used
+when sender and receiver are the same thread (guaranteed deadlock).
+
+Q: What happens when a signal is emitted from another thread?
+A: With AutoConnection, Qt detects the thread affinity mismatch and
+automatically uses a queued connection, safely deferring the slot call
+to the receiver's thread instead of executing cross-thread directly.
+
+Q: When should Qt::QueuedConnection be used?
+A: Whenever a signal from a worker thread needs to update a UI object
+(or any object) living on a different thread — direct calls across
+threads on non-thread-safe Qt objects are unsafe, so queuing is required.
+
+Q: What happens if a receiver is destroyed?
+A: Qt's QObject destructor automatically disconnects all its
+connections, so a destroyed receiver cannot be called — this
+auto-cleanup prevents dangling-pointer crashes as long as receiver is a
+QObject tracked properly (or connected via a QObject "context" for
+lambdas).
+
+Q: Can one signal connect to multiple slots?
+A: Yes — a single signal can be connected to any number of slots; all
+connected slots are invoked (in connection order) when the signal is
+emitted.
+
+Q: Can one slot receive multiple signals?
+A: Yes — a slot can be connected to multiple different signals from the
+same or different objects.
+
+Q: Can a signal connect directly to another signal?
+A: Yes — connecting signal-to-signal causes emitting the first signal to
+also emit the second, effectively chaining/re-broadcasting.
+
+Q: How do you disconnect a signal?
+A: `disconnect(sender, signal, receiver, slot)`, or
+`sender->disconnect()` (removes all), or store the QMetaObject::
+Connection handle returned by connect() and call `QObject::disconnect
+(connection)`.
+
+Q: What is a lambda slot?
+A: Connecting a signal directly to an inline lambda instead of a named
+slot function: `connect(btn, &QPushButton::clicked, [](){ ... });` —
+convenient for small handlers.
+
+Q: What problems can occur when capturing objects in lambda connections?
+A: Capturing a raw pointer/`this` by value can dangle if that object is
+destroyed before the signal fires, since the lambda has no automatic
+lifetime tracking unless a QObject "context" argument is passed to
+connect() (which auto-disconnects when the context object is destroyed).
+
+===================================================================
+SECTION 11: QT OBJECT OWNERSHIP
+===================================================================
+
+Q: Explain Qt parent-child ownership.
+A: Every QObject can be given a parent; the parent keeps a list of its
+children and deletes them all in its own destructor, so child objects
+generally don't need explicit `delete` — memory management is tied to
+object-tree structure rather than pure C++ RAII/smart pointers.
+
+Q: How does QObject ownership work?
+A: Passing a parent pointer in the constructor (or calling setParent())
+registers the child in the parent's internal children list; the parent's
+destructor iterates that list and deletes each child.
+
+Q: What happens to child QObjects when their parent is destroyed?
+A: They are automatically deleted (their destructors run) as part of the
+parent's destructor, recursively down the object tree.
+
+Q: Why does Qt not normally require manual deletion of child QObjects?
+A: Because the parent-child tree already guarantees children are cleaned
+up when the parent is destroyed, making explicit `delete` for
+parented widgets/objects redundant (and a double-free risk if done
+anyway).
+
+Q: Difference between C++ memory ownership and QObject parent ownership.
+A: Plain C++ ownership is expressed via scope/RAII or smart pointers
+(unique_ptr/shared_ptr) with no built-in hierarchy; QObject parent
+ownership is an intrusive tree maintained by QObject itself, independent
+of C++ scoping — an object can outlive the function that created it as
+long as it has a living parent, and mixing it with smart pointers (e.g.
+unique_ptr owning a parented QObject) can cause double-free if not
+careful.
+
+Q: What is deleteLater()?
+A: A QObject method that schedules the object for deletion by posting a
+deferred deletion event to the event loop, rather than deleting
+immediately — safe to call from within the object's own slot/signal
+handler or from another thread's context.
+
+Q: Why is deleteLater() often safer than directly calling delete?
+A: Because calling `delete this` (or from a nested call stack still
+using the object) immediately can cause use-after-free if other code
+higher up the call stack still references the object or if it's
+currently processing an event; deleteLater() defers destruction until
+control returns to the event loop, after all pending events referencing
+it have been processed.
+
+Q: What happens if a QObject is deleted while an event is pending?
+A: Qt's event system checks a "deleted objects" watchdog
+(QPointer/internal tracking) so pending events targeting a destroyed
+object are safely discarded rather than dispatched to freed memory —
+but this safety relies on using deleteLater() rather than raw delete
+from unsafe contexts.
+
+===================================================================
+SECTION 12: QT THREADING
+===================================================================
+
+Q: How does threading work in Qt?
+A: Qt threads (QThread) each run their own event loop if started via
+`exec()`; QObjects have "thread affinity" (the thread they live in), and
+Qt uses this to decide whether signal/slot calls are direct or queued,
+enabling safe cross-thread communication without manual locking for the
+call dispatch itself.
+
+Q: What is QThread?
+A: Qt's class representing a thread of execution; you either subclass it
+and override run(), or (preferred) create a QObject "worker" and move it
+to a QThread instance via moveToThread().
+
+Q: Difference between subclassing QThread and using the worker-object
+approach.
+A: Subclassing QThread and putting logic in run() executes that code on
+the new thread but any slots on the QThread subclass itself still run on
+the *original* thread (a common misconception). The worker-object
+approach — creating a plain QObject, moving it to a QThread via
+moveToThread(), then using signals/slots for communication — is Qt's
+recommended pattern since it correctly executes all the worker's slots on
+the new thread and cleanly separates threading from business logic.
+
+Q: What is moveToThread()?
+A: A QObject method that changes an object's thread affinity so that all
+of its subsequent event handling (including queued slot calls) executes
+on the target thread's event loop, instead of the thread it was created
+on.
+
+Q: What happens when a QObject is moved to another thread?
+A: Its thread affinity changes; the object's timers and future queued
+events/slot calls will be processed by the target thread's event loop.
+The object itself isn't physically moved in memory — only its associated
+"home thread" pointer changes.
+
+Q: Can a QObject have children belonging to another thread?
+A: No (or at least it's problematic) — Qt requires that a QObject and
+all its children share the same thread affinity; moveToThread() on a
+parent with children will assert/warn if children are handled
+inconsistently, so children should be moved together or created after
+the move.
+
+Q: How do you safely stop a QThread?
+A: Set an atomic/volatile stop flag checked inside the worker's loop,
+emit a signal or call requestInterruption()/quit() to end the thread's
+event loop, then call `thread->wait()` to block until it actually
+finishes before destroying related objects.
+
+Q: What is QThread::quit()?
+A: Tells the thread's event loop to exit (equivalent to calling exit(0)
+on that thread's QEventLoop) — it only affects the exec() loop, not any
+custom run() logic without an event loop.
+
+Q: What is QThread::requestInterruption()?
+A: Sets an internal interruption flag that the running thread's code can
+poll via `isInterruptionRequested()` to cooperatively decide to stop —
+Qt does not force-terminate the thread.
+
+Q: How can signals and slots be used for cross-thread communication?
+A: Emit a signal from the worker thread; because the receiver (e.g. a
+GUI object) lives on a different thread, Qt automatically (AutoConnection)
+marshals it as a QueuedConnection, safely delivering data to the other
+thread's event loop without manual locking.
+
+Q: What happens if a blocking operation runs on the GUI thread?
+A: The event loop is blocked, so the UI stops repainting, doesn't
+respond to input, and appears frozen/unresponsive ("Not Responding")
+until the blocking call returns.
+
+Q: Why should long-running operations not run on the GUI thread?
+A: Because the GUI thread must keep servicing its event loop to redraw
+the UI and process input; anything blocking it — I/O, heavy computation,
+network calls — freezes the interface, so such work should be offloaded
+to a worker thread.
+
+===================================================================
+SECTION 13: QT GUI
+===================================================================
+
+Q: Difference between QWidget and QML.
+A: QWidget is C++-based, immediate-mode-ish, pixel/widget-tree UI with
+native look-and-feel and mature desktop tooling; QML is a declarative,
+JavaScript-backed, scene-graph/GPU-accelerated UI language better suited
+for fluid, animated, touch-friendly interfaces (mobile/embedded), backed
+by C++ via Qt Quick.
+
+Q: What is QWidget?
+A: The base class for all UI elements in the Qt Widgets module (buttons,
+labels, windows), providing painting, event handling, and layout
+integration.
+
+Q: What is QMainWindow?
+A: A QWidget subclass providing a standard application window
+framework with a menu bar, toolbars, dock widgets, a status bar, and a
+central widget area.
+
+Q: What is QApplication?
+A: (see Section 9) The application object managing the event loop and
+GUI-wide resources for Widget-based apps.
+
+Q: What is layout management in Qt?
+A: Using layout classes (QHBoxLayout, QVBoxLayout, QGridLayout,
+QFormLayout) to automatically position/resize child widgets based on
+size policies and hints, instead of hardcoding pixel geometry, so UIs
+adapt to window resizing and different platforms/DPIs.
+
+Q: Difference between QHBoxLayout and QVBoxLayout.
+A: QHBoxLayout arranges child widgets left-to-right in a horizontal row;
+QVBoxLayout arranges them top-to-bottom in a vertical column.
+
+Q: What is QGridLayout?
+A: A layout that places widgets in a 2D grid of rows and columns,
+optionally spanning multiple cells, useful for form-like or tabular
+arrangements.
+
+Q: What is model-view architecture in Qt?
+A: A design separating data (model, implementing QAbstractItemModel) from
+its presentation (view, e.g. QListView/QTableView) and optional per-item
+rendering/editing logic (delegate), so the same data can be displayed in
+multiple ways and updates to the model automatically refresh all
+attached views.
+
+Q: What is QListView?
+A: A view widget that displays items from a model (QAbstractItemModel/
+QAbstractListModel) as a simple vertical (or grid) list.
+
+Q: What is QTableView?
+A: A view widget presenting model data as rows/columns of a table, with
+support for headers, sorting, and per-cell delegates.
+
+Q: What is QAbstractItemModel?
+A: The abstract base class defining the interface (rowCount, columnCount,
+data(), index(), parent()) that models must implement so Qt's views can
+query hierarchical/tabular data generically.
+
+Q: Difference between model, view, and delegate.
+A: Model holds/exposes the data; view handles layout and user
+interaction, rendering items by asking the model for data; delegate
+controls how individual items are painted and edited (e.g., a custom
+delegate can render a progress bar or provide an inline editor widget).
+
+===================================================================
+SECTION 14: QML — VERY HIGH PRIORITY
+===================================================================
+
+Q: What is QML?
+A: A declarative, JSON-like markup language (with embedded JavaScript)
+for describing UI elements, their properties, and bindings; interpreted/
+compiled by the Qt Quick engine and commonly paired with a C++ backend.
+
+Q: What is Qt Quick?
+A: The module providing the QML types (Rectangle, Item, ListView, etc.)
+and the scene-graph-based rendering engine that QML applications run on.
+
+Q: Difference between Qt Widgets and Qt Quick/QML.
+A: Widgets are native-look, C++-defined, retained-mode desktop UI; Qt
+Quick/QML is GPU-accelerated (scene graph), declarative, animation-
+friendly, and better suited to custom/fluid/touch UIs and embedded
+displays.
+
+Q: What is a QML component?
+A: A reusable, self-contained UI element definition (a .qml file, or an
+inline `Component {}` block) that can be instantiated multiple times,
+similar to a class/prefab.
+
+Q: What is a QML property?
+A: A named, typed attribute of a QML object (built-in like `width`, or
+custom via `property int count: 0`) that can be read, written, and bound
+to expressions.
+
+Q: What is property binding?
+A: Assigning an expression (not just a static value) to a property so it
+automatically re-evaluates and updates whenever any property it
+references changes — e.g., `width: parent.width / 2` keeps recalculating
+as parent.width changes.
+
+Q: What is a signal in QML?
+A: A declaration (`signal clicked()`) that an object can emit; other QML
+code can react via an automatically-generated handler `onClicked: {...}`
+or explicit `Connections`.
+
+Q: What is a signal handler?
+A: The `on<SignalName>` block (e.g., `onClicked: console.log("hi")`) that
+runs JavaScript code automatically when the corresponding signal fires.
+
+Q: What is a JavaScript function in QML?
+A: A `function foo() {...}` block defined inside a QML object, callable
+from signal handlers, bindings, or other QML/JS code, used for imperative
+logic that doesn't fit a declarative binding.
+
+Q: What is id in QML?
+A: A special, non-property identifier (`id: root`) assigned to a QML
+object so other elements in the same file/scope can reference it (e.g.,
+`root.width`), unique per QML document.
+
+Q: What is anchors?
+A: A layout system in QML positioning an item relative to another item's
+edges/center (`anchors.left: parent.left`, `anchors.centerIn: parent`),
+offering flexible, constraint-based positioning without pixel math.
+
+Q: Difference between anchors and layouts.
+A: Anchors position individual items relative to specific other items'
+edges (fine-grained, item-to-item); Layouts (RowLayout/ColumnLayout/
+GridLayout) automatically arrange a set of children in a flow/grid the
+way Qt Widgets layouts do, redistributing space as children are
+added/removed/resized — layouts can't be combined with conflicting
+anchors on the same item.
+
+Q: What is Row?
+A: A positioner that arranges its children left-to-right in a single row
+at their natural sizes (no stretching/resizing of children).
+
+Q: What is Column?
+A: A positioner that arranges children top-to-bottom in a single column.
+
+Q: What is RowLayout?
+A: Like Row, but a true layout — children can have `Layout.fillWidth`,
+stretch factors, and the layout responds to resizing by redistributing
+space, unlike the simpler Row positioner.
+
+Q: What is ColumnLayout?
+A: The vertical counterpart to RowLayout, with the same layout
+attached-property support (Layout.fillHeight, alignment, stretch).
+
+Q: What is ListView?
+A: A QML view that efficiently displays a (potentially large/dynamic)
+list of items from a model using a delegate, with support for
+scrolling, delegate recycling, and section headers.
+
+Q: What is GridView?
+A: Like ListView but arranges delegates in a 2D flowing grid instead of
+a single-direction list.
+
+Q: What is Repeater?
+A: A non-visual QML item that instantiates a delegate once per item in a
+model, inserting each instance as a sibling in the surrounding
+layout/positioner — good for small, static-ish sets since (unlike
+ListView) it does not do delegate recycling or virtualization.
+
+Q: Difference between ListView and Repeater.
+A: ListView virtualizes/recycles delegates (only visible items are
+instantiated) and is optimized for large or scrolling datasets;
+Repeater instantiates every item's delegate up front with no
+recycling/virtualization or built-in scrolling, so it's only suitable
+for small, fixed-ish lists.
+
+===================================================================
+END OF BATCH 2 (Sections 10-14). Next batch will cover Sections 15-19
+(QML+C++ Integration, QML Models, QML Performance, Networking).
+===================================================================
+
+
+===================================================================
+INTERVIEW Q&A — BATCH 3 (Sections 15–19)
+===================================================================
+
+===================================================================
+SECTION 15: QML + C++ INTEGRATION
+===================================================================
+
+Q: How do you expose a C++ class to QML?
+A: Three main ways: (1) register the type with qmlRegisterType() so QML
+can instantiate it directly with `import` + `MyType {}`; (2) set an
+instance as a context property via
+`engine.rootContext()->setContextProperty("myObj", obj)`; (3) register a
+singleton via qmlRegisterSingletonType/qmlRegisterSingletonInstance. The
+class must derive from QObject with Q_OBJECT, and expose data via
+Q_PROPERTY and behavior via Q_INVOKABLE/slots.
+
+Q: What is qmlRegisterType()?
+A: A function (called before engine creation) that registers a C++
+QObject-derived class under a QML import URI/version/name so QML code
+can instantiate it as a normal QML element (`MyClass { ... }`), with
+QML owning the resulting instance's lifetime.
+
+Q: What is qmlRegisterSingletonType()?
+A: Registers a factory function that QML calls once to create a single
+shared instance of a type, accessible by name in QML without
+instantiating it as an element — useful for global services/managers.
+
+Q: What is qmlRegisterSingletonInstance()?
+A: A simpler singleton registration (Qt 5.14+) that directly registers an
+already-existing C++ object pointer as the QML singleton instance,
+without needing a separate factory function.
+
+Q: How can a C++ object be exposed to QML using a context property?
+A: `engine.rootContext()->setContextProperty("backend", myObjectPtr)`
+makes `backend` available as a global name in all QML files loaded by
+that engine/context, letting QML read its properties and call its
+Q_INVOKABLE methods/slots directly.
+
+Q: Difference between context property and registered QML type.
+A: A context property exposes one specific existing C++ instance under a
+name, globally visible in that context (simple, but harder to scope/
+reuse and can't be multiply instantiated from QML). A registered type
+lets QML `import` and instantiate the class like any QML element,
+supporting multiple instances, proper QML ownership, and better
+component reusability, but requires more registration boilerplate.
+
+Q: How do you expose a C++ property to QML?
+A: Declare it with `Q_PROPERTY(type name READ getter WRITE setter NOTIFY
+signal)` inside a QObject-derived class; QML can then read/write/bind to
+it like a native QML property.
+
+Q: What is Q_PROPERTY?
+A: A macro that registers a C++ member as a property in the meta-object
+system, specifying its type, getter, optional setter, and optional
+NOTIFY signal (and optionally RESET, CONSTANT, etc.), making it visible
+to QML and Qt's property system (e.g., QObject::setProperty).
+
+Q: Explain the components of Q_PROPERTY.
+A: type + name (the property's declared type/name), READ (getter
+function), WRITE (setter function, optional for read-only props), NOTIFY
+(signal emitted when the value changes, required for QML binding to
+update reactively), plus optional CONSTANT, RESET, STORED, DESIGNABLE.
+
+Q: How do you notify QML that a C++ property changed?
+A: Emit the property's NOTIFY signal from the setter whenever the
+underlying value actually changes; QML's binding engine is subscribed to
+that signal and re-evaluates any binding depending on the property.
+
+Q: What is a NOTIFY signal?
+A: The signal named in a Q_PROPERTY's NOTIFY clause, emitted when the
+property's value changes, which QML's property binding system listens to
+in order to keep bound UI elements in sync.
+
+Q: Why is the NOTIFY signal important for QML property binding?
+A: Without it, QML has no way to know the underlying C++ value changed,
+so any UI bound to that property would go stale — bindings are
+push-based (event-driven), not polling, so the notify signal is the only
+trigger for re-evaluation.
+
+Q: How do you expose a C++ method to QML?
+A: Mark it `Q_INVOKABLE`, or declare it as a `public slot`; both make the
+method callable from QML/JavaScript.
+
+Q: What is Q_INVOKABLE?
+A: A macro marking a normal C++ member function as callable from QML,
+without making it a Qt slot (i.e., it can't be connected to a signal, but
+QML can call it directly).
+
+Q: Difference between Q_INVOKABLE and a slot exposed to QML.
+A: Both are callable from QML. A slot can additionally be the target of
+a signal-slot connection (from C++ or QML `Connections`); Q_INVOKABLE
+methods exist purely to be callable, not connectable as a slot target.
+
+Q: How do you expose C++ signals to QML?
+A: Any signal in a QObject-derived, meta-object-registered class is
+automatically visible to QML — QML auto-generates an `on<SignalName>`
+handler for it, or you can connect via `Connections { target: cppObj;
+function onMySignal(arg) {...} }`.
+
+Q: How does QML call C++ functions?
+A: Directly, as if it were a native method — `myObj.doSomething(arg)` —
+provided doSomething is Q_INVOKABLE or a slot on an object exposed to
+QML.
+
+Q: How does C++ call QML functions?
+A: Via `QMetaObject::invokeMethod(qmlObject, "functionName",
+Q_ARG(...))`, addressing the QML object dynamically through the
+meta-object system since C++ has no compile-time knowledge of QML-defined
+functions.
+
+Q: How can C++ emit a signal that QML receives?
+A: Emit the Q_OBJECT-derived class's signal normally (`emit
+mySignal(value)`); any QML `Connections` or auto `on<Signal>` handler
+listening on that exposed object fires in response.
+
+Q: How can QML emit a signal that C++ receives?
+A: Declare `signal qmlSignal(var data)` in QML, connect a C++ slot to it
+via `QObject::connect(qmlRootObject, SIGNAL(qmlSignal(QVariant)), cppObj,
+SLOT(onQmlSignal(QVariant)))` (or the equivalent using
+QMetaObject::Connection with function pointers where types match).
+
+===================================================================
+SECTION 16: QML MODELS
+===================================================================
+
+Q: What is a model in QML?
+A: A data source (a list of items, list of records, or a C++
+QAbstractItemModel) that a view (ListView, GridView, Repeater) iterates
+over, instantiating one delegate per item.
+
+Q: What is a delegate?
+A: A template (`Component`) defining how each model item is visually
+represented; the view instantiates a delegate instance per (visible)
+model item, binding to the item's exposed roles.
+
+Q: What is a ListModel?
+A: A simple, QML-native, dynamic list model (`ListModel { ListElement {
+...} }`) usable directly with ListView without writing C++, suitable for
+smaller/static-ish datasets.
+
+Q: What is a ListElement?
+A: A single entry/row inside a ListModel, defined declaratively with
+name:value property pairs representing that row's data.
+
+Q: How does ListView communicate with its model?
+A: The ListView queries the model for item count and, per visible index,
+requests role data; it listens for the model's insert/remove/change
+signals (or C++ model's beginInsertRows/endInsertRows etc.) to
+incrementally update the visible delegates rather than rebuilding
+everything.
+
+Q: How do you create a custom C++ model for QML?
+A: Subclass QAbstractListModel (or QAbstractItemModel/QAbstractTableModel
+for more complex shapes), implement rowCount(), data(), and roleNames(),
+then expose the model instance to QML (context property or registered
+type) and use it as a ListView's `model:`.
+
+Q: What is QAbstractListModel?
+A: A convenience base class for list-shaped (single-column, multi-row)
+models, requiring only rowCount(), data(), and roleNames() to be
+implemented, plus optional insert/remove-row support functions.
+
+Q: What is rowCount()?
+A: A virtual function returning the number of rows (items) currently in
+the model — called by the view to know how many delegates it may need.
+
+Q: What is data()?
+A: A virtual function `QVariant data(const QModelIndex &index, int role)`
+returning the value for a given row and role — the primary way views
+retrieve item content from the model.
+
+Q: What are roles in QAbstractListModel?
+A: Named "fields" of each model item (e.g., "name", "imageUrl") mapped
+to integer role IDs; QML accesses them as `model.name`, `model.imageUrl`
+inside a delegate.
+
+Q: What is roleNames()?
+A: A virtual function returning a QHash<int, QByteArray> mapping each
+custom role's integer ID to its QML-visible property name, required for
+QML delegates to reference roles by name.
+
+Q: How do you add a row to a QML model from C++?
+A: Call `beginInsertRows(QModelIndex(), pos, pos)`, modify the underlying
+data container (e.g., insert into a QVector/std::vector), then call
+`endInsertRows()` — this pair of calls notifies attached views to update
+correctly.
+
+Q: How do you remove a row from QAbstractListModel?
+A: Call `beginRemoveRows(QModelIndex(), pos, pos)`, erase the item from
+the backing container, then call `endRemoveRows()`.
+
+Q: What are beginInsertRows() and endInsertRows()?
+A: Notification functions bracketing a row-insertion operation; calling
+them correctly (with the future row range, before actually modifying the
+data) lets connected views animate/update incrementally instead of
+resetting entirely.
+
+Q: What are beginRemoveRows() and endRemoveRows()?
+A: The removal counterparts — bracket a row-deletion operation so
+views know which rows are being removed and can update/animate
+accordingly.
+
+Q: Why must model notification functions be called correctly?
+A: Because views rely on these signals to know exactly which
+rows/columns changed; skipping them (or modifying data without
+begin/end calls) leaves views out of sync with the underlying data,
+causing crashes (index out of range), visual glitches, or stale display.
+
+===================================================================
+SECTION 17: QML PERFORMANCE
+===================================================================
+
+Q: Why can excessive QML bindings cause performance problems?
+A: Each binding re-evaluates (often re-running a JS expression) whenever
+any of its dependencies change; too many/too-complex bindings mean
+frequent, cascading re-evaluation on every frame/update, consuming CPU
+and potentially causing dropped frames.
+
+Q: How would you optimize a slow QML application?
+A: Profile with QML Profiler to find hot bindings/paint operations;
+reduce binding complexity, use delegate recycling in ListView, avoid
+unnecessary property re-bindings, use Loader/async loading for heavy
+components, reduce Image sizes/use sourceSize, and move heavy logic into
+optimized C++.
+
+Q: How do you identify unnecessary QML object creation?
+A: Use QML Profiler's "Creating" timeline to see object instantiation
+spikes, and check for Repeaters/Loaders creating many items
+simultaneously, or reactive bindings that recreate components rather than
+reusing them.
+
+Q: What causes QML binding loops?
+A: A property's binding indirectly depends on its own value (A depends
+on B which depends on A), causing infinite/undefined re-evaluation; QML
+detects and warns about this at runtime ("Binding loop detected").
+
+Q: How do you debug a binding loop?
+A: The QML runtime prints a console warning naming the offending
+property; trace the dependency chain in the referenced bindings, and
+break the cycle by caching a value in a plain property updated
+imperatively (e.g. in a signal handler) instead of a circular binding.
+
+Q: How do you reduce unnecessary property updates?
+A: Avoid deeply chained bindings, batch related updates, use `Behavior`/
+explicit animations judiciously, debounce rapid-fire property changes
+from C++ (e.g., coalesce updates instead of emitting NOTIFY on every
+tiny change), and prefer read-only bindings where reactivity isn't
+actually needed.
+
+Q: How do you optimize a large ListView?
+A: Enable/rely on delegate recycling (`reuseItems: true` in newer Qt),
+keep delegates lightweight (avoid heavy nested bindings/Images per
+delegate), set `cacheBuffer` appropriately, avoid unnecessary
+`Layout`/`anchors` complexity per item, and paginate/virtualize data from
+the C++ model side for very large datasets.
+
+Q: What is delegate recycling?
+A: A ListView optimization where delegate instances scrolled out of view
+are reused for newly visible items (rebinding their data) instead of
+destroying and recreating them, reducing allocation/GC churn during
+scrolling.
+
+Q: How can images affect QML performance?
+A: Large images decoded at full resolution consume significant memory
+and GPU upload bandwidth; always set `sourceSize` to the actual display
+size so Qt decodes a scaled-down version, and use asynchronous loading
+(`asynchronous: true`) to avoid blocking the UI during decode.
+
+Q: How would you optimize a CCTV/video-monitoring UI written in QML?
+A: Render video frames via a custom QQuickFramebufferObject/
+QSGTexture-based item (or VideoOutput with hardware-accelerated
+decoding) rather than pushing frames as QML Images; decode on worker
+threads; throttle frame rate for off-screen/minimized tiles; recycle
+GPU textures; and keep per-tile QML bindings minimal.
+
+Q: How would you display hundreds of camera streams efficiently?
+A: Only decode/render full-resolution streams for currently visible
+tiles (viewport-based virtualization), use lower-resolution sub-streams
+for grid thumbnails, hardware-accelerate decode (VA-API/NVDEC) and
+render via the scene graph directly (custom QSGNode) to avoid CPU-side
+image copies, and stagger network/decoding load across worker threads.
+
+Q: How would you avoid blocking the QML GUI thread?
+A: Do all network I/O, decoding, and heavy computation on worker threads
+(QThread/worker-object pattern or a thread pool), communicating results
+back to QML-bound C++ objects via queued signals, so the GUI/render
+thread only handles presentation.
+
+===================================================================
+SECTION 19: NETWORKING — IMPORTANT FOR HIKVISION
+===================================================================
+
+Q: [REPORTED] Explain the TCP protocol handshaking flow.
+A: TCP establishes a connection via a three-way handshake: (1) client
+sends a SYN (synchronize) segment with an initial sequence number; (2)
+server responds with SYN-ACK, acknowledging the client's sequence number
+and sending its own; (3) client responds with ACK, acknowledging the
+server's sequence number. After this, both sides can reliably exchange
+data with sequencing, acknowledgment, and retransmission. Connection
+teardown uses a four-way FIN/ACK exchange (each side independently
+closes its direction).
+
+Q: What is TCP?
+A: Transmission Control Protocol — a connection-oriented, reliable,
+ordered, byte-stream transport protocol providing error detection,
+retransmission, flow control, and congestion control.
+
+Q: What is UDP?
+A: User Datagram Protocol — a connectionless, unreliable, unordered
+datagram transport protocol with minimal overhead (no handshake, no
+retransmission, no guaranteed ordering).
+
+Q: Difference between TCP and UDP.
+A: TCP: connection-oriented, reliable (retransmits lost packets),
+ordered, flow/congestion controlled, higher overhead/latency. UDP:
+connectionless, no delivery/order guarantees, lower overhead/latency,
+suited to real-time data where occasional loss is acceptable.
+
+Q: Why would a video-surveillance application use UDP?
+A: Live video streaming tolerates occasional dropped frames far better
+than added latency from retransmission — UDP (often via RTP) avoids
+head-of-line blocking and keeps latency low, which matters more than
+perfect reliability for real-time monitoring.
+
+Q: Why might TCP be preferred for reliable control messages?
+A: Control/command messages (PTZ commands, configuration, alarms) must
+arrive reliably and in order — losing or misordering them is worse than
+the extra latency TCP's reliability mechanisms introduce.
+
+Q: What is a TCP three-way handshake?
+A: (see above) SYN → SYN-ACK → ACK, establishing initial sequence
+numbers and confirming both sides can send/receive before data transfer
+begins.
+
+Q: What are SYN, SYN-ACK, and ACK?
+A: SYN: initiates a connection, proposing an initial sequence number.
+SYN-ACK: server's combined acknowledgment of the client's SYN plus its
+own SYN proposing its sequence number. ACK: final acknowledgment
+confirming both sequence numbers are agreed, completing the handshake.
+
+Q: What happens when a TCP connection is closed?
+A: A four-way termination: the closer sends FIN, the peer ACKs it (and
+may keep sending remaining data), then the peer sends its own FIN when
+done, and the original closer ACKs that — after which the connection
+enters TIME_WAIT briefly to handle any delayed packets.
+
+Q: What is a socket?
+A: An OS-level endpoint for network communication, identified by
+IP address + port + protocol, exposed as a file-descriptor-like handle
+that application code reads/writes.
+
+Q: What is an IP address?
+A: A numeric identifier (IPv4: 32-bit dotted-decimal, e.g. 192.168.1.1;
+IPv6: 128-bit hex) assigned to a network interface, used for routing
+packets to the correct host.
+
+Q: Difference between IPv4 and IPv6.
+A: IPv4 uses 32-bit addresses (~4.3 billion, largely exhausted); IPv6
+uses 128-bit addresses (vastly larger space), simplifies header
+processing, has built-in support for auto-configuration, and doesn't
+require NAT the way IPv4 commonly does today.
+
+Q: What is a port?
+A: A 16-bit number identifying a specific process/service endpoint on a
+host, allowing multiple applications to share one IP address (e.g., 80
+for HTTP, 554 for RTSP).
+
+Q: What is DNS?
+A: Domain Name System — a distributed, hierarchical service translating
+human-readable hostnames into IP addresses.
+
+Q: What is HTTP?
+A: HyperText Transfer Protocol — an application-layer, request/response
+protocol (typically over TCP) used for transferring web resources, with
+methods like GET/POST and stateless requests.
+
+Q: What is HTTPS?
+A: HTTP layered over TLS/SSL, adding encryption, integrity, and server
+(and optionally client) authentication to HTTP traffic.
+
+Q: What is WebSocket?
+A: A protocol providing a persistent, full-duplex TCP connection
+(initiated via an HTTP upgrade handshake) allowing the server to push
+data to the client without repeated polling.
+
+Q: Difference between HTTP and WebSocket.
+A: HTTP is request/response, connection typically short-lived per
+exchange (or pooled); WebSocket keeps one long-lived connection open
+allowing either side to send messages any time, suited to real-time
+bidirectional communication (chat, live dashboards).
+
+Q: What is RTSP?
+A: Real-Time Streaming Protocol — an application-layer control protocol
+(like a "remote control" for media, PLAY/PAUSE/TEARDOWN/DESCRIBE) used to
+set up and control streaming sessions; the actual media is usually
+transported separately via RTP.
+
+Q: Why is RTSP relevant to video surveillance?
+A: IP cameras and NVRs commonly expose RTSP endpoints so client software
+can negotiate and control a live video stream (start/stop, seek on
+playback) — it's the de facto standard for camera stream access.
+
+Q: What is RTP?
+A: Real-time Transport Protocol — carries the actual audio/video payload
+(usually over UDP), adding sequence numbers and timestamps to allow the
+receiver to detect loss/reorder and reconstruct timing, but with no
+retransmission itself.
+
+Q: What is RTCP?
+A: RTP Control Protocol — a companion protocol to RTP that periodically
+exchanges statistics (packet loss, jitter, round-trip time) between
+sender and receiver for quality monitoring and synchronization.
+
+Q: Explain the basic architecture of a network camera streaming video.
+A: The camera encodes video (H.264/H.265) and exposes it via an RTSP
+server; a client sends an RTSP DESCRIBE/SETUP/PLAY sequence to negotiate
+the session, then receives the encoded frames over RTP/UDP (or
+interleaved over TCP), decodes them, and renders to a display — often
+alongside a separate control-channel (HTTP/TCP) for PTZ, alarms, and
+configuration.
+
+Q: What can cause video-stream latency?
+A: Encoder buffering (GOP size, B-frames), network jitter/congestion,
+receiver-side jitter buffers, decoder processing time, and
+rendering/vsync pipeline delay; each stage adds cumulative latency.
+
+Q: How would you troubleshoot packet loss in a camera stream?
+A: Capture traffic with tcpdump/Wireshark to check for retransmissions/
+gaps, inspect RTCP receiver reports for loss statistics, check network
+utilization/congestion (switch port counters, QoS settings), verify
+MTU/fragmentation issues, and test with a wired vs. wireless path to
+isolate the segment causing loss.
+
+===================================================================
+END OF BATCH 3 (Sections 15-19). Next batch will cover Sections 20-24
+(Linux, Design Patterns, Coding Questions, C++ Tricky/Output Questions,
+Scenario-Based Questions).
+===================================================================
+
+
+===================================================================
+INTERVIEW Q&A — BATCH 4 (Sections 20–24)
+===================================================================
+
+===================================================================
+SECTION 20: LINUX
+===================================================================
+
+Q: How do you detect a memory leak in Linux?
+A: (see Section 5) Valgrind memcheck, AddressSanitizer/LeakSanitizer, or
+monitoring VmRSS growth in /proc/<pid>/status over time for a long-running
+process.
+
+Q: What is Valgrind?
+A: (see Section 5) A CPU-emulation-based instrumentation framework whose
+memcheck tool detects leaks, invalid memory access, and uninitialized
+reads at the cost of significant runtime overhead.
+
+Q: What is AddressSanitizer?
+A: (see Section 5) A compile-time instrumented, low-overhead sanitizer
+detecting buffer overflows, use-after-free, and (with LeakSanitizer)
+memory leaks.
+
+Q: What is gdb?
+A: The GNU Debugger — allows setting breakpoints, stepping through code,
+inspecting/modifying variables and memory, examining the call stack
+(backtrace), and analyzing core dumps for a compiled C/C++ binary.
+
+Q: How do you debug a segmentation fault?
+A: Compile with debug symbols (`-g`), run under gdb or load the
+resulting core dump (`gdb ./app core`), use `bt` (backtrace) to find the
+faulting frame, inspect variables/pointers with `print`, and check for
+null/dangling pointer dereferences or out-of-bounds access. AddressSanitizer
+often pinpoints the exact line faster.
+
+Q: How do you generate and analyze a core dump?
+A: Enable core dumps (`ulimit -c unlimited`, and ensure
+/proc/sys/kernel/core_pattern is set appropriately), let the crash occur
+to produce a core file, then load it with `gdb <binary> <corefile>` and
+run `bt` to see the crash's call stack and inspect variable state at the
+time of the crash.
+
+Q: What is a segmentation fault?
+A: A signal (SIGSEGV) raised by the OS when a process accesses memory it
+doesn't have permission for (unmapped page, null pointer, writing to
+read-only memory, stack overflow), immediately terminating the process by
+default.
+
+Q: What is a zombie process?
+A: A process that has terminated but whose exit status hasn't yet been
+read by its parent via wait()/waitpid(); it remains in the process table
+as a "defunct" entry holding minimal resources until reaped.
+
+Q: What is a daemon?
+A: A background process, typically detached from any controlling
+terminal, that runs continuously providing a service (e.g., sshd,
+cron) rather than direct user interaction.
+
+Q: Difference between process and thread in Linux.
+A: (see Section 8) Processes have isolated address spaces created via
+fork()/exec() (heavier, IPC needed to communicate); threads (created via
+pthread_create, which internally uses clone() with shared memory flags)
+share the same address space within a process, making communication
+cheaper but requiring synchronization.
+
+Q: What are signals in Linux?
+A: Asynchronous notifications delivered to a process to indicate an
+event (SIGINT from Ctrl+C, SIGSEGV on a fault, SIGTERM to request
+termination); a process can install custom handlers, ignore, or use the
+default action for most signals.
+
+Q: Difference between SIGTERM and SIGKILL.
+A: SIGTERM is a "polite" termination request that a process can catch,
+handle, and clean up before exiting; SIGKILL cannot be caught, blocked,
+or ignored — the kernel terminates the process immediately with no
+cleanup opportunity.
+
+Q: How do you find CPU usage of a process?
+A: `top`/`htop` (live view), or `ps -p <pid> -o %cpu`, or read
+/proc/<pid>/stat for utime/stime and compute over a sampling interval.
+
+Q: How do you find memory usage of a process?
+A: `ps -p <pid> -o rss,vsz`, `/proc/<pid>/status` (VmRSS, VmSize), `top`/
+`htop`, or `smem` for proportional set size (PSS) accounting for shared
+memory.
+
+Q: How do you find which process is using a port?
+A: `sudo lsof -i :<port>` or `sudo ss -tulnp | grep <port>` (modern
+replacement for the older `netstat -tulnp`).
+
+Q: What is ps?
+A: A command showing a snapshot of currently running processes and their
+attributes (PID, CPU%, memory, state, command line).
+
+Q: What is top?
+A: An interactive, real-time process-monitoring tool showing CPU/memory
+usage per process, updating periodically, sortable by various metrics.
+
+Q: What is htop?
+A: An enhanced, more user-friendly interactive alternative to top, with
+color output, scrollable process lists, tree view, and easier
+process control (kill, renice) via the UI.
+
+Q: What is netstat / ss?
+A: Tools to inspect network connections, listening sockets, and routing
+info; `ss` is the modern, faster replacement for the older `netstat`,
+both used to see which ports/sockets are open and by which process
+(with -p).
+
+===================================================================
+SECTION 21: DESIGN PATTERNS
+===================================================================
+
+Q: [REPORTED] Give examples of any two design patterns in C++.
+A: Singleton (a class restricting itself to exactly one instance,
+globally accessible — e.g. a Logger or ConfigManager) and Observer (an
+object, the subject, notifies a list of registered observers automatically
+when its state changes — directly analogous to Qt's signal/slot
+mechanism).
+
+Q: What is a design pattern?
+A: A general, reusable, named solution template to a commonly recurring
+software design problem, not tied to a specific implementation but
+describing the structure/interaction of classes and objects.
+
+Q: Explain Singleton pattern.
+A: Restricts a class to a single instance and provides a global access
+point to it (typically via a static local variable inside a static
+`instance()` method for thread-safe lazy init in C++11+), with the
+constructor made private so no other instance can be created.
+
+Q: Explain Factory pattern.
+A: Encapsulates object creation behind a function/method that returns an
+instance of some base type, choosing the concrete derived type to
+instantiate based on input parameters — decouples client code from
+concrete classes.
+
+Q: Explain Abstract Factory.
+A: A factory-of-factories: provides an interface for creating families
+of related objects (e.g., a UI toolkit's Button+Checkbox for Windows vs.
+macOS) without specifying their concrete classes, ensuring consistency
+across a related object family.
+
+Q: Explain Observer pattern.
+A: One-to-many dependency: a "subject" maintains a list of "observers"
+and notifies them all automatically (usually via a callback/update
+method) when its state changes, decoupling the subject from concrete
+observer implementations — this is exactly what Qt's signal/slot system
+implements.
+
+Q: Explain Strategy pattern.
+A: Encapsulates a family of interchangeable algorithms behind a common
+interface, letting the algorithm used by a context object be selected/
+swapped at runtime without changing the context's code (e.g., different
+sorting or compression strategies plugged into the same class).
+
+Q: Explain Adapter pattern.
+A: Wraps an existing class with an incompatible interface behind a new
+interface expected by client code, allowing otherwise-incompatible
+classes to work together without modifying either.
+
+Q: Explain Builder pattern.
+A: Separates the construction of a complex object from its
+representation, using a step-by-step builder object (with chained
+setter-like calls) to assemble a final complex object, useful when
+construction has many optional parameters.
+
+Q: Explain MVC.
+A: Model-View-Controller: Model holds data/business logic, View renders
+the UI, Controller handles user input and updates the Model, which in
+turn notifies the View to refresh — separating concerns for
+testability and reusability (Qt's model/view is a variant of this idea).
+
+Q: Which design pattern is commonly associated with Qt's signal/slot
+mechanism?
+A: The Observer pattern — signals act as the subject's notification and
+slots act as the observers reacting to state changes, but decoupled at
+compile time via the meta-object system rather than requiring explicit
+observer-interface inheritance.
+
+Q: How would you design a camera-management system using design
+patterns?
+A: Factory to instantiate camera-driver objects per vendor/protocol
+(ONVIF, proprietary SDK) behind a common ICamera interface; Observer
+(Qt signals) to notify UI/recording modules of new frames/alarms;
+Singleton for a central CameraManager/registry; Strategy for
+swappable decoding/recording backends.
+
+Q: How would you design a notification/event system?
+A: Observer pattern at the core: an EventBus/Signal dispatcher that
+producers publish events to, and subscribers register callbacks/slots
+for event types they care about — in Qt this maps directly to
+signals/slots or a QObject-based event-bus singleton.
+
+===================================================================
+SECTION 22: CODING QUESTIONS TO PRACTICE
+===================================================================
+(Concise reference solutions — practice writing these from scratch.)
+
+Q: Reverse a string without using a library reverse function.
+A:
+	void reverseStr(std::string &s) {
+		int l = 0, r = s.size() - 1;
+		while (l < r) std::swap(s[l++], s[r--]);
+	}
+
+Q: Reverse words in a string.
+A: Split on spaces into tokens, reverse the token order, rejoin with
+single spaces (trim extra whitespace first).
+std::string reverseWords(std::string s) {
+	std::istringstream iss(s);
+	std::vector<std::string> words;
+	std::string w;
+	while (iss >> w) words.push_back(w);
+	std::reverse(words.begin(), words.end());
+	std::string res;
+	for (size_t i = 0; i < words.size(); ++i)
+		res += words[i] + (i + 1 < words.size() ? " " : "");
+	return res;
+}
+
+Q: Find duplicate elements in an array.
+A: Use an unordered_set/unordered_map counting occurrences; O(n) time.
+std::vector<int> findDuplicates(std::vector<int>& a) {
+	std::unordered_map<int,int> cnt;
+	std::vector<int> dups;
+	for (int x : a) if (++cnt[x] == 2) dups.push_back(x);
+	return dups;
+}
+
+Q: Find the first non-repeating character.
+A: Count frequencies, then scan in order for the first with count 1.
+char firstNonRepeat(const std::string &s) {
+	int freq[256] = {0};
+	for (char c : s) freq[(unsigned char)c]++;
+	for (char c : s) if (freq[(unsigned char)c] == 1) return c;
+	return '\0';
+}
+
+Q: Check whether a string is a palindrome.
+A:
+bool isPalindrome(const std::string &s) {
+	int l = 0, r = s.size() - 1;
+	while (l < r) if (s[l++] != s[r--]) return false;
+	return true;
+}
+
+Q: Check whether two strings are anagrams.
+A: Sort both and compare, or compare character frequency counts (O(n)).
+bool isAnagram(std::string a, std::string b) {
+	if (a.size() != b.size()) return false;
+	int freq[256] = {0};
+	for (char c : a) freq[(unsigned char)c]++;
+	for (char c : b) if (--freq[(unsigned char)c] < 0) return false;
+	return true;
+}
+
+Q: Find the second-largest element in an array.
+A: Single pass tracking largest and second-largest.
+int secondLargest(std::vector<int>& a) {
+	int first = INT_MIN, second = INT_MIN;
+	for (int x : a) {
+		if (x > first) { second = first; first = x; }
+		else if (x > second && x != first) second = x;
+	}
+	return second;
+}
+
+Q: Remove duplicates from a vector.
+A: Sort then use std::unique + erase, or preserve order with an
+unordered_set filter.
+void dedupe(std::vector<int>& v) {
+	std::sort(v.begin(), v.end());
+	v.erase(std::unique(v.begin(), v.end()), v.end());
+}
+
+Q: Sort a vector without using std::sort.
+A: Implement e.g. quicksort/mergesort manually (see below) instead of
+calling std::sort.
+
+Q: Implement a stack using a linked list.
+A:
+struct Node 
+{ 
+	int val; 
+	Node* next; 
+};
+class Stack 
+{
+	Node* head = nullptr;
+	public:
+	void push(int v) 
+	{ 
+		head = new Node{v, head}; 
+	}
+	void pop() 
+	{ 
+		if (head) 
+		{ 
+			Node* t = head; 
+			head = head->next; 
+			delete t; 
+		} 
+	}
+	int top() 
+	{ 
+		return head->val; 
+	}
+	bool empty() 
+	{ 
+		return head == nullptr; 
+	}
+};
+
+Q: Implement a queue using a linked list.
+A:
+struct node { int val; node* next; };
+class queue 
+{
+	node *head = nullptr, *tail = nullptr;
+	public:
+	void enqueue(int v) 
+	{
+		node* n = new node{v, nullptr};
+		if (tail) 
+			tail->next = n; 
+		else 
+			head = n;
+		tail = n;
+	}
+	void dequeue() 
+	{
+		if (head) 
+		{ 
+			node* t = head; 
+			head = head->next; 
+			if (!head) 
+				tail = nullptr; 
+			delete t; 
+		}
+	}
+	int front() { return head->val; }
+};
+
+Q: Implement a circular queue.
+A: Fixed-size array with front/rear indices modulo capacity, and a size
+counter to distinguish full vs. empty.
+class CircularQueue 
+{
+	std::vector<int> buf; 
+	int front_=0, size_=0, cap;
+	public:
+	CircularQueue(int c): buf(c), cap(c) {}
+	bool enqueue(int v) 
+	{
+		if (size_ == cap) 
+			return false;
+		buf[(front_ + size_) % cap] = v; 
+		size_++; 
+		return true;
+	}
+	bool dequeue() {
+		if (size_ == 0) return false;
+		front_ = (front_ + 1) % cap; size_--; return true;
+	}
+};
+
+Q: Implement a singly linked list.
+A:
+struct Node { int val; Node* next=nullptr; };
+class LinkedList {
+	Node* head = nullptr;
+	public:
+	void push_back(int v) {
+		Node* n = new Node{v};
+		if (!head) { head = n; return; }
+		Node* cur = head;
+		while (cur->next) cur = cur->next;
+		cur->next = n;
+	}
+};
+
+Q: Reverse a linked list.
+A:
+Node* reverse(Node* head) {
+	Node* prev = nullptr;
+	while (head) {
+		Node* next = head->next;
+		head->next = prev;
+		prev = head;
+		head = next;
+	}
+	return prev;
+}
+
+// --- PAIR SWAP FUNCTION USING A DUMMY NODE ---
+Node* swap_pairs(Node* head) {
+    // 1. Create a dummy node and point its 'next' to head
+    Node dummy;
+    dummy.next = head;
+    
+    // 2. 'prev' will always be the node right before the pair we want to swap
+    Node* prev = &dummy;
+
+    // 3. Loop as long as there is a pair left to swap
+    while (prev->next && prev->next->next) {
+        Node* first = prev->next;
+        Node* second = first->next;
+
+        // Swap links
+        first->next = second->next; // 'first' points to the node after 'second'
+        second->next = first;       // 'second' points back to 'first'
+        prev->next = second;        // 'prev' hooks into the new front of the pair ('second')
+
+        // 4. Move 'prev' two steps forward (it lands on 'first', right before the next pair)
+        prev = first;
+    }
+
+    // 5. The real head of the modified list is now dummy.next
+    return dummy.next;
+}
+
+Q: Detect a cycle in a linked list.
+A: Floyd's cycle detection (slow/fast pointers).
+bool hasCycle(Node* head) {
+	Node *slow = head, *fast = head;
+	while (fast && fast->next) {
+		slow = slow->next;
+		fast = fast->next->next;
+		if (slow == fast) return true;
+	}
+	return false;
+}
+
+Q: Find the middle element of a linked list.
+A: Slow/fast pointer technique — when fast reaches the end, slow is at
+the middle.
+Node* middle(Node* head) {
+	Node *slow = head, *fast = head;
+	while (fast && fast->next) { slow = slow->next; fast = fast->next->next; }
+	return slow;
+}
+
+Q: Merge two sorted linked lists.
+A:
+Node* merge(Node* a, Node* b) 
+{
+	Node dummy; 
+	Node* tail = &dummy;
+	while (a && b) 
+	{
+		if (a->val <= b->val) 
+		{ 
+			tail->next = a; 
+			a = a->next; 
+		}
+		else 
+		{ 
+			tail->next = b; 
+			b = b->next; 
+		}
+		tail = tail->next;
+	}
+	tail->next = a ? a : b;
+	return dummy.next;
+}
+
+Q: Implement binary search.
+A:
+int binarySearch(std::vector<int>& a, int target) {
+	int lo = 0, hi = a.size() - 1;
+	while (lo <= hi) {
+		int mid = lo + (hi - lo) / 2;
+		if (a[mid] == target) return mid;
+		else if (a[mid] < target) lo = mid + 1;
+		else hi = mid - 1;
+	}
+	return -1;
+}
+
+Q: Implement quicksort.
+A:
+void quicksort(std::vector<int>& a, int lo, int hi) {
+	if (lo >= hi) return;
+	int pivot = a[hi], i = lo - 1;
+	for (int j = lo; j < hi; j++) if (a[j] < pivot) std::swap(a[++i], a[j]);
+	std::swap(a[i+1], a[hi]);
+	quicksort(a, lo, i);
+	quicksort(a, i + 2, hi);
+}
+
+Q: Implement mergesort.
+A:
+void mergeSort(std::vector<int>& a, int lo, int hi) {
+	if (lo >= hi) return;
+	int mid = (lo + hi) / 2;
+	mergeSort(a, lo, mid);
+	mergeSort(a, mid + 1, hi);
+	std::vector<int> tmp;
+	int i = lo, j = mid + 1;
+	while (i <= mid && j <= hi) tmp.push_back(a[i] <= a[j] ? a[i++] : a[j++]);
+	while (i <= mid) tmp.push_back(a[i++]);
+	while (j <= hi) tmp.push_back(a[j++]);
+	std::copy(tmp.begin(), tmp.end(), a.begin() + lo);
+}
+
+Q: Find the frequency of every character in a string.
+A:
+std::unordered_map<char,int> freq(const std::string& s) {
+	std::unordered_map<char,int> m;
+	for (char c : s) m[c]++;
+	return m;
+}
+
+Q: Find the frequency of elements using unordered_map.
+A: Same pattern generalized to any type: iterate, `m[x]++`.
+
+Q: Find the intersection of two arrays.
+A:
+std::vector<int> intersect(std::vector<int> a, std::vector<int> b) {
+	std::unordered_set<int> s(a.begin(), a.end());
+	std::vector<int> res;
+	for (int x : b)
+	{
+		if (s.count(x)) 
+		{ 
+			res.push_back(x); 
+			s.erase(x); 
+		}
+	}
+	return res;
+}
+
+Q: Find missing number from 1 to N.
+A: Use the sum formula: expected sum N(N+1)/2 minus actual sum (or XOR
+		all numbers 1..N with all array elements).
+int missingNumber(std::vector<int>& a, int n) {
+	long expected = (long)n * (n + 1) / 2;
+	long actual = 0;
+	for (int x : a) actual += x;
+	return expected - actual;
+}
+
+Q: Find duplicate number in an array.
+A: For values in [1,n] with one duplicate, Floyd's cycle detection
+(treating array as a linked list via indices) gives O(n) time O(1) space;
+simplest robust approach is an unordered_set scan (O(n) time/space).
+int findDuplicate(std::vector<int>& nums) {
+	std::unordered_set<int> seen;
+	for (int x : nums) if (!seen.insert(x).second) return x;
+	return -1;
+}
+
+Q: Implement an LRU cache.
+A: unordered_map<key, list-iterator> + a doubly linked list ordered by
+recency; get() moves the accessed node to front, put() evicts the back
+node when over capacity.
+class LRUCache {
+	int cap;
+	std::list<std::pair<int,int>> items; // front = most recent
+	std::unordered_map<int, std::list<std::pair<int,int>>::iterator> map;
+	public:
+	LRUCache(int c): cap(c) {}
+	int get(int key) {
+		auto it = map.find(key);
+		if (it == map.end()) return -1;
+		items.splice(items.begin(), items, it->second);
+		return it->second->second;
+	}
+	void put(int key, int val) {
+		auto it = map.find(key);
+		if (it != map.end()) { items.erase(it->second); map.erase(it); }
+		items.push_front({key, val});
+		map[key] = items.begin();
+		if ((int)map.size() > cap) {
+			auto last = items.back();
+			map.erase(last.first);
+			items.pop_back();
+		}
+	}
+};
+
+Q: Implement a thread-safe queue.
+A: (see Section 8) Wrap std::queue with a mutex + condition_variable;
+push locks, pushes, and notifies; pop waits on `!empty()` predicate then
+pops under lock.
+
+===================================================================
+SECTION 23: C++ OUTPUT / TRICKY QUESTIONS
+===================================================================
+
+Q: What is the output of code involving pre-increment and post-increment?
+A: Pre-increment (`++x`) increments then returns the new value;
+post-increment (`x++`) returns the old value then increments — e.g.,
+`int x=5; int a=x++ + ++x;` gives a = 5 + 7 = 12 (x becomes 7), though
+mixing multiple increments of the same variable in one expression without
+a sequence point is technically UB pre-C++17 and best avoided in real
+code.
+
+Q: What is the output when a virtual function is called from a
+constructor?
+A: It calls the version defined in the currently-constructing class (the
+base class's version), NOT the derived class's override — because the
+derived part of the object hasn't been constructed yet and the vtable
+pointer still reflects the base class during base construction.
+
+Q: What happens when a virtual function is called from a destructor?
+A: Similarly, it resolves to the current class's version (base class's,
+if in the base destructor) since the derived part has already been
+destroyed by the time the base destructor runs and the vtable has been
+"rewound".
+
+Q: What happens when an exception is thrown from a destructor?
+A: If it happens while another exception is already propagating (e.g.,
+during stack unwinding), `std::terminate()` is called — throwing from a
+destructor during unwinding is one of the most dangerous UB-adjacent
+situations in C++, so destructors should be effectively noexcept.
+
+Q: What happens when an object is passed by value?
+A: A copy (via copy constructor, or move constructor if a temporary) is
+made for the parameter; changes inside the function don't affect the
+caller's original object, at the cost of the copy's overhead.
+
+Q: What happens when an object is passed by reference?
+A: No copy is made; the parameter is an alias for the caller's object, so
+modifications inside the function are visible to the caller — faster for
+large objects and required when the function must modify the argument.
+
+Q: Difference between const int* and int* const.
+A: `const int*` is a pointer to a const int — the pointed-to value can't
+be modified through this pointer, but the pointer itself can be
+reassigned. `int* const` is a const pointer to a non-const int — the
+pointer itself can't be reassigned, but the pointed-to value can be
+modified.
+
+Q: What does const after a member function mean?
+A: It promises the function will not modify the object's non-mutable
+members (implicitly makes `this` a `const T*`), allowing it to be called
+on const objects/references.
+
+Q: Can a const member function modify a member variable?
+A: Only if that variable is declared `mutable` — mutable bypasses the
+const-correctness check, intended for things like caching or internal
+bookkeeping that don't represent the object's logical state.
+
+Q: What is mutable?
+A: A specifier allowing a class member to be modified even inside a
+const member function / on a const object.
+
+Q: What is static local variable?
+A: A local variable inside a function that is initialized only once and
+retains its value across multiple calls to that function (lifetime is
+the whole program, but scope is still local to the function).
+
+Q: What is a static class member?
+A: A data member shared by all instances of the class (one copy total,
+not per-object), defined/initialized outside the class definition
+(pre-C++17) or inline (C++17+ with `inline static`).
+
+Q: What is a static member function?
+A: A member function that isn't tied to any particular instance (no
+`this` pointer), callable via the class name directly, and can only
+access other static members.
+
+Q: Can a static member function access non-static members?
+A: Not directly — it has no `this` pointer, so it cannot access instance
+(non-static) members/methods unless given an explicit object to operate
+on.
+
+Q: What is an inline function?
+A: A function marked `inline` as a hint to the compiler to substitute the
+function's body at the call site instead of doing a normal call,
+potentially reducing call overhead for small, frequently-called
+functions (modern compilers largely make this decision themselves
+regardless of the keyword; `inline` today mainly affects linkage,
+allowing definition in headers without ODR violations).
+
+Q: What is a friend function?
+A: A non-member function granted access to a class's private/protected
+members by being declared `friend` inside that class.
+
+Q: What is a friend class?
+A: A class granted access to another class's private/protected members
+by being declared `friend class X;` inside the granting class.
+
+Q: What is namespace?
+A: A named scope grouping identifiers (classes, functions, variables) to
+prevent naming collisions between different libraries/modules.
+
+Q: What is an anonymous namespace?
+A: A namespace with no name; its contents have internal linkage,
+effectively visible only within that translation unit — the modern C++
+replacement for file-static functions/variables.
+
+Q: Difference between compile-time and run-time errors.
+A: Compile-time errors (syntax errors, type mismatches) are caught by the
+compiler before the program runs and prevent a binary from being
+produced; run-time errors (segfaults, exceptions, logic errors) only
+manifest while the program is executing.
+
+===================================================================
+SECTION 24: SCENARIO-BASED C++ / QT / QML QUESTIONS
+===================================================================
+
+Q: Your Qt application freezes when a camera connects.
+A: Likely a blocking call (socket connect/read, DNS resolution, SDK init)
+running on the GUI thread. Move the connection logic to a worker
+thread/QThread via moveToThread(), use asynchronous sockets
+(QTcpSocket's signal-based API) instead of blocking reads, and confirm
+via a profiler/backtrace during the freeze which call is blocking.
+
+Q: A QML screen becomes slow when 64 cameras are displayed.
+A: Investigate per-tile binding complexity, whether delegates are being
+recycled (GridView reuseItems), image decode cost (sourceSize not set),
+whether each tile does per-frame QML-side processing instead of GPU
+texture updates, and whether all 64 streams decode at full resolution
+regardless of visibility.
+
+Q: A C++ worker thread receives camera data continuously — how send
+updates to QML safely?
+A: Emit a Qt signal (with the frame/data as argument) from the worker
+object; since QML-bound objects live on the main/GUI thread, Qt's
+AutoConnection marshals it as a QueuedConnection automatically, safely
+delivering data without manual locking in the QML-facing code. For high
+frame rates, consider coalescing/throttling updates to avoid queue
+buildup.
+
+Q: Your application crashes randomly after closing a camera window —
+what could cause it?
+A: Likely a dangling pointer/use-after-free: a worker thread or pending
+queued signal still referencing the now-destroyed window/object.
+Investigate whether the window was deleted with `delete` instead of
+`deleteLater()`, whether worker threads were properly stopped/joined
+before destruction, and whether signal connections used a QObject
+context to auto-disconnect.
+
+Q: A QML signal is connected twice and an operation executes twice — how
+diagnose it?
+A: Check for a `Connections`/`connect()` call being executed multiple
+times, e.g., inside a binding or a component re-instantiated repeatedly
+(a Loader reloading, or connect() called in a function invoked more than
+once instead of once at initialization) — audit connect-call sites for
+this idempotency issue and disconnect before reconnecting where needed.
+
+Q: A QML property does not update when the C++ value changes — what to
+check?
+A: Verify the Q_PROPERTY declares a NOTIFY signal, and that the setter
+actually emits it whenever the value changes; also check that the object
+exposing the property is the exact instance QML is bound to (e.g., not a
+stale context property from before a re-registration).
+
+Q: A C++ object exposed to QML gets destroyed unexpectedly — what could
+be wrong?
+A: If QML has taken ownership of an object created from a registered
+QML type, the QML engine may garbage-collect it when it believes nothing
+references it anymore; setting appropriate ownership
+(QQmlEngine::setObjectOwnership to CppOwnership) for objects that should
+outlive their QML usage prevents this.
+
+Q: A Qt application has increasing memory usage after opening/closing
+camera views repeatedly — how find the leak?
+A: Run repeated open/close cycles under Valgrind/ASan or watch
+/proc/<pid>/status VmRSS growth per cycle; check that QObjects created
+per view are actually parented/deleted (not orphaned raw pointers), that
+worker threads per view are joined and destroyed, and that any
+QML-created components/Loaders are properly destroyed (Loader.source =
+"" or explicit destroy()) rather than just hidden.
+
+Q: A TCP connection drops randomly — how debug it?
+A: Capture with Wireshark/tcpdump to see if a FIN/RST is sent (and by
+which side), check for keep-alive/timeout mismatches, firewall/NAT idle
+timeouts, and server-side resource limits (max connections, crashed
+worker); add reconnect-with-backoff logic and application-level
+heartbeats to detect and recover from silent drops.
+
+Q: Video playback is delayed by several seconds — what areas
+investigate?
+A: Encoder GOP/B-frame settings and buffering, network jitter buffer
+size on the receiver, decoder queue depth, and whether the pipeline
+processes frames faster than real-time or is backlogged (check for
+frame queue growth over time indicating a slower-than-real-time stage).
+
+Q: CPU usage reaches 100% when many cameras are displayed — how
+optimize?
+A: Profile to find the hot stage (decode, colorspace conversion,
+QML rendering, per-frame allocations); offload decode to hardware
+(VA-API/NVDEC) instead of software decode, avoid redundant image
+copies/format conversions, throttle/skip frames for non-visible tiles,
+and parallelize decode across threads/a thread pool matched to core
+count.
+
+Q: A worker thread needs to update a QML model — how design the
+communication?
+A: The QAbstractListModel instance should live on the main/QML thread;
+the worker thread emits a signal with new/changed data, and a slot on
+the main-thread model (connected via QueuedConnection) performs the
+actual beginInsertRows/data-mutation/endInsertRows calls — never mutate
+the model directly from the worker thread.
+
+Q: How would you prevent blocking network operations from freezing the
+UI?
+A: Use asynchronous APIs (QNetworkAccessManager's signal-based requests,
+or async sockets) rather than blocking reads, or perform blocking calls
+on a dedicated worker thread and communicate results back via queued
+signals — never block the main event loop.
+
+Q: How would you design a reusable QML camera-view component?
+A: A self-contained QML Item exposing properties (streamUrl, camera
+status) and signals (clicked, error), internally using a custom
+VideoOutput/FBO-based renderer bound to a C++ backend object per
+instance, so it can be instantiated N times (e.g., inside a GridView)
+with independent state.
+
+Q: How would you design C++ backend + QML frontend architecture for a
+surveillance application?
+A: C++ layer owns networking/decoding/business-logic (camera manager,
+stream decoders, alarm engine) exposed to QML via registered types/
+context properties and QAbstractListModel-based camera lists; QML layer
+is purely presentational, driven by property bindings and signals,
+keeping heavy processing off the QML/JS thread entirely.
+
+===================================================================
+END OF BATCH 4 (Sections 20-24). Next batch will cover Sections 1-4 and
+27-29 (Prama Hikvision-specific: Confirmed Questions, OOP, Constructors/
+Destructors, Pointers/References, Project-Based Questions,
+Highest-Priority list, Public Evidence).
+===================================================================
+
+
+===================================================================
+INTERVIEW Q&A — BATCH 5 / FINAL (Sections 1–4, 27–29)
+===================================================================
+
+===================================================================
+SECTION 1: CONFIRMED / PUBLICLY REPORTED PRAMA HIKVISION QUESTIONS
+===================================================================
+(These 7 are the ones CppBuzz publicly reports as actually asked in the
+Prama Hikvision technical test — treat them as your highest-priority
+review items. Full answers are in the sections noted; a fresh polymorphism
+answer is added here since it wasn't covered in earlier batches.)
+
+Q: [REPORTED] Write the differences between vector and list.
+A: See Batch 1, Section 6 (STL) — vector: contiguous, O(1) random access,
+amortized O(1) push_back, O(n) middle insert/erase, reallocation
+invalidates iterators. list: doubly linked, O(1) insert/erase anywhere
+given an iterator, O(n) random access, no reallocation on insert.
+
+Q: [REPORTED] List the features of C++11.
+A: See Batch 1, Section 7 — auto, lambdas, move semantics/rvalue refs,
+smart pointers, range-based for, nullptr, constexpr, variadic templates,
+std::thread/mutex/condition_variable, enum class, override/final.
+
+Q: [REPORTED] What is polymorphism in C++?
+A: The ability of a single interface (function name/call) to behave
+differently depending on the actual type involved. Compile-time
+(static) polymorphism: function/operator overloading, templates —
+resolved at compile time. Run-time (dynamic) polymorphism: virtual
+functions accessed through a base class pointer/reference — resolved at
+runtime via the vtable, so the correct derived-class override is called
+even though the static type is the base class.
+
+Q: [REPORTED] How can you detect a memory leak in a C++ application on
+Linux?
+A: See Batch 1, Section 5 — Valgrind memcheck (`valgrind
+--leak-check=full`), AddressSanitizer/LeakSanitizer, or monitoring
+VmRSS growth in /proc/<pid>/status.
+
+Q: [REPORTED] Give examples of any two design patterns in C++.
+A: See Batch 4, Section 21 — Singleton (single global instance, private
+constructor + static accessor) and Observer (subject notifies registered
+observers on state change — the pattern behind Qt's signals/slots).
+
+Q: [REPORTED] Explain the TCP protocol handshaking flow.
+A: See Batch 3, Section 19 — three-way handshake: SYN → SYN-ACK → ACK,
+establishing sequence numbers before reliable data transfer begins.
+
+Q: [REPORTED] What are signals and slots in Qt? How are they useful?
+A: See Batch 2, Section 10 — Qt's decoupled object-communication
+mechanism: a signal is emitted on an event, any connected slot is
+automatically invoked; sender doesn't need to know its receivers exist,
+enabling loosely-coupled event-driven design and safe cross-thread
+calls via queued connections.
+
+===================================================================
+SECTION 2: C++ CORE — HIGH PRIORITY (OOP)
+===================================================================
+
+Q: What are the four pillars of OOP?
+A: Encapsulation, Abstraction, Inheritance, Polymorphism.
+
+Q: Explain encapsulation.
+A: Bundling data and the methods that operate on it within a class, and
+restricting direct external access to internal state (via
+private/protected members with public getter/setter methods), so the
+object's invariants can't be violated from outside.
+
+Q: Explain abstraction.
+A: Exposing only the essential, relevant interface of an object/system
+while hiding implementation details — e.g., an abstract base class
+defining "what" operations exist without specifying "how" they're
+implemented.
+
+Q: Explain inheritance.
+A: A mechanism where a derived class acquires the properties/behavior of
+a base class, enabling code reuse and establishing an "is-a"
+relationship; the derived class can extend or override base
+functionality.
+
+Q: Explain polymorphism.
+A: See Section 1 above — one interface, multiple behaviors, resolved
+either at compile time (overloading/templates) or runtime (virtual
+functions).
+
+Q: What is compile-time polymorphism?
+A: Polymorphism resolved by the compiler before runtime: function
+overloading (same name, different parameter lists), operator
+overloading, and templates — the compiler picks/generates the correct
+version based on static types.
+
+Q: What is run-time polymorphism?
+A: Polymorphism resolved during program execution via virtual functions
+and dynamic dispatch — calling a virtual method through a base
+pointer/reference invokes the actual derived object's override, decided
+by the vtable at runtime.
+
+Q: What is function overloading?
+A: Defining multiple functions with the same name but different
+parameter lists (type/count) within the same scope; the compiler
+selects the matching overload at compile time based on argument types.
+
+Q: What is function overriding?
+A: A derived class providing its own implementation of a virtual
+function already declared in its base class, with an identical
+signature, so calls through a base pointer/reference dispatch to the
+derived version at runtime.
+
+Q: What is the difference between overloading and overriding?
+A: Overloading: same name, different signatures, resolved at compile
+time, can be in the same class. Overriding: same name AND signature,
+in a base/derived class pair, requires `virtual` in the base, resolved
+at runtime via dynamic dispatch.
+
+Q: What is a virtual function?
+A: A member function declared with the `virtual` keyword in a base
+class, allowing derived classes to override it and enabling dynamic
+dispatch — the actual function called is determined by the object's
+real (dynamic) type, not the static type of the pointer/reference.
+
+Q: What is a pure virtual function?
+A: A virtual function with no implementation in the base class, declared
+as `virtual void f() = 0;`, forcing any concrete derived class to
+provide an implementation; a class containing one becomes abstract
+(cannot be instantiated).
+
+Q: What is an abstract class?
+A: A class containing at least one pure virtual function, which cannot
+be instantiated directly — it exists to be subclassed, defining a common
+interface that derived classes must implement.
+
+Q: Why should a base class destructor sometimes be virtual?
+A: So that deleting a derived object through a base class pointer calls
+the derived class's destructor first (then the base's), ensuring
+derived-class resources are properly released; without a virtual
+destructor, only the base destructor runs, leaking derived-class
+members.
+
+Q: What happens if a base-class pointer deletes a derived-class object
+and the destructor is not virtual?
+A: Undefined behavior — typically only the base class's destructor
+executes, so any resources owned by the derived class portion are never
+released (a memory/resource leak), and derived-specific cleanup never
+happens.
+
+Q: Explain multiple inheritance.
+A: A class deriving from more than one base class simultaneously,
+inheriting members/behavior from all of them — powerful but can
+introduce ambiguity if bases share a common ancestor or have
+name-clashing members.
+
+Q: What is the diamond problem?
+A: When class D inherits from both B and C, which both inherit from a
+common base A, D ends up with two separate copies of A's members (via
+B and via C) unless virtual inheritance is used, causing ambiguity when
+accessing A's members through D.
+
+Q: How does virtual inheritance solve the diamond problem?
+A: Declaring the shared base as a `virtual` base class
+(`class B : virtual public A`) ensures only a single, shared instance of
+A exists in the final derived object, regardless of how many paths lead
+to it, eliminating the duplicate-copy ambiguity.
+
+===================================================================
+SECTION 3: C++ CONSTRUCTORS / DESTRUCTORS
+===================================================================
+
+Q: What is a constructor?
+A: A special member function automatically called when an object is
+created, used to initialize its members; has the same name as the class
+and no return type.
+
+Q: What is a destructor?
+A: A special member function automatically called when an object is
+destroyed (scope exit, delete, or program termination), used to release
+resources; named `~ClassName()`, takes no parameters, and cannot be
+overloaded.
+
+Q: What are the different types of constructors?
+A: Default constructor (no arguments), parameterized constructor (takes
+arguments), copy constructor (initializes from another object of the
+same type), and move constructor (C++11+, transfers resources from an
+rvalue).
+
+Q: What is a copy constructor?
+A: A constructor `T(const T& other)` that initializes a new object as a
+copy of an existing one, invoked on pass-by-value, return-by-value
+(sometimes elided), and explicit copy-initialization.
+
+Q: What is a move constructor?
+A: A constructor `T(T&& other)` that transfers ("steals") resources from
+a temporary/rvalue object into the new object, leaving the source in a
+valid-but-unspecified state, avoiding an expensive deep copy.
+
+Q: What is a copy assignment operator?
+A: `T& operator=(const T& other)` — assigns the state of an existing
+object to an already-constructed object, typically after releasing any
+resources the target previously held.
+
+Q: What is a move assignment operator?
+A: `T& operator=(T&& other)` — transfers resources from a temporary into
+an already-constructed object, releasing the target's prior resources
+first, then stealing the source's.
+
+Q: What is the Rule of 3?
+A: If a class defines any one of: destructor, copy constructor, or copy
+assignment operator, it should probably explicitly define all three —
+because needing custom logic for one (e.g., a raw pointer needing deep
+copy) usually implies the compiler-generated defaults for the others are
+wrong too.
+
+Q: What is the Rule of 5?
+A: The C++11 extension of Rule of 3: also consider defining the move
+constructor and move assignment operator alongside the destructor, copy
+constructor, and copy assignment operator, for classes managing a
+resource, to enable efficient moves instead of falling back to copies.
+
+Q: What is the Rule of 0?
+A: Prefer designing classes so they own no raw resources directly (use
+smart pointers/standard containers instead), so none of the five special
+member functions need to be user-defined at all — the compiler-generated
+versions are correct by construction.
+
+Q: When is a copy constructor called?
+A: Pass-by-value argument, return-by-value (without move/RVO), explicit
+copy-initialization (`T b = a;`), and inserting an object into a
+container by copy.
+
+Q: When is a move constructor called?
+A: When initializing from an rvalue — a temporary, a function returning
+by value, or an lvalue explicitly cast with std::move — and the type has
+a move constructor available.
+
+Q: What is shallow copy?
+A: Copying an object's members byte-for-byte/field-for-field, including
+raw pointers — the copy ends up pointing to the SAME underlying memory as
+the original, rather than an independent copy.
+
+Q: What is deep copy?
+A: Copying an object such that any owned dynamically-allocated resources
+are duplicated too — the copy gets its own independent memory, not
+merely a pointer to the original's memory.
+
+Q: What problems can shallow copying cause?
+A: Double-free (both objects' destructors free the same memory), and
+one object's mutation through the shared pointer unexpectedly affecting
+the "copy" — leading to use-after-free/dangling-pointer bugs when one
+of them is destroyed first.
+
+Q: What is constructor delegation?
+A: One constructor calling another constructor of the same class in its
+initializer list (`Foo() : Foo(0) {}`), letting shared initialization
+logic live in one place instead of being duplicated across overloads.
+
+Q: Can a constructor be virtual?
+A: No — virtual dispatch requires an existing vtable/object, but the
+constructor is what creates the object in the first place, so there's no
+object yet to dispatch on; the language disallows it.
+
+Q: Can a destructor be virtual?
+A: Yes, and it's recommended for any class intended to be used
+polymorphically (deleted through a base pointer) — see Section 2.
+
+Q: Can a constructor be private?
+A: Yes — commonly used to prevent direct instantiation from outside the
+class (e.g., Singleton pattern, or forcing creation only via a static
+factory method).
+
+Q: How would you implement a singleton using a private constructor?
+A:
+  class Singleton {
+      Singleton() {}
+  public:
+      static Singleton& instance() {
+          static Singleton inst;   // thread-safe lazy init since C++11
+          return inst;
+      }
+      Singleton(const Singleton&) = delete;
+      Singleton& operator=(const Singleton&) = delete;
+  };
+
+===================================================================
+SECTION 4: POINTERS AND REFERENCES
+===================================================================
+
+Q: What is a pointer?
+A: A variable that stores the memory address of another variable/object,
+allowing indirect access, dynamic memory management, and array/data
+structure traversal.
+
+Q: What is a reference?
+A: An alias for an existing variable, established at declaration and
+bound for its lifetime — it can't be null or later rebound to refer to
+something else, unlike a pointer.
+
+Q: Difference between pointer and reference.
+A: A pointer can be null, reassigned to point elsewhere, and requires
+explicit dereferencing (`*p`); a reference must be initialized when
+declared, can never be null or rebound, and is used with normal variable
+syntax (no dereference operator).
+
+Q: What is a null pointer?
+A: A pointer holding a value (`nullptr` in modern C++) guaranteed not to
+point to any valid object, used to indicate "points to nothing" —
+dereferencing it is undefined behavior (typically a segfault).
+
+Q: What is a dangling pointer?
+A: A pointer that still holds the address of memory that has already
+been freed/gone out of scope — using it is undefined behavior (often
+manifesting as use-after-free bugs).
+
+Q: What is a wild pointer?
+A: A pointer that has been declared but never initialized, so it holds
+an indeterminate/garbage address — dereferencing it is undefined
+behavior, distinct from a dangling pointer (which WAS valid, then freed).
+
+Q: What is a void pointer?
+A: A generic pointer type (`void*`) that can hold the address of any
+data type but cannot be dereferenced directly without first being cast
+to a concrete type — used for generic/type-erased APIs (e.g. malloc's
+return type, callback user-data parameters).
+
+Q: What is a function pointer?
+A: A variable that stores the address of a function, allowing the
+function to be called indirectly, passed as a callback, or stored in a
+data structure of function pointers (e.g., a dispatch table).
+
+Q: What is a pointer to member function?
+A: A pointer that stores the address of a non-static member function of
+a specific class (`ReturnType (ClassName::*ptr)(Args)`), requiring an
+object instance to be invoked (`(obj.*ptr)(args)`), since member
+functions implicitly need a `this`.
+
+Q: What is pointer arithmetic?
+A: Adding/subtracting integers to/from a pointer moves it by that many
+elements (scaled by sizeof(T)), commonly used to traverse arrays;
+undefined behavior if it moves outside the bounds of the array plus one
+past the end.
+
+Q: What is a double pointer?
+A: A pointer to a pointer (`int** pp`), used for things like modifying a
+pointer's own value through a function call, or representing 2D
+dynamic arrays / arrays of pointers.
+
+Q: What is nullptr?
+A: (C++11) A keyword representing a type-safe null pointer constant of
+type std::nullptr_t, replacing the ambiguous integer-based NULL macro.
+
+Q: Difference between NULL and nullptr.
+A: NULL is typically a macro expanding to `0` or `((void*)0)`, which can
+ambiguously match integer overloads in function overload resolution;
+nullptr has its own distinct type (std::nullptr_t) and unambiguously
+matches only pointer parameters.
+
+Q: What is a smart pointer?
+A: A class template (unique_ptr, shared_ptr, weak_ptr) that wraps a raw
+pointer and manages its lifetime automatically via RAII, calling delete
+when appropriate so manual memory management/leaks are largely avoided.
+
+Q: Difference between unique_ptr, shared_ptr, and weak_ptr.
+A: unique_ptr: exclusive ownership, not copyable (only movable), zero
+overhead over a raw pointer. shared_ptr: shared ownership via reference
+counting, object destroyed when the last shared_ptr goes away, has
+atomic refcount overhead. weak_ptr: a non-owning observer of a
+shared_ptr-managed object, doesn't affect the refcount, used to break
+cycles / check if the object still exists (`lock()`).
+
+Q: When should you use unique_ptr?
+A: When an object has one clear, single owner responsible for its
+lifetime — the default choice for owning heap resources unless shared
+ownership is genuinely required.
+
+Q: When should you use shared_ptr?
+A: When multiple parts of the code genuinely need to co-own an object's
+lifetime, and the object should only be destroyed once nothing
+references it anymore (e.g., a cache entry referenced from multiple
+places).
+
+Q: Why can shared_ptr cause cyclic references?
+A: If A holds a shared_ptr to B and B holds a shared_ptr back to A, each
+keeps the other's refcount above zero forever, so neither is ever
+destroyed even when no external references remain — a memory leak.
+
+Q: How does weak_ptr solve cyclic references?
+A: By having one side of the cycle hold a weak_ptr (non-owning, doesn't
+increment the refcount) instead of a shared_ptr, the cycle is broken —
+when the owning shared_ptr(s) go away, the object is destroyed normally,
+and the weak_ptr can detect this via `expired()`/`lock()`.
+
+Q: What is RAII?
+A: Resource Acquisition Is Initialization — a C++ idiom where a
+resource (memory, file handle, lock, socket) is acquired in a
+constructor and released in the corresponding destructor, so resource
+lifetime is tied to object scope and cleanup happens automatically
+(even during exception unwinding) — the foundation for smart pointers,
+lock_guard, and fstream.
+
+Q: Explain RAII with an example.
+A: `std::lock_guard<std::mutex> lock(mtx);` acquires the mutex on
+construction; when `lock` goes out of scope (normal return OR exception),
+its destructor automatically releases the mutex — no risk of a forgotten
+`unlock()` leaving the mutex held forever.
+
+===================================================================
+SECTION 27: PROJECT-BASED QUESTIONS
+===================================================================
+(These are personal — tailor to your actual resume projects rather than
+using a generic script. Framework/approach for each is below; fill in
+specifics from your own eBPF/fanotify/PAM/Endpoint-Security-Framework
+work.)
+
+Q: Explain your current project.
+A: Structure as: problem it solves → your role → architecture (major
+components/technologies) → your specific contribution → outcome/impact.
+Keep it to ~90 seconds unless asked to go deeper.
+
+Q: What exactly was your contribution?
+A: Be specific and quantifiable where possible — which modules you
+designed/owned end-to-end vs. contributed to, any performance
+improvements, bugs you fixed, or features you shipped independently.
+
+Q: What was the most difficult technical problem you solved?
+A: Pick one concrete bug/design challenge (e.g., a race condition, a
+kernel-level edge case, a performance bottleneck), explain the
+diagnosis process (tools used, hypotheses tested) and the fix, not just
+the symptom.
+
+Q: Why did you choose the architecture used in your project?
+A: Explain the alternatives considered and the trade-offs (performance
+vs. complexity, portability, team familiarity) that led to the chosen
+design — interviewers want reasoning, not just description.
+
+Q: How many developers were in your team?
+A: State the actual team size and your specific role/scope within it.
+
+Q: What C++ standard did your project use?
+A: State the actual standard (C++11/14/17/etc.) and mention one or two
+specific features you relied on from it.
+
+Q: Which Qt version did you use?
+A: State your actual Qt version and note any version-specific API you
+depended on.
+
+Q: Which QML version did you use?
+A: State the actual QML/Qt Quick version used.
+
+Q: How did C++ communicate with QML in your project?
+A: Describe your actual mechanism — registered types, context
+properties, Q_PROPERTY/NOTIFY usage, Q_INVOKABLE methods — from Section
+15 above, applied to your project's specifics.
+
+Q: How did you handle multithreading?
+A: Describe your actual thread architecture (worker-object pattern,
+thread pool, etc.) and synchronization primitives used, referencing
+Section 8/12 concepts as applied to your real code.
+
+Q: How did you handle memory management?
+A: Describe your actual ownership model — smart pointers, RAII, QObject
+parent-child ownership — and any manual management you had to do (e.g.
+raw pointers required by a C API/kernel interface).
+
+Q: How did you detect memory leaks?
+A: Name the actual tools you used (Valgrind, ASan, manual RSS
+monitoring) and a specific leak you found/fixed with them.
+
+Q: How did you debug crashes?
+A: Describe your actual process — gdb, core dumps, logging, ASan — with
+a specific crash example if you have one.
+
+Q: How did you optimize performance?
+A: Describe a real before/after: what was slow, how you profiled it
+(perf, QML Profiler, custom timers), and what change fixed it.
+
+Q: How did you implement logging?
+A: Describe your actual logging approach (custom logger, syslog,
+qDebug categories, log levels, rotation).
+
+Q: How did you test your Qt/QML application?
+A: Describe your actual testing approach — manual, QTest unit tests,
+integration tests, CI.
+
+Q: Did you use unit testing?
+A: Answer honestly based on your actual project; if not, be ready to
+discuss how you'd add it (QTest, Google Test).
+
+Q: How did you handle code reviews?
+A: Describe your actual process (PR reviews, review checklist, tools
+used — GitHub/GitLab/Gerrit).
+
+Q: What Git workflow did your team follow?
+A: State your actual workflow (feature branches + PR, Git Flow, trunk-
+based) and branching/merge conventions used.
+
+===================================================================
+SECTION 28 & 29: HIGHEST-PRIORITY LIST / PUBLIC EVIDENCE
+===================================================================
+No new content — these are prioritization/summary lists, not distinct
+questions. Every item on the "Highest-Priority" list (Vector vs List,
+C++11 features, TCP handshake, polymorphism, Qt signals/slots, memory-
+leak detection, design patterns, smart pointers, Rule of 3/5/0, move
+semantics, virtual functions/destructors, STL complexities,
+multithreading, mutex/condition_variable/atomic, Q_OBJECT/MOC, Qt event
+loop, connection types, QThread/moveToThread, QML property binding,
+Q_PROPERTY, Q_INVOKABLE, C++↔QML communication, QAbstractListModel,
+ListView/delegates, QML performance, RTSP/RTP/TCP/UDP, multi-camera
+architecture, debugging leaks/segfaults, and explaining your own
+project) is already fully answered across Batches 1–5 above. The
+"Public Evidence" section is just the same 7 CppBuzz-confirmed
+questions listed again — already covered in full at the top of this
+batch (Section 1).
+
+===================================================================
+END OF ALL BATCHES. Full set: Batch1 (Sec 5-9), Batch2 (Sec 10-14),
+Batch3 (Sec 15-19), Batch4 (Sec 20-24), Batch5 (Sec 1-4, 27-29).
+===================================================================
+

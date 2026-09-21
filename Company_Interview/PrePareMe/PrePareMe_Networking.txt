@@ -1,0 +1,577 @@
+# Comprehensive Networking Question Bank (500 Questions)
+
+---
+
+## Module 1: OSI & TCP/IP Reference Models (Questions 1–50)
+
+### 1. Fundamentals & Layer Functions (1–20)
+1. What are the seven layers of the OSI model, and what is the primary role of each layer?
+2. Compare and contrast the OSI 7-Layer Model with the TCP/IP 4-Layer Architecture.
+3. What is Data Encapsulation and Decapsulation? Describe the Protocol Data Unit (PDU) at each layer.
+4. At which OSI layer does a router primarily operate, and why?
+5. At which OSI layer does a network switch operate, and how does a Layer 3 switch differ?
+6. Which OSI layer is responsible for end-to-end flow control, error detection, and retransmission?
+7. How does the Presentation Layer handle data serialization, encryption, and compression?
+8. Explain the responsibilities of the Session Layer in session establishment, maintenance, and termination.
+9. What is a MAC address, at which layer is it defined, and how is it structured (OUI vs Device ID)?
+10. Describe the difference between logical addressing (IP) and physical addressing (MAC).
+11. Which layer handles bit synchronization, line coding, and signal representation?
+12. Explain the difference between connection-oriented and connectionless communication models.
+13. Describe how a packet travels through all 7 OSI layers from a sending host to a receiving host.
+14. What is multiplexing and demultiplexing in the context of transport layer port numbers?
+15. Explain the role of physical media (fiber, copper, wireless) at Layer 1.
+16. What is framing, and how does Layer 2 delineate frame boundaries?
+17. Differentiate between hop-by-hop delivery and end-to-end delivery.
+18. How do firewalls fit into the OSI model across different layers (Layer 3/4 vs Layer 7 WAF)?
+19. What are trailer fields in Layer 2 frames, and why are they added at the end of the frame?
+20. Explain why modern networking relies mostly on TCP/IP rather than the full OSI standard stack.
+
+### 2. Physical & Data Link Layer Concepts (21–50)
+21. What is Ethernet (IEEE 802.3), and how has its frame format evolved?
+22. Explain CSMA/CD (Carrier Sense Multiple Access with Collision Detection) and CSMA/CA.
+23. What is a collision domain versus a broadcast domain?
+24. How do hubs, bridges, and switches differ regarding collision and broadcast domains?
+25. Explain Half-Duplex versus Full-Duplex communication modes.
+26. What is ARP (Address Resolution Protocol), and how does it map IP addresses to MAC addresses?
+27. Describe the ARP request/reply workflow and the concept of an ARP cache table.
+28. What is a Gratuitous ARP, and what are its primary use cases (IP conflict detection, failover)?
+29. Explain ARP Spoofing/Poisoning and how Dynamic ARP Inspection (DAI) prevents it.
+30. What is RARP (Reverse ARP), and how does it differ from ARP and DHCP?
+31. Explain MTU (Maximum Transmission Unit) and MSS (Maximum Segment Size).
+32. What happens when an IP packet exceeds the MTU of an outgoing interface?
+33. Describe the Ethernet Frame structure (Preamble, SFD, Destination, Source, Type/Length, Payload, FCS).
+34. What is a Cyclic Redundancy Check (CRC), and how does it detect frame corruption?
+35. Differentiate between Unicast, Multicast, and Broadcast frames.
+36. What is VLAN (Virtual Local Area Network) tagging (IEEE 802.1Q)?
+37. Explain the structure of an 802.1Q tag, including VLAN ID and Class of Service (CoS).
+38. What is the difference between Access ports and Trunk ports?
+39. Explain Native VLANs and security risks associated with VLAN Hopping attacks.
+40. What is STP (Spanning Tree Protocol - IEEE 802.1D) and what problem does it solve?
+41. Describe the STP port states: Blocking, Listening, Learning, Forwarding, and Disabled.
+42. How does the STP Root Bridge election process work?
+43. Compare STP, RSTP (Rapid STP - 802.1w), and MSTP (Multiple STP - 802.1s).
+44. What are BPDU Guard, Loop Guard, and Root Guard in switch security?
+45. What is LACP (Link Aggregation Control Protocol - 802.3ad/802.1ax) and EtherChannel?
+46. Explain load-balancing algorithms used in Link Aggregation (MAC vs IP source/destination hashing).
+47. What is MAC Address Table flooding, and how does Port Security mitigate it?
+48. Describe LLDP (Link Layer Discovery Protocol) and CDP (Cisco Discovery Protocol).
+49. What is Jumbo Frames, and in what scenarios (e.g., SAN, data centers) are they used?
+50. Explain High Availability at Layer 2 using multi-chassis EtherChannel (vPC, MLAG).
+
+---
+
+## Module 2: IP Addressing, Subnetting & Routing (Questions 51–120)
+
+### 1. IPv4 Addressing & Subnetting (51–80)
+51. What is an IPv4 address? Explain its binary and dotted-decimal structure.
+52. Describe Classful IPv4 Addressing (Classes A, B, C, D, and E) and their default subnet masks.
+53. What are Private IPv4 ranges according to RFC 1918?
+54. What is CIDR (Classless Inter-Domain Routing), and why was it introduced?
+55. Explain how to calculate the Network Address, Broadcast Address, and Host Range from an IP and Subnet Mask.
+56. Subnetting Task: Divide `192.168.1.0/24` into 4 equal subnets. List subnets, masks, and usable host ranges.
+57. Subnetting Task: Allocate subnets for 100 hosts, 50 hosts, 20 hosts, and 2 hosts from `10.0.0.0/16` using VLSM.
+58. What is VLSM (Variable Length Subnet Masking), and how does it optimize address space?
+59. What is APIPA (Automatic Private IP Addressing - `169.254.0.0/16`), and when is it assigned?
+60. Explain Loopback addresses (`127.0.0.1` to `127.255.255.254`) and their purpose.
+61. What is IP Fragmentation? Explain the Flags (DF, MF) and Fragment Offset fields in the IPv4 header.
+62. Describe the fields of an IPv4 Header (TTL, Protocol, Header Checksum, TOS/DSCP, etc.).
+63. What happens to a packet when its Time-to-Live (TTL) reaches zero?
+64. Explain how ICMP (Internet Control Message Protocol) uses Echo Request/Reply for `ping`.
+65. How does `traceroute` (or `tracert`) utilize ICMP and TTL manipulation to map network paths?
+66. What is NAT (Network Address Translation)? Compare Static NAT, Dynamic NAT, and PAT (NAPT).
+67. Explain Source NAT (SNAT) versus Destination NAT (DNAT) and Port Forwarding.
+68. What are the limitations and drawbacks of NAT (e.g., breaking end-to-end trace, processing overhead)?
+69. What is Carrier-Grade NAT (CGNAT/NAT444), and why do ISPs use it?
+70. Explain NAT Traversal techniques (STUN, TURN, ICE) used in VoIP and P2P communication.
+71. What is IP Anycast, and how does it differ from Unicast, Broadcast, and Multicast?
+72. How is Multicast IP addressing structured (Class D range `224.0.0.0/4`)?
+73. What is IGMP (Internet Group Management Protocol), and what are its key versions (v1, v2, v3)?
+74. Explain IGMP Snooping on Layer 2 switches.
+75. What is the role of PIM (Protocol Independent Multicast) in routing multicast traffic?
+76. Differentiate between PIM Sparse Mode (PIM-SM) and PIM Dense Mode (PIM-DM).
+77. What is a Rendezvous Point (RP) in multicast routing?
+78. Calculate the usable hosts for `/23`, `/27`, `/29`, and `/30` subnet masks.
+79. Why is a `/31` subnet mask permitted on point-to-point links (RFC 3021)?
+80. What is IP address overlapping, and how can NAT or VRF resolve it during company mergers?
+
+### 2. IPv6 Addressing & Architecture (81–100)
+81. Why was IPv6 introduced, and what are its key advantages over IPv4?
+82. Describe the format and representation of an IPv6 address (128-bit hex notation).
+83. Explain rules for shortening IPv6 addresses (leading zero suppression, zero compression `::`).
+84. Describe the primary IPv6 address types: Global Unicast, Link-Local, Unique Local, Multicast, and Anycast.
+85. What is the Link-Local address prefix (`fe80::/10`), and why is it mandatory on IPv6 interfaces?
+86. Explain SLAAC (Stateless Address Autoconfiguration) in IPv6.
+87. How does EUI-64 generate an IPv6 Interface ID from a MAC address?
+88. What is NDP (Neighbor Discovery Protocol), and how does it replace ARP in IPv6?
+89. Explain NDP messages: Router Solicitation (RS), Router Advertisement (RA), Neighbor Solicitation (NS), Neighbor Advertisement (NA).
+90. Describe the IPv6 Header structure and compare its complexity to IPv4.
+91. Why does the IPv6 main header eliminate the checksum and explicit fragmentation fields?
+92. How does IPv6 handle packet fragmentation using Extension Headers?
+93. Differentiate between DHCPv6 Stateful, DHCPv6 Stateless, and SLAAC.
+94. What is IPv6 Privacy Extensions (RFC 4941), and why are they necessary?
+95. Explain Dual-Stack architecture for IPv4-to-IPv6 transition.
+96. What is Tunneling (e.g., 6to4, GRE, 6rd) in IPv6 transition strategies?
+97. Explain NAT64 and DNS64 operation for IPv6-only clients accessing IPv4 servers.
+98. Does IPv6 use broadcast addressing? Explain how multicast replaces broadcast in IPv6.
+99. What is the Solicited-Node Multicast Address in IPv6, and how is it constructed?
+100. Compare IPv4 TOS/DiffServ fields with IPv6 Traffic Class and Flow Label fields.
+
+### 3. IP Routing Principles & Static Routing (101–120)
+101. What is a Routing Table, and what information does each route entry contain?
+102. Explain the step-by-step IP packet forwarding process in a router.
+103. What is the Longest Prefix Match rule, and how does a router select the best route?
+104. What is Administrative Distance (AD) / Route Preference, and why is it used?
+105. List default Administrative Distances for Directly Connected, Static, eBGP, OSPF, IS-IS, and RIP.
+106. What is a Metric in routing, and how do different protocols calculate it?
+107. Explain Default Gateway and Default Route (`0.0.0.0/0` or `::/0`).
+108. Compare Static Routing vs Dynamic Routing protocols (Pros, Cons, Scalability).
+109. What is a Floating Static Route, and how is it used for backup connectivity?
+110. Explain Equal-Cost Multi-Path (ECMP) routing and packet distribution methods.
+111. What is Unequal-Cost Load Balancing (UCMP), and which protocol supports it natively?
+112. Describe Route Summarization (Supernetting) and its benefits for routing tables.
+113. What is a Blackhole Route (`/dev/null` or `Null0`), and how is it used for DDoSS prevention?
+114. Explain Recursive Route Lookup in routing tables.
+115. What is Policy-Based Routing (PBR), and how does it override standard destination-based routing?
+116. Describe VRF (Virtual Routing and Forwarding) and its applications in multi-tenancy.
+117. What is Path MTU Discovery (PMTUD), and how does ICMP Frag Needed / Packet Too Big affect it?
+118. What happens when PMTUD fails due to ICMP filtering (Blackhole Routers)?
+119. Explain Asymmetric Routing and issues it creates with stateful firewalls.
+120. How do Reverse Path Forwarding (RPF) checks prevent IP spoofing and routing loops?
+
+---
+
+## Module 3: Dynamic Routing Protocols (Questions 121–180)
+
+### 1. Distance Vector Protocols (121–135)
+121. Differentiate between Distance-Vector and Link-State routing protocols.
+122. Explain the Bellman-Ford algorithm used in Distance-Vector routing.
+123. What is the Count-to-Infinity problem in distance-vector networks?
+124. Explain Split Horizon and Split Horizon with Poison Reverse mechanisms.
+125. What are Route Poisoning and Holddown Timers?
+126. Describe RIP (Routing Information Protocol) v1 vs v2 characteristics and limits (15 hop max).
+127. What is RIPng (RIP Next Generation) for IPv6?
+128. Explain EIGRP (Enhanced Interior Gateway Routing Protocol) as an Advanced Distance-Vector protocol.
+129. What is the DUAL (Diffusing Update Algorithm) in EIGRP?
+130. How does EIGRP calculate its Composite Metric (Bandwidth, Delay, Reliability, Load, MTU)?
+131. Explain EIGRP Feasible Distance (FD), Reported Distance (RD), and Feasible Successor (FS).
+132. How does EIGRP achieve fast convergence without loops using Successors and Feasible Successors?
+133. Describe EIGRP message types: Hello, Update, Query, Reply, ACK.
+134. What is Stub Routing in EIGRP, and how does it limit query propagation?
+135. Compare EIGRP for IPv4 and EIGRP Named Mode (Multi-AF).
+
+### 2. OSPF (Open Shortest Path First) (136–160)
+136. Explain Link-State Routing logic and Dijkstra's Shortest Path First (SPF) algorithm.
+137. What are the key features of OSPFv2 (RFC 2328)?
+138. Describe OSPF Neighbor Adjacency states: Down, Init, 2-Way, ExStart, Exchange, Loading, Full.
+139. What is the role of Hello packets and Dead Interval in OSPF neighbor discovery?
+140. Explain Designated Router (DR) and Backup Designated Router (BDR) election on broadcast networks.
+141. Why are DR/BDR elections unnecessary on Point-to-Point OSPF networks?
+142. What is OSPF Area-based hierarchy? Why is Area 0 (Backbone Area) mandatory?
+143. Explain OSPF Router Types: Internal Router, Backbone Router, ABR (Area Border Router), ASBR (Autonomous System Boundary Router).
+144. Detail OSPF Link State Advertisement (LSA) Types 1 through 5 (Router, Network, Summary, ASBR Summary, External).
+145. What are LSA Type 7 and NSSA (Not-So-Stubby Area) configurations?
+146. Differentiate between OSPF Area Types: Standard, Stub, Totally Stubby, NSSA, and Totally NSSA.
+147. How does OSPF calculate its cost metric ($Cost = \frac{Reference\ Bandwidth}{Interface\ Bandwidth}$)?
+148. Why must the default reference bandwidth ($100\text{ Mbps}$) be adjusted in modern gigabit/100G networks?
+149. Explain OSPF External Route Types: E1 (Type 1) vs E2 (Type 2).
+150. What is an OSPF Virtual Link, and when is it used to connect disconnected areas to Area 0?
+151. How does OSPF Summarization work on ABRs and ASBRs?
+152. Describe OSPF Authentication methods (Cleartext, MD5, SHA-HMAC).
+153. What is OSPF Graceful Restart (Helper Mode) and Non-Stop Routing (NSR)?
+154. Explain OSPFv3 differences from OSPFv2 (IPv6 support, runs per-link rather than per-subnet).
+155. How does OSPF handle LSA refreshing and aging (MaxAge 3600s)?
+156. What causes OSPF SPF throttling and flapping, and how are SPF timers tuned?
+157. Explain IS-IS (Intermediate System to Intermediate System) protocol structure and TLVs.
+158. Compare IS-IS levels (Level 1, Level 2, Level 1-2) with OSPF areas.
+159. Why is IS-IS widely adopted in Large Service Provider / Telecom backbones over OSPF?
+160. What is Integrated IS-IS for IPv4 and IPv6 dual-stack routing?
+
+### 3. BGP (Border Gateway Protocol) (161–180)
+161. What is BGP, and why is it classified as a Path-Vector Protocol?
+162. Differentiate between IGP (Interior Gateway Protocol) and EGP (Exterior Gateway Protocol).
+163. Explain Autonomous Systems (AS) and AS Numbers (16-bit vs 32-bit ASN formats).
+164. What is the difference between eBGP (External BGP) and iBGP (Internal BGP)?
+165. Describe BGP Peer Connection States: Idle, Connect, Active, OpenSent, OpenConfirm, Established.
+166. Why does BGP use TCP port 179 for reliable connection management?
+167. Explain the iBGP Full Mesh requirement and the Split Horizon rule for iBGP.
+168. How do BGP Route Reflectors (RR) and BGP Confederations solve the iBGP full mesh scaling issue?
+169. List BGP Path Attributes in order of preference (Weight, Local Preference, Originate, AS Path, Origin, MED, eBGP > iBGP, IGP Cost, Router ID).
+170. Detail the function of Local Preference (`LOCAL_PREF`) for controlling outbound traffic.
+171. Detail the function of Multi-Exit Discriminator (`MED`) for influencing inbound traffic.
+172. How does AS-Path Prepending influence inbound traffic path selection?
+173. What is BGP Community Attribute, and how is it used for traffic engineering (Standard, Extended, Large Communities)?
+174. Explain BGP Route Flap Damping and its impact on routing stability.
+175. What is MP-BGP (Multiprotocol BGP), and how does it support IPv6, MPLS VPNs, and EVPN?
+176. Explain BGP Peer Groups and Dynamic Neighbors.
+177. What is Route Refresh capability in BGP, and how does soft reconfig differ?
+178. Describe BGP Security mechanisms: TTL Security Check (GTSM), RPKI (Resource Public Key Infrastructure), and BGPsec.
+179. What is a BGP Blackhole and BGP Flowspec (RFC 5575)?
+180. Explain default route injection and Internet transit vs peering (IXP).
+
+---
+
+## Module 4: Transport & Application Layer Protocols (Questions 181–240)
+
+### 1. TCP (Transmission Control Protocol) (181–210)
+181. What are the key features of TCP (Reliable, Connection-oriented, Flow-controlled, Byte-stream)?
+182. Detail the structure of a TCP Header (Ports, Sequence Num, Ack Num, Window, Flags, Checksum, Urgent).
+183. Explain all TCP Flags: SYN, ACK, FIN, RST, PSH, URG, ECE, CWR.
+184. Explain the TCP 3-Way Handshake process (SYN $\rightarrow$ SYN-ACK $\rightarrow$ ACK).
+185. Explain the TCP 4-Way Termination process (FIN $\rightarrow$ ACK $\rightarrow$ FIN $\rightarrow$ ACK).
+186. What is the TIME_WAIT state in TCP, and why must a socket wait for 2MSL (Maximum Segment Lifetime)?
+187. Explain TCP Sequence and Acknowledgment Number calculation logic during data transfer.
+188. What is the TCP Sliding Window mechanism for flow control?
+189. Explain TCP Window Scaling option (RFC 1323) for high-bandwidth delay product (BDP) networks.
+190. Describe TCP Congestion Control algorithms: Slow Start, Congestion Avoidance, Fast Retransmit, Fast Recovery.
+191. Differentiate between loss-based (Reno, Cubic) and delay-based (BBR) congestion control algorithms.
+192. What is Selective Acknowledgment (SACK), and how does it optimize retransmissions?
+193. Explain TCP Delayed ACK and Nagle's Algorithm (and `TCP_NODELAY` flag).
+194. What is the Silly Window Syndrome, and how do Clark's solution and Nagle's algorithm prevent it?
+195. How does TCP compute Retransmission Timeout (RTO) using RTT estimates and Karn's Algorithm?
+196. What causes a TCP Reset (RST) packet to be sent?
+197. Explain SYN Flood attacks and how SYN Cookies mitigate them.
+198. What is TCP Keepalive, and how does it detect dead connections?
+199. Differentiate between TCP Fast Open (TFO) and standard TCP handshake overhead.
+200. What is TCP Out-of-Order segment processing and buffer management?
+201. Explain TCP Segmentation Offload (TSO) and Large Receive Offload (LRO) in NIC cards.
+202. What is TCP Connection Churn, and how do persistent connections (HTTP Keep-Alive) help?
+203. Describe Multipath TCP (MPTCP) and its applications in mobile devices (Wi-Fi + Cellular aggregation).
+204. Explain Explicit Congestion Notification (ECN) using ECE and CWR flags.
+205. How does TCP handle Path MTU Discovery changes mid-connection?
+206. Compare TCP throughput capabilities over high-latency satellite links vs low-latency LANs.
+207. What is TCP Window Auto-tuning in modern OS kernels?
+208. Explain how TCP socket states can be monitored using `netstat` or `ss` utilities.
+209. What is a half-open TCP connection vs a half-closed TCP connection?
+210. Explain the impact of packet loss on TCP congestion window scaling ($CWND$).
+
+### 2. UDP, QUIC & Application Services (211–240)
+211. What are the key characteristics of UDP (User Datagram Protocol)?
+212. Detail the 8-byte UDP Header fields (Source Port, Destination Port, Length, Checksum).
+213. Compare TCP vs UDP across overhead, reliability, ordering, speed, and streaming suitability.
+214. What is QUIC (Quick UDP Internet Connections) protocol, and why was it developed by Google/IETF?
+215. How does QUIC eliminate Head-of-Line (HoL) blocking experienced by TCP?
+216. Explain HTTP/1.1 vs HTTP/2 vs HTTP/3 underlying transport mechanisms.
+217. How does HTTP/2 Multiplexing work over a single TCP connection?
+218. Describe DNS (Domain Name System) architecture (Root, TLD, Authoritative servers).
+219. Explain DNS Query types: Recursive vs Iterative queries.
+220. List essential DNS Resource Records: A, AAAA, CNAME, MX, TXT, NS, PTR, SOA, SRV.
+221. Describe the DNS Resolution process step-by-step when typing a URL in a web browser.
+222. What is DNS Caching, TTL (Time To Live), and DNS cache poisoning?
+223. Explain DNSSEC (DNS Security Extensions) and how it validates domain authenticity.
+224. Compare DNS over HTTPS (DoH) and DNS over TLS (DoT) for privacy.
+225. What is DHCP (Dynamic Host Configuration Protocol) and the DORA process (Discover, Offer, Request, ACK)?
+226. What is a DHCP Relay Agent, and why is it required when clients and DHCP servers are in different subnets?
+227. Explain DHCP Starvation attacks and DHCP Snooping protection.
+228. How do DHCP Leases, Renewal ($T_1$), and Rebinding ($T_2$) timers work?
+229. Describe FTP (File Transfer Protocol) Active vs Passive mode operation and firewall challenges.
+230. Explain SMTP, IMAP, and POP3 protocols for email routing and retrieval.
+231. How does SSH (Secure Shell) establish encrypted shell sessions and execute key exchange?
+232. Explain SNMP (Simple Network Management Protocol) components: Manager, Agent, MIB, OID, Traps/Informs.
+233. Compare SNMP v1, v2c, and v3 security models (Authentication and Encryption in v3).
+234. What is NTP (Network Time Protocol), and why is clock synchronization critical for networking and logging?
+235. Explain NTP Stratum levels (Stratum 0, 1, 2, etc.).
+236. What is Syslog (RFC 5424), and what are Syslog severity levels (0–7 Emergency to Debugging)?
+237. Describe LDAP (Lightweight Directory Access Protocol) role in user authentication networks.
+238. What is RADIUS and TACACS+ protocols for AAA (Authentication, Authorization, Accounting)?
+239. Compare RADIUS vs TACACS+ (Transport protocol, encryption of packet body vs entire payload, separation of AA).
+240. What is WebSocket protocol, and how does it upgrade an HTTP connection to full-duplex?
+
+---
+
+## Module 5: Network Security, Firewalls & VPNs (Questions 241–300)
+
+### 1. Network Security Principles & Cryptography (241–260)
+241. Explain the CIA Triad (Confidentiality, Integrity, Availability) in network security context.
+242. Compare Symmetric Encryption (AES, DES) vs Asymmetric Encryption (RSA, ECC).
+243. How do Hash functions (SHA-256, MD5) ensure data integrity?
+244. What is a Digital Signature, and how does it provide authenticity and non-repudiation?
+245. Explain Public Key Infrastructure (PKI), Certificate Authorities (CA), and X.509 Certificates.
+246. Describe TLS/SSL Handshake mechanism (TLS 1.2 vs TLS 1.3).
+247. How does TLS 1.3 achieve 0-RTT and 1-RTT connection setups compared to older versions?
+248. What is Perfect Forward Secrecy (PFS), and how do Diffie-Hellman ephemeral keys ensure it?
+249. Explain Man-in-the-Middle (MitM) attacks and prevention mechanisms.
+250. What is IPsec (Internet Protocol Security) framework?
+251. Differentiate between IPsec Authentication Header (AH) and Encapsulating Security Payload (ESP).
+252. Compare IPsec Transport Mode vs Tunnel Mode.
+253. Describe IKE (Internet Key Exchange) phases: IKEv1 (Phase 1 Main/Aggressive, Phase 2 Quick) vs IKEv2.
+254. What are Security Associations (SA), Security Parameter Index (SPI), and Security Policy Database (SPD) in IPsec?
+255. How do SSL/TLS VPNs (e.g., OpenVPN, WireGuard) differ from IPsec Site-to-Site VPNs?
+256. What is WireGuard protocol, and why is it considered simpler and faster than IPsec/OpenVPN?
+257. Explain MACsec (IEEE 802.1AE) for Layer 2 point-to-point hop-by-hop encryption.
+258. What is 802.1X Port-Based Network Access Control (EAP-TLS, PEAP, EAP-FAST)?
+259. Describe RADIUS/TACACS+ integration with 802.1X framework for network admission control (NAC).
+260. Explain Zero Trust Network Access (ZTNA) principles vs traditional perimeter-based security.
+
+### 2. Firewalls, IDS/IPS & Threat Mitigation (261–280)
+261. Evolution of Firewalls: Packet Filtering $\rightarrow$ Stateful Inspection $\rightarrow$ Application-Aware (NGFW).
+262. How does a Stateful Firewall keep track of connection states in a Connection State Table?
+263. What is a Next-Generation Firewall (NGFW), and what features define it (App-ID, User-ID, SSL Decryption)?
+264. Compare Network-based IDS/IPS (NIDS/NIPS) vs Host-based IDS/IPS (HIDS/HIPS).
+265. Explain Signature-based detection vs Anomaly-based detection vs Heuristic analysis in IPS.
+266. What is Inline mode vs Promiscuous/SPAN mode deployment for IPS/IDS?
+267. Explain Deep Packet Inspection (DPI) and SSL/TLS Forward Proxy Decryption challenges.
+268. What is a DMZ (Demilitarized Zone), and how is it architected with dual firewalls?
+269. Describe DDoS (Distributed Denial of Service) attack vectors: Volume-based, Protocol-based, Application-layer.
+270. Explain SYN Floods, UDP Amplification, DNS Amplification, and HTTP Slowloris attacks.
+271. How do Anti-DDoS mitigation techniques work (BGP Anycast, Scrubbing Centers, SYN Cookies, Rate Limiting)?
+272. What is Web Application Firewall (WAF) and how does it protect against OWASP Top 10 (SQLi, XSS)?
+273. Explain Network Segmentation and Microsegmentation using SDN or Software-Defined Perimeter.
+274. What is Port Scanning (TCP SYN scan, Connect scan, FIN scan, NULL scan) using tools like Nmap?
+275. Describe IP Address Spoofing and Unicast Reverse Path Forwarding (uRPF) mitigation.
+276. What is Rogue DHCP Server detection and DHCP Snooping binding tables?
+277. Explain Dynamic ARP Inspection (DAI) and IP Source Guard (IPSG).
+278. What is VPN Split Tunneling vs Full Tunneling, and what are security trade-offs?
+279. Explain Bastion Hosts and Jump Boxes for secure administrative access.
+280. Describe Honeypots and Honeynets for proactive threat intelligence collection.
+
+### 3. Wireless & Enterprise Mobility Security (281–300)
+281. Explain IEEE 802.11 standards evolution (802.11a/b/g/n/ac/ax - Wi-Fi 6 / Wi-Fi 6E / Wi-Fi 7).
+282. Differentiate between 2.4 GHz, 5 GHz, and 6 GHz wireless frequency bands (Range vs Throughput vs Channel overlap).
+283. Explain Wi-Fi Channels, Non-overlapping channels in 2.4GHz (1, 6, 11), and Dynamic Frequency Selection (DFS) in 5GHz.
+284. What are BSSID, SSID, and ESSID in wireless terminology?
+285. Explain Wireless LAN Controller (WLC) architecture: Autonomous APs vs Lightweight APs (CAPWAP/LWAPP).
+286. What is Split-MAC architecture in controller-based wireless networks?
+287. Describe 802.11 Frame Types: Management, Control, Data frames.
+288. How does CSMA/CA work in Wi-Fi with RTS/CTS (Request to Send / Clear to Send)?
+289. Evolution of Wi-Fi Security: WEP $\rightarrow$ WPA $\rightarrow$ WPA2 $\rightarrow$ WPA3.
+290. Why is WEP flawed (RC4 IV collisions), and why is WPA2-Personal (PSK) vulnerable to offline dictionary attacks?
+291. What is WPA3 Simultaneous Authentication of Equals (SAE) / Dragonfly Handshake, and how does it prevent offline cracking?
+292. Compare WPA2/WPA3 Personal (PSK) vs Enterprise (802.1X/EAP).
+293. What is Opportunistic Wireless Encryption (OWE) for open public Wi-Fi networks?
+294. Explain Wi-Fi Roaming (802.11r Fast Transition, 802.11k Neighbor Reports, 802.11v BSS Transition).
+295. What is Beamforming, MU-MIMO (Multi-User MIMO), and OFDMA in Wi-Fi 6 (802.11ax)?
+296. Describe Rogue AP Detection and Wireless Intrusion Prevention Systems (WIPS).
+297. What is a Deauthentication Attack (802.11 deauth), and how do Management Frame Protection (802.11w) mitigate it?
+298. Explain Site Surveys: Passive, Active, and Predictive Wireless Surveys.
+299. What is Band Steering and Client Load Balancing in Enterprise Wi-Fi?
+300. Describe Captive Portals and Guest Wi-Fi isolation mechanisms.
+
+---
+
+## Module 6: Data Center, Virtualization & Cloud Networking (Questions 301–360)
+
+### 1. Enterprise Data Center Architecture (301–320)
+301. Compare traditional 3-Tier Data Center Design (Core, Aggregation, Access) vs Clos Spine-and-Leaf Architecture.
+302. Why is Spine-and-Leaf architecture preferred for modern East-West data center traffic?
+303. What is the difference between East-West traffic and North-South traffic in a data center?
+304. Explain Oversubscription Ratios in data center network design.
+305. What is VXLAN (Virtual Extensible LAN), and why was it created to replace standard 802.1Q VLANs?
+306. Detail the VXLAN Header structure, VNI (VXLAN Network Identifier), and UDP encapsulation (Port 4789).
+307. What is a VTEP (VXLAN Tunnel Endpoint)?
+308. Explain VXLAN Flood-and-Learn vs VXLAN Control Plane with BGP EVPN (Ethernet VPN).
+309. How does BGP EVPN distribute Layer 2 MAC addresses and Layer 3 IP routes using MP-BGP?
+310. What is NVGRE (Network Virtualization using Generic Routing Encapsulation) and GENEVE?
+311. Explain Data Center Bridging (DCB) suite: PFC (Priority Flow Control), ETS, and CN-DCBX.
+312. What is Lossless Ethernet, and why is it necessary for RoCE (RDMA over Converged Ethernet)?
+313. Describe Storage Area Networking (SAN) technologies: Fibre Channel (FC), FCoE, and iSCSI.
+314. What is Top-of-Rack (ToR) vs End-of-Row (EoR) cabling models?
+315. Explain Multi-Chassis Link Aggregation (MCLAG / vPC) in data center switches.
+316. What is Software-Defined Networking (SDN)? Explain Control Plane, Data Plane, and Management Plane separation.
+317. What are OpenFlow, NETCONF, RESTCONF, and gRPC in SDN environments?
+318. Describe Cisco ACI (Application Centric Infrastructure) architecture (APIC, Leaf, Spine, EPGs).
+319. What is Network Disaggregation, SONiC, and Whitebox switching?
+320. Explain Micro-segmentation in Software-Defined Data Centers (SDDC) using VMware NSX.
+
+### 2. Virtualization & Container Networking (321–340)
+321. How does a Hypervisor (ESXi, KVM, Hyper-V) handle Virtual Switching (vSwitch / dvSwitch)?
+322. Compare Standard vSwitch vs Distributed vSwitch capabilities.
+323. What is SR-IOV (Single Root I/O Virtualization), and how does it bypass the hypervisor for low latency?
+324. Explain DPDK (Data Plane Development Kit) and its performance advantages in packet processing.
+325. What is PCI Passthrough in virtualized networking?
+326. Explain Virtual Network Interfaces (vNIC, veth pairs, tap/tun devices in Linux).
+327. How does Docker networking handle default modes: Bridge, Host, None, and Overlay networks?
+328. Explain Docker Embedded DNS and container port mapping (`-p host_port:container_port`).
+329. What is a CNI (Container Network Interface) plugin in Kubernetes?
+330. Describe common Kubernetes CNI implementations: Calico, Flannel, Cilium, Weave Net.
+331. How does eBPF (Extended Berkeley Packet Filter) revolutionize Linux container networking and security (e.g., Cilium)?
+332. Explain Kubernetes Networking Model constraints (Every Pod gets its own IP address).
+333. How does a Kubernetes Service (`ClusterIP`, `NodePort`, `LoadBalancer`) route traffic to target Pods?
+334. Explain the role of `kube-proxy` (iptables mode vs IPVS mode).
+335. What is Kubernetes Ingress Controller and API Gateway (e.g., NGINX, Envoy, Traefik)?
+336. Describe Service Mesh architecture (Istio, Linkerd) and Sidecar Proxy patterns (Envoy).
+337. How does a Service Mesh provide mutual TLS (mTLS) between microservices?
+338. What is MACVTAP and IPVTAP in Linux virtual networking?
+339. Explain Overlay Networks vs Underlay Networks in container environments.
+340. Describe Network Policies in Kubernetes for enforcing Pod-to-Pod traffic isolation.
+
+### 3. Cloud Networking (AWS, Azure, GCP) (341–360)
+341. Compare Cloud Virtual Networks: AWS VPC vs Azure VNet vs GCP VPC.
+342. Explain Public Subnets vs Private Subnets in AWS VPC.
+343. What is an Internet Gateway (IGW) and NAT Gateway in cloud environments?
+344. How do Cloud Route Tables and Security Groups differ from Network ACLs (NACLs)?
+345. Compare Security Groups (Stateful, instance-level) vs Network ACLs (Stateless, subnet-level).
+346. What is Cloud VPC Peering, and why is VPC Peering non-transitive?
+347. Explain AWS Transit Gateway (TGW) and Azure Virtual WAN for centralized hub-and-spoke connectivity.
+348. What is AWS Direct Connect, Azure ExpressRoute, and GCP Dedicated Interconnect?
+349. How is IPsec VPN combined with Cloud Direct Connect / ExpressRoute for encrypted hybrid connectivity?
+350. Explain Private Endpoints / PrivateLink (AWS PrivateLink, Azure Private Link) to access PaaS services without Internet exposure.
+351. How does Load Balancing work in the cloud? Compare ALB (Layer 7), NLB (Layer 4), and GLB (Gateway Load Balancer).
+352. What is Gateway Load Balancer (GLB), and how does it use GENEVE encapsulation to route traffic through third-party firewalls?
+353. Explain Cloud egress charges and cost optimization strategies for cloud networking.
+354. Describe Cloud DNS and Private Hosted Zones.
+355. What is IPv6 support model across major public cloud providers?
+356. Explain Cloud CDN (Content Delivery Network) integrations with Cloud Edge Locations (e.g., CloudFront, Cloud CDN).
+357. What is Global Server Load Balancing (GSLB) and DNS-based latency routing?
+358. Describe Hybrid Cloud DNS resolution using DNS Forwarders / Inbound-Outbound Endpoints.
+359. Explain Multi-Cloud Networking (MCN) challenges and solutions (e.g., Aviatrix, Alkira).
+360. How do Cloud Native Firewalls differ from virtual firewall appliances (NVA) deployed in cloud VMs?
+
+---
+
+## Module 7: Network Operations, Management & Troubleshooting (Questions 361–420)
+
+### 1. Monitoring, Logging & Telemetry (361–380)
+361. What is the difference between Pull-based (SNMP, Polling) and Push-based (Streaming Telemetry) monitoring?
+362. Explain Streaming Telemetry (gRPC, gNMI, NETCONF) and why it scales better than SNMP.
+363. What is NetFlow, IPFIX, sFlow, and NetStream? Compare flow sampling vs flow logging.
+364. Detail NetFlow v5 vs NetFlow v9 vs IPFIX (RFC 5101) flexible field templates.
+365. How are Flow Exporters, Flow Collectors, and Flow Analyzers used for traffic analysis?
+366. Explain Port Mirroring: SPAN (Switch Port Analyzer), RSPAN (Remote SPAN), and ERSPAN (Encapsulated RSPAN).
+367. What is Network TAP (Test Access Point) vs SPAN port mirroring pros and cons?
+368. Describe Syslog architecture and message formats.
+369. What is SIEM (Security Information and Event Management) and SOAR integration in network ops?
+370. Explain SNMP Traps vs SNMP Informs (Unreliable UDP vs Acknowledged).
+371. What is Synthetic Network Monitoring and Active Measurement (e.g., Cisco SLA / IP SLA)?
+372. Describe Network Observability vs Traditional Network Monitoring.
+373. Explain packet capture tools: `tcpdump`, Wireshark, TShark.
+374. How do you construct `tcpdump` syntax filters (e.g., capture TCP port 443 on `eth0` excluding IP `1.1.1.1`)?
+375. What are Wireshark display filters vs capture filters (BPF - Berkeley Packet Filters)?
+376. Explain MTTR (Mean Time to Repair) and MTTD (Mean Time to Detect) metrics in network operations.
+377. What is Time Synchronization protocol PTP (Precision Time Protocol - IEEE 1588) vs NTP?
+378. Describe Configuration Management tools for networks (Ansible, Terraform, Nornir, SaltStack).
+379. Explain Network Automation protocols: NETCONF (YANG Data Models) and RESTCONF.
+380. What is CI/CD for Network Infrastructure (NetDevOps, GitOps, NetBox as Source of Truth)?
+
+### 2. Diagnostic Tools & Troubleshooting Strategies (381–400)
+381. What structured methodology do you use for troubleshooting network issues (Top-down, Bottom-up, Divide-and-conquer)?
+382. How does `ping` work, and what do response codes (Time Exceeded, Destination Host Unreachable) signify?
+383. How do `traceroute` (Unix/Linux) and `tracert` (Windows) differ in execution (UDP/ICMP vs ICMP Echo)?
+384. What is `mtr` (My Traceroute), and how does it combine `ping` and `traceroute`?
+385. Explain how to use `arp` / `ip neighbor` commands to view and manipulate Layer 2 resolution tables.
+386. How do `netstat`, `ss`, and `lsof` commands display active connections and listening ports?
+387. How to use `nslookup`, `dig`, and `host` commands for DNS troubleshooting?
+388. What does `dig +trace domain.com` do?
+389. How do `iproute2` commands (`ip addr`, `ip route`, `ip link`) replace legacy `ifconfig` and `route` commands in Linux?
+390. Explain `curl` and `wget` usage for testing HTTP/HTTPS connectivity, headers, and SSL certificates.
+391. How to use `iperf` / `iperf3` to measure maximum TCP and UDP bandwidth performance?
+392. How do you detect and troubleshoot Duplex Mismatch issues on switch interfaces?
+393. What are Interface Errors: CRC errors, Runts, Giants, Frame errors, Dropped packets, Input/Output errors?
+394. What causes Packet Loss, High Latency, and Jitter, and how do they impact TCP vs UDP traffic?
+395. How do you identify a Routing Loop using traceroute logs?
+396. Troubleshooting Scenario: Host A can ping Host B's IP, but cannot open Host B's web page in a browser. What are the steps?
+397. Troubleshooting Scenario: Host receives APIPA address (`169.254.x.x`). Step-by-step resolution.
+398. Troubleshooting Scenario: intermittent packet loss occurring every few minutes on a redundant switched network.
+399. How to diagnose DNS Resolution Slowness vs Routing Slowness vs Application Latency.
+400. Explain how MTU mismatch leads to TCP connection hangs during TLS handshakes or large transfers.
+
+### 3. Load Balancing, High Availability & WAN (401–420)
+401. What is First Hop Redundancy Protocol (FHRP)? Compare HSRP, VRRP, and GLBP.
+402. How does HSRP (Hot Standby Router Protocol) maintain a active/standby virtual router pair?
+403. How does VRRP (Virtual Router Redundancy Protocol - RFC 5798) differ from HSRP?
+404. Explain GLBP (Gateway Load Balancing Protocol) and how it achieves active/active default gateway load balancing.
+405. What is Load Balancing? Compare Layer 4 (Transport) vs Layer 7 (Application) Load Balancing.
+406. Explain Load Balancing Algorithms: Round Robin, Weighted Round Robin, Least Connections, IP Hash.
+407. What is Health Checking / Probing in Load Balancers?
+408. What is Session Persistence / Sticky Sessions (Source IP, Cookie Insertion, SSL Session ID)?
+409. Differentiate between Inbound Load Balancing and Outbound Link Load Balancing.
+410. Explain WAN Technologies: Leased Lines, MPLS, SD-WAN, Broadband, Cellular (4G/5G).
+411. What is MPLS (Multiprotocol Label Switching)? Explain Label Switching, LSR, LER, LDP, and RSVP-TE.
+412. How do MPLS L2VPN (VPWS, VPLS) and L3VPN (MP-BGP VRF) work?
+413. What is SD-WAN (Software-Defined Wide Area Network)?
+414. What are the advantages of SD-WAN over traditional MPLS networks (Cost, Dynamic Path Selection, Zero-Touch Provisioning)?
+415. How does SD-WAN execute application-aware routing based on real-time latency, jitter, and packet loss metrics?
+416. Explain SASE (Secure Access Service Edge) framework combining SD-WAN with Cloud Security (SSE, CASB, ZTNA, SWG).
+417. What is WAN Optimization (Data Deduplication, Compression, TCP Acceleration)?
+418. Explain GRE (Generic Routing Encapsulation) tunnels and GRE over IPsec.
+419. What is DMVPN (Dynamic Multipoint VPN) and its components (NHRP, mGRE, IPsec)?
+420. Explain Segment Routing (SR-MPLS / SRv6) and its integration with modern carrier networks.
+
+---
+
+## Module 8: Advanced Topics, Network Protocols & Future Trends (Questions 421–500)
+
+### 1. Advanced Routing, QoS & Network Virtualization (421–450)
+421. What is Quality of Service (QoS), and why is it necessary in converged networks?
+422. Explain QoS Models: Best Effort, Integrated Services (IntServ / RSVP), Differentiated Services (DiffServ).
+423. Detail DiffServ Architecture: DSCP (Differentiated Services Code Point - 6 bits) vs CoS (3 bits).
+424. Explain Expedited Forwarding (EF) and Assured Forwarding (AF) DSCP values.
+425. What is Traffic Classification, Marking, Policing, and Shaping?
+426. Compare Traffic Policing (drops/re-marks excess packets) vs Traffic Shaping (buffers excess packets).
+427. What are Congestion Management mechanisms: FIFO, PQ (Priority Queuing), WFQ, CBWFQ, LLQ (Low Latency Queuing)?
+428. What are Congestion Avoidance mechanisms: RED (Random Early Detection) and WRED (Weighted RED)?
+429. Explain Explicit Congestion Notification (ECN) and IP ECN field bits.
+430. What is BGP EVPN with VXLAN Multi-Site architecture?
+431. Explain LISP (Locator/ID Separation Protocol) architecture (Endpoint Identifiers vs Routing Locators).
+432. What is Segment Routing v6 (SRv6) and IPv6 Network Programming?
+433. Describe Carrier Ethernet services (E-Line, E-LAN, E-Tree - MEF standards).
+434. Explain QinQ (IEEE 802.1ad Double Tagging) for provider bridging.
+435. What is PTP (Precision Time Protocol IEEE 1588v2) Boundary Clock and Transparent Clock?
+436. Explain Optical Networking basics: WDM, CWDM, DWDM, and OTN (Optical Transport Network).
+437. What are Transceivers formats: SFP, SFP+, SFP28, QSFP+, QSFP28, QSFP-DD, OSFP?
+438. Explain Fiber Optic Cable types: Single-Mode Fiber (SMF) vs Multi-Mode Fiber (MMF) and connector types (LC, SC, MPO).
+439. What is Link Budget Calculation in optical fiber links (Attenuation, Splice Loss, Connector Loss)?
+440. Explain Forward Error Correction (FEC) in 100G/400G high-speed Ethernet links.
+441. What is Multicast Routing Protocols: PIM-SM, PIM-SSM (Source-Specific Multicast), BIDIR-PIM.
+442. Explain Anycast RP using MSDP (Multicast Source Discovery Protocol) or BGP.
+443. What is IGMPv3 vs IGMPv2 in source-specific multicast join processing?
+444. Describe IPv6 Multicast Addressing structure and MLD (Multicast Listener Discovery).
+445. What is Path Computation Element (PCE) and Segment Routing Path Computation Engine (SR-PCE)?
+446. Explain SDN Controllers: OpenDaylight, ONOS, Ryu, Cisco NSO (Network Services Orchestrator).
+447. What is YANG Data Modeling Language (RFC 6020) and device model abstractions?
+448. Explain OpenConfig data models for vendor-neutral network automation.
+449. What is Model-Driven Telemetry (MDT) over gNMI (gRPC Network Management Interface)?
+450. Describe Network Verification and Formal Verification (e.g., Batfish, Forward Networks).
+
+### 2. Emerging Technologies, Wireless 5G/6G & Edge Computing (451–480)
+451. What is 5G Standalone (SA) vs 5G Non-Standalone (NSA) core network architecture?
+452. Explain 5G Service-Based Architecture (SBA) and HTTP/2 control plane protocols.
+453. What is Network Slicing in 5G mobile networks?
+454. Explain User Plane Function (UPF) and Access and Mobility Management Function (AMF) in 5G.
+455. What is Open RAN (O-RAN) and disaggregation of Radio Access Networks (RU, DU, CU)?
+456. How does Private 5G / Private LTE benefit industrial IoT and enterprise environments?
+457. What is Multi-Access Edge Computing (MEC) and its latency implications?
+458. Explain Wi-Fi 6E and Wi-Fi 7 (802.11be) features: 320 MHz channels, 4096-QAM, Multi-Link Operation (MLO).
+459. Compare 5G vs Wi-Fi 6/7 co-existence in enterprise deployments.
+460. What is Low Earth Orbit (LEO) Satellite Networking (e.g., Starlink) latency and routing characteristics?
+461. Explain Space Information Networks and inter-satellite laser links.
+462. What is Quantum Key Distribution (QKD) and quantum-safe networking?
+463. Explain Post-Quantum Cryptography (PQC) impact on network security protocols (TLS, IPsec, SSH).
+464. What is SmartNIC / Data Processing Unit (DPU) offloading (e.g., Nvidia BlueField, AMD Pensando)?
+465. How do DPUs process inline security, OVS offload, storage, and telemetry without host CPU overhead?
+466. What is Programmable Data Plane with P4 Programming Language?
+467. Explain In-band Network Telemetry (INT) using P4 programmable switches.
+468. What is Time-Sensitive Networking (TSN - IEEE 802.1) for industrial automation and automotive networks?
+469. Explain Deterministic Networking (DetNet) IETF standards for IP networks.
+470. Describe Information-Centric Networking (ICN) / Named Data Networking (NDN).
+471. What is IPv6 SRv6 Mobile User Plane (SRv6-MUP) replacing GTP-U tunnels?
+472. Explain Edge AI and AI workload networking requirements (High Bandwidth, Ultra-low Latency, InfiniBand vs RoCEv2).
+473. What is InfiniBand architecture and how does it compare to lossless Ethernet for HPC clusters?
+474. Describe NVMe over Fabrics (NVMe-oF) over RDMA (RoCEv2, iWARP) and FC.
+475. What is Ethernet for HPC / AI clusters (Ultra Ethernet Consortium - UEC)?
+476. Explain Green Networking and power saving capabilities in network hardware (IEEE 802.3az Energy Efficient Ethernet).
+477. What is Network Function Virtualization (NFV) and VNF vs CNF (Virtualized vs Containerized Network Functions)?
+478. Describe ETSI NFV Architecture (NFVO, VNFM, VIM).
+479. What is MANO (Management and Orchestration) in NFV environments?
+480. Explain Cloud-Native Network Functions (CNFs) deployment on Kubernetes using SR-IOV and Multus CNI.
+
+### 3. Advanced Scenario-Based & System Design Questions (481–500)
+481. System Design: Design a high-availability network architecture for a global E-Commerce platform spanning two cloud regions and on-premises data centers.
+482. System Design: Architect a secure low-latency network infrastructure for a High-Frequency Trading (HFT) firm.
+483. Scenario: A enterprise experiences a complete BGP route leak, directing internet traffic through a rogue ISP. How could this have been prevented using RPKI and BGP filters?
+484. Scenario: Dual ISP dual-router configuration using BGP. Configure traffic engineering so ISP-A is primary for inbound/outbound, and ISP-B is backup.
+485. System Design: Design a multi-tenant Data Center overlay network supporting 50,000 isolated tenant networks using VXLAN and EVPN.
+486. Scenario: Troubleshoot an issue where users report slow file downloads from a cloud server, but bandwidth tests show 1 Gbps available. Ping shows 150ms RTT and 0.5% packet loss. Explain TCP window size limitations.
+487. Scenario: An enterprise network migration from IPv4 to Dual-Stack IPv4/IPv6. Provide an implementation strategy for core, edge, and endpoints.
+488. System Design: Design a Zero Trust Network Access (ZTNA) framework for 10,000 remote workers accessing on-premises and SaaS applications.
+489. Scenario: A core link fails, causing OSPF SPF recalculation storm and high CPU usage on all routers. What design improvements should be applied?
+490. System Design: Design a global DNS load balancing (GSLB) setup with active-active web servers in US, Europe, and Asia, including failover mechanisms.
+491. Scenario: An IP camera network generates heavy multicast traffic that degrades Wi-Fi network performance. What switch features must be configured to fix this?
+492. System Design: Architect a high-throughput network for an AI model training cluster consisting of 1,000 GPU nodes using RoCEv2.
+493. Scenario: A company merges with another firm, and both use `10.10.0.0/16` internal IP subnets. Provide three methods to achieve immediate inter-company connectivity without re-IPing.
+494. System Design: Design an SD-WAN architecture for a enterprise with 500 branch offices, dual transport (MPLS + Broadband), and central firewalling.
+495. Scenario: Wi-Fi users disconnect continuously when walking between access points in an enterprise building. What roaming protocols and design parameters need tuning?
+496. System Design: Design a resilient perimeter security layer capable of absorbing 500 Gbps volumetric DDoS attacks while retaining legitimate traffic.
+497. Scenario: A server cannot reach its default gateway after a new host was plugged into the switch with IP/MAC duplicate configuration. How do you mitigate ARP spoofing/conflicts?
+498. System Design: Architect an automated network compliance and configuration backup pipeline for 2,000 multi-vendor network devices using GitOps.
+499. Scenario: Host A sends a packet to Host B across 3 routers. Describe every header change (MAC addresses, IP TTL, IP Checksum) at each hop along the path.
+500. System Design: End-to-End Architecture: Trace the precise journey of a user opening `https://app.example.com` on a smartphone over 5G, from DNS, TCP handshake, TLS 1.3 negotiation, BGP routing, to backend Kubernetes pod response.

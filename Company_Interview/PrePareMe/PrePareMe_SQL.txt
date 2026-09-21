@@ -1,0 +1,693 @@
+# Comprehensive SQL Question Bank (500 Questions)
+
+This question bank is structured topic-by-topic, categorized into three levels of difficulty: **Easy**, **Medium**, and **Hard**.
+
+---
+
+## Topic 1: Introduction to SQL & Relational Database Concepts
+
+### Easy
+1. What is SQL, and what does it stand for?
+2. What is a Relational Database Management System (RDBMS)? Give three examples.
+3. Define the terms: Table, Row, Column, Field, and Record.
+4. What is the difference between SQL and MySQL?
+5. What is a Primary Key? State its core characteristics.
+6. What is a Foreign Key, and how does it enforce referential integrity?
+7. Explain the difference between `NULL` and `0` or an empty string `""` in SQL.
+8. What is the difference between Data Definition Language (DDL) and Data Manipulation Language (DML)?
+9. Name the four basic operations of persistent storage known as CRUD, and map them to SQL statements.
+10. What is a Candidate Key? How is it different from a Primary Key?
+11. What is a Super Key?
+12. What is a Composite Key? Give a real-world scenario where it is required.
+13. What is Data Control Language (DCL)? Give two examples of DCL commands.
+14. What is Transaction Control Language (TCL)? List three TCL commands.
+15. What is a Unique Key constraint, and how does it differ from a Primary Key?
+
+### Medium
+16. Compare and contrast Relational (SQL) and Non-Relational (NoSQL) databases across schema flexibility, scalability, and consistency models.
+17. Explain the ACID properties of a database transaction in detail.
+18. What is Database Normalization? Briefly explain the primary purpose of normalizing a database schema.
+19. Explain 1NF (First Normal Form) with a practical before-and-after example.
+20. Explain 2NF (Second Normal Form) and the concept of Partial Functional Dependency.
+21. Explain 3NF (Third Normal Form) and the concept of Transitive Dependency.
+22. What is Boyce-Codd Normal Form (BCNF)? How does it differ from 3NF?
+23. What is Denormalization? When and why would a database administrator intentionally denormalize a schema?
+24. Explain the concept of Entity-Relationship (ER) modeling. What are Entities, Attributes, and Relationships?
+25. Describe the different types of cardinality in relational design: 1-to-1, 1-to-Many, Many-to-1, and Many-to-Many. How is a Many-to-Many relationship implemented physically?
+26. What is the difference between a surrogate key and a natural key? List pros and cons of each.
+27. Explain Referential Integrity Constraints and what happens during `ON DELETE CASCADE` vs `ON DELETE SET NULL`.
+28. What is the difference between logical data independence and physical data independence?
+29. Describe the difference between OLTP (Online Transaction Processing) and OLAP (Online Analytical Processing).
+30. What is a schema in SQL? How does a database schema differ from a database instance?
+
+### Hard
+31. What is 4NF (Fourth Normal Form), and what type of dependency does it eliminate?
+32. What is 5NF (Fifth Normal Form / Project-Join Normal Form)?
+33. Explain Domain-Key Normal Form (DKNF) and 6NF. In what systems are these applied?
+34. Analyze the trade-offs of using UUIDs (GUIDs) vs. Auto-Incrementing Integers as Primary Keys in distributed systems.
+35. How does write amplification affect database performance when designing normalized vs denormalized schemas?
+36. Describe how phantom reads, non-repeatable reads, and dirty reads occur in database transactions.
+37. Explain the CAP Theorem and how traditional SQL databases fit into the theorem under network partitioning.
+38. Explain the difference between Strong Consistency, Eventual Consistency, and Causal Consistency in distributed database architectures.
+39. What are Star Schema and Snowflake Schema in data warehousing? Compare their performance and maintenance trade-offs.
+40. How do database engines enforce foreign key constraints under the hood during high-concurrency inserts?
+
+---
+
+## Topic 2: Basic SQL Querying (`SELECT`, `WHERE`, `ORDER BY`, `LIMIT`)
+
+### Easy
+41. Write a query to fetch all columns from a table named `employees`.
+42. Write a query to select distinct job titles from the `employees` table.
+43. Write a query to retrieve the name and salary of employees earning more than 50,000.
+44. Write a query to list all products whose price is between 10 and 50 using `BETWEEN`.
+45. Write a query to select all customers living in either 'New York', 'London', or 'Paris' using `IN`.
+46. Write a query to find all employees whose name starts with the letter 'A' using `LIKE`.
+47. Write a query to find all employees whose name ends with 'son'.
+48. Write a query to retrieve all orders where the order status is NOT 'Completed'.
+49. How do you sort query results in descending order by `hire_date`?
+50. Write a query to return the top 5 highest-paid employees using `ORDER BY` and `LIMIT` (or equivalent syntax).
+51. How do you check for `NULL` values in a `WHERE` clause?
+52. Write a query to retrieve all rows where the `manager_id` is NOT NULL.
+53. What is the order of execution of a basic SQL statement containing `SELECT`, `FROM`, `WHERE`, and `ORDER BY`?
+54. How do you rename a column output in a SELECT query using an alias?
+55. Write a query to select employee names and calculate an annual bonus as `salary * 0.10` aliased as `annual_bonus`.
+
+### Medium
+56. Write a query using wildcards to find all employee names containing 'an' as the second and third characters.
+57. Explain how the `LIKE` operator handles case sensitivity across different database dialects (e.g., PostgreSQL vs MySQL).
+58. Write a query to return the top 10 products, skipping the first 20 records (Pagination implementation).
+59. Write a query that combines `AND`, `OR`, and `NOT` conditions using parenthesis to ensure proper operator precedence.
+60. Write a query to filter rows where a specific date column falls within the current calendar month.
+61. What is the difference between `LIMIT / OFFSET` and `FETCH FIRST n ROWS ONLY` ANSI SQL standards?
+62. How does `ORDER BY` treat `NULL` values by default, and how can you force `NULLS FIRST` or `NULLS LAST`?
+63. Write a query using `CASE WHEN` inside a `SELECT` statement to categorize salaries into 'Low', 'Medium', and 'High'.
+64. Write a query to fetch products where `discount_price` is less than `retail_price`, handling potential `NULL` values in `discount_price`.
+65. Explain why using wildcard searches with a leading percent sign (e.g., `LIKE '%abc'`) impairs query execution performance.
+
+### Hard
+66. Write a single query to retrieve alternating rows (odd or even `id`s) from a table without using window functions.
+67. Given a table with duplicate records across all columns, write a query to fetch only unique rows without using `DISTINCT`.
+68. Write a query that returns all records where a text column contains special characters (e.g., `%`, `_`, `\`) literal search.
+69. Explain how expression evaluation and short-circuit logic work in a SQL `WHERE` clause across different query optimizers.
+70. Write a dynamic sorting query using a single `ORDER BY` statement and `CASE` logic dependent on a parameter input (e.g., sort by name if parameter is 'NAME', else by salary).
+
+---
+
+## Topic 3: Data Aggregation & Grouping (`GROUP BY`, `HAVING`, Aggregate Functions)
+
+### Easy
+71. What are Aggregate Functions in SQL? List five standard aggregate functions.
+72. Write a query to count the total number of records in the `orders` table.
+73. What is the difference between `COUNT(*)`, `COUNT(column_name)`, and `COUNT(DISTINCT column_name)`?
+74. Write a query to find the average, minimum, and maximum salary of employees.
+75. Write a query to calculate the total sales amount from an `orders` table.
+76. What is the purpose of the `GROUP BY` clause in SQL?
+77. Write a query to find the total number of employees in each department.
+78. What is the difference between `WHERE` and `HAVING` clauses?
+79. Write a query to display department IDs and their average salary, but only for departments with an average salary greater than 60,000.
+80. Can you use column aliases defined in the `SELECT` clause inside a `WHERE` clause or a `GROUP BY` clause? Explain why.
+
+### Medium
+81. Write a query to calculate the number of orders placed per year and per month.
+82. Write a query to find all department IDs that have more than 5 employees.
+83. How do aggregate functions handle `NULL` values in SQL?
+84. Write a query using `GROUP BY` and `CASE` statements to sum sales based on region ('North', 'South', 'Other').
+85. Write a query to find the average salary of employees per department, excluding employees who were hired in the last 6 months.
+86. Explain the behavior of grouping by multiple columns (e.g., `GROUP BY department_id, job_title`).
+87. Write a query to find all categories having a total stock quantity between 100 and 500 units.
+88. Can an aggregate function be nested inside another aggregate function in standard SQL (e.g., `AVG(SUM(sales))`)? How do you achieve this?
+89. Write a query to find the ratio of male to female employees per department.
+90. Write a query to fetch the minimum and maximum order date per customer along with their total order count.
+
+### Hard
+91. Explain the differences between `GROUP BY ROLLUP`, `GROUP BY CUBE`, and `GROUPING SETS`. Provide queries demonstrating each.
+92. Write a query using `GROUP BY GROUPING SETS` to aggregate total revenue by (Year, Region), (Year), (Region), and Overall Total.
+93. Write a query using the `GROUPING()` function to distinguish between actual stored `NULL` values and super-aggregate `NULL` values generated by `ROLLUP`.
+94. How does the SQL query optimizer execute `GROUP BY` internally? Contrast Hash Aggregation vs. Stream/Sorted Aggregation.
+95. Write a query to compute the median value of a numerical column without using native window functions or built-in median functions.
+
+---
+
+## Topic 4: Joins (`INNER`, `LEFT`, `RIGHT`, `FULL OUTER`, `CROSS`, `SELF`)
+
+### Easy
+96. What is a SQL Join? Why are joins necessary in relational databases?
+97. Explain the difference between `INNER JOIN` and `LEFT OUTER JOIN`.
+98. What is a `RIGHT OUTER JOIN`? How can any `RIGHT JOIN` be rewritten as a `LEFT JOIN`?
+99. Write a query to fetch employee names along with their corresponding department names using an `INNER JOIN`.
+100. Write a query to retrieve all customers and their orders, including customers who have not placed any orders.
+101. What is a `FULL OUTER JOIN`?
+102. What is a `CROSS JOIN`? How many rows are returned if Table A has 10 rows and Table B has 5 rows?
+103. What is a `SELF JOIN`? Give a standard real-world schema scenario where a `SELF JOIN` is required.
+104. Write a query using a `SELF JOIN` to find the names of employees alongside their manager's name from an `employees` table.
+105. What is the explicit syntax vs. implicit syntax for writing joins? Why is explicit syntax preferred?
+
+### Medium
+106. Explain the difference between filtering conditions placed in the `ON` clause versus the `WHERE` clause during a `LEFT JOIN`.
+107. Write a query using a `LEFT JOIN` to find all customers who have **never** placed an order (Anti-Join concept).
+108. What is a Natural Join (`NATURAL JOIN`)? What are the risks of using it in production code?
+109. Write a query joining three tables: `customers`, `orders`, and `order_items`, retrieving customer name, order date, and total item count per order.
+110. How do non-equi joins work? Write an example query joining employees to a `salary_grades` table where salary falls between `low_sal` and `high_sal`.
+111. Write a query using `CROSS JOIN` to generate a master matrix of all possible combinations of products and store locations.
+112. Explain how `NULL` values affect join conditions when matching columns contain `NULL`s on both sides.
+113. Write a query to find pairs of employees who work in the same department and earn the exact same salary.
+114. Write a query that joins a table to itself to compute a hierarchy path or determine parent-child relationships up to two levels.
+115. What is cartesian explosion in database joins, and how can it be detected and prevented?
+
+### Hard
+116. Explain the underlying physical join algorithms used by relational database engines: Nested Loop Join, Hash Join, and Sort-Merge Join. Under what circumstances does the optimizer pick each?
+117. Write an optimized query to find records in Table A that do not exist in Table B using: 1) `LEFT JOIN / IS NULL`, 2) `NOT EXISTS`, and 3) `NOT IN`. Explain how the query optimizer handles `NULL`s in `NOT IN`.
+118. Construct a query to resolve a complex many-to-many join scenario across 5 normalized tables with aggregated metrics at multiple levels without introducing metric duplication.
+119. Explain how join order affects execution plan cost and how database optimizers use dynamic programming or genetic algorithms to determine join order.
+120. Demonstrate how to perform a fuzzy join between two tables based on string distance or partial matches.
+
+---
+
+## Topic 5: Subqueries, Correlated Subqueries & CTEs
+
+### Easy
+121. What is a Subquery? What is the difference between a single-row subquery and a multi-row subquery?
+122. Write a query to find all employees whose salary is higher than the average salary of all employees.
+123. Write a query using `IN` with a subquery to list all products that have been ordered at least once.
+124. What is a Common Table Expression (CTE)? Write a basic query using the `WITH` clause.
+125. What is the difference between a subquery in the `WHERE` clause and a subquery in the `FROM` clause (derived table)?
+126. Write a query using `EXISTS` to find departments that have at least one employee.
+127. What is the key difference between `IN` and `EXISTS`?
+128. Write a query using a subquery in the `SELECT` list to display employee names along with the total employee count.
+129. Can a subquery return multiple columns? Give an example where this is valid using row constructors or `IN`.
+130. What is an inline view?
+
+### Medium
+131. What is a Correlated Subquery? Explain how its execution process differs from a standard scalar subquery.
+132. Write a correlated subquery to find all employees whose salary is above the average salary of their respective department.
+133. Write a query using `NOT EXISTS` to identify users who registered but never logged in.
+134. Convert a multi-level nested subquery into a clean, readable CTE chain using multiple `WITH` blocks.
+135. Compare the performance, reusability, and scope of temporary tables, derived tables, and CTEs.
+136. Write a query using a correlated subquery to find the Nth highest salary in an `employees` table.
+137. Explain the behavior of `ANY`, `SOME`, and `ALL` operators when paired with subqueries. Write an example query for `ALL`.
+138. Write a query using a CTE to calculate monthly sales growth percentage compared to the previous month.
+139. How do database query optimizers optimize non-correlated vs correlated subqueries? What is subquery unnesting/flattening?
+140. Write a query to find the second highest salary per department using correlated subqueries.
+
+### Hard
+141. What is a Recursive CTE? Explain its components: Anchor member, Union operator, Recursive member, and Termination condition.
+142. Write a Recursive CTE to traverse an organizational hierarchy tree and output employee names along with their depth/level in the hierarchy.
+143. Write a Recursive CTE to generate a contiguous sequence of dates between a start date and an end date to fill missing reporting dates.
+144. Write a Recursive CTE to solve a shortest-path graph problem (e.g., finding the cheapest flight route between two cities with multiple layovers).
+145. Compare the materialization strategies of CTEs across PostgreSQL (e.g., `AS MATERIALIZED`), MySQL 8.0, and SQL Server.
+
+---
+
+## Topic 6: Window Functions & Analytical SQL
+
+### Easy
+146. What is a Window Function in SQL? How does it differ from a standard aggregate function using `GROUP BY`?
+147. What is the basic syntax of the `OVER()` clause?
+148. What is the difference between `ROW_NUMBER()`, `RANK()`, and `DENSE_RANK()`?
+149. Write a query to generate a sequential row number for all employees ordered by their hire date.
+150. Write a query to rank employees within each department based on their salary using `RANK()`.
+151. What do the `LEAD()` and `LAG()` functions do?
+152. Write a query using `LAG()` to get the previous row's sales amount for each row.
+153. What is the `PARTITION BY` clause used for in window functions?
+154. What are `FIRST_VALUE()` and `LAST_VALUE()` functions?
+155. Can window functions be evaluated inside the `WHERE` or `HAVING` clauses? Why or why not?
+
+### Medium
+156. Write a query using `ROW_NUMBER()` inside a CTE or subquery to find the highest-paid employee in each department.
+157. Write a query using `LAG()` to calculate the day-over-day percentage change in stock prices.
+158. Explain the framing specification in window functions (`ROWS BETWEEN ... AND ...` vs `RANGE BETWEEN ... AND ...`).
+159. Write a query to calculate a 7-day moving average of daily revenue using `ROWS BETWEEN 6 PRECEDING AND CURRENT ROW`.
+160. Write a query to divide customers into 4 equal quartiles based on their total spend using `NTILE(4)`.
+161. Explain the difference between `ROWS` and `RANGE` when handling duplicate values in an `ORDER BY` window frame.
+162. Write a query using `CUME_DIST()` and `PERCENT_RANK()` to compute the percentile ranking of students by exam scores.
+163. Write a query to find all orders where the order value is higher than the customer's overall average order value using window functions.
+164. Write a query using `FIRST_VALUE()` to display each employee's salary along with the top salary of their department.
+165. How does `LAST_VALUE()` behave if an explicit frame specification like `RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING` is omitted?
+
+### Hard
+166. Write a query to identify session IDs for user activity logs using a gap-and-island approach (a new session starts if inactivity exceeds 30 minutes).
+167. Write a query to calculate continuous stretches (islands) of consecutive days where a user logged into a system.
+168. Given a stream of transactions, write a query to compute the running balance of an account while handling simultaneous multi-transaction updates on the same timestamp correctly.
+169. Write a query using window functions to detect overlapping time intervals (e.g., overlapping hotel reservations or employee shifts).
+170. Optimize a query that calculates complex running totals across millions of rows by minimizing window frame re-evaluations and spill to temporary storage.
+
+---
+
+## Topic 7: Set Operations (`UNION`, `UNION ALL`, `INTERSECT`, `EXCEPT` / `MINUS`)
+
+### Easy
+171. Name the four primary set operators in SQL.
+172. What is the main difference between `UNION` and `UNION ALL`?
+173. What are the two strict structural requirements for two queries to be combined using set operators?
+174. Write a query that combines customer email addresses and vendor email addresses into a single list using `UNION`.
+175. What does the `INTERSECT` operator do?
+176. What does the `EXCEPT` (or `MINUS` in Oracle) operator do?
+177. Write a query using `EXCEPT` to find all product IDs that are in the `products` table but have never appeared in the `order_items` table.
+178. Where must the `ORDER BY` clause be placed when using set operators in a multi-query statement?
+179. Does `UNION` preserve the order of records from the top query to the bottom query?
+180. Which set operator performs faster: `UNION` or `UNION ALL`? Explain why.
+
+### Medium
+181. Write a query using `INTERSECT` to find customers who placed orders in both Year 2022 and Year 2023.
+182. How do set operators handle `NULL` values when comparing rows between two result sets?
+183. Write a single query using `UNION ALL` and aggregation to generate a summary report displaying Total Revenue, Total Orders, and Total New Customers in separate rows.
+184. Can you perform set operations on queries that contain different column names, provided the data types match? Explain with an example using column aliasing.
+185. Simulate an `INTERSECT` operation using `INNER JOIN` or `EXISTS`.
+186. Simulate an `EXCEPT` operation using `LEFT JOIN` or `NOT EXISTS`.
+187. Compare the performance footprint of using `UNION` (which performs distinct sorting/deduplication) vs `GROUP BY` across large datasets.
+188. Write a query to compare two tables (`table_a` and `table_b`) with identical schemas and return any rows that differ between them using set operators.
+189. Can window functions be used directly inside individual statements participating in a `UNION`?
+190. What is the operator precedence when combining `UNION`, `INTERSECT`, and `EXCEPT` in a single complex SQL statement?
+
+### Hard
+191. Write a query that evaluates multiset semantics (preserving duplicate counts correctly) for `INTERSECT ALL` and `EXCEPT ALL` on database engines that do not natively support the `ALL` modifier for set operators.
+192. Compare how PostgreSQL, Oracle, SQL Server, and MySQL execute `UNION` vs `UNION ALL` at the execution plan level (Hash Match / Stream Aggregate).
+193. Write an efficient SQL statement using set operations to determine whether two high-volume dynamic tables are exact bit-for-bit duplicates.
+194. Solve a dynamic data reconciliation challenge across three staging tables using set operators without causing full table scans on all three.
+195. Explain how character collations impact set operations when joining strings across distinct database instances or schemas.
+
+---
+
+## Topic 8: Data Manipulation Language (DML) - `INSERT`, `UPDATE`, `DELETE`, `MERGE`
+
+### Easy
+196. Write an `INSERT` statement to add a new row into a `departments` table with values for `id`, `name`, and `location`.
+197. Write an `INSERT` statement that inserts multiple rows in a single query execution.
+198. Write an `UPDATE` statement to increase the salary of all employees in department 5 by 10%.
+199. Write a `DELETE` statement to remove all orders marked as 'Cancelled'.
+200. What happens if you execute an `UPDATE` or `DELETE` statement without a `WHERE` clause?
+201. What is the difference between `DELETE` and `TRUNCATE`?
+202. Is `TRUNCATE` classified as DML or DDL? Explain why.
+203. How can you insert values into a table by selecting data from another existing table (`INSERT INTO ... SELECT`)?
+204. Write a query to copy the entire structure and data of table `A` into a new table `B`.
+205. How do you handle inserting explicit values into an auto-increment or identity column?
+
+### Medium
+206. Write an `UPDATE` statement that joins two tables to update the `customers` table's `total_spent` based on calculated sums from the `orders` table.
+207. Write a `DELETE` statement that deletes records from a `customers` table if they have no corresponding records in the `orders` table using a subquery.
+208. Explain the `UPSERT` concept. How is `UPSERT` syntax implemented in MySQL (`ON DUPLICATE KEY UPDATE`), PostgreSQL (`ON CONFLICT DO UPDATE`), and SQL Server (`MERGE`)?
+209. Write a PostgreSQL or MySQL `INSERT ... ON CONFLICT` / `ON DUPLICATE KEY UPDATE` query to update a log counter if a key already exists.
+210. What is the `MERGE` statement in standard SQL? Explain `WHEN MATCHED`, `WHEN NOT MATCHED`, and `WHEN NOT MATCHED BY SOURCE`.
+211. Write a complete SQL `MERGE` statement synchronizing a target table `inventory` with a source table `daily_shipments`.
+212. What is the `RETURNING` clause (or `OUTPUT` clause in SQL Server)? Write an example query returning auto-generated IDs from an `INSERT` command.
+213. Explain how table locks (Row Lock vs Page Lock vs Table Lock) operate during massive concurrent `DML` operations.
+214. Write a conditional `UPDATE` statement using `CASE` to modify employee ranks based on performance points.
+215. How do triggers execute relative to DML statements (`BEFORE`, `AFTER`, `INSTEAD OF`)?
+
+### Hard
+216. How do you delete duplicate rows from a table while retaining exactly one copy of each duplicate group without dropping the table? Write three distinct approaches.
+217. Explain transaction log generation (WAL / Transaction Log) during a `DELETE` vs a `TRUNCATE` operation on large tables containing billions of rows.
+218. Write a batch-deletion script (using loops or recursive CTE batching) to safely delete 10 million old audit records in chunks of 5,000 to prevent transaction log bloat and table lock escalation.
+219. Explain non-deterministic updates in `UPDATE ... FROM` or `MERGE` statements when a target row matches multiple source rows.
+220. Demonstrate how to implement soft deletes (using `is_deleted` flags) and analyze the index performance overhead and integrity enforcement constraints associated with this design pattern.
+
+---
+
+## Topic 9: Data Definition Language (DDL) & Data Types
+
+### Easy
+221. What is Data Definition Language (DDL)? List four DDL commands.
+222. Write a `CREATE TABLE` statement for an `employees` table including basic data types and a primary key constraint.
+223. What is the difference between `CHAR` and `VARCHAR` data types?
+224. Explain the difference between `FLOAT`, `DOUBLE`, and `DECIMAL / NUMERIC`. Which type should be used for storing financial currency values, and why?
+225. Write an `ALTER TABLE` query to add a new column `email` (VARCHAR(255)) to an existing table.
+226. Write an `ALTER TABLE` query to drop a column from a table.
+227. Write an `ALTER TABLE` query to rename an existing column.
+228. What does the `DROP TABLE` command do? How is it different from `TRUNCATE TABLE`?
+229. What is the `DROP DATABASE` command?
+230. Name three temporal data types in SQL and explain their differences (e.g., `DATE`, `TIME`, `TIMESTAMP`, `DATETIME`).
+
+### Medium
+231. Explain the difference between `TIMESTAMP` and `TIMESTAMPTZ` (Timestamp with Time Zone). Why is storing UTC recommended?
+232. What are Integrity Constraints? Name and describe five common column constraints (`NOT NULL`, `UNIQUE`, `PRIMARY KEY`, `FOREIGN KEY`, `CHECK`, `DEFAULT`).
+233. Write a `CREATE TABLE` statement that includes a `CHECK` constraint validating that an employee's salary is greater than zero and age is at least 18.
+234. How do you add a Foreign Key constraint with custom delete behavior (`ON DELETE CASCADE`) to an existing table using `ALTER TABLE`?
+235. What is the difference between Schema-on-Read and Schema-on-Write?
+236. What is a BLOB data type? What is a CLOB data type? What are the storage impacts of keeping large binary objects directly inside relational tables?
+237. Explain JSON/JSONB data types in modern relational databases. What are the advantages of storing semi-structured JSON inside SQL tables?
+238. Write a query to create a table with auto-incrementing / sequence primary keys across MySQL, PostgreSQL, and SQL Server.
+239. What is a computed or generated column in DDL? Write an example creating a table with a persisted generated column.
+240. What happens when you alter a column's data type from `VARCHAR(100)` to `VARCHAR(50)` on a populated table? What risks are involved?
+
+### Hard
+241. Explain Online DDL operations. How do modern relational database engines perform non-blocking schema modifications (e.g., adding columns or indexes) without locking tables for reads and writes?
+242. Describe how database storage engines store variable-length columns on disk (e.g., slotted-page structure, TOAST in PostgreSQL, Overflow pages in SQL Server).
+243. Compare the internal physical storage representations of column-store databases vs row-store databases.
+244. How does character set encoding (e.g., `utf8mb3` vs `utf8mb4` in MySQL) impact indexing string lengths and maximum storage footprints?
+245. Write a script/DDL migration structure to alter a table with 500 million rows safely in production without causing service downtime.
+
+---
+
+## Topic 10: Indexing, Query Optimization & Performance Tuning
+
+### Easy
+246. What is an Index in a database, and why is it used?
+247. What is the primary tradeoff of adding too many indexes to a table?
+248. Write a SQL query to create a standard single-column index on the `last_name` column of an `employees` table.
+249. Write a query to drop an index.
+250. What is a Primary Index?
+251. What is the command used to display the execution plan of a query in SQL?
+252. What is a Table Scan (or Sequential Scan)?
+253. What is an Index Scan vs an Index Seek?
+254. True or False: Adding an index always speeds up `SELECT` queries. Explain.
+255. What is a Composite Index (Multi-column Index)?
+
+### Medium
+256. Explain the concept of the Leftmost Prefix Rule (or Index Prefix Rule) for composite indexes.
+257. What is a Clustered Index? How does it differ from a Non-Clustered Index?
+258. How many Clustered Indexes can a single table have? Why?
+259. What is a Covering Index? How does it eliminate table lookups (Key Lookups / Bookmark Lookups)?
+260. Explain the internal structure of a B-Tree (and B+ Tree) index. Why are B+ Trees preferred for database indexes over standard Binary Search Trees?
+261. What is SARGability (Search Argument Able)? Why does applying a function to a indexed column in a `WHERE` clause (e.g., `WHERE YEAR(order_date) = 2023`) prevent index usage?
+262. Rewrite the non-sargable query `WHERE UPPER(email) = 'USER@EXAMPLE.COM'` or `WHERE order_date + INTERVAL '1 day' > NOW()` into a sargable format.
+263. What is a Partial (or Filtered) Index? Write an example query creating a partial index for active users only.
+264. What is a Expression-Based (or Functional) Index? Give a query example where it is useful.
+265. What are Database Statistics, and why are they critical for the Query Optimizer? What happens when statistics are stale?
+
+### Hard
+266. Contrast B-Tree indexes, Hash indexes, GIN (Generalized Inverted) indexes, and GiST (Generalized Search Tree) indexes. Provide ideal use cases for each.
+267. Explain Index Fragmentation (Internal vs External). How does page splitting occur, and how do you detect and remediate fragmentation (`REBUILD` / `REORGANIZE`)?
+268. Analyze a complex Execution Plan output: Identify cost distributions, Hash Joins vs Nested Loops, Spills to TempDB/Disk, and implicit data type conversions.
+269. What is a Bitmap Index? Why is it useful in Data Warehousing environments with low cardinality columns, but bad for OLTP systems with high write concurrency?
+270. Explain Query Optimizer Hints (e.g., `FORCE INDEX`, `OPTION (RECOMPILE)`). Why should hints generally be used as a last resort in production?
+
+---
+
+## Topic 11: Views & Materialized Views
+
+### Easy
+271. What is a View in SQL?
+272. What are the main benefits of using Views?
+273. Write a query to create a view named `high_salary_employees` that displays employees earning over 100,000.
+274. Write a query to drop a view.
+275. Does a standard View store data physically on disk?
+276. Write a query to update data through a simple view.
+277. What is an Updatable View? What constraints must a view satisfy to be updatable?
+278. Write a query to replace or modify an existing view structure (`CREATE OR REPLACE VIEW`).
+279. Can you query a view using joins and filters just like a regular table?
+280. What is the `WITH CHECK OPTION` clause when creating a view?
+
+### Medium
+281. What is a Materialized View? How does it differ from a standard virtual View?
+282. Explain the trade-offs between Materialized Views and standard Views regarding storage, write latency, and read freshness.
+283. Write a DDL query to create a Materialized View aggregating monthly sales summaries.
+284. How do you refresh data in a Materialized View? Explain Complete Refresh vs Incremental/Fast Refresh strategies.
+285. What is an Indexed View in SQL Server? How does it differ from PostgreSQL's Materialized View?
+286. Explain how Views can be used to implement row-level or column-level security for sensitive database tables.
+287. Can you create an index on a standard virtual view? Explain why or why not.
+288. What is Query Rewrite (Automatic View Matching) in database engines with materialized views?
+289. Write a query using `WITH CHECK OPTION` and demonstrate how it prevents inserting rows that violate the view's `WHERE` filter.
+290. What happens to a view if an underlying base table column is dropped or modified? How do you resolve dynamic view dependency breakage?
+
+### Hard
+291. Design an automated, near-real-time materialized view refresh architecture for high-volume analytics tables without causing locking contention on production OLTP databases.
+292. Explain the mathematical concept of Incremental View Maintenance (IVM) for delta updates in materialized views.
+293. Describe security invoker vs security definer dynamics in SQL views and how they impact database authorization models.
+294. Analyze execution plan differences between querying a nested view chain (views referencing views) versus querying flattened CTEs or underlying base tables.
+295. How do distributed query engines (e.g., Snowflake, BigQuery, Trino) implement dynamic materialized views across partitioned object storage?
+
+---
+
+## Topic 12: Transactions, Concurrency Control & Isolation Levels
+
+### Easy
+296. What is a Database Transaction?
+297. Write a basic transaction block using `BEGIN TRANSACTION`, `COMMIT`, and `ROLLBACK`.
+298. What does `COMMIT` do?
+299. What does `ROLLBACK` do?
+300. What is a Savepoint in a transaction?
+301. Write a query placing a `SAVEPOINT` and rolling back to it.
+302. What is Autocommit mode in relational databases?
+303. What is a Dirty Read?
+304. What is a Non-Repeatable Read?
+305. What is a Phantom Read?
+
+### Medium
+306. List and explain the four standard ANSI SQL Isolation Levels in order of increasing isolation.
+307. Complete a matrix showing which concurrency anomalies (Dirty Read, Non-Repeatable Read, Phantom Read) are allowed under each ANSI isolation level.
+308. What is Lost Update anomaly? How do locking or isolation levels prevent it?
+309. What is Pessimistic Locking? Write a query implementing pessimistic locking using `SELECT ... FOR UPDATE`.
+310. What is Optimistic Locking? Explain how it uses a version number or timestamp column to manage concurrent updates.
+311. Explain Shared Locks (S-Locks) vs Exclusive Locks (X-Locks).
+312. Explain Intent Locks (Intent Shared - IS, Intent Exclusive - IX) and why database engines use lock hierarchies.
+313. What is a Deadlock? How does a database management system detect and resolve deadlocks?
+314. What is the difference between Write-Ahead Logging (WAL) and Redo/Undo logs?
+315. Write a transaction demonstrating conditional rollback using application logic or procedural SQL exceptions.
+
+### Hard
+316. What is Snapshot Isolation? How does it differ from Serializable isolation level?
+317. Explain Multi-Version Concurrency Control (MVCC). How do PostgreSQL and MySQL (InnoDB) handle tuple versioning, tuple visibility, and vacuuming/garbage collection differently?
+318. What is Serialization Anomaly / Write Skew? Give an example where Snapshot Isolation fails to prevent Write Skew, and show how Serializable isolation resolves it.
+319. Explain Two-Phase Locking (2PL) and Strict Two-Phase Locking (S2PL). How do they guarantee serializability?
+320. Explain Distributed Transactions and the Two-Phase Commit (2PC) protocol (Prepare phase and Commit phase). What are the main failure modes of 2PC?
+
+---
+
+## Topic 13: Stored Procedures, Functions & Triggers
+
+### Easy
+321. What is a Stored Procedure?
+322. What is a User-Defined Function (UDF)?
+323. What is the main structural difference between a Stored Procedure and a Function?
+324. Write a simple stored procedure to select all active employees.
+325. How do you execute/call a stored procedure in SQL?
+326. What is a Database Trigger?
+327. Name the three primary DML events that can fire a trigger.
+328. What is the difference between a `BEFORE` trigger and an `AFTER` trigger?
+329. What is a Deterministic Function vs a Non-Deterministic Function? Give an example of each.
+330. Write a query to drop a stored procedure.
+
+### Medium
+331. Write a stored procedure that accepts an input parameter (`department_id`) and returns the total employee count and total salary sum via `OUT` parameters.
+332. Write a scalar function that calculates age in years given a `birth_date` parameter.
+333. Write a Table-Valued Function (TVF) that takes a date range and returns a result set of orders placed within those dates.
+334. Write a database trigger that automatically logs employee salary changes into an `audit_log` table whenever an `UPDATE` occurs on the `salary` column.
+335. What are the special pseudo-tables `OLD` and `NEW` (or `INSERTED` and `DELETED` in SQL Server) inside triggers?
+336. What is an `INSTEAD OF` trigger? Write an example scenario where an `INSTEAD OF` trigger allows updating a non-updatable multi-table view.
+337. Explain autonomous transactions inside stored procedures or triggers.
+338. Compare performance implications of using scalar UDFs vs Inline Table-Valued Functions inside SQL queries.
+339. How do you handle error handling and exception trapping inside stored procedures (`TRY...CATCH` or `DECLARE HANDLER`)?
+340. Write a stored procedure with transaction management logic, rolling back changes if an error occurs during execution.
+
+### Hard
+341. Explain the performance impacts of procedural row-by-row processing (RBAR - Row By Agonizing Row) inside stored procedures versus set-based SQL queries.
+342. Analyze the risks of Trigger Cascading and Recursive Triggers. How do database engines prevent infinite trigger loops?
+343. Write a dynamic stored procedure that accepts dynamic table names and column parameters securely using parameter binding to prevent SQL Injection vulnerabilities.
+344. Describe CLR (Common Language Runtime) or PL/Python / PL/v8 procedures and when procedural extensions outside standard SQL are appropriate.
+345. Design an event-driven audit architecture using generic triggers and JSON mutation tracking across dozens of dynamic schemas.
+
+---
+
+## Topic 14: String, Numeric, Date & Utility Built-in Functions
+
+### Easy
+346. Write a query using string concatenation to join `first_name` and `last_name` with a space in between.
+347. Write a query using `UPPER()` and `LOWER()` to format text output.
+348. Write a query using `LENGTH()` / `LEN()` to find employee names longer than 15 characters.
+349. Write a query using `SUBSTRING()` / `SUBSTR()` to extract the first 3 characters of a product code.
+350. What does the `TRIM()` function do?
+351. Write a query using `ROUND()` to round product prices to 2 decimal places.
+352. Write a query using `CEIL()` / `CEILING()` and `FLOOR()`. Explain their differences.
+353. Write a query to get the current date and time using SQL standard functions (`CURRENT_TIMESTAMP` / `NOW()`).
+354. Write a query to extract the Year, Month, and Day from a date column using `EXTRACT()` or `DATEPART()`.
+355. What does the `COALESCE()` function do? Write a simple query using it.
+
+### Medium
+356. Compare `COALESCE()` and `NVL()` / `IFNULL()`. How does `COALESCE()` behave when passed multiple arguments?
+357. Write a query using `NULLIF()`. Provide a practical scenario where `NULLIF()` prevents a "Division by Zero" error.
+358. Write a query to calculate the exact difference in days between two date columns.
+359. Write a query using date arithmetic to filter records created in the last 30 days dynamically relative to `CURRENT_DATE`.
+360. Write a query using `REPLACE()` to mask email addresses or format phone numbers.
+361. What is `INSTR()` / `CHARINDEX()`? Write a query using it to find the position of the `@` symbol in email strings.
+362. Write a query using `POSITION()` / `STRPOS()` and `SUBSTRING()` to parse out the domain name from email strings.
+363. Write a query using `LPAD()` or `RPAD()` to format account numbers with leading zeroes up to 10 digits.
+364. Write a query to convert a string representation of a date into an actual native `DATE` type (`CAST` vs `CONVERT` vs `TO_DATE`).
+365. How do string collation rules affect string comparison, sorting, and functions like `LIKE` or `REPLACE`?
+
+### Hard
+366. Write a complex string manipulation query using Regular Expressions (`REGEXP_LIKE`, `REGEXP_SUBSTR`, `REGEXP_REPLACE`) to extract valid US Social Security Numbers from unformatted text blocks.
+367. Write a query to calculate business days (excluding weekends) between two given dates without hardcoding custom calendar tables.
+368. Demonstrate how to write a custom string parsing query that splits a comma-separated string value from a column into multiple individual rows (String Splitting / Unnesting).
+369. Explain time zone conversion handling functions (`AT TIME ZONE`) and how daylight saving time transitions affect date math functions across global applications.
+370. Compare internal precision, rounding modes, and CPU execution performance of IEEE floating-point arithmetic versus exact arbitrary-precision fixed-point math routines in SQL engines.
+
+---
+
+## Topic 15: Subquery Syntax Variations & Advanced Conditional Logic
+
+### Easy
+371. What does the `CASE` expression do in SQL?
+372. Write a Simple `CASE` expression query comparing a single expression to static values.
+373. Write a Searched `CASE` expression query evaluating independent boolean conditions.
+374. What happens if no `ELSE` clause is specified in a `CASE` expression and no conditions match?
+375. Write a query using `CASE` inside an `ORDER BY` clause to order specified records first.
+376. What is the `DECODE()` function in Oracle SQL? How does it map to `CASE`?
+377. Write a query using `CASE` inside a aggregate function (`SUM(CASE WHEN ... THEN 1 ELSE 0 END)`).
+378. Can `CASE` statements be nested inside other `CASE` statements?
+379. What is a scalar subquery, and where can it be placed in a SQL query?
+380. What error occurs if a scalar subquery returns more than one row during runtime execution?
+
+### Medium
+381. Write a query performing a Pivot transformation using conditional aggregation (`SUM` + `CASE`) to transform row values into columns.
+382. Write a query using conditional logic inside an `UPDATE` statement to apply differential percentage raises depending on job tiers.
+383. Write a query using scalar subqueries inside the `SELECT` projection list to fetch related metric counts without performing explicit `GROUP BY` operations.
+384. Compare the readable structure and performance of conditional aggregation vs ANSI SQL `FILTER (WHERE ...)` syntax.
+385. Write a query using `FILTER (WHERE ...)` clause with aggregate functions (PostgreSQL standard).
+386. How does evaluation order work within a `CASE` expression? Are expressions short-circuited?
+387. Write a query handling dynamic missing attributes using `COALESCE` chained with multiple `CASE` statements.
+388. Write a query using correlated scalar subqueries inside an `INSERT` statement's `VALUES` block.
+389. Write a query that dynamically bucketizes continuous customer spend metrics into dynamic age/income demographic brackets.
+390. Explain the difference between scalar subqueries, lateral subqueries / cross apply, and correlated subqueries.
+
+### Hard
+391. Write a query using `LATERAL` joins (PostgreSQL/MySQL 8.0+) or `CROSS APPLY` (SQL Server/Oracle) to evaluate complex row-by-row subquery logic referencing columns from preceding table sources.
+392. Solve a dynamic pivot requirement where column headers are determined at runtime without hardcoding fixed categories using dynamic SQL.
+393. Analyze performance implications of short-circuit evaluation guarantees (or lack thereof) across SQL dialects when evaluating expressions that could throw execution errors (e.g., division by zero inside `CASE`).
+394. Construct an unpivot query transforming flat wide columns into long narrow row records without using native `UNPIVOT` syntax.
+395. Optimize a heavy analytical query containing dozens of inline scalar subqueries in projection lists into set-based joins or single-pass window aggregations.
+
+---
+
+## Topic 16: Database Security, Permissions & User Management
+
+### Easy
+396. What is Data Control Language (DCL)?
+397. Write a query to create a new database user.
+398. Write a query using `GRANT` to give a user `SELECT` and `INSERT` permissions on a specific table.
+399. Write a query using `REVOKE` to remove `DELETE` permissions from a user.
+400. What is a Database Role? Why is granting permissions to roles better than granting permissions directly to individual users?
+401. Write a query to create a database role.
+402. Write a query to assign a user to a role.
+403. What is SQL Injection?
+404. What is the most effective defense against SQL Injection attacks in application code?
+405. What is the Principle of Least Privilege in database security?
+
+### Medium
+406. Explain the difference between Authentication and Authorization in database systems.
+407. Explain Row-Level Security (RLS). How does RLS restrict table access based on the executing application user?
+408. Write an example policy establishing Row-Level Security in PostgreSQL or SQL Server.
+409. Explain Column-Level Encryption vs Transparent Data Encryption (TDE).
+410. How can database audit logs be configured to track schema modifications and unauthorized access attempts?
+411. What are dynamic data masking features in modern SQL databases? Write an example query masking email addresses for non-admin users.
+412. Explain how SQL injection can occur even when using stored procedures if dynamic SQL concatenation is misused.
+413. What is the purpose of granting `WITH GRANT OPTION` when assigning privileges? What are the security risks?
+414. How do database connections handle transport security (TLS/SSL encryption in transit)?
+415. What is parameter sniffing, and how can it impact system performance when parameterized queries are used for security?
+
+### Hard
+416. Design an Enterprise RBAC (Role-Based Access Control) schema in SQL containing Users, Roles, Permissions, and User-Role mapping tables, complete with hierarchical role inheritance queries.
+417. Explain zero-trust database security paradigms, including ephemeral database credentials, short-lived tokens, and IAM-integrated database authentication (e.g., AWS IAM database authentication).
+418. Demonstrate an exploit pattern of blind time-based SQL injection and write the corresponding secure parameterized implementation that neutralizes it.
+419. Analyze performance trade-offs of using Column-Level Encryption with client-side deterministic key management vs server-side hardware security modules (HSM).
+420. Explain the implications of database backup encryption, key rotation policies, and regulatory compliance frameworks (GDPR, HIPAA, PCI-DSS) on relational database architecture.
+
+---
+
+## Topic 17: Database Architecture, Storage & System Administration
+
+### Easy
+421. What is the difference between Logical Storage and Physical Storage in a database?
+422. What is a Database Page / Block? What is its standard size in common database engines (e.g., PostgreSQL, MySQL)?
+423. What is a Database Schema vs a Database Catalog?
+424. What is a Transaction Log / Write-Ahead Log (WAL)?
+425. What is Database Partitioning?
+426. What is the primary benefit of Table Partitioning?
+427. What is Database Sharding? How does Sharding differ from Partitioning?
+428. What is a Connection Pool in database management, and why is it used?
+429. What is Database Replication?
+430. What is the difference between Primary-Replica (Master-Slave) replication and Multi-Primary replication?
+
+### Medium
+431. Compare Range Partitioning, List Partitioning, Hash Partitioning, and Composite Partitioning.
+432. Write a DDL query creating a Range Partitioned table split by order creation years.
+433. Explain Partition Pruning. How does the query optimizer use partition keys to skip scanning unnecessary physical files?
+434. Compare Synchronous Replication versus Asynchronous Replication. What are the trade-offs regarding data safety and write latency?
+435. What is Read Replica Lag? What application design challenges arise when reading immediately after writing in an asynchronously replicated system?
+436. Explain Buffer Pool / Shared Buffers management in database RAM. What is LRU (Least Recently Used) cache eviction?
+437. What is a Checkpoint in database logging and recovery?
+438. What is Database Vacuuming (in PostgreSQL) or Auto-Compaction/Purging (in MySQL/InnoDB)? Why is MVCC garbage collection required?
+439. What is Index Bloat, and how does it affect memory utilization and scan speed?
+440. Explain Connection Starvation and how to properly size maximum connection limits vs CPU core counts on database servers.
+
+### Hard
+441. Explain Write-Ahead Logging (WAL) internals: Write-Ahead requirement, LSN (Log Sequence Number), Fuzzy Checkpointing, and ARIES recovery algorithm (Analysis, Redo, Undo).
+442. Design a horizontal database sharding strategy for an e-commerce platform handling 100,000 writes/sec. Detail shard key selection, re-sharding strategies, and cross-shard querying mitigation.
+443. Compare LSM-Trees (Log-Structured Merge-trees) used in modern storage engines with traditional B-Tree storage engines regarding write-amplification, read-amplification, and space-amplification.
+444. Explain the mechanics of High Availability (HA) architectures utilizing Raft or Paxos consensus algorithms for automated failover (e.g., Patroni for Postgres, MySQL InnoDB Cluster).
+445. Analyze the storage subsystem performance impact of Direct I/O vs OS Page Cache buffering, NVMe storage alignment, and RAID levels (RAID 10 vs RAID 5/6) for write-heavy OLTP workloads.
+
+---
+
+## Topic 18: Advanced SQL Scenarios & Query Writing Challenges
+
+### Easy
+446. Write a query to list all employee names along with their manager names, displaying 'Top Boss' if the employee has no manager.
+447. Write a query to find all orders placed on weekends (Saturday or Sunday).
+448. Write a query to display employee names in sentence case (First letter capitalized, rest lowercase).
+449. Write a query to output duplicate email addresses from a `users` table alongside the count of occurrences.
+450. Write a query to find the 3rd highest salary in an `employees` table without using window functions.
+451. Write a query to select all records from a table where a string column contains only numeric digits.
+452. Write a query to compute the sum of values while treating `NULL` as zero.
+453. Write a query to list all tables available in the current database schema.
+454. Write a query to calculate the percentage contribution of each product's sales to total company sales.
+455. Write a query to fetch the last inserted record in a table ordered by auto-incrementing ID.
+
+### Medium
+456. **Scenario:** Given a log table of user logins with `user_id` and `login_date`, write a query to return users who logged in for at least 3 consecutive days.
+457. **Scenario:** Given a transactions table with `account_id`, `amount`, and `transaction_time`, write a query to calculate the daily closing balance for every account.
+458. **Scenario:** Write a query to transform long customer attributes (`customer_id`, `attribute_name`, `attribute_value`) into a wide tabular format with columns `email`, `phone`, `address`.
+459. **Scenario:** Given an `employees` table, write a query to display the employee who earns the highest salary in each department along with the salary gap between them and the second-highest earner in that department.
+460. **Scenario:** Write a query to fill down missing (NULL) values in a column with the last non-null value previously seen in the sequence.
+461. **Scenario:** Given a list of employee working shifts with `start_time` and `end_time`, write a query to calculate the total uninterrupted work duration without double-counting overlapping shift times.
+462. **Scenario:** Write a query to generate a complete list of missing numbers in a sequential integer column sequence (e.g., 1, 2, 4, 5, 8 -> Missing: 3, 6, 7).
+463. **Scenario:** Given an order log, write a query to calculate the Retention Rate of customers month-over-month (Cohort Analysis).
+464. **Scenario:** Given a table tracking inventory changes (`item_id`, `change_qty`, `timestamp`), write a query to return all timestamps where stock dropped below zero.
+465. **Scenario:** Write a query that dynamically aggregates sales totals into weekly buckets starting on Mondays regardless of localized server environment settings.
+
+### Hard
+466. **Scenario:** Write a query to find the median execution time of API requests grouped by endpoint and HTTP status code using raw SQL without relying on built-in percentile functions.
+467. **Scenario (Gaps and Islands):** Given a dynamic dynamic sensor reading table logging status values ('OK', 'ERROR') sequentially, group continuous runs of status values into islands showing `status`, `start_time`, `end_time`, and `reading_count`.
+468. **Scenario:** Write a query to construct a dynamic BOM (Bill of Materials) recursive explode report: Given a product assembly table where parts consist of sub-parts, calculate total raw material quantities needed to produce 100 units of a parent product.
+469. **Scenario:** Write an optimized query to match order requests with available inventory batches using FIFO (First-In, First-Out) allocation rules, consuming batch allocations until orders are satisfied.
+470. **Scenario:** Given a table tracking employee attendance badge-ins and badge-outs, construct a query that pairs every badge-in with its corresponding next badge-out, identifying unpaired missing swipes accurately.
+471. **Scenario:** Construct a pure-SQL query to solve a Traveling Salesperson Problem (TSP) brute-force path matrix for a small graph of 6 connected nodes using recursive CTEs.
+472. **Scenario:** Write a query to compute the rolling Customer Lifetime Value (CLV) trajectory per user across dynamic 30-day window offsets post-registration.
+473. **Scenario:** Given high-frequency stock trade records, write a query to identify time intervals where trade volume spiked by 300% relative to the preceding 15-minute moving average.
+474. **Scenario:** Write a query that reconciles financial double-entry transaction ledgers, flagging unbalanced transaction batches where debit and credit sums fail to net out to zero.
+475. **Scenario:** Write a query to compute dynamic churn risk indicators: Identify active users who placed 5+ orders in month 1, but whose order frequency dropped by over 50% month-over-month while their average order value decreased.
+
+---
+
+## Topic 19: Working with Semi-Structured Data (JSON, XML) & Spatial SQL
+
+### Easy
+476. What is a semi-structured data type in relational databases?
+477. What is the difference between `JSON` (text storage) and `JSONB` (binary storage) in PostgreSQL?
+478. Write a query to extract a top-level string field from a JSON column.
+479. Write a query to filter rows based on a value inside a nested JSON key.
+480. What is Spatial SQL? Name two spatial data types (`GEOMETRY`, `GEOGRAPHY`).
+481. What is the standard coordinate format used for spatial points (e.g., Latitude/Longitude vs Longitude/Latitude order)?
+482. Write a query to create a table containing a JSON column and a Spatial Geometry column.
+483. What function converts a spatial point object into Well-Known Text (WKT) format?
+484. Write a query to validate if a string column contains valid JSON payload.
+485. Name the operator or function used to expand a JSON array into multiple individual SQL rows.
+
+### Medium
+486. Write a query using `JSON_EXTRACT()` or `->` / `->>` operators to pull data from a deeply nested JSON payload.
+487. Write a query to update a specific key-value pair inside an existing JSON column without overwriting the entire JSON document.
+488. Write a query using `JSON_ARRAY_ELEMENTS()` or `JSON_TABLE()` to convert a JSON array stored in a single cell into individual rows for joining.
+489. Write a spatial query using `ST_Distance()` to find all store locations within a 10-kilometer radius of a given user's coordinates.
+490. Explain the difference between `ST_Contains()`, `ST_Within()`, and `ST_Intersects()` in spatial querying.
+491. Write a spatial query using `ST_DWithin()` and explain why it utilizes spatial indexes (R-Tree) better than `ST_Distance() < distance`.
+492. Explain how R-Tree spatial indexing works compared to B-Tree indexing.
+493. Write a query aggregating relational query results into a single output JSON array using `JSON_AGG()` / `JSON_ARRAYAGG()`.
+494. Write a query constructing a dynamic nested JSON object from joined multi-table data using `JSON_BUILD_OBJECT()` / `JSON_OBJECT()`.
+495. What are Path Expressions (e.g., JSONPath) in SQL? Write an example query using JSONPath expressions.
+
+### Hard
+496. Write a query that dynamically extracts key-value keys from arbitrary, unstructured JSON logs and counts key presence across millions of rows using GIN containment operators (`@>`).
+497. Design an index strategy for high-throughput JSON queries (comparing Expression Indexes on JSON paths vs generalized GIN / JSONB indexes).
+498. Construct a spatial SQL query calculating the exact spatial intersection polygon area (using `ST_Intersection()` and `ST_Area()`) between overlapping delivery zones.
+499. Write a complex geospatial query converting raw GPS breadcrumb trajectories into map-matched route line segments using `ST_MakeLine()` window functions.
+500. Optimize a hybrid query joining billions of spatial point locations with dynamic JSON metadata payloads, ensuring full utilization of composite indexing and spatial bounding-box filters.

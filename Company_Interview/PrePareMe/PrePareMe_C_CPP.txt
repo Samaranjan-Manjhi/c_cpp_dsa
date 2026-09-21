@@ -1,6 +1,6 @@
 # C / C++ Interview Question Bank
 
-*Consolidated from Chella Software, Delta IoT Solutions, Network Marvels, Prescient Technologies, Smart Analytica, and the Opcito interview prep sets. Scope: C and C++ language & core CS fundamentals only (Qt, SQL, pure networking/OS, HR, aptitude, and DSA-only problems were left out). Questions only for now — answers are a future pass.*
+*Consolidated from Chella Software, Delta IoT Solutions, Network Marvels, Prescient Technologies, Smart Analytica, and the Opcito interview prep sets. Scope: C and C++ language & core CS fundamentals only (Qt, SQL, pure networking/OS, HR, aptitude, and DSA-only problems were left out — see the companion files: `Qt_Interview_Questions.md`, `Network_Interview_Questions.md`, `SQL_Interview_Questions.md`, `CPP_Coding_Problems.md`, `Miscellaneous_Puzzles_Aptitude.md`). Questions only for now — answers are a future pass.*
 
 ## How to Use This Document
 
@@ -74,7 +74,6 @@ Moving forward, I'm looking to bring my depth in kernel-level monitoring, system
 48. Can a 'const' variable value be determined at runtime based on user input?
 49. What are static assertions ('static_assert'), and how do they differ from runtime assertions ('assert')?
 50. Write a code example where a 'static_assert' validates the byte alignment size of a structural layout.
-
 
 ---
 
@@ -410,6 +409,11 @@ Moving forward, I'm looking to bring my depth in kernel-level monitoring, system
 48. What are 'std::next' and 'std::prev', and how do they safely calculate iterator offsets?
 49. Can you sort a 'std::list' using 'std::sort(list.begin(), list.end())'? How must a list be sorted?
 50. Write a short program that populates a 'std::vector<int>', removes all even numbers via the Erase-Remove idiom, and displays the final set.
+51. What is 'std::array', and how does it differ from a raw C-style array and from 'std::vector'?
+52. What is Small String Optimization (SSO) inside 'std::string', and how does it let short strings avoid a heap allocation entirely?
+53. What is 'std::string_view' versus 'std::string' when it comes to who owns the underlying character buffer? (cross-reference with Section 10.)
+54. What is 'std::move_iterator', and how does wrapping an iterator with 'std::make_move_iterator' change what 'std::copy' does at the destination?
+55. How does 'std::partition' differ from 'std::sort', and what does 'std::stable_partition' additionally guarantee about relative order?
 
 
 ---
