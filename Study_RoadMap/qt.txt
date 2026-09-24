@@ -1,0 +1,78 @@
+	 	Qt Framework — Study Notes
+
+1. Introduction to Qt
+1.1 What is Qt
+1.2 Qt Modules Overview (Core, Widgets, GUI, Network, SQL)
+1.3 Qt Creator IDE
+1.4 Build Systems
+1.4.1 qmake
+1.4.2 CMake with Qt
+
+2. Qt Core Concepts
+2.1 QObject
+2.2 Meta-Object System (moc)
+2.3 Signals & Slots
+2.3.1 connect() Syntax (old vs new)
+2.3.2 Custom Signals & Slots
+2.3.3 Signal-Slot Connection Types (Direct, Queued, Auto)
+2.4 Qt Event Loop
+2.5 Event Handling (QEvent, event())
+
+3. Qt Widgets
+3.1 QWidget Basics
+3.2 Common Widgets (QPushButton, QLabel, QLineEdit, etc.)
+3.3 Layouts
+3.3.1 QVBoxLayout / QHBoxLayout
+3.3.2 QGridLayout
+3.3.3 QFormLayout
+3.4 Dialogs (QDialog, QMessageBox, QFileDialog)
+3.5 Menus & Toolbars (QMenuBar, QToolBar, QAction)
+
+4. Model / View Framework
+4.1 Model-View-Delegate Architecture
+4.2 QAbstractItemModel
+4.3 QStandardItemModel
+4.4 QListView / QTableView / QTreeView
+4.5 Custom Delegates
+
+5. Qt Core Classes
+5.1 QString
+5.2 QVariant
+5.3 Container Classes (QList, QVector, QMap, QHash)
+5.4 QFile / QDir
+5.5 QSettings
+5.6 QTimer
+
+6. File & Network I/O in Qt
+6.1 File Handling (QFile, QTextStream, QDataStream)
+6.2 Networking with Qt
+6.2.1 QTcpSocket / QTcpServer
+6.2.2 QUdpSocket
+6.2.3 QNetworkAccessManager (HTTP requests)
+
+7. Qt Multithreading
+7.1 QThread Basics
+7.2 Worker Object Pattern (moveToThread)
+7.3 QtConcurrent
+7.4 Thread Synchronization (QMutex, QWaitCondition)
+
+8. Qt SQL Module
+8.1 QSqlDatabase
+8.2 QSqlQuery
+8.3 QSqlTableModel
+
+9. Custom Widgets & Painting
+9.1 Subclassing QWidget
+9.2 QPainter Basics
+9.3 paintEvent()
+9.4 Custom Styling (QSS - Qt Style Sheets)
+
+10. QML / Qt Quick (Overview)
+10.1 QML Basics
+10.2 Qt Quick Components
+10.3 Integrating C++ with QML
+
+11. Qt Best Practices for Interviews
+11.1 Memory Management (Parent-Child Ownership)
+11.2 Common Qt Interview Questions
+11.3 Debugging Qt Applications

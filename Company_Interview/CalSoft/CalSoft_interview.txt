@@ -1,0 +1,2467 @@
+=====================================================
+CALSOFT INTERVIEW PREPARATION
+Samaranjan Pankajkumar Manjhi | C++ Developer | Pune
+L1 Interview - 24 Sep 2026
+=====================================================
+
+
+=====================================================
+SECTION 1: QUESTIONS FROM GLASSDOOR / AMBITIONBOX / GEEKSFORGEEKS
+(Aggregated from multiple candidate reports across roles)
+=====================================================
+
+--- Interview Process Overview ---
+Typically 2-3 technical rounds (sometimes an online assessment first)
++ HR/managerial round. Heavy focus on resume/projects, core CS
+fundamentals (DSA, OS, DBMS, Networking), and C/C++.
+
+--- Technical & Coding Questions ---
+1. Predict Java output involving inheritance
+2. Data structure question on linked lists, including factorial via recursion
+3. Implement a stack and a queue using arrays (handle empty/full conditions)
+4. Describe the internal workings of memory management in C/C++
+5. String-based coding question (recurring, exact problem varies)
+6. SQL queries + writing queries to normalize a given schema (~4 SQL questions)
+7. Basic coding: arrays and strings (easy-level, often in online assessment)
+8. Find a pair in an array summing to a target N
+   Example: array = {1,3,7,9,10,11}, n = 12 -> answer = 2 (1+11, 9+3)
+9. Replace all characters in string S1 with '+' that are NOT in string S2
+   Example: S1 = "MOHIT", S2 = "ROHIT" -> answer = "+OHIT"
+10. Classify an integer array as one of:
+    - Series of natural numbers (e.g. {4,5,6,7,8})
+    - Fibonacci series (e.g. {2,3,5,8,13})
+    - Squares of natural numbers (e.g. {9,16,25,36,49})
+11. Count number of ways to sum to N using array elements (each used once)
+12. Program to find a cycle in a loop / linked list
+13. Convert a given tree to its Sum Tree
+14. Remove duplicates from a given string
+15. Find the n'th node from the end of a Linked List
+
+--- Core CS / Conceptual Questions ---
+16. Difference between process and thread
+17. What happens when you type "www.google.com" in a browser
+18. What is a Kernel
+19. Dynamic memory allocation in C, and how to allocate it
+20. Pass by reference vs pass by value in C
+21. Static vs public variables/methods (Java context, but conceptually relevant)
+22. OS questions: process/thread, memory management basics
+23. DBMS: database normalization (asked more than once)
+24. Networking-based questions (general, recurring)
+25. C vs C++ basics and OOP fundamentals
+26. SDLC and its different phases
+27. Performance optimization in Angular, lifecycle hooks, latest features,
+    dependency injection, pipes, directives (for frontend-adjacent roles)
+28. Network basics - firewall packet flow, troubleshooting, scenario-based
+
+--- Resume / Project-Based ---
+29. Deep dive into projects listed on your CV (how you built things and why)
+30. Awareness of trending tech (AI/ML, cryptography) even for non-ML roles
+31. "Why do you want to join our company?"
+
+--- HR / Managerial Round ---
+32. Strengths, weaknesses, career goals
+33. Behavioral / culture-fit questions
+34. Salary discussion and preferred work location
+
+
+=====================================================
+SECTION 2: LEETCODE DISCUSS - "Calsoft | SWE | Pune"
+Source: https://leetcode.com/discuss/post/912313/calsoft-swe-pune-by-anonymous_user-rvee/
+(Real candidate report, ~1 hour interview, started with intro +
+questions on internship/projects)
+=====================================================
+
+Q1. Which sorting algorithm is better?
+Q2. What is Kernel?
+Q3. Design a class in C++ to explain Inheritance, Polymorphism & Abstraction
+Q4. What are the phases of Compiler Design?
+Q5. Explain Counting Sort
+Q6. Difference between binary tree & binary search tree
+Q7. How will you reverse a string without modifying special symbols?
+Q8. What happens when you type a URL in browser?
+Q9. Practical example of Linked List
+Q10. How will you sort a Linked List?
+
+
+=====================================================
+SECTION 3: ANSWERS (C++ FOCUSED)
+=====================================================
+
+
+I'm currently a Systems and Cybersecurity Software Engineer, with about three years of experience specializing in building C/C++ production-grade endpoint security tools, kernel monitors, and Data Loss Prevention (DLP) engines across macOS and Linux. In my current role, I've designed and delivered multiple enterprise security modules — including a real-time antivirus scanning daemon using eBPF kernel tracing, an execution-gating framework built on kernel permission events, and a custom PAM module adding 2FA to SSH logins. My work has focused on cross-platform security daemons, with measurable wins on memory overhead and event-detection throughput.
+
+Moving forward, I'm looking to bring my depth in kernel-level monitoring, systems-level C/C++, and low-level architecture to a team tackling interesting high-scale engineering problems.
+
+
+
+--- Q1: Which sorting algorithm is better? ---
+No single "best" - depends on context:
+- Quicksort: O(n log n) average, in-place, cache-friendly. Best general
+  purpose choice, though O(n^2) worst case.
+- Merge sort: O(n log n) guaranteed, stable, needs O(n) extra space.
+  Good for linked lists and when stability matters.
+- Heapsort: O(n log n) guaranteed, in-place, not stable, worse cache
+  locality than quicksort.
+- Counting/Radix sort: O(n+k). Beats comparison sorts when data has a
+  small, known range.
+
+Strong answer: "Depends on data size, stability needs, and memory
+constraints - for general use I'd pick quicksort/introsort (what
+std::sort uses), for linked lists merge sort, for small-range integers
+counting sort."
+
+Bonus detail: std::sort in libstdc++ typically uses INTROSORT -
+quicksort with a fallback to heapsort when recursion gets too deep
+(avoids O(n^2) worst case), plus insertion sort for small partitions.
+
+
+--- Q2: What is Kernel? ---
+The core part of an OS that runs in privileged (kernel) mode with
+direct access to hardware. Manages CPU scheduling, memory, device
+drivers, and system calls; mediates all access between user-space
+processes and hardware. Loaded into memory at boot and stays resident,
+providing the syscall interface user programs use to request services.
+
+
+--- Q3: Design a class in C++ to explain Inheritance, Polymorphism & Abstraction ---
+
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+class Shape {                              // Abstraction
+public:
+    virtual double area() const = 0;        // pure virtual function
+    void display() const {
+        cout << "Area: " << area() << endl;
+    }
+    virtual ~Shape() {}                     // virtual destructor - important!
+};
+
+class Circle : public Shape {               // Inheritance
+    double radius;
+public:
+    Circle(double r) : radius(r) {}
+    double area() const override {          // Polymorphism (runtime, vtable)
+        return M_PI * radius * radius;
+    }
+};
+
+class Rectangle : public Shape {            // Inheritance
+    double l, w;
+public:
+    Rectangle(double l, double w) : l(l), w(w) {}
+    double area() const override {          // Polymorphism
+        return l * w;
+    }
+};
+
+int main() {
+    Shape* s1 = new Circle(5);
+    Shape* s2 = new Rectangle(4, 6);
+    s1->display();   // resolved at runtime via vtable - dynamic dispatch
+    s2->display();
+    delete s1;
+    delete s2;
+}
+
+Key points to mention:
+- Abstraction: Shape is abstract (pure virtual function = 0), can't be
+  instantiated directly.
+- Inheritance: Circle/Rectangle use public inheritance from Shape.
+- Polymorphism: achieved via virtual functions and a vtable; calling
+  s1->display() resolves area() at runtime based on actual object type.
+- Virtual destructor is critical in C++ (no GC like Java) so delete
+  through a base pointer correctly calls the derived destructor.
+- If asked further: contrast compile-time polymorphism (function
+  overloading, templates) vs runtime polymorphism (virtual functions).
+
+
+--- Q4: Phases of Compiler Design ---
+1. Lexical Analysis - source code -> tokens (removes whitespace/comments)
+2. Syntax Analysis (Parsing) - tokens -> parse tree/AST, checks grammar
+3. Semantic Analysis - type checking, scope resolution, validates meaning
+4. Intermediate Code Generation - AST -> IR (e.g. three-address code)
+5. Code Optimization - improves IR for speed/size (constant folding,
+   dead code elimination, etc.)
+6. Code Generation - IR -> target machine code
+7. Symbol Table Management and Error Handling run throughout all phases
+
+
+--- Q5: Explain Counting Sort ---
+Non-comparison sort for integers within a known, small range [0, k].
+Steps:
+  1. Build a count array of size k+1, count occurrences of each value.
+  2. Convert counts to prefix sums (cumulative counts) - gives each
+     value's final position.
+  3. Place elements into an output array using the prefix sums
+     (iterate original array from the end for stability).
+Time: O(n + k), Space: O(n + k). Stable and non-comparison-based, but
+only practical when k is not much larger than n.
+
+C++ implementation:
+
+void countingSort(vector<int>& arr) {
+    if (arr.empty()) return;
+    int maxVal = *max_element(arr.begin(), arr.end());
+    vector<int> count(maxVal + 1, 0);
+    for (int x : arr) count[x]++;
+    for (int i = 1; i <= maxVal; i++) count[i] += count[i - 1];
+    vector<int> output(arr.size());
+    for (int i = arr.size() - 1; i >= 0; i--) {
+        output[--count[arr[i]]] = arr[i];
+    }
+    arr = output;
+}
+
+
+--- Q6: Difference between Binary Tree & Binary Search Tree ---
+Binary Tree:
+  - Each node has at most 2 children
+  - No ordering constraint
+  - Search is O(n) in general
+  - Any structure allowed
+
+Binary Search Tree:
+  - Each node has at most 2 children
+  - Left subtree < node < right subtree (for all nodes)
+  - Search/insert/delete average O(log n), worst O(n) if unbalanced
+  - Structure enforced by the ordering property
+
+A BST is a specialized binary tree with the ordering invariant, which
+enables efficient searching.
+
+
+--- Q7: Reverse a string without modifying special symbols ---
+Two-pointer approach - only swap alphabetic characters, skip everything
+else in place.
+
+#include <string>
+#include <cctype>
+using namespace std;
+
+string reverseOnlyLetters(string s) {
+    int i = 0, j = s.size() - 1;
+    while (i < j) {
+        if (!isalpha(s[i])) { i++; continue; }
+        if (!isalpha(s[j])) { j--; continue; }
+        swap(s[i], s[j]);
+        i++; j--;
+    }
+    return s;
+}
+
+Example: "a-bC-dEf-ghIj" -> "j-Ih-gfE-dCba"
+Time O(n), Space O(1) extra (in-place).
+
+
+--- Q8: What happens when you type a URL in a browser? ---
+1. URL parsing - browser extracts protocol, domain, path.
+2. DNS resolution - domain resolved to IP (cache -> OS -> resolver ->
+   root/TLD/authoritative DNS servers).
+3. TCP connection - 3-way handshake with server IP on port 443/80.
+4. TLS handshake (if HTTPS) - certificate exchange, key negotiation,
+   encrypted channel established.
+5. HTTP request sent - browser sends GET request with headers.
+6. Server processes request - may hit load balancer, app server,
+   database, then returns an HTTP response.
+7. Browser receives response - parses HTML, builds DOM, fetches
+   additional resources (CSS/JS/images), builds render tree/CSSOM.
+8. Rendering - layout (reflow) -> paint -> composite, page displayed.
+9. Connection closes or is kept alive (HTTP keep-alive / HTTP2
+   multiplexing).
+
+
+--- Q9: Practical example of Linked List ---
+- Browser history / back-forward navigation - doubly linked list,
+  next/prev pointers move forward/backward.
+- Music/video playlist - "next" and "previous" track navigation.
+- Undo/redo functionality in editors.
+- Memory management - OS free-block lists in dynamic memory allocators
+  (relevant to systems background).
+- LRU cache implementation - combined with a hash map, a doubly linked
+  list tracks recency order for O(1) eviction.
+
+
+--- Q10: How will you sort a Linked List? ---
+Merge Sort is the standard answer - O(n log n), and unlike arrays,
+doesn't need extra O(n) space for a linked list since you just relink
+nodes.
+
+Approach:
+  1. Find the middle using slow/fast pointers.
+  2. Split the list into two halves.
+  3. Recursively sort each half.
+  4. Merge the two sorted halves (relinking pointers).
+
+struct ListNode {
+    int val;
+    ListNode* next;
+    ListNode(int x) : val(x), next(nullptr) {}
+};
+
+ListNode* merge(ListNode* l1, ListNode* l2) {
+    ListNode dummy(0);
+    ListNode* tail = &dummy;
+    while (l1 && l2) {
+        if (l1->val <= l2->val) { tail->next = l1; l1 = l1->next; }
+        else { tail->next = l2; l2 = l2->next; }
+        tail = tail->next;
+    }
+    tail->next = l1 ? l1 : l2;
+    return dummy.next;
+}
+
+ListNode* sortList(ListNode* head) {
+    if (!head || !head->next) return head;
+    ListNode *slow = head, *fast = head->next;
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    ListNode* mid = slow->next;
+    slow->next = nullptr;
+    ListNode* left = sortList(head);
+    ListNode* right = sortList(mid);
+    return merge(left, right);
+}
+
+Time: O(n log n), Space: O(log n) for recursion stack (no extra O(n)
+array needed, since nodes are relinked in place).
+Why not quicksort? Possible but loses its main advantage (in-place
+partitioning) on linked lists since there's no O(1) random access -
+merge sort is a more natural fit.
+
+
+=====================================================
+SECTION 4: PREP PRIORITY NOTES (based on Samar's C++/Linux/systems background)
+=====================================================
+- Strong areas likely to be easy wins: Kernel, memory management,
+  process/thread, pass by reference/value, URL-in-browser, dynamic
+  memory allocation.
+- Areas needing a quick refresh: OOP-via-class-design walkthrough,
+  compiler phases (more academic, less day-to-day for eBPF/PAM work).
+- Coding to actually drill hands-on before the interview:
+  Two Sum-style pair sum, reverse string skipping special chars,
+  sort a linked list (merge sort), implement stack/queue from arrays,
+  counting sort implementation.
+- SQL: be ready for basic queries and schema normalization questions.
+
+=====================================================
+SECTION 5: BFS & DFS - DEFINITIONS, TYPES, EXAMPLES (C++)
+=====================================================
+
+--- BFS (Breadth-First Search) ---
+Definition: Graph/tree traversal that explores all neighbors at the
+current depth before moving to nodes at the next depth level. Uses a
+QUEUE (FIFO) internally.
+
+When to use: Shortest path in an unweighted graph, level-order
+traversal, finding connected components.
+
+Example graph: 1-2, 1-3, 2-4, 3-4
+BFS from node 1 -> visit order: 1, 2, 3, 4
+
+C++ implementation (adjacency list):
+
+#include <vector>
+#include <queue>
+using namespace std;
+
+void bfs(int start, vector<vector<int>>& adj, int n) {
+    vector<bool> visited(n, false);
+    queue<int> q;
+    q.push(start);
+    visited[start] = true;
+
+    while (!q.empty()) {
+        int node = q.front(); q.pop();
+        cout << node << " ";
+        for (int neighbor : adj[node]) {
+            if (!visited[neighbor]) {
+                visited[neighbor] = true;
+                q.push(neighbor);
+            }
+        }
+    }
+}
+
+Time: O(V + E), Space: O(V) for visited array + queue.
+
+
+--- DFS (Depth-First Search) ---
+Definition: Graph/tree traversal that goes as deep as possible along
+one branch before backtracking. Uses a STACK (or recursion, which
+uses the call stack) internally.
+
+When to use: Cycle detection, topological sort, path finding,
+connected components, backtracking problems.
+
+Example graph: 1-2, 1-3, 2-4, 3-4
+DFS from node 1 -> visit order: 1, 2, 4, 3 (depends on adjacency order)
+
+C++ implementation (recursive):
+
+void dfs(int node, vector<vector<int>>& adj, vector<bool>& visited) {
+    visited[node] = true;
+    cout << node << " ";
+    for (int neighbor : adj[node]) {
+        if (!visited[neighbor]) {
+            dfs(neighbor, adj, visited);
+        }
+    }
+}
+
+C++ implementation (iterative, using explicit stack):
+
+void dfsIterative(int start, vector<vector<int>>& adj, int n) {
+    vector<bool> visited(n, false);
+    stack<int> st;
+    st.push(start);
+
+    while (!st.empty()) {
+        int node = st.top(); st.pop();
+        if (visited[node]) continue;
+        visited[node] = true;
+        cout << node << " ";
+        for (int neighbor : adj[node]) {
+            if (!visited[neighbor]) st.push(neighbor);
+        }
+    }
+}
+
+Time: O(V + E), Space: O(V) for visited array + recursion/stack.
+
+--- BFS vs DFS Quick Comparison ---
+| BFS                          | DFS                             |
+|-------------------------------|----------------------------------|
+| Uses Queue (FIFO)              | Uses Stack / recursion            |
+| Explores level by level        | Explores depth-first, backtracks  |
+| Finds shortest path (unweighted)| Doesn't guarantee shortest path  |
+| More memory for wide graphs    | More memory for deep graphs       |
+| Good for: shortest path, level order | Good for: cycle detection, topological sort, backtracking |
+
+
+=====================================================
+SECTION 6: OOP CONCEPTS - FULL DEFINITIONS, TYPES & EXAMPLES (C++)
+=====================================================
+
+--- 1. ENCAPSULATION ---
+Definition: Bundling data (member variables) and methods that operate
+on that data into a single unit (class), while restricting direct
+access to internal details using access specifiers (private/protected).
+Purpose: Data hiding and controlled access.
+
+Example:
+class BankAccount {
+private:
+    double balance;                 // hidden from outside
+public:
+    BankAccount(double b) : balance(b) {}
+    void deposit(double amt) { balance += amt; }
+    double getBalance() const { return balance; }  // controlled access
+};
+// balance can only be changed through deposit(), not directly modified.
+
+
+--- 2. ABSTRACTION ---
+Definition: Hiding implementation details and exposing only the
+essential features/behavior to the user. Achieved in C++ via abstract
+classes (classes with at least one pure virtual function).
+
+Example:
+class Shape {
+public:
+    virtual double area() const = 0;   // pure virtual -> abstract class
+};
+// User calls shape->area() without knowing HOW each shape calculates it.
+
+Difference from Encapsulation:
+- Encapsulation = HOW you hide data (mechanism - access specifiers).
+- Abstraction = WHAT you hide (design concept - hiding complexity,
+  showing only relevant interface).
+
+
+--- 3. INHERITANCE ---
+Definition: Mechanism where a new class (derived/child) acquires
+properties and behavior of an existing class (base/parent), enabling
+code reuse.
+
+Types of Inheritance (with examples):
+
+a) Single Inheritance - one derived class from one base class
+   class Animal { };
+   class Dog : public Animal { };
+
+b) Multiple Inheritance - one derived class from more than one base class
+   class Flyable { };
+   class Swimmable { };
+   class Duck : public Flyable, public Swimmable { };
+
+c) Multilevel Inheritance - chain of inheritance (grandparent->parent->child)
+   class Animal { };
+   class Mammal : public Animal { };
+   class Dog : public Mammal { };
+
+d) Hierarchical Inheritance - multiple derived classes from one base class
+   class Shape { };
+   class Circle : public Shape { };
+   class Square : public Shape { };
+
+e) Hybrid Inheritance - combination of two or more types above
+   (e.g. Hierarchical + Multiple), often causes the "Diamond Problem"
+   in C++, solved using VIRTUAL INHERITANCE:
+
+   class Animal { };
+   class Mammal : virtual public Animal { };
+   class WaterAnimal : virtual public Animal { };
+   class Whale : public Mammal, public WaterAnimal { };
+   // 'virtual' ensures only ONE copy of Animal is inherited into Whale.
+
+
+--- 4. POLYMORPHISM ---
+Definition: "Many forms" - ability of a function/object to behave
+differently based on context. Two types:
+
+a) COMPILE-TIME (Static) Polymorphism - resolved at compile time
+   Achieved via:
+   i.  Function Overloading - same function name, different parameters
+       int add(int a, int b) { return a + b; }
+       double add(double a, double b) { return a + b; }
+
+   ii. Operator Overloading - redefining operators for user-defined types
+       class Complex {
+       public:
+           int real, imag;
+           Complex operator+(const Complex& other) {
+               return {real + other.real, imag + other.imag};
+           }
+       };
+
+   iii. Templates (generic programming) - compiler generates code per type
+       template <typename T>
+       T maxVal(T a, T b) { return (a > b) ? a : b; }
+
+b) RUNTIME (Dynamic) Polymorphism - resolved at runtime
+   Achieved via: Virtual Functions + Base class pointer/reference
+   
+   How it works internally: Each class with virtual functions has a
+   hidden VTABLE (virtual table) - an array of function pointers. Each
+   object has a hidden VPTR pointing to its class's vtable. When you
+   call a virtual function through a base pointer, the call is resolved
+   at runtime by looking up the actual object's vtable (this is called
+   "dynamic dispatch" or "late binding").
+
+   class Animal {
+   public:
+       virtual void sound() { cout << "Some sound\n"; }
+   };
+   class Dog : public Animal {
+   public:
+       void sound() override { cout << "Bark\n"; }
+   };
+
+   Animal* a = new Dog();
+   a->sound();   // prints "Bark" - resolved at RUNTIME via vtable,
+                 // even though 'a' is typed as Animal*
+   delete a;
+
+   Key requirement: base class function must be marked 'virtual', and
+   you access it through a pointer or reference (not a plain object),
+   otherwise you get "static binding" / object slicing instead.
+
+
+--- ABSTRACT CLASS vs INTERFACE (C++) ---
+Note: C++ doesn't have a separate 'interface' keyword like Java/C#.
+In C++, an "interface" is simulated as a PURE abstract class (a class
+with ONLY pure virtual functions and no data members or implementation).
+
+| Abstract Class                          | Interface (C++ style)             |
+|-------------------------------------------|--------------------------------------|
+| Can have both pure virtual AND regular (implemented) functions | Has ONLY pure virtual functions (no implementation) |
+| Can have data members / state             | Should have no data members            |
+| Can have constructors                     | Typically no constructor (nothing to initialize) |
+| A class can inherit from only limited abstract classes practically (though C++ allows multiple) | Designed to be inherited via multiple inheritance freely (no diamond problem since no data) |
+| Represents an "IS-A" relationship with shared partial implementation | Represents a "CAN-DO" / capability contract |
+
+Example - Abstract class (partial implementation):
+class Shape {
+public:
+    virtual double area() const = 0;      // must override
+    void printInfo() { cout << "This is a shape\n"; }  // shared, implemented
+};
+
+Example - Interface style (pure abstract class, no implementation):
+class Drawable {
+public:
+    virtual void draw() const = 0;
+};
+class Printable {
+public:
+    virtual void print() const = 0;
+};
+class Document : public Drawable, public Printable {
+public:
+    void draw() const override { cout << "Drawing document\n"; }
+    void print() const override { cout << "Printing document\n"; }
+};
+// Document "implements" two interfaces via multiple inheritance -
+// safe here because Drawable/Printable have no data members, so no
+// diamond problem.
+
+
+--- OVERLOADING vs OVERRIDING ---
+| Overloading                         | Overriding                          |
+|----------------------------------------|----------------------------------------|
+| Same function name, different parameter list (number/type) | Same function signature, redefined in derived class |
+| Resolved at COMPILE time (static binding) | Resolved at RUNTIME (dynamic binding, needs virtual) |
+| Happens within the same class          | Happens between base and derived class |
+| No inheritance needed                  | Requires inheritance                   |
+| Example: add(int,int) vs add(double,double) | Example: Dog::sound() overrides Animal::sound() |
+
+
+--- WHY VIRTUAL DESTRUCTOR MATTERS ---
+If a base class pointer is used to delete a derived object and the
+base destructor is NOT virtual, only the base class destructor runs -
+the derived class's destructor is skipped, causing memory leaks /
+undefined behavior for any resources the derived class allocated.
+
+class Base {
+public:
+    virtual ~Base() { cout << "Base destroyed\n"; }
+};
+class Derived : public Base {
+public:
+    ~Derived() { cout << "Derived destroyed\n"; }
+};
+
+Base* b = new Derived();
+delete b;
+// With virtual destructor: prints "Derived destroyed" then "Base destroyed"
+// Without virtual: would print ONLY "Base destroyed" - BUG.
+
+
+=====================================================
+SECTION 7: ANSWERS FOR SECTION 1 CODING QUESTIONS (C++)
+=====================================================
+
+--- Linked List basics + Factorial via Recursion ---
+Two separate asks bundled in candidate reports: (a) a general linked
+list question (traversal/manipulation), (b) factorial using recursion.
+
+Basic singly linked list traversal + insert at end:
+
+struct Node {
+    int data;
+    Node* next;
+    Node(int d) : data(d), next(nullptr) {}
+};
+
+void insertAtEnd(Node*& head, int val) {
+    Node* newNode = new Node(val);
+    if (!head) { head = newNode; return; }
+    Node* temp = head;
+    while (temp->next) temp = temp->next;
+    temp->next = newNode;
+}
+
+void printList(Node* head) {
+    while (head) { cout << head->data << " "; head = head->next; }
+}
+
+Factorial via recursion:
+
+long long factorial(int n) {
+    if (n <= 1) return 1;          // base case
+    return n * factorial(n - 1);   // recursive case
+}
+// factorial(5) = 5*4*3*2*1 = 120
+// Time: O(n), Space: O(n) due to recursion call stack.
+
+
+--- Q3: Implement Stack using Array (with empty/full handling) ---
+
+#define MAX 100
+class Stack {
+    int arr[MAX];
+    int top;
+public:
+    Stack() : top(-1) {}
+    bool isEmpty() { return top == -1; }
+    bool isFull() { return top == MAX - 1; }
+    void push(int x) {
+        if (isFull()) { cout << "Stack Overflow\n"; return; }
+        arr[++top] = x;
+    }
+    int pop() {
+        if (isEmpty()) { cout << "Stack Underflow\n"; return -1; }
+        return arr[top--];
+    }
+    int peek() {
+        if (isEmpty()) { cout << "Stack is empty\n"; return -1; }
+        return arr[top];
+    }
+};
+
+Implement Queue using Array (with empty/full handling) - circular queue
+to reuse freed space:
+
+class Queue {
+    int arr[MAX];
+    int front, rear, count;
+public:
+    Queue() : front(0), rear(-1), count(0) {}
+    bool isEmpty() { return count == 0; }
+    bool isFull() { return count == MAX; }
+    void enqueue(int x) {
+        if (isFull()) { cout << "Queue Overflow\n"; return; }
+        rear = (rear + 1) % MAX;
+        arr[rear] = x;
+        count++;
+    }
+    int dequeue() {
+        if (isEmpty()) { cout << "Queue Underflow\n"; return -1; }
+        int val = arr[front];
+        front = (front + 1) % MAX;
+        count--;
+        return val;
+    }
+};
+// Both: push/pop/enqueue/dequeue are O(1) time, O(1) extra space
+// (fixed-size array).
+
+
+--- Q4: Internal workings of memory management in C/C++ ---
+Memory is divided into regions:
+  - CODE/TEXT segment - compiled instructions (read-only)
+  - DATA segment - initialized global/static variables
+  - BSS segment - uninitialized global/static variables (zeroed)
+  - STACK - function call frames, local variables, grows downward,
+    automatically managed (LIFO), fast allocation/deallocation
+  - HEAP - dynamic memory (malloc/new), grows upward, manually managed
+
+Dynamic allocation:
+  - C: malloc()/calloc()/realloc()/free() - work with raw bytes, no
+    constructor/destructor calls, return void*.
+  - C++: new/delete - call constructors/destructors, type-safe,
+    new[]/delete[] for arrays.
+
+Internally, the heap is managed by the memory allocator (e.g. glibc's
+ptmalloc / dlmalloc) which maintains free lists / bins of chunks by
+size, uses techniques like:
+  - Splitting large free chunks to satisfy smaller requests
+  - Coalescing adjacent free chunks to reduce fragmentation
+  - Metadata (chunk size, in-use bit) stored just before each allocated
+    block
+Fragmentation types: internal (allocated block larger than needed) and
+external (free memory scattered in small unusable chunks).
+
+Key point to mention: unlike Java/Python (garbage collected), C/C++
+requires manual deallocation - forgetting `free()`/`delete` causes
+memory leaks; double free or use-after-free causes undefined behavior.
+Smart pointers (unique_ptr, shared_ptr) in modern C++ automate this via
+RAII (Resource Acquisition Is Initialization).
+
+
+--- Q5: String-based coding (general pattern - example: check anagram) ---
+Since the exact problem varies by candidate, here's a representative
+easy string problem interviewers reuse - check if two strings are
+anagrams:
+
+bool isAnagram(string s1, string s2) {
+    if (s1.size() != s2.size()) return false;
+    int freq[256] = {0};
+    for (char c : s1) freq[c]++;
+    for (char c : s2) freq[c]--;
+    for (int f : freq) if (f != 0) return false;
+    return true;
+}
+// Time: O(n), Space: O(1) (fixed 256-size array)
+
+
+--- Q6: SQL - Normalization + example queries ---
+Normalization = organizing tables to reduce redundancy and avoid
+update/insert/delete anomalies.
+  - 1NF: atomic column values, no repeating groups.
+  - 2NF: 1NF + no partial dependency (non-key columns depend on the
+    WHOLE primary key, relevant for composite keys).
+  - 3NF: 2NF + no transitive dependency (non-key columns depend only
+    on the primary key, not on other non-key columns).
+  - BCNF: stricter 3NF, every determinant is a candidate key.
+
+Example - normalizing an unnormalized "Orders" table
+(OrderID, CustomerName, CustomerCity, ProductName, ProductPrice, Qty)
+into 3NF:
+
+CREATE TABLE Customers (
+    CustomerID INT PRIMARY KEY,
+    CustomerName VARCHAR(100),
+    CustomerCity VARCHAR(100)
+);
+
+CREATE TABLE Products (
+    ProductID INT PRIMARY KEY,
+    ProductName VARCHAR(100),
+    ProductPrice DECIMAL(10,2)
+);
+
+CREATE TABLE Orders (
+    OrderID INT PRIMARY KEY,
+    CustomerID INT,
+    ProductID INT,
+    Qty INT,
+    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID),
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+);
+
+Common query types asked alongside this:
+-- Find total order value per customer
+SELECT c.CustomerName, SUM(p.ProductPrice * o.Qty) AS Total
+FROM Orders o
+JOIN Customers c ON o.CustomerID = c.CustomerID
+JOIN Products p ON o.ProductID = p.ProductID
+GROUP BY c.CustomerName;
+
+-- Find customers with more than 1 order
+SELECT CustomerID, COUNT(*) 
+FROM Orders 
+GROUP BY CustomerID 
+HAVING COUNT(*) > 1;
+
+
+--- Q7: Basic arrays/strings (representative easy examples) ---
+a) Find the max element in an array:
+int findMax(vector<int>& arr) {
+    int mx = arr[0];
+    for (int x : arr) mx = max(mx, x);
+    return mx;
+}
+
+b) Reverse an array in place:
+void reverseArray(vector<int>& arr) {
+    int i = 0, j = arr.size() - 1;
+    while (i < j) swap(arr[i++], arr[j--]);
+}
+
+c) Check if a string is a palindrome:
+bool isPalindrome(string s) {
+    int i = 0, j = s.size() - 1;
+    while (i < j) if (s[i++] != s[j--]) return false;
+    return true;
+}
+
+
+--- Q8: Find a pair in an array summing to N ---
+array = {1,3,7,9,10,11}, n = 12 -> answer = 2 pairs (1+11, 9+3)
+
+Using a hash set, O(n) time:
+int countPairs(vector<int>& arr, int target) {
+    unordered_map<int,int> freq;
+    int count = 0;
+    for (int x : arr) freq[x]++;
+    for (int x : arr) {
+        int need = target - x;
+        if (freq.count(need)) {
+            if (need == x) count += freq[need] - 1;  // avoid pairing with self incorrectly
+            else count += freq[need];
+        }
+    }
+    return count / 2;  // each pair counted twice
+}
+// Time: O(n), Space: O(n)
+
+
+--- Q9: Replace chars in S1 not present in S2 with '+' ---
+S1 = "MOHIT", S2 = "ROHIT" -> answer = "+OHIT"
+
+string replaceNotPresent(string s1, string s2) {
+    bool present[256] = {false};
+    for (char c : s2) present[(unsigned char)c] = true;
+    for (char& c : s1) {
+        if (!present[(unsigned char)c]) c = '+';
+    }
+    return s1;
+}
+// Time: O(n+m), Space: O(1) (fixed 256-array)
+
+
+--- Q10: Classify array as Natural / Fibonacci / Squares series ---
+
+enum SeriesType { NATURAL, FIBONACCI, SQUARES, UNKNOWN };
+
+SeriesType classifySeries(vector<int>& arr) {
+    int n = arr.size();
+    if (n < 2) return UNKNOWN;
+
+    // Check natural numbers (consecutive, diff = 1)
+    bool isNatural = true;
+    for (int i = 1; i < n; i++)
+        if (arr[i] - arr[i-1] != 1) { isNatural = false; break; }
+    if (isNatural) return NATURAL;
+
+    // Check Fibonacci (each = sum of previous two)
+    bool isFib = (n >= 3);
+    for (int i = 2; i < n && isFib; i++)
+        if (arr[i] != arr[i-1] + arr[i-2]) isFib = false;
+    if (isFib) return FIBONACCI;
+
+    // Check perfect squares of consecutive naturals
+    bool isSquare = true;
+    for (int i = 0; i < n; i++) {
+        int root = (int)sqrt(arr[i]);
+        if (root * root != arr[i]) { isSquare = false; break; }
+    }
+    if (isSquare) return SQUARES;
+
+    return UNKNOWN;
+}
+// Time: O(n)
+
+
+--- Q11: Count ways to sum to N using array elements (each used once) ---
+Classic Subset Sum Count - 0/1 knapsack style DP:
+
+int countSubsetsWithSum(vector<int>& arr, int target) {
+    int n = arr.size();
+    vector<vector<int>> dp(n + 1, vector<int>(target + 1, 0));
+    for (int i = 0; i <= n; i++) dp[i][0] = 1;  // empty subset = sum 0
+
+    for (int i = 1; i <= n; i++) {
+        for (int s = 0; s <= target; s++) {
+            dp[i][s] = dp[i-1][s];                       // exclude arr[i-1]
+            if (arr[i-1] <= s) 
+                dp[i][s] += dp[i-1][s - arr[i-1]];        // include arr[i-1]
+        }
+    }
+    return dp[n][target];
+}
+// Time: O(n * target), Space: O(n * target) - can be optimized to O(target)
+
+
+--- Q12: Find a cycle in a Linked List (Floyd's Cycle Detection) ---
+
+bool hasCycle(ListNode* head) {
+    ListNode *slow = head, *fast = head;
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+        if (slow == fast) return true;   // cycle detected
+    }
+    return false;
+}
+// Time: O(n), Space: O(1) - "tortoise and hare" algorithm.
+// To find the cycle's START node: after detection, reset one pointer
+// to head, move both one step at a time; they meet at the cycle start.
+
+
+--- Q13: Convert a given Tree to its Sum Tree ---
+Sum Tree: each node's value is replaced by the sum of all values in
+its original left and right subtrees (leaf nodes become 0).
+
+struct TreeNode {
+    int val;
+    TreeNode *left, *right;
+    TreeNode(int v) : val(v), left(nullptr), right(nullptr) {}
+};
+
+int toSumTree(TreeNode* node) {
+    if (!node) return 0;
+    int oldVal = node->val;
+    int leftSum = toSumTree(node->left);
+    int rightSum = toSumTree(node->right);
+    node->val = leftSum + rightSum;         // replace with subtree sum
+    return node->val + oldVal;              // return sum including original value, for parent's use
+}
+// Time: O(n), Space: O(h) recursion stack (h = tree height)
+
+
+--- Q14: Remove duplicates from a given string ---
+Preserving first-occurrence order:
+
+string removeDuplicates(string s) {
+    bool seen[256] = {false};
+    string result;
+    for (char c : s) {
+        if (!seen[(unsigned char)c]) {
+            seen[(unsigned char)c] = true;
+            result += c;
+        }
+    }
+    return result;
+}
+// Example: "programming" -> "progamin"
+// Time: O(n), Space: O(1) extra (fixed 256-array) + O(n) for result
+
+
+--- Q15: Find the n'th node from the end of a Linked List ---
+Two-pointer approach, single pass:
+
+ListNode* nthFromEnd(ListNode* head, int n) {
+    ListNode *first = head, *second = head;
+    for (int i = 0; i < n; i++) {
+        if (!first) return nullptr;   // n larger than list length
+        first = first->next;
+    }
+    while (first) {
+        first = first->next;
+        second = second->next;
+    }
+    return second;   // second now points to n'th node from end
+}
+// Time: O(L) single pass (L = list length), Space: O(1)
+
+
+=====================================================
+SECTION 8: MORE LINKED LIST OPERATIONS (C++)
+=====================================================
+
+--- Create a Linked List MANUALLY (node-by-node, head->next style) ---
+This is the style interviewers often want to see written by hand on a
+whiteboard/screen, instead of a loop function:
+
+struct ListNode {
+    int val;
+    ListNode* next;
+    ListNode(int v) : val(v), next(nullptr) {}
+};
+
+int main() {
+    // Create nodes one by one and link them manually
+    ListNode* head = new ListNode(1);
+    head->next = new ListNode(2);
+    head->next->next = new ListNode(3);
+    head->next->next->next = new ListNode(4);
+    head->next->next->next->next = new ListNode(5);
+    // List is now: 1 -> 2 -> 3 -> 4 -> 5 -> NULL
+
+    // Print it
+    ListNode* temp = head;
+    while (temp != nullptr) {
+        cout << temp->val;
+        if (temp->next != nullptr) cout << " -> ";
+        temp = temp->next;
+    }
+    cout << endl;   // Output: 1 -> 2 -> 3 -> 4 -> 5
+
+    return 0;
+}
+
+Note: this manual style is fine for a QUICK demo of 4-5 nodes in an
+interview, but for anything longer or dynamic (unknown number of
+inputs) always prefer the loop-based createList() function shown
+above - "head->next->next->next..." chains become unreadable and
+error-prone past 3-4 nodes.
+
+
+--- Create a Linked List (loop-based, values entered one at a time) ---
+
+struct ListNode {
+    int val;
+    ListNode* next;
+    ListNode(int v) : val(v), next(nullptr) {}
+};
+
+// Create a linked list from a vector of values
+ListNode* createList(vector<int>& values) {
+    ListNode* head = nullptr;
+    ListNode* tail = nullptr;
+    for (int v : values) {
+        ListNode* newNode = new ListNode(v);
+        if (!head) { head = tail = newNode; }
+        else { tail->next = newNode; tail = newNode; }
+    }
+    return head;
+}
+
+// Print the linked list
+void printList(ListNode* head) {
+    while (head) {
+        cout << head->val;
+        if (head->next) cout << " -> ";
+        head = head->next;
+    }
+    cout << endl;
+}
+
+// Usage:
+// vector<int> vals = {1, 2, 3, 4, 5};
+// ListNode* head = createList(vals);
+// printList(head);   // Output: 1 -> 2 -> 3 -> 4 -> 5
+
+
+--- Find the START node of a cycle (Floyd's algorithm, Phase 2) ---
+(Builds on Q12's hasCycle - this extends it to locate WHERE the loop begins)
+
+ListNode* detectCycleStart(ListNode* head) {
+    ListNode *slow = head, *fast = head;
+    bool cycleFound = false;
+
+    // Phase 1: detect if a cycle exists
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+        if (slow == fast) { cycleFound = true; break; }
+    }
+    if (!cycleFound) return nullptr;   // no cycle
+
+    // Phase 2: find the start - reset one pointer to head,
+    // move both one step at a time; they meet at cycle start.
+    slow = head;
+    while (slow != fast) {
+        slow = slow->next;
+        fast = fast->next;
+    }
+    return slow;   // this node is the start of the cycle
+}
+// Why this works: if the cycle starts at distance 'a' from head, and
+// the meeting point in Phase 1 is 'b' steps into the cycle, math shows
+// moving 'a' more steps from head and 'a' more steps from the meeting
+// point lands both pointers exactly at the cycle start.
+// Time: O(n), Space: O(1)
+
+
+--- Find the LENGTH of the cycle ---
+
+int cycleLength(ListNode* head) {
+    ListNode *slow = head, *fast = head;
+    bool cycleFound = false;
+
+    // Phase 1: detect meeting point inside the cycle
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+        if (slow == fast) { cycleFound = true; break; }
+    }
+    if (!cycleFound) return 0;   // no cycle
+
+    // Phase 2: keep one pointer fixed, move the other around the
+    // cycle counting steps until it comes back to the same node.
+    int length = 1;
+    ListNode* temp = slow->next;
+    while (temp != slow) {
+        temp = temp->next;
+        length++;
+    }
+    return length;
+}
+// Time: O(n), Space: O(1)
+
+
+--- DELETE / REMOVE the cycle from a Linked List ---
+
+void removeCycle(ListNode* head) {
+    ListNode *slow = head, *fast = head;
+    bool cycleFound = false;
+
+    // Phase 1: detect
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+        if (slow == fast) { cycleFound = true; break; }
+    }
+    if (!cycleFound) return;   // nothing to remove
+
+    // Phase 2: find start of cycle
+    slow = head;
+    if (slow == fast) {
+        // special case: cycle starts at head itself -
+        // advance 'fast' to find the last node in the cycle
+        while (fast->next != slow) fast = fast->next;
+    } else {
+        while (slow->next != fast->next) {
+            slow = slow->next;
+            fast = fast->next;
+        }
+    }
+    fast->next = nullptr;   // break the cycle
+}
+// Time: O(n), Space: O(1)
+// Full combo tip for interview: mention you can do detect -> find
+// start -> find length -> remove all as one connected Floyd's-based
+// solution, reusing the same meeting point.
+
+
+--- REVERSE a Linked List ---
+
+// Iterative (preferred - O(1) space)
+ListNode* reverseList(ListNode* head) {
+    ListNode* prev = nullptr;
+    ListNode* curr = head;
+    while (curr) {
+        ListNode* nextTemp = curr->next;
+        curr->next = prev;
+        prev = curr;
+        curr = nextTemp;
+    }
+    return prev;   // new head
+}
+
+// Recursive (O(n) space due to call stack)
+ListNode* reverseListRecursive(ListNode* head) {
+    if (!head || !head->next) return head;
+    ListNode* newHead = reverseListRecursive(head->next);
+    head->next->next = head;
+    head->next = nullptr;
+    return newHead;
+}
+// Example: 1->2->3->4->5  =>  5->4->3->2->1
+// Time: O(n), Space: O(1) iterative / O(n) recursive
+
+
+--- SWAP NODES IN PAIRS ---
+Swap every two adjacent nodes (swap actual nodes, not just values).
+Example: 1->2->3->4  =>  2->1->4->3
+
+ListNode* swapPairs(ListNode* head) {
+    ListNode dummy(0);
+    dummy.next = head;
+    ListNode* prev = &dummy;
+
+    while (prev->next && prev->next->next) {
+        ListNode* first = prev->next;
+        ListNode* second = first->next;
+
+        first->next = second->next;   // 1 -> 3
+        second->next = first;         // 2 -> 1
+        prev->next = second;          // prev -> 2
+
+        prev = first;                 // move prev to end of swapped pair
+    }
+    return dummy.next;
+}
+// Time: O(n), Space: O(1) - uses a dummy node to simplify head handling.
+
+// If odd number of nodes, the last single node is left as-is:
+// Example: 1->2->3->4->5 => 2->1->4->3->5
+
+
+=====================================================
+SECTION 9: ADVANCED C++ TOPICS - DEFINITIONS, SYNTAX & EXAMPLES
+=====================================================
+
+--- 1. POINTERS vs REFERENCES ---
+
+Definition:
+- Pointer: a variable that STORES THE ADDRESS of another variable.
+  Can be reassigned to point elsewhere, can be null, supports pointer
+  arithmetic.
+- Reference: an ALIAS for an existing variable (another name for the
+  same memory location). Must be initialized at declaration, cannot
+  be reassigned to refer to something else afterward.
+
+Internal difference:
+- A pointer is a real object that occupies its own memory (typically
+  4 or 8 bytes) and holds an address value that can change.
+- A reference, internally, is usually implemented by the compiler as
+  a pointer under the hood (same machine code), BUT the language
+  enforces it can never be null and never be "rebound" - it's
+  syntactic sugar with compile-time restrictions, giving safer syntax
+  (you use `.` instead of `->`, no need to dereference explicitly).
+
+Syntax:
+int x = 10;
+int* ptr = &x;      // pointer: stores address of x
+int& ref = x;        // reference: ref IS x (another name for it)
+
+*ptr = 20;            // dereference pointer to modify x
+ref = 30;             // directly modifies x (no dereference needed)
+
+int y = 40;
+ptr = &y;             // valid: pointer can be reassigned
+// ref = y;           // INVALID as "rebind" - this actually just
+                       // copies y's VALUE into x (since ref = x),
+                       // it does NOT make ref refer to y.
+
+Can you have a null reference? 
+NO (not through legal means) - the C++ standard requires a reference
+to be bound to a valid object at the time it's declared; there's no
+syntax to declare an uninitialized or "null" reference (unlike
+pointers, which can be `nullptr`).
+Why: references were designed to always be a safe alias for a real
+object - allowing null would defeat that safety guarantee and every
+place using a reference would need null-checks, same as pointers,
+making references pointless.
+(Technically you CAN create a "null reference" via undefined behavior,
+e.g. dereferencing a null pointer to bind a reference to it - but this
+is UB and never done in correct code; interviewers want you to say
+references cannot be null BY DESIGN.)
+
+Quick comparison table:
+| Pointer                          | Reference                        |
+|-------------------------------------|--------------------------------------|
+| Can be null                         | Cannot be null                       |
+| Can be reassigned                   | Cannot be re-bound after init        |
+| Needs dereference (*) to access value| Used directly like the original var  |
+| Supports pointer arithmetic          | No arithmetic                        |
+| Can be uninitialized                | Must be initialized at declaration   |
+| Has its own memory address           | No separate address (same as target) |
+
+
+--- 2. SMART POINTERS: unique_ptr, shared_ptr, weak_ptr ---
+
+Definition: RAII wrapper classes (from <memory>) that automatically
+manage the lifetime of dynamically allocated objects, calling delete
+automatically when no longer needed - eliminating manual new/delete
+and preventing memory leaks.
+
+a) std::unique_ptr - EXCLUSIVE ownership. Only one unique_ptr can own
+   an object at a time. Cannot be copied, only MOVED.
+   #include <memory>
+   std::unique_ptr<int> p1 = std::make_unique<int>(10);
+   // std::unique_ptr<int> p2 = p1;      // ERROR - copy not allowed
+   std::unique_ptr<int> p2 = std::move(p1);  // OK - ownership transferred
+   // p1 is now nullptr, p2 owns the resource
+   Use case: default choice when only one owner is needed - zero
+   overhead compared to a raw pointer.
+
+b) std::shared_ptr - SHARED ownership via reference counting. Multiple
+   shared_ptrs can point to the same object; the object is destroyed
+   when the LAST shared_ptr owning it is destroyed.
+   std::shared_ptr<int> sp1 = std::make_shared<int>(20);
+   std::shared_ptr<int> sp2 = sp1;      // OK - both share ownership
+   cout << sp1.use_count();             // prints 2
+
+   How the reference counter is managed internally:
+   - make_shared allocates a CONTROL BLOCK alongside the object (one
+     allocation for both) containing: a strong reference count (# of
+     shared_ptrs), a weak reference count (# of weak_ptrs), and a
+     deleter.
+   - Every time a shared_ptr is copied, the strong count is atomically
+     incremented (thread-safe); every time one is destroyed/reset, it's
+     atomically decremented.
+   - When strong count hits 0, the managed object is destroyed
+     (deleter called). When BOTH strong and weak counts hit 0, the
+     control block itself is freed.
+
+c) std::weak_ptr - a NON-OWNING observer of an object managed by a
+   shared_ptr. Does NOT increment the strong reference count, so it
+   doesn't keep the object alive. Must be "locked" into a shared_ptr
+   to access the object (returns nullptr/empty if already destroyed).
+   std::shared_ptr<int> sp = std::make_shared<int>(30);
+   std::weak_ptr<int> wp = sp;           // observes sp, doesn't own
+   if (auto locked = wp.lock()) {        // safely check if still alive
+       cout << *locked;
+   }
+
+How to handle circular dependency (the classic shared_ptr pitfall):
+If A holds a shared_ptr to B, and B holds a shared_ptr to A, neither's
+reference count ever reaches 0 (each keeps the other alive) - MEMORY
+LEAK, objects never destroyed even when unreachable from outside.
+
+Fix: break the cycle by making ONE of the two references a weak_ptr:
+struct B;
+struct A {
+    std::shared_ptr<B> bPtr;
+    ~A() { cout << "A destroyed\n"; }
+};
+struct B {
+    std::weak_ptr<A> aPtr;    // weak_ptr breaks the cycle
+    ~B() { cout << "B destroyed\n"; }
+};
+// Now when the last external shared_ptr<A> goes out of scope,
+// A's count can drop to 0, which drops B's count to 0 too - both
+// get destroyed properly.
+
+Quick comparison:
+| unique_ptr            | shared_ptr                  | weak_ptr                   |
+|--------------------------|---------------------------------|---------------------------------|
+| Exclusive ownership       | Shared ownership (ref counted)  | Non-owning observer            |
+| Move-only, no copy        | Copyable (increments count)     | Doesn't affect ref count        |
+| Zero overhead              | Small overhead (atomic counter) | Used to break circular refs     |
+| delete on destruction      | delete when count reaches 0     | Must .lock() to access safely   |
+
+
+--- 3. MEMORY MANAGEMENT: Stack vs Heap, Dangling Pointer, Memory Leak, RAII ---
+
+Stack vs Heap (structural differences):
+| Stack                              | Heap                              |
+|----------------------------------------|----------------------------------------|
+| Fixed-size region, set at thread start | Large region, grows as needed (up to system limits) |
+| LIFO - allocation/deallocation automatic (function call/return) | Manual allocation/deallocation (new/delete, malloc/free) |
+| Very fast (just moves stack pointer)   | Slower (allocator searches free lists) |
+| Stores: local variables, function params, return addresses | Stores: dynamically allocated objects |
+| Limited size - stack overflow if exceeded (e.g. deep recursion) | Much larger, but can fragment over time |
+| Automatically freed when scope ends     | Must be explicitly freed by programmer (or smart pointer) |
+
+Dangling pointer: a pointer that still holds the address of memory
+that has ALREADY BEEN FREED/deleted or gone out of scope. Dereferencing
+it is undefined behavior (could crash, or silently corrupt data).
+int* getDangling() {
+    int x = 5;
+    return &x;          // x goes out of scope when function returns
+}                        // returned pointer is now DANGLING
+int* p = getDangling();
+cout << *p;              // undefined behavior!
+
+Another common cause:
+int* p = new int(10);
+delete p;                 // memory freed
+cout << *p;               // p is now dangling - UB
+p = nullptr;              // good practice: null it immediately after delete
+
+Memory leak: dynamically allocated memory that is NEVER freed because
+all pointers to it are lost/overwritten before calling delete/free.
+void leak() {
+    int* p = new int(100);
+    p = new int(200);      // original int(100) is now unreachable -
+                            // its memory is leaked, can never be freed
+}
+
+RAII (Resource Acquisition Is Initialization): a C++ idiom where a
+resource (memory, file handle, mutex lock, socket, etc.) is acquired
+in a constructor and automatically released in the destructor. Since
+C++ guarantees destructors run when an object goes out of scope (even
+during stack unwinding from an exception), this makes leaks/dangling
+resources far less likely.
+class FileHandle {
+    FILE* file;
+public:
+    FileHandle(const char* name) { file = fopen(name, "r"); }
+    ~FileHandle() { if (file) fclose(file); }   // auto-cleanup
+};
+void useFile() {
+    FileHandle fh("data.txt");
+    // ... use fh ...
+}   // fh's destructor runs automatically here - file closed,
+    // even if an exception was thrown in between.
+
+This is exactly how smart pointers (unique_ptr/shared_ptr) work - they
+are RAII wrappers around raw pointers, so "resource = memory" is
+acquired in the constructor and released in the destructor
+automatically, preventing both leaks and dangling pointers.
+
+
+--- 4. MOVE SEMANTICS (C++11): lvalues, rvalues, std::move, std::forward ---
+
+Definitions:
+- lvalue: an expression that refers to a persistent object with an
+  identifiable memory location/address - it can appear on the LEFT
+  side of an assignment (has a name, you can take its address).
+  int x = 10;   // x is an lvalue
+- rvalue: a temporary value/expression that does NOT persist beyond
+  the current expression - typically appears on the RIGHT side, has
+  no address you can take directly.
+  int y = x + 5;   // (x + 5) is an rvalue - a temporary
+
+std::move: does NOT actually move anything by itself - it's simply a
+CAST that converts an lvalue into an rvalue reference (T&&), signaling
+"this object's resources can be stolen/pilfered, I don't need its
+current value anymore." Declared in <utility>.
+std::string a = "hello";
+std::string b = std::move(a);   // a's internal buffer is "stolen" by b
+                                 // a is now left in a valid but
+                                 // unspecified (usually empty) state
+
+std::forward: used in TEMPLATE functions to preserve the value
+category (lvalue-ness or rvalue-ness) of a forwarded argument -
+"perfect forwarding." Prevents an rvalue from accidentally being
+treated as an lvalue when passed through a wrapper function.
+template <typename T>
+void wrapper(T&& arg) {
+    target(std::forward<T>(arg));   // forwards arg preserving whether
+}                                   // it was originally lvalue/rvalue
+
+Move constructor vs Copy constructor (performance):
+- Copy constructor: allocates NEW memory and copies every element
+  from the source object - O(n) time and extra memory, expensive for
+  large objects (e.g. big vectors/strings).
+- Move constructor: simply "steals" the source's internal pointers/
+  resources (pointer reassignment) and leaves the source empty/null -
+  O(1), no new allocation, no copying of data.
+
+class MyString {
+    char* data;
+    size_t len;
+public:
+    // Copy constructor - deep copy, expensive
+    MyString(const MyString& other) {
+        len = other.len;
+        data = new char[len + 1];
+        memcpy(data, other.data, len + 1);   // O(n) copy
+    }
+    // Move constructor - cheap, steals resources
+    MyString(MyString&& other) noexcept {
+        data = other.data;      // steal the pointer
+        len = other.len;
+        other.data = nullptr;   // leave source in valid empty state
+        other.len = 0;
+    }
+    ~MyString() { delete[] data; }
+};
+
+Why it matters: without move semantics, returning a large object by
+value (e.g. `return someBigVector;`) or pushing into a container
+during reallocation would trigger expensive deep copies. Move
+semantics make these operations essentially free (just pointer swaps),
+which is why STL containers like std::vector, std::string all have
+move constructors since C++11.
+
+
+--- 5. SYNCHRONIZATION: Race Conditions, std::mutex, std::lock_guard, Semaphores ---
+
+Race condition: occurs when two or more threads access SHARED DATA
+concurrently, at least one of them modifies it, and the final result
+depends on the unpredictable TIMING/ORDER of thread execution -
+leading to incorrect or inconsistent results.
+
+Example WITHOUT protection (race condition):
+int counter = 0;
+void increment() {
+    for (int i = 0; i < 100000; i++) counter++;   // NOT atomic! 
+    // counter++ is actually: read, add 1, write back - 3 steps.
+    // Two threads can interleave these steps and lose updates.
+}
+// Running increment() on 2 threads may give counter < 200000 due to
+// lost updates.
+
+Fix using std::mutex + std::lock_guard:
+#include <mutex>
+#include <thread>
+
+std::mutex mtx;
+int counter = 0;
+
+void safeIncrement() {
+    for (int i = 0; i < 100000; i++) {
+        std::lock_guard<std::mutex> lock(mtx);  // acquires lock on
+        counter++;                              // construction, RAII-
+    }                                            // releases automatically
+}                                                // when 'lock' goes out
+                                                  // of scope (even on
+                                                  // exception)
+
+int main() {
+    std::thread t1(safeIncrement);
+    std::thread t2(safeIncrement);
+    t1.join();
+    t2.join();
+    cout << counter;   // always correctly 200000
+}
+
+std::mutex: a low-level lock primitive - lock()/unlock() manually.
+Risk: if an exception is thrown between lock() and unlock(), the mutex
+stays locked forever (deadlock) - this is why lock_guard is preferred.
+
+std::lock_guard: an RAII WRAPPER around a mutex - locks it in the
+constructor, unlocks it in the destructor automatically. Cannot be
+manually unlocked early or copied. Simplest, safest choice for a
+straightforward critical section.
+
+std::unique_lock: similar to lock_guard but more flexible - can be
+locked/unlocked manually, deferred, or used with condition variables
+(mention this if asked for alternatives to lock_guard).
+
+Semaphores (std::counting_semaphore, C++20, <semaphore>): unlike a
+mutex (binary - locked/unlocked, owned by one thread), a semaphore
+maintains a COUNT and allows up to N threads to access a resource
+concurrently. Useful for limiting concurrent access to a pool of N
+identical resources (e.g. N database connections).
+#include <semaphore>
+std::counting_semaphore<3> sem(3);   // allow up to 3 concurrent threads
+void accessResource() {
+    sem.acquire();     // decrements count, blocks if 0
+    // ... use one of the 3 shared resources ...
+    sem.release();     // increments count back
+}
+
+Mutex vs Semaphore quick distinction:
+| Mutex                                | Semaphore                         |
+|------------------------------------------|----------------------------------------|
+| Binary lock - only 1 thread at a time     | Counting - up to N threads at a time  |
+| Has ownership (only the locking thread can unlock) | No ownership - any thread can release |
+| Used for protecting a critical section    | Used for limiting access to a resource pool |
+
+
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+
+// Finds indices of the two numbers that add up to the target
+std::pair<int, int> twoSum(const std::vector<int>& nums, int target) {
+    std::unordered_map<int, int> num_map; // Stores {value: index}
+    
+    for (int i = 0; i < nums.size(); ++i) {
+        int complement = target - nums[i];
+        
+        // Check if the complement already exists in the map
+        if (num_map.find(complement) != num_map.end()) {
+            return {num_map[complement], i};
+        }
+        
+        // Otherwise, store the current number and its index
+        num_map[nums[i]] = i;
+    }
+    
+    return {-1, -1}; // Return dummy values if no pair is found
+}
+
+
+#include <iostream>
+#include <string>
+#include <unordered_set>
+
+std::string replaceMissingChars(std::string str1, const std::string& str2, char replacement = '*') {
+    // Lookups in an unordered_set take O(1) time
+    std::unordered_set<char> present_chars(str2.begin(), str2.end());
+    
+    for (char& ch : str1) {
+        if (present_chars.find(ch) == present_chars.end()) {
+            ch = replacement; // Replace character if it's not found in str2
+        }
+    }
+    
+    return str1;
+}
+
+
+#include <iostream>
+#include <vector>
+#include <cmath>
+
+enum SequenceType { ARITHMETIC, FIBONACCI, PERFECT_SQUARES, UNKNOWN };
+
+SequenceType classifySequence(const std::vector<int>& arr) {
+    int n = arr.size();
+    if (n < 3) return UNKNOWN; // Need at least 3 elements to reliably check rules
+
+    bool is_arithmetic = true;
+    bool is_fibonacci = true;
+    bool is_squares = true;
+
+    int diff = arr[1] - arr[0];
+
+    for (int i = 0; i < n; ++i) {
+        // 1. Check Arithmetic (Constant difference)
+        if (i > 0 && (arr[i] - arr[i-1] != diff)) {
+            is_arithmetic = false;
+        }
+
+        // 2. Check Fibonacci (Each element is sum of previous two)
+        if (i >= 2 && (arr[i] != arr[i-1] + arr[i-2])) {
+            is_fibonacci = false;
+        }
+
+        // 3. Check Perfect Squares
+        int root = std::round(std::sqrt(arr[i]));
+        if (root * root != arr[i]) {
+            is_squares = false;
+        }
+    }
+
+    if (is_arithmetic) return ARITHMETIC;
+    if (is_fibonacci) return FIBONACCI;
+    if (is_squares) return PERFECT_SQUARES;
+    return UNKNOWN;
+}
+
+
+#include <iostream>
+#include <vector>
+
+int countWaysToTarget(const std::vector<int>& arr, int target) {
+    // dp[i] stores the number of ways to reach sum 'i'
+    std::vector<int> dp(target + 1, 0);
+    dp[0] = 1; // Base case: 1 way to make a sum of 0 (using an empty subset)
+
+    for (int num : arr) {
+        for (int i = num; i <= target; ++i) {
+            dp[i] += dp[i - num];
+        }
+    }
+
+    return dp[target];
+}
+
+Stack & Queue Implementations Using Arrays
+class Stack {
+private:
+    int* arr;
+    int topIndex;
+    int capacity;
+
+public:
+    Stack(int size) {
+        capacity = size;
+        arr = new int[capacity];
+        topIndex = -1;
+    }
+
+    ~Stack() { delete[] arr; }
+
+    void push(int val) {
+        if (topIndex == capacity - 1) return; // Overflow
+        arr[++topIndex] = val;
+    }
+
+    void pop() {
+        if (topIndex == -1) return; // Underflow
+        topIndex--;
+    }
+
+    int top() {
+        if (topIndex == -1) return -1;
+        return arr[topIndex];
+    }
+};
+
+Queue (FIFO - Circular Array implementation)
+class Queue {
+private:
+    int* arr;
+    int frontIndex, rearIndex, capacity, currentSize;
+
+public:
+    Queue(int size) {
+        capacity = size;
+        arr = new int[capacity];
+        frontIndex = 0;
+        rearIndex = -1;
+        currentSize = 0;
+    }
+
+    ~Queue() { delete[] arr; }
+
+    void enqueue(int val) {
+        if (currentSize == capacity) return; // Overflow
+        rearIndex = (rearIndex + 1) % capacity;
+        arr[rearIndex] = val;
+        currentSize++;
+    }
+
+    void dequeue() {
+        if (currentSize == 0) return; // Underflow
+        frontIndex = (frontIndex + 1) % capacity;
+        currentSize--;
+    }
+
+    int front() {
+        if (currentSize == 0) return -1;
+        return arr[frontIndex];
+    }
+};
+
+
+=====================================================
+END OF FILE
+=====================================================
+================================================================
+INTERVIEW QUICK REFERENCE — TREE TRAVERSALS + OOP + THREADING
+================================================================
+
+----------------------------------------------------------------
+1. TREE TRAVERSALS
+----------------------------------------------------------------
+
+struct Node {
+    int data;
+    Node* left;
+    Node* right;
+    Node(int val) : data(val), left(nullptr), right(nullptr) {}
+};
+
+// INORDER: Left -> Root -> Right  (gives sorted order for a BST)
+void inorder(Node* root) {
+    if (!root) return;
+    inorder(root->left);
+    cout << root->data << " ";
+    inorder(root->right);
+}
+
+// PREORDER: Root -> Left -> Right  (used to copy/serialize a tree)
+void preorder(Node* root) {
+    if (!root) return;
+    cout << root->data << " ";
+    preorder(root->left);
+    preorder(root->right);
+}
+
+// POSTORDER: Left -> Right -> Root  (used to delete a tree safely)
+void postorder(Node* root) {
+    if (!root) return;
+    postorder(root->left);
+    postorder(root->right);
+    cout << root->data << " ";
+}
+
+Memory trick: the ROOT's position in the name tells you the order.
+  PRE-order  -> root comes first
+  IN-order   -> root comes in the middle
+  POST-order -> root comes last
+
+----------------------------------------------------------------
+2. OOP — FOUR PILLARS (definitions + syntax + example)
+----------------------------------------------------------------
+
+A) ENCAPSULATION
+Definition: Bundling data and the methods that operate on it into
+one unit (class), and restricting direct access to internal data
+using access specifiers (private/protected/public).
+
+class Account {
+private:
+    int balance;              // hidden from outside
+public:
+    Account(int b) : balance(b) {}
+    void deposit(int amt) { balance += amt; }
+    int getBalance() const { return balance; }   // controlled access
+};
+
+B) ABSTRACTION
+Definition: Hiding implementation details and exposing only the
+essential interface. Achieved via abstract classes / pure virtual
+functions.
+
+class Shape {                       // abstract class
+public:
+    virtual double area() const = 0;   // pure virtual -> no body here
+    virtual ~Shape() {}
+};
+
+class Circle : public Shape {
+    double radius;
+public:
+    Circle(double r) : radius(r) {}
+    double area() const override { return 3.14159 * radius * radius; }
+};
+// You cannot do: Shape s;  (abstract classes can't be instantiated)
+
+C) INHERITANCE
+Definition: A class (derived) acquires properties/behavior of
+another class (base).
+
+Types of inheritance:
+  1. Single       - one base, one derived
+  2. Multilevel   - A -> B -> C (chain)
+  3. Multiple     - one derived class, two+ base classes
+  4. Hierarchical - one base, multiple derived classes
+  5. Hybrid       - combination of the above
+
+class Animal {
+public:
+    void eat() { cout << "eating\n"; }
+};
+class Dog : public Animal {          // single inheritance
+public:
+    void bark() { cout << "barking\n"; }
+};
+
+MULTIPLE INHERITANCE + DIAMOND PROBLEM:
+class A { public: int x; };
+class B : public A {};
+class C : public A {};
+class D : public B, public C {};     // D has TWO copies of A::x -> ambiguous!
+
+D obj;
+obj.x = 5;          // ERROR: ambiguous, compiler doesn't know B::x or C::x
+
+FIX — virtual inheritance:
+class A { public: int x; };
+class B : virtual public A {};
+class C : virtual public A {};
+class D : public B, public C {};     // now only ONE shared copy of A
+
+D obj;
+obj.x = 5;          // OK now, single unambiguous copy
+
+D) POLYMORPHISM
+Definition: Same interface, different behavior.
+  - Compile-time (static) -> function overloading, operator overloading
+  - Runtime (dynamic)     -> function overriding via virtual functions
+
+// Compile-time: overloading
+class Print {
+public:
+    void show(int i)    { cout << "int: " << i << "\n"; }
+    void show(double d) { cout << "double: " << d << "\n"; }
+};
+
+// Runtime: overriding (see Virtual Functions section below)
+
+----------------------------------------------------------------
+3. VIRTUAL FUNCTIONS & VTABLES
+----------------------------------------------------------------
+
+Definition: A virtual function lets a derived class override a
+base class function, and the CORRECT version is chosen at RUNTIME
+based on the actual object type, not the pointer/reference type.
+
+class Base {
+public:
+    virtual void speak() { cout << "Base speaking\n"; }
+    virtual ~Base() {}     // always make base destructor virtual
+};
+class Derived : public Base {
+public:
+    void speak() override { cout << "Derived speaking\n"; }
+};
+
+Base* b = new Derived();
+b->speak();      // prints "Derived speaking" -> runtime polymorphism
+
+HOW IT WORKS INTERNALLY:
+- Any class with at least one virtual function gets a hidden
+  pointer called the vptr, added to every object of that class.
+- The compiler creates one vtable (virtual table) PER CLASS — a
+  static array of function pointers, one entry per virtual function.
+- The object's vptr points to its class's vtable.
+- A virtual call is resolved as: object->vptr->vtable[index]()
+- This is why calling a virtual function costs one extra pointer
+  dereference compared to a normal (non-virtual) call.
+- Non-virtual functions are resolved at compile-time (no vtable
+  lookup needed) — that's why they're faster but can't be
+  overridden polymorphically.
+
+Why base destructor MUST be virtual:
+Base* b = new Derived();
+delete b;   // without virtual ~Base(), only ~Base() runs -> leaks
+            // Derived's members/destructor never gets called
+
+----------------------------------------------------------------
+4. CLASS WITH int / char* / ARRAY MEMBERS — RULE OF THREE/FIVE
+----------------------------------------------------------------
+
+Why this matters: if a class manages raw memory (like char*), the
+COMPILER-GENERATED copy constructor just copies the POINTER, not
+the data (shallow copy). Two objects then point to the same memory
+-> double free / dangling pointer bugs. This is the classic
+interview setup question.
+
+class MyString {
+private:
+    int length;
+    char* data;          // raw pointer -> owns dynamic memory
+    int arr[5];           // plain array member (not a pointer)
+
+public:
+    // Constructor
+    MyString(const char* str) {
+        length = strlen(str);
+        data = new char[length + 1];
+        strcpy(data, str);
+        for (int i = 0; i < 5; i++) arr[i] = i;
+    }
+
+    // 1. Destructor
+    ~MyString() {
+        delete[] data;
+    }
+
+    // 2. Copy Constructor (deep copy)
+    MyString(const MyString& other) {
+        length = other.length;
+        data = new char[length + 1];
+        strcpy(data, other.data);
+        for (int i = 0; i < 5; i++) arr[i] = other.arr[i];
+    }
+
+    // 3. Copy Assignment Operator
+    MyString& operator=(const MyString& other) {
+        if (this == &other) return *this;      // self-assignment check
+        delete[] data;                          // free old memory
+        length = other.length;
+        data = new char[length + 1];
+        strcpy(data, other.data);
+        for (int i = 0; i < 5; i++) arr[i] = other.arr[i];
+        return *this;
+    }
+
+    // 4. Move Constructor (Rule of Five, C++11)
+    MyString(MyString&& other) noexcept {
+        length = other.length;
+        data = other.data;           // steal the pointer
+        other.data = nullptr;        // null out source
+        other.length = 0;
+        for (int i = 0; i < 5; i++) arr[i] = other.arr[i];
+    }
+
+    // 5. Move Assignment Operator (Rule of Five, C++11)
+    MyString& operator=(MyString&& other) noexcept {
+        if (this == &other) return *this;
+        delete[] data;
+        length = other.length;
+        data = other.data;
+        other.data = nullptr;
+        other.length = 0;
+        for (int i = 0; i < 5; i++) arr[i] = other.arr[i];
+        return *this;
+    }
+
+    void print() const { cout << data << "\n"; }
+};
+
+RULE OF THREE: if you write ANY ONE of destructor / copy
+constructor / copy assignment operator, you almost certainly need
+all three (because it means the class manages a resource manually).
+
+RULE OF FIVE (C++11 onward): same idea, plus move constructor and
+move assignment operator, so resources can be transferred instead
+of deep-copied when the source is a temporary/rvalue.
+
+----------------------------------------------------------------
+5. OPERATOR OVERLOADING (live-codeable example)
+----------------------------------------------------------------
+
+class Complex {
+private:
+    int real, imag;
+public:
+    Complex(int r = 0, int i = 0) : real(r), imag(i) {}
+
+    // Overload + operator
+    Complex operator+(const Complex& other) const {
+        return Complex(real + other.real, imag + other.imag);
+    }
+
+    // Overload == operator
+    bool operator==(const Complex& other) const {
+        return real == other.real && imag == other.imag;
+    }
+
+    // Overload << (must be a free function / friend, not a member)
+    friend ostream& operator<<(ostream& os, const Complex& c) {
+        os << c.real << " + " << c.imag << "i";
+        return os;
+    }
+};
+
+int main() {
+    Complex a(2, 3), b(1, 4);
+    Complex c = a + b;         // uses operator+
+    cout << c << "\n";         // uses operator<<
+}
+
+----------------------------------------------------------------
+6. MULTITHREADING — MUTEX vs SEMAPHORE, DEADLOCK, RACE CONDITION
+----------------------------------------------------------------
+
+RACE CONDITION: two or more threads access shared data
+concurrently, and the final result depends on the unpredictable
+order of execution -> incorrect/inconsistent results.
+
+#include <thread>
+#include <mutex>
+int counter = 0;
+mutex mtx;
+
+void increment() {
+    for (int i = 0; i < 100000; i++) {
+        // WITHOUT a lock here -> race condition on 'counter'
+        lock_guard<mutex> lock(mtx);   // WITH lock -> safe
+        counter++;
+    }
+}
+// Two threads calling increment() without the mutex can lose
+// updates because counter++ is not atomic (read-modify-write).
+
+MUTEX (Mutual Exclusion):
+- A lock that allows only ONE thread into a critical section at a
+  time.
+- Binary in nature: locked or unlocked.
+- Owned by the thread that locked it — only that thread can unlock
+  it (in most implementations).
+- Used for protecting a single shared resource.
+
+SEMAPHORE:
+- A counter-based synchronization primitive that allows UP TO N
+  threads into a section at once (N = initial count).
+- Not owned by a specific thread — any thread can signal/release it.
+- Used to limit access to a pool of resources (e.g., N database
+  connections), or for signaling between threads (unlike mutex,
+  which is only for exclusion).
+- Binary semaphore (count = 1) looks similar to a mutex but
+  differs in ownership semantics.
+
+#include <semaphore>            // C++20
+counting_semaphore<3> sem(3);   // allow 3 threads at once
+void worker() {
+    sem.acquire();
+    // ... use one of 3 shared resources ...
+    sem.release();
+}
+
+DEADLOCK: two or more threads are each waiting on a resource held
+by the other, so none can proceed.
+
+Classic 2-mutex deadlock:
+mutex m1, m2;
+
+void threadA() {
+    lock_guard<mutex> lockA(m1);
+    // ... some work ...
+    lock_guard<mutex> lockB(m2);   // waits for m2, held by threadB
+}
+void threadB() {
+    lock_guard<mutex> lockB(m2);
+    // ... some work ...
+    lock_guard<mutex> lockA(m1);   // waits for m1, held by threadA
+}
+// threadA holds m1, wants m2. threadB holds m2, wants m1. -> DEADLOCK
+
+FIX — always lock mutexes in the SAME global order in every thread,
+or use std::lock(m1, m2) to acquire both atomically:
+    lock(m1, m2);
+    lock_guard<mutex> lockA(m1, adopt_lock);
+    lock_guard<mutex> lockB(m2, adopt_lock);
+
+Four necessary conditions for deadlock (good to state verbally):
+  1. Mutual exclusion   - resource can't be shared
+  2. Hold and wait      - thread holds one resource, waits for another
+  3. No preemption      - resource can't be forcibly taken away
+  4. Circular wait       - a cycle of threads each waiting on the next
+
+----------------------------------------------------------------
+7. MODERN C++ (11/14/17) QUICK HITS
+----------------------------------------------------------------
+
+SMART POINTERS
+#include <memory>
+
+// unique_ptr: sole ownership, cannot be copied, only moved
+unique_ptr<int> up = make_unique<int>(5);
+// unique_ptr<int> up2 = up;        // ERROR: copy not allowed
+unique_ptr<int> up2 = std::move(up); // OK: ownership transferred, up is now null
+
+// shared_ptr: shared ownership via reference counting
+shared_ptr<int> sp1 = make_shared<int>(10);
+shared_ptr<int> sp2 = sp1;          // OK, refcount now 2
+cout << sp1.use_count();            // 2
+
+// weak_ptr: non-owning observer of a shared_ptr, avoids cycles
+weak_ptr<int> wp = sp1;
+if (auto locked = wp.lock()) { /* use *locked safely */ }
+
+MOVE SEMANTICS / rvalue references
+void process(string&& s) { cout << "moved: " << s; }   // rvalue ref
+string a = "hello";
+process(std::move(a));   // std::move casts 'a' to an rvalue; 'a' is
+                          // now in a valid-but-unspecified state
+// std::move does NOT move anything itself — it's just a cast that
+// tells the compiler "this can be treated as a temporary."
+
+CONSTEXPR
+constexpr int square(int x) { return x * x; }
+constexpr int val = square(5);   // computed at COMPILE time, not runtime
+// Use when a value/function result is knowable at compile time
+// -> zero runtime cost.
+
+STD::OPTIONAL (C++17) — represents a value that may or may not exist
+#include <optional>
+optional<int> findValue(bool found) {
+    if (found) return 42;
+    return nullopt;             // no value, safer than returning -1/NULL
+}
+auto result = findValue(false);
+if (result.has_value()) cout << *result;
+else cout << "no value";
+
+STD::VARIANT (C++17) — type-safe union, holds one of several types
+#include <variant>
+variant<int, string> v = 10;
+v = "now a string";
+if (holds_alternative<string>(v)) cout << get<string>(v);
+
+AUTO / TYPE DEDUCTION
+auto x = 5;             // int
+auto y = 3.14;          // double
+auto vec = vector<int>{1,2,3};
+for (auto& elem : vec) { /* elem's type deduced, reference avoids copy */ }
+
+----------------------------------------------------------------
+8. MEMORY & POINTERS — DEEPER QUESTIONS
+----------------------------------------------------------------
+
+POINTER ARITHMETIC
+int arr[5] = {10,20,30,40,50};
+int* p = arr;
+p++;              // moves by sizeof(int) bytes, now points to arr[1]
+cout << *(p+2);   // arr[3] -> 40
+
+STACK vs HEAP
+- Stack: fast, automatic lifetime (freed when scope ends), limited
+  size, used for local variables.
+- Heap: manual lifetime (new/delete), larger, slower to allocate,
+  survives beyond the function that created it -> needed for
+  dynamically sized/long-lived data.
+
+DANGLING POINTER example (and how to avoid it):
+int* dangerous() {
+    int local = 5;
+    return &local;      // BUG: local's stack memory is gone after return
+}
+// Fix: return by value, or allocate on heap and manage with a
+// smart pointer, or pass output param by reference.
+
+VTABLE MEMORY OVERHEAD
+- A class with virtual functions gets exactly ONE extra pointer
+  (the vptr) per OBJECT — typically 8 bytes on a 64-bit system —
+  regardless of how many virtual functions it has.
+- The vtable ITSELF (the array of function pointers) exists once
+  PER CLASS, not per object, so it doesn't scale with object count.
+- So: 1 vptr per object (fixed cost) + 1 shared vtable per class
+  (size = number of virtual functions * pointer size).
+
+VIRTUAL DESTRUCTOR
+class Base {
+public:
+    virtual ~Base() { cout << "~Base\n"; }
+};
+class Derived : public Base {
+    int* data;
+public:
+    Derived() { data = new int[10]; }
+    ~Derived() override { delete[] data; cout << "~Derived\n"; }
+};
+Base* b = new Derived();
+delete b;
+// WITH virtual ~Base(): prints ~Derived then ~Base -> data is freed.
+// WITHOUT virtual: only ~Base() runs -> Derived's destructor never
+// fires -> 'data' leaks. This is undefined behavior per the standard.
+
+UNIQUE_PTR vs SHARED_PTR / make_shared OPTIMIZATION
+- unique_ptr: zero overhead over a raw pointer, single owner, moves
+  only.
+- shared_ptr: has overhead — a CONTROL BLOCK holding the reference
+  count (and weak count), typically heap-allocated separately.
+- make_shared<T>(...) allocates the control block AND the object
+  T in a SINGLE heap allocation (one malloc), whereas
+  shared_ptr<T> sp(new T(...)) does TWO separate allocations (one
+  for T, one later for the control block) -> make_shared is faster
+  and more cache-friendly. Always prefer make_shared unless you
+  need a custom deleter.
+
+NEW/DELETE vs MALLOC/FREE
+- new/delete call constructors/destructors; malloc/free just
+  allocate raw bytes.
+- new is type-safe (returns T*, no cast needed); malloc returns void*.
+- new throws std::bad_alloc on failure; malloc returns nullptr.
+- C++ keeps malloc/free for C compatibility and low-level cases
+  where you explicitly don't want construction (e.g. custom
+  allocators).
+
+OVERLOADING operator new
+class MyClass {
+public:
+    static void* operator new(size_t size) {
+        cout << "Custom allocation of " << size << " bytes\n";
+        return ::operator new(size);       // call global new
+    }
+    static void operator delete(void* ptr) {
+        cout << "Custom deallocation\n";
+        ::operator delete(ptr);
+    }
+};
+// Overloading per-class lets you route a class's allocations
+// through a custom pool/allocator without touching global new.
+
+MEMORY FRAGMENTATION & CUSTOM ALLOCATORS
+- Fragmentation: repeated alloc/free of varying sizes leaves gaps
+  of free memory too small/scattered to satisfy new requests, even
+  though total free memory is sufficient.
+- Fix in long-running apps: use a memory POOL (pre-allocate a big
+  block, hand out fixed-size chunks from it) or a custom STL
+  allocator so objects of the same size are reused from the same
+  pool instead of going back to the general heap each time —
+  avoids fragmentation and is faster (no general-purpose allocator
+  overhead).
+
+STD::VECTOR REALLOCATION
+- A vector stores size, capacity, and a pointer to a heap buffer.
+- When size() reaches capacity() and you push_back() again, the
+  vector must reallocate: it allocates a NEW, larger buffer
+  (typically ~1.5x-2x the old capacity, implementation-defined),
+  copies/moves all existing elements into it, then frees the old
+  buffer. This invalidates all existing pointers/iterators/references.
+- To minimize reallocations: call reserve(n) up front if you know
+  (or can estimate) the final size — this avoids repeated
+  copy-and-grow cycles.
+
+----------------------------------------------------------------
+9. THREAD-SAFE QUEUE (mutex + condition_variable)
+----------------------------------------------------------------
+
+#include <queue>
+#include <mutex>
+#include <condition_variable>
+
+template<typename T>
+class ThreadSafeQueue {
+    queue<T> q;
+    mutable mutex mtx;
+    condition_variable cv;
+public:
+    void push(T val) {
+        lock_guard<mutex> lock(mtx);
+        q.push(std::move(val));
+        cv.notify_one();          // wake one waiting consumer
+    }
+
+    T pop() {
+        unique_lock<mutex> lock(mtx);
+        cv.wait(lock, [this]{ return !q.empty(); });  // sleeps until non-empty
+        T val = std::move(q.front());
+        q.pop();
+        return val;
+    }
+
+    bool empty() const {
+        lock_guard<mutex> lock(mtx);
+        return q.empty();
+    }
+};
+// cv.wait() atomically unlocks the mutex while sleeping and
+// re-locks it on wakeup -> avoids missed wakeups and busy-waiting.
+
+----------------------------------------------------------------
+10. PUZZLES — WITH ANSWERS
+----------------------------------------------------------------
+
+A) TWO EGGS / 100-FLOOR BUILDING
+Question: minimum number of drops in the WORST CASE to find the
+exact floor an egg starts breaking from, using 2 eggs.
+
+Answer: 14 drops.
+Reasoning: with the first egg, don't halve — start high and reduce
+the step size by 1 each time a drop fails (since you have fewer
+attempts left with the 2nd egg to search the remaining floors
+linearly). You want the largest n such that n + (n-1) + (n-2) +
+... + 1 >= 100. That's a triangular number: 14+13+...+1 = 105 >= 100,
+so 14 is the minimum. Drop egg 1 at floor 14, then 27, then 39...
+(step decreasing by 1 each time); if it breaks, use egg 2 to walk
+up linearly from the last safe floor.
+
+B) 8L / 5L / 3L JUGS — MEASURE 4 LITERS
+Start: 8L jug full, 5L and 3L empty.
+1. Pour 8L jug -> 5L jug until 5L is full: (3, 5, 0)
+2. Pour 5L jug -> 3L jug until 3L is full: (3, 2, 3)
+3. Empty the 3L jug: (3, 2, 0)
+4. Pour 5L jug -> 3L jug: (3, 0, 2)
+5. Pour 8L jug -> 5L jug until 5L full: (0, 5, 2)
+6. Pour 5L jug -> 3L jug until 3L full (only 1L needed, 3L has 2,
+   needs 1 more): (1, 4, 3)
+Result: the 5L jug now has exactly 4 liters. (State shown as
+(8L jug, 5L jug, 3L jug) at each step.)
+
+C) 25 HORSES, RACES OF 5, NO STOPWATCH — FIND TOP 3
+Answer: 7 races minimum.
+Reasoning:
+1. Races 1-5: split 25 horses into 5 groups of 5, race each group.
+   (5 races so far) — now you know the ranking within each group.
+2. Race 6: race the 5 WINNERS of each group against each other.
+   This tells you the single fastest horse overall, and roughly
+   orders the groups by strength.
+3. Now use the race-6 result to prune: let group winners be
+   A1>B1>C1>D1>E1 (race 6 order). A1 is the overall fastest.
+   - D1, E1 and everyone in groups D and E can be eliminated
+     (their whole groups are too slow).
+   - From group C, only C1 can possibly be in the top 3 (C2 can't
+     beat B1 or A1 potentially — eliminate C2-C5).
+   - From group B, B1 and B2 are still candidates, B3-B5 eliminated.
+   - From group A, A2 and A3 are still candidates (A1 already
+     confirmed #1).
+   Remaining candidates for 2nd/3rd place: A2, A3, B1, B2, C1
+   (5 horses).
+4. Race 7: race these 5 candidates. The top 2 finishers of this
+   race are the overall 2nd and 3rd fastest horses.
+Total: 5 + 1 + 1 = 7 races.
+
+D) 8 BALLS, ONE HEAVIER, BALANCE SCALE — FIND IT IN 2 WEIGHINGS
+You have 8 identical-looking balls, one is heavier than the rest.
+Find the heavier ball using a balance scale in minimum weighings.
+
+Answer: 2 weighings.
+Reasoning:
+1. Split the 8 balls into 3 groups: 3, 3, 2.
+2. Weighing 1: put 3 balls on each side of the scale (leave 2 aside).
+   - If balanced -> the heavier ball is one of the 2 set aside.
+     Weighing 2: put those 2 balls one on each side -> heavier
+     side wins. Done.
+   - If NOT balanced -> the heavier ball is in the heavier group of 3.
+     Weighing 2: take those 3 balls, put 1 on each side of the
+     scale (leave 1 aside).
+       - If balanced -> the one set aside is the heavier ball.
+       - If not balanced -> the heavier side has the heavier ball.
+Total: 2 weighings, works for any single-heavier-ball case among 8.
+
+(General rule: with a 3-way split each weighing, you can find 1
+odd ball among up to 3^n balls in n weighings — 8 balls fits
+comfortably in n=2 since 3^2=9.)
+
+----------------------------------------------------------------
+11. LONGEST SUBSTRING WITHOUT REPEATING CHARACTERS
+----------------------------------------------------------------
+
+Problem: given a string, find the length (or the substring itself)
+of the longest contiguous substring with no repeated characters.
+Example: "abcabcbb" -> "abc", length 3.
+
+Approach: SLIDING WINDOW with a hash set (or map storing last seen
+index). Two pointers (left, right) define the current window;
+expand right, and whenever a repeat is found, shrink from the left
+until the repeat is gone. This is O(n) — each character is visited
+at most twice (once by right, once by left).
+
+#include <string>
+#include <unordered_map>
+using namespace std;
+
+int lengthOfLongestSubstring(const string& s) {
+    unordered_map<char, int> lastSeen;   // char -> last index seen at
+    int left = 0, maxLen = 0;
+
+    for (int right = 0; right < (int)s.size(); right++) {
+        char c = s[right];
+        // if c was seen before AND that occurrence is inside the
+        // current window, jump 'left' past it
+        if (lastSeen.count(c) && lastSeen[c] >= left) {
+            left = lastSeen[c] + 1;
+        }
+        lastSeen[c] = right;
+        maxLen = max(maxLen, right - left + 1);
+    }
+    return maxLen;
+}
+
+// If they ask you to return the SUBSTRING itself, not just the
+// length, track the best window's start index too:
+string longestSubstring(const string& s) {
+    unordered_map<char, int> lastSeen;
+    int left = 0, maxLen = 0, bestStart = 0;
+
+    for (int right = 0; right < (int)s.size(); right++) {
+        char c = s[right];
+        if (lastSeen.count(c) && lastSeen[c] >= left) {
+            left = lastSeen[c] + 1;
+        }
+        lastSeen[c] = right;
+        if (right - left + 1 > maxLen) {
+            maxLen = right - left + 1;
+            bestStart = left;
+        }
+    }
+    return s.substr(bestStart, maxLen);
+}
+
+Dry run on "abcabcbb":
+- right=0 'a': not seen -> window [0,0], maxLen=1
+- right=1 'b': not seen -> window [0,1], maxLen=2
+- right=2 'c': not seen -> window [0,2], maxLen=3
+- right=3 'a': seen at 0, 0>=left(0) -> left=1; window [1,3], maxLen=3
+- right=4 'b': seen at 1, 1>=left(1) -> left=2; window [2,4], maxLen=3
+- right=5 'c': seen at 2, 2>=left(2) -> left=3; window [3,5], maxLen=3
+- right=6 'b': seen at 4, 4>=left(3) -> left=5; window [5,6], maxLen=2
+- right=7 'b': seen at 6, 6>=left(5) -> left=7; window [7,7], maxLen=2
+Final answer: maxLen = 3 ("abc")
+
+Say this out loud in the interview as: "I'll use a sliding window —
+two pointers and a hash map tracking the last index each character
+was seen at. I expand the right pointer, and whenever I hit a
+character already in my current window, I move the left pointer
+just past its previous occurrence. This gives O(n) time and O(min(n,
+charset size)) space, versus a brute-force O(n^2) or O(n^3) check
+of every substring."
+
+================================================================
+END OF FILE — tell me if you want anything added (linked list
+reversal, cycle detection, two-sum, recursion set, SOLID
+principles breakdown, inheritance vs composition, etc.)
+================================================================
