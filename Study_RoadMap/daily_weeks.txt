@@ -1,0 +1,137 @@
+================================================================
+ WEEKLY STUDY ITINERARY - MAX 5-7 SUBTOPICS PER DAY
+ Starts: Friday, Sept 25, 2026.
+================================================================
+
+HOW TO USE:
+Every week has the same 7-day pattern:
+ Day 1 = next C session
+ Day 2 = next C++ session
+ Day 3 = next Qt session
+ Day 4 = next Networking (CN) session
+ Day 5 = next OS revision session (loops forever, already fully documented)
+ Day 6 = next DSA session A
+ Day 7 = next DSA session B
+Just take the NEXT unused session in that subject's list below each
+time its day comes around. If you don't finish a session, resume
+the leftover items next time instead of starting the next session.
+
+================================================================
+C - 26 SESSIONS (~26 weeks to finish, one C-day per week)
+================================================================
+C-S1: 1.1 What is C; 1.2 History of C; 1.3 Features of C; 1.4 C as Mother/System/Procedural/Structured/Mid-Level Language; 1.5 How to Install C; 1.6 First C Program
+C-S2: 1.7 Compilation Process; 1.8 Flow of a C Program; 1.9 printf()/scanf(); 1.10 Variables; 1.11 Data Types; 1.12 Keywords
+C-S3: 1.13 Identifiers; 1.14 Operators (all 8 sub-types together); 1.15 Comments; 1.16 Format Specifiers; 1.17 Escape Sequences; 1.18 ASCII Value
+C-S4: 1.19 Constants; 1.20 Literals; 1.21 Tokens; 1.22 C Boolean; 1.23 Static in C; 1.24 Programming Errors (Syntax/Runtime/Logical)
+C-S5: 1.25 Compile Time vs Runtime; 1.26 Conditional Operator; 1.27 Bitwise Operator; 1.28 2's Complement; 1.29 Compiler vs Interpreter; 1.30 Structure in C
+C-S6: 1.31 Programming Language; 2.1 Decision-Making Overview; 2.2 if-else; 2.3 Nested if-else; 2.4 switch; 2.5 if-else vs switch
+C-S7: 2.6 Loops Overview (while/do-while/for/nested/infinite/for vs while); 2.7 break; 2.8 continue; 2.9 goto; 2.10 Branching/Jump Statements; 2.11 Type Casting
+C-S8: 3.1 1-D Array; 3.2 2-D Array; 3.3 Multidimensional Array; 3.4 Passing Array to Function; 3.5 Returning Array from Function; 3.6 Array of Strings
+C-S9: 3.7 Dynamic Array; 3.8 Array vs Pointer; 3.9 Return an Array in C; 3.10 Array to Function; 4.1 Function Basics; 4.2 Functions in C
+C-S10: 4.3 Call by Value vs Reference; 4.4 Actual vs Formal Parameters; 4.5 Recursion; 4.6 Storage Classes; 4.7 Inter-Function Communication; 4.8 Reentrant Functions
+C-S11: 4.9 Library vs User-Defined Functions; 5.1 Pointer Basics; 5.2 Pointer to Pointer; 5.3 Pointer Arithmetic; 5.4 Pointer vs Array; 5.5 Null Pointer
+C-S12: 5.6 Void Pointer; 5.7 Dangling Pointer; 5.8 const Pointer; 5.9 Function Pointer; 5.10 Passing Function Pointer as Argument; 5.11 Dereferencing a Pointer
+C-S13: 5.12 sizeof() Operator; 5.13 Near/Far/Huge Pointers; 6.1 malloc(); 6.2 calloc(); 6.3 realloc(); 6.4 free()
+C-S14: 6.5 Memory Leak; 6.6 Segmentation Fault; 6.7 Stack Overflow; 6.8 Memory Layout of a C Program; 7.1 String Basics; 7.2 gets()/puts()
+C-S15: 7.3 String Functions Overview; 7.4 strlen(); 7.5 strcpy(); 7.6 strcat(); 7.7 strcmp()/strcmpi()/strncmp(); 7.8 strrev()
+C-S16: 7.9 strlwr()/strupr(); 7.10 strstr()/strchr()/strrchr(); 7.11 strtok(); 7.12 strdup(); 7.13 Reversing/Comparing/Concatenating Strings; 8. Math
+C-S17: 9.1 Structure in C; 9.2 Accessing Structure Members; 9.3 Array of Structures; 9.4 Nested Structure; 9.5 Self-Referential Structure; 9.6 Structure Pointer
+C-S18: 9.7 Structure Padding; 9.8 Bit Fields; 9.9 typedef; 9.10 Union in C; 9.11 Structure vs Union; 9.12 Enum in C
+C-S19: 10.1 File Handling Basics; 10.2 fprintf()/fscanf(); 10.3 fputc()/fgetc(); 10.4 fputs()/fgets(); 10.5 fread()/fwrite(); 10.6 fseek()
+C-S20: 10.7 rewind(); 10.8 ftell(); 10.9 feof(); 10.10 Random Access File; 11.1 Preprocessor Overview; 11.2 Macros (#define)
+C-S21: 11.3 Multiline Macros; 11.4 #include; 11.5 #undef; 11.6 #ifdef/#ifndef; 11.7 #if/#else; 11.8 #error
+C-S22: 11.9 #pragma; 11.10 Header Files (Standard & Custom); 12.1 argc/argv; 13.1 stdio.h; 13.2 stdlib.h; 13.3 string.h
+C-S23: 13.4 math.h; 13.5 ctype.h; 13.6 conio.h; 14.1 Type Qualifiers (const/volatile/restrict); 14.2 Lvalue and Rvalue; 14.3 Sequence Points
+C-S24: 14.4 Integer Promotions; 14.5 size_t; 14.6 Garbage Value; 14.7 stdin/stdout/stderr; 14.8 Symbolic Constants; 14.9 Assert in C
+C-S25: 14.10 exit() vs return(); 14.11 System Function; 14.12 Multithreading in C (basics); 15.1 Linked List (Singly, Doubly); 15.2 Stack; 15.3 Queue
+C-S26 (final, 3 items): 15.4 Searching (Linear/Binary/Interpolation); 15.5 Sorting (Bubble/Insertion/Quick/Merge); 15.6 Time Complexity Basics (Big O)
+-> After C-S26, C is complete. Loop back to C-S1 as revision.
+
+================================================================
+C++ - 6 SESSIONS (resuming at 13.4, ~6 weeks to finish)
+================================================================
+CPP-S1: 13.4 std::string_view; 14.1 Defining a Namespace; 14.2 using Directive; 15.1 Structure in C++ (vs C); 15.2 Union in C++; 15.3 Enum Class (Scoped Enums)
+CPP-S2: 16.1 Data Races and Synchronization (mutex/lock_guard/unique_lock); 16.2 Condition Variables; 16.3 Asynchronous Execution (future/async/promise); 16.4 Atomic Operations; 17.1 Stack vs Heap Allocation; 17.2 Memory Leaks and Dangling Pointers
+CPP-S3: 17.3 Valgrind and Address Sanitizers; 17.4 Custom Memory Allocators; 17.8 Static Initialization Order Fiasco; 18.1 optional/variant/any; 18.2 Structured Binding; 18.3 Concepts and Constraints (C++20)
+CPP-S4: 18.4 Ranges Library; 18.5 Modules (C++20 vs #include); 18.6 Coroutines; 18.7 std::span; 18.8 Type Traits; 19.1 Preprocessor Directives (#define, include guards)
+CPP-S5: 19.2 Header vs Source Files; 19.3 Static vs Dynamic Linking; 19.4 Build Tools (CMake/Makefiles); 19.5 Name Mangling/extern "C"/ABI; 20.1 Singleton; 20.2 Factory
+CPP-S6 (final, 2 items): 20.3 Observer; 20.4 PIMPL
+-> After CPP-S6, C++ is complete. Loop back to CPP-S1 as revision (or start mock interviews from Company_Interview/).
+
+================================================================
+QT - 8 SESSIONS (~8 weeks to finish)
+================================================================
+QT-S1: 1.1 What is Qt; 1.2 Qt Modules Overview; 1.3 Qt Creator IDE; 1.4 Build Systems (qmake, CMake with Qt); 2.1 QObject; 2.2 Meta-Object System (moc)
+QT-S2: 2.3 Signals & Slots (connect syntax, custom signals/slots, connection types); 2.4 Qt Event Loop; 2.5 Event Handling (QEvent, event()); 3.1 QWidget Basics; 3.2 Common Widgets; 3.3 Layouts (VBox/HBox/Grid/Form)
+QT-S3: 3.4 Dialogs (QDialog, QMessageBox, QFileDialog); 3.5 Menus & Toolbars; 4.1 Model-View-Delegate Architecture; 4.2 QAbstractItemModel; 4.3 QStandardItemModel; 4.4 QListView/QTableView/QTreeView
+QT-S4: 4.5 Custom Delegates; 5.1 QString; 5.2 QVariant; 5.3 Container Classes (QList/QVector/QMap/QHash); 5.4 QFile/QDir; 5.5 QSettings
+QT-S5: 5.6 QTimer; 6.1 File Handling (QFile/QTextStream/QDataStream); 6.2 Networking with Qt (QTcpSocket/QUdpSocket/QNetworkAccessManager); 7.1 QThread Basics; 7.2 Worker Object Pattern (moveToThread); 7.3 QtConcurrent
+QT-S6: 7.4 Thread Synchronization (QMutex, QWaitCondition); 8.1 QSqlDatabase; 8.2 QSqlQuery; 8.3 QSqlTableModel; 9.1 Subclassing QWidget; 9.2 QPainter Basics
+QT-S7: 9.3 paintEvent(); 9.4 Custom Styling (QSS); 10.1 QML Basics; 10.2 Qt Quick Components; 10.3 Integrating C++ with QML; 11.1 Memory Management (Parent-Child Ownership)
+QT-S8 (final, 2 items): 11.2 Common Qt Interview Questions; 11.3 Debugging Qt Applications
+-> After QT-S8, Qt is complete. Loop back to QT-S1 as revision.
+
+================================================================
+NETWORKING (CN) - 13 SESSIONS (~13 weeks to finish)
+================================================================
+CN-S1: 1.1 Computer Networking; 1.2 Types; 1.3 Internet; 1.4 Network Devices; 1.5 OSI Model; 1.6 TCP/IP Model
+CN-S2: 1.7 OSI vs TCP/IP Model; 1.8 Bandwidth/Throughput/Latency/Jitter; 2.1 Physical Layer; 2.2 Network Topology; 2.3 Transmission Modes; 2.4 Transmission Media
+CN-S3: 2.5 Multiplexing (FDM/TDM/WDM); 3.1 Data Link Layer; 3.2 Switching (Collision vs Broadcast Domain); 3.3 Virtual LAN; 3.4 Framing; 3.5 Error Control (Checksum/CRC/Hamming/FEC)
+CN-S4: 3.6 Flow Control; 3.7 Piggybacking; 3.8 ARP/RARP; 3.9 Media Access Control (CSMA/CD, CSMA/CA); 4.1 Network Layer; 4.2 Classful Addressing
+CN-S5: 4.3 Classless Addressing; 4.4 IP Address (Unicast/Multicast/Broadcast/Anycast); 4.5 IPv4/IPv6 Header Structure; 4.6 IPv4 vs IPv6; 4.7 Public vs Private IP; 4.8 Subnetting
+CN-S6: 4.9 Routing (Distance Vector/Link State/Static vs Dynamic/RIP-OSPF-BGP); 4.10 NAT/ICMP/IGMP; 5.1 Transport Layer; 5.2 Protocols; 5.3 TCP; 5.4 UDP
+CN-S7: 5.5 TCP vs UDP; 5.6 Ports & Sockets; 6.1 Socket Basics (socket/bind/listen/accept/connect); 6.2 TCP Socket Programming; 6.3 UDP Socket Programming; 6.4 Unix Domain Sockets
+CN-S8: 6.5 Blocking vs Non-Blocking Sockets; 6.6 select()/poll()/epoll(); 6.7 Multithreaded Socket Servers; 7.1 Session Layer; 7.2 Presentation Layer; 7.3 Secure Socket Layer
+CN-S9: 7.4 Point-to-Point Tunneling Protocols; 7.5 MIME Protocol; 8.1 Application Layer; 8.2 Client-Server/Peer-to-Peer Model; 8.3 WWW; 8.4 Electronic Mail
+CN-S10: 8.5 Content Distribution Network; 8.6 DNS/DHCP/HTTP-HTTPS/FTP-SFTP/SSH; 9.1 Congestion Control (Slow Start/Avoidance/Fast Retransmit); 9.2 Sliding Window Protocol; 10.1 Firewalls; 10.2 IDS/IPS
+CN-S11: 10.3 VPN Basics; 10.4 SSL/TLS Handshake; 10.5 Common Attacks (MITM/DoS-DDoS/Spoofing); 10.6 Port Scanning Basics; 11.1 ping/traceroute; 11.2 netstat/ss
+CN-S12: 11.3 tcpdump/Wireshark Basics; 11.4 nmap Basics; 12.1 QoS & Multimedia; 12.2 Authentication; 12.3 Encryption; 12.4 MAC Filtering
+CN-S13 (final, 4 items): 12.5 Wi-Fi Standards; 12.6 Bluetooth; 12.7 Wireless Communication; 12.8 Cloud Networking
+-> After CN-S13, Networking is complete. Loop back to CN-S1 as revision.
+
+================================================================
+OS - 8 SESSIONS, REVISION LOOP (already fully documented once)
+================================================================
+OS-S1: 1.1 What is an OS; 1.2 Functions of OS; 1.3 Types of OS (Batch/Distributed/Real-Time/Network); 2.1 What is a Process; 2.2 Process States; 2.3 PCB
+OS-S2: 2.4 Context Switching; 2.5 Process vs Thread; 3.1 Scheduling Criteria; 3.2 FCFS Scheduling; 3.2 SJF Scheduling; 3.2 Priority Scheduling
+OS-S3: 3.2 Round Robin; 3.2 Multilevel Queue Scheduling; 3.2 Multilevel Feedback Queue; 4.1 Critical Section Problem; 4.2 Race Condition; 4.3 Mutex
+OS-S4: 4.4 Semaphore (Binary/Counting); 4.5 Peterson's Solution; 4.6 Producer-Consumer Problem; 5.1 Deadlock Conditions; 5.2 Deadlock Prevention; 5.3 Banker's Algorithm
+OS-S5: 5.4 Deadlock Detection; 5.5 Deadlock Recovery; 6.1 Contiguous Memory Allocation; 6.2 Fragmentation; 6.3 Paging; 6.4 Segmentation
+OS-S6: 6.5 Paging vs Segmentation; 7.1 Demand Paging; 7.2 Page Fault; 7.3 Page Replacement (FIFO/LRU/Optimal); 7.4 Thrashing; 8.1 File Concepts
+OS-S7: 8.2 File Allocation Methods; 8.3 Directory Structures; 9.1 I/O Devices & Controllers; 9.2 Disk Scheduling (FCFS/SSTF/SCAN/C-SCAN/LOOK); 10.1 User vs Kernel Threads; 10.2 Multithreading Models
+OS-S8 (final, 4 items): 10.3 Thread Synchronization; 11. IPC (Pipes/FIFO/Message Queues/Shared Memory/Sockets); 12.1 Authentication; 12.2 Access Control / 12.3 Encryption Basics
+-> After OS-S8, loop back to OS-S1. Repeats every 8 weeks as ongoing revision.
+
+================================================================
+DSA / PROBLEM-SOLVING - 18 SESSIONS (already 2-4 items each, no change needed)
+================================================================
+DSA-S1: step_01_variables_data-types_operators; step_02_control_flow; step_03_function_recursion
+DSA-S2: step_04_array; step_05_pointer_reference; step_06_string
+DSA-S3: step_07_classes_objects; step_08_inheritance; step_09_polymorphism; step_10_abstraction
+DSA-S4: step_11_stl_Containers_vector; step_12_stl_Containers_list; step_13_stl_Containers_deque
+DSA-S5: step_14_stl_Containers_stack; step_15_stl_Containers_queue; step_16_stl_Containers_priority-queue
+DSA-S6: step_17_stl_Containers_set; step_18_stl_Containers_multiset; step_19_stl_Containers_unordered-set
+DSA-S7: step_20_stl_Containers_map; step_21_stl_Containers_unordered-map; step_22_stl_Containers_pair; step_23_stl_Containers_tuple
+DSA-S8: step_24_stl_Algorithms-Iterators; step_25_templates
+DSA-S9: step_26_exception_handling; step_27_smart_pointers; step_28_file_handling
+DSA-S10: step_29_single_linked_list; step_30_doubly_linked_list; step_31_circular_linked_list
+DSA-S11: step_32_stack; step_33_queue
+DSA-S12: step_34_hash_maps; step_35_hash_sets
+DSA-S13: step_36_searching_algorithms; step_37_sorting_algorithms
+DSA-S14: step_38_array_technique_2_ptr; step_39_array_technique_sliding_window; step_40_array_technique_kadane_algo
+DSA-S15: step_41_binary_tree; step_42_binary_search_tree
+DSA-S16: step_43_heaps_priority_queue
+DSA-S17: step_44_advanced_trees_AVL; step_45_advanced_trees_segment-fenwick; step_46_advanced_trees_trie
+DSA-S18 (final): step_47_graph_basics
+-> After DSA-S18 (week 9, since 2 sessions/week), loop back and revisit weak areas.
+
+================================================================
+TIMELINE NOTE
+================================================================
+At 1 day/week per subject and 5-7 items/day: C finishes in ~26 weeks,
+C++ in ~6, Qt in ~8, CN in ~13, DSA in ~9 (weeks). C and CN are the
+long poles versus your Nov 10, 2026 LWD (~7 weeks away). If you want
+everything done before then, the options are: (a) accept slower/partial
+coverage of C and CN by the deadline, or (b) double up a session's items
+on C/CN days specifically. Say the word and I'll adjust just those two.
+================================================================
