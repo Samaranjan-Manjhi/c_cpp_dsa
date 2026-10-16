@@ -869,6 +869,49 @@ int countPairs(vector<int>& arr, int target) {
     return count / 2;  // each pair counted twice
 }
 // Time: O(n), Space: O(n)
+#include <iostream>
+#include <vector>
+#include <unordered_set>
+#include <set>
+#include <algorithm>
+
+using namespace std;
+
+vector<pair<int, int>> findUniquePairs(const vector<int>& arr, int target) {
+    unordered_set<int> seen;
+    set<pair<int, int>> unique_pairs; // Set automatically handles duplicate pairs
+
+    for (int x : arr) {
+        int need = target - x;
+        
+        if (seen.count(need)) {
+            // Store smaller value first so (2, 4) and (4, 2) are recognized as the same pair
+            int first = min(x, need);
+            int second = max(x, need);
+            unique_pairs.insert({first, second});
+        }
+        
+        seen.insert(x);
+    }
+
+    // Convert set to vector
+    return vector<pair<int, int>>(unique_pairs.begin(), unique_pairs.end());
+}
+
+int main() {
+    vector<int> arr = {2, 4, 3, 3, 5, 1, 3, 3, -1, 7};
+    int target = 6;
+
+    vector<pair<int, int>> result = findUniquePairs(arr, target);
+
+    cout << "Unique pairs with sum " << target << ":" << endl;
+    for (const auto& p : result) {
+        cout << "(" << p.first << ", " << p.second << ")" << endl;
+    }
+
+    return 0;
+}
+Time Complexity: $O(N \log K)$, where $N$ is the number of elements in the array and $K$ is the number of unique pairs found (due to std::set insertion).Space Complexity: $O(N)$ to store the elements in the hash set and result container.
 
 
 --- Q9: Replace chars in S1 not present in S2 with '+' ---
@@ -878,7 +921,8 @@ string replaceNotPresent(string s1, string s2) {
     bool present[256] = {false};
     for (char c : s2) present[(unsigned char)c] = true;
     for (char& c : s1) {
-        if (!present[(unsigned char)c]) c = '+';
+        if (!present[(unsigned char)c]) 
+		c = '+';
     }
     return s1;
 }
@@ -902,7 +946,8 @@ SeriesType classifySeries(vector<int>& arr) {
     // Check Fibonacci (each = sum of previous two)
     bool isFib = (n >= 3);
     for (int i = 2; i < n && isFib; i++)
-        if (arr[i] != arr[i-1] + arr[i-2]) isFib = false;
+        if (arr[i] != arr[i-1] + arr[i-2]) 
+		isFib = false;
     if (isFib) return FIBONACCI;
 
     // Check perfect squares of consecutive naturals
@@ -2459,6 +2504,670 @@ character already in my current window, I move the left pointer
 just past its previous occurrence. This gives O(n) time and O(min(n,
 charset size)) space, versus a brute-force O(n^2) or O(n^3) check
 of every substring."
+
+
+
+. REVERSE A LINKED LIST
+
+#include 
+
+struct Node {
+	int data;
+	Node* next;
+	Node(int x) : data(x), next(nullptr) {}
+};
+
+Node* reverseList(Node* head) {
+	Node* prev = nullptr;
+	Node* curr = head;
+	while (curr != nullptr) {
+		Node* nextNode = curr->next;
+		curr->next = prev;
+		prev = curr;
+		curr = nextNode;
+	}
+	return prev;
+}
+
+void printList(Node* head) {
+	while (head) {
+		std::cout << head->data << " ";
+		head = head->next;
+	}
+	std::cout << std::endl;
+}
+
+int main() {
+	Node* head = new Node(1);
+	head->next = new Node(2);
+	head->next->next = new Node(3);
+	head->next->next->next = new Node(4);
+
+	std::cout << "Original: 1 2 3 4\nReversed: ";
+	head = reverseList(head);
+	printList(head);
+
+	return 0;
+
+
+}
+
+REVERSE LINKED LIST IN K GROUPS
+
+#include 
+
+struct Node {
+	int data;
+	Node* next;
+	Node(int x) : data(x), next(nullptr) {}
+};
+
+Node* reverseKGroup(Node* head, int k) {
+	Node* temp = head;
+	int count = 0;
+	while (temp != nullptr && count < k) {
+		temp = temp->next;
+		count++;
+	}
+	if (count < k) return head;
+
+	Node* curr = head;
+	Node* prev = nullptr;
+	Node* nextNode = nullptr;
+	count = 0;
+
+	while (curr != nullptr && count < k) {
+		nextNode = curr->next;
+		curr->next = prev;
+		prev = curr;
+		curr = nextNode;
+		count++;
+	}
+
+	if (nextNode != nullptr) {
+		head->next = reverseKGroup(nextNode, k);
+	}
+
+	return prev;
+
+
+}
+
+void printList(Node* head) {
+	while (head) {
+		std::cout << head->data << " ";
+		head = head->next;
+	}
+	std::cout << std::endl;
+}
+
+int main() {
+	Node* head = new Node(1);
+	head->next = new Node(2);
+	head->next->next = new Node(3);
+	head->next->next->next = new Node(4);
+	head->next->next->next->next = new Node(5);
+	head->next->next->next->next->next = new Node(6);
+
+	std::cout << "Original: 1 2 3 4 5 6\nReversed in K=2 groups: ";
+	head = reverseKGroup(head, 2);
+	printList(head);
+
+	return 0;
+
+
+}
+
+NEAREST PALINDROME
+
+#include 
+#include 
+
+bool isPalindrome(const std::string& s) {
+	int i = 0, j = s.length() - 1;
+	while (i < j) {
+		if (s[i] != s[j]) return false;
+		i++; j--;
+	}
+	return true;
+}
+
+std::string nearestSmallerPalindrome(std::string s) {
+	long long num = std::stoll(s);
+	for (long long i = num - 1; i >= 0; i--) {
+		std::string candidate = std::to_string(i);
+		if (isPalindrome(candidate)) return candidate;
+	}
+	return "0";
+}
+
+int main() {
+	std::string input = "123";
+	std::cout << "Input: " << input << "\nNearest smaller palindrome: "
+		<< nearestSmallerPalindrome(input) << std::endl;
+	return 0;
+}
+
+REVERSE A STRING
+
+#include 
+#include 
+#include 
+
+void reverseString(std::string& s) {
+	int left = 0, right = s.length() - 1;
+	while (left < right) {
+		std::swap(s[left], s[right]);
+		left++;
+		right--;
+	}
+}
+
+int main() {
+	std::string str = "hello";
+	std::cout << "Original: " << str << std::endl;
+	reverseString(str);
+	std::cout << "Reversed: " << str << std::endl;
+	return 0;
+}
+
+REVERSE STRING PRESERVING SPECIAL CHARACTERS
+
+#include 
+#include 
+#include 
+
+void reverseOnlyLetters(std::string& s) {
+	int left = 0;
+	int right = s.length() - 1;
+
+	while (left < right) {
+		if (!isalpha(s[left])) {
+			left++;
+		} else if (!isalpha(s[right])) {
+			right--;
+		} else {
+			std::swap(s[left], s[right]);
+			left++;
+			right--;
+		}
+	}
+
+
+}
+
+int main() {
+	std::string s = "a,b$c";
+	std::cout << "Original: " << s << std::endl;
+	reverseOnlyLetters(s);
+	std::cout << "Reversed: " << s << std::endl;
+	return 0;
+}
+
+SORT A LINKED LIST (MERGE SORT)
+
+#include 
+
+	struct Node {
+		int data;
+		Node* next;
+		Node(int x) : data(x), next(nullptr) {}
+	};
+
+Node* mergeLists(Node* a, Node* b) {
+	if (!a) return b;
+	if (!b) return a;
+
+	if (a->data < b->data) {
+		a->next = mergeLists(a->next, b);
+		return a;
+	} else {
+		b->next = mergeLists(a, b->next);
+		return b;
+	}
+
+
+}
+
+Node* mergeSort(Node* head) {
+	if (!head || !head->next) return head;
+
+	Node* slow = head;
+	Node* fast = head->next;
+
+	while (fast && fast->next) {
+		slow = slow->next;
+		fast = fast->next->next;
+	}
+
+	Node* second = slow->next;
+	slow->next = nullptr;
+
+	Node* left = mergeSort(head);
+	Node* right = mergeSort(second);
+
+	return mergeLists(left, right);
+
+
+}
+
+void printList(Node* head) {
+	while (head) {
+		std::cout << head->data << " ";
+		head = head->next;
+	}
+	std::cout << std::endl;
+}
+
+int main() {
+	Node* head = new Node(4);
+	head->next = new Node(2);
+	head->next->next = new Node(1);
+	head->next->next->next = new Node(3);
+
+	std::cout << "Original: 4 2 1 3\nSorted: ";
+	head = mergeSort(head);
+	printList(head);
+
+	return 0;
+}
+
+COUNTING SORT
+
+#include 
+#include 
+#include 
+
+void countingSort(std::vector& arr) {
+	if (arr.empty()) return;
+
+	int maxValue = arr[0];
+	for (int x : arr) maxValue = std::max(maxValue, x);
+
+	std::vector<int> count(maxValue + 1, 0);
+	for (int x : arr) count[x]++;
+
+	int index = 0;
+	for (int i = 0; i <= maxValue; i++) {
+		while (count[i] > 0) {
+			arr[index++] = i;
+			count[i]--;
+		}
+	}
+
+
+}
+
+int main() {
+	std::vector arr = {4, 2, 2, 8, 3, 3, 1};
+	countingSort(arr);
+	std::cout << "Sorted Array: ";
+	for (int x : arr) std::cout << x << " ";
+	std::cout << std::endl;
+	return 0;
+}
+
+SECOND LARGEST DISTINCT ELEMENT
+
+#include 
+#include 
+#include 
+
+int secondLargest(const std::vector& arr) {
+	int largest = INT_MIN;
+	int second = INT_MIN;
+
+	for (int num : arr) {
+		if (num > largest) {
+			second = largest;
+			largest = num;
+		} else if (num > second && num != largest) {
+			second = num;
+		}
+	}
+
+	return second;
+
+
+}
+
+int main() {
+	std::vector arr = {10, 5, 20, 8, 20};
+	std::cout << "Second Largest: " << secondLargest(arr) << std::endl;
+	return 0;
+}
+
+FIRST NON-REPEATING CHARACTER
+
+#include 
+#include 
+#include <unordered_map>
+
+char firstNonRepeating(const std::string& s) {
+	std::unordered_map<char, int> freq;
+	for (char c : s) freq[c]++;
+	for (char c : s) {
+		if (freq[c] == 1) return c;
+	}
+	return '\0';
+}
+
+int main() {
+	std::string s = "swiss";
+	std::cout << "First non-repeating character in "" << s << "": "
+		<< firstNonRepeating(s) << std::endl;
+	return 0;
+}
+
+DETECT CYCLE & FIND CYCLE START IN LINKED LIST
+
+#include 
+
+struct Node {
+	int data;
+	Node* next;
+	Node(int x) : data(x), next(nullptr) {}
+};
+
+bool hasCycle(Node* head) {
+	Node* slow = head;
+	Node* fast = head;
+	while (fast != nullptr && fast->next != nullptr) {
+		slow = slow->next;
+		fast = fast->next->next;
+		if (slow == fast) return true;
+	}
+	return false;
+}
+
+Node* cycleStart(Node* head) {
+	Node* slow = head;
+	Node* fast = head;
+	while (fast && fast->next) {
+		slow = slow->next;
+		fast = fast->next->next;
+		if (slow == fast) break;
+	}
+
+	if (!fast || !fast->next) return nullptr;
+
+	slow = head;
+	while (slow != fast) {
+		slow = slow->next;
+		fast = fast->next;
+	}
+	return slow;
+
+
+}
+
+int main() {
+	Node* head = new Node(1);
+	head->next = new Node(2);
+	head->next->next = new Node(3);
+	head->next->next->next = new Node(4);
+	// Create cycle: 4 -> 2
+	head->next->next->next->next = head->next;
+
+	std::cout << "Has Cycle: " << (hasCycle(head) ? "Yes" : "No") << std::endl;
+	Node* startNode = cycleStart(head);
+	if (startNode) {
+		std::cout << "Cycle Start Value: " << startNode->data << std::endl;
+	}
+
+	return 0;
+
+
+}
+
+MERGE TWO SORTED LINKED LISTS
+
+#include 
+
+struct Node {
+	int data;
+	Node* next;
+	Node(int x) : data(x), next(nullptr) {}
+};
+
+Node* mergeTwoLists(Node* a, Node* b) {
+	Node dummy(0);
+	Node* tail = &dummy;
+
+	while (a && b) {
+		if (a->data <= b->data) {
+			tail->next = a;
+			a = a->next;
+		} else {
+			tail->next = b;
+			b = b->next;
+		}
+		tail = tail->next;
+	}
+
+	tail->next = a ? a : b;
+	return dummy.next;
+
+
+}
+
+void printList(Node* head) {
+	while (head) {
+		std::cout << head->data << " ";
+		head = head->next;
+	}
+	std::cout << std::endl;
+}
+
+int main() {
+	Node* l1 = new Node(1);
+	l1->next = new Node(3);
+	l1->next->next = new Node(5);
+
+	Node* l2 = new Node(2);
+	l2->next = new Node(4);
+	l2->next->next = new Node(6);
+
+	std::cout << "Merged List: ";
+	Node* merged = mergeTwoLists(l1, l2);
+	printList(merged);
+
+	return 0;
+
+
+}
+
+MERGE K SORTED LINKED LISTS
+
+#include 
+#include 
+#include 
+
+struct Node {
+	int data;
+	Node* next;
+	Node(int x) : data(x), next(nullptr) {}
+};
+
+struct Compare {
+	bool operator()(Node* a, Node* b) {
+		return a->data > b->data;
+	}
+};
+
+Node* mergeKLists(std::vector<Node*>& lists) {
+	std::priority_queue<Node*, std::vector<Node*>, Compare> pq;
+
+	for (Node* head : lists) {
+		if (head) pq.push(head);
+	}
+
+	Node dummy(0);
+	Node* tail = &dummy;
+
+	while (!pq.empty()) {
+		Node* curr = pq.top();
+		pq.pop();
+
+		tail->next = curr;
+		tail = curr;
+
+		if (curr->next) pq.push(curr->next);
+	}
+
+	return dummy.next;
+
+
+}
+
+void printList(Node* head) {
+	while (head) {
+		std::cout << head->data << " ";
+		head = head->next;
+	}
+	std::cout << std::endl;
+}
+
+int main() {
+	Node* l1 = new Node(1); l1->next = new Node(4); l1->next->next = new Node(5);
+	Node* l2 = new Node(1); l2->next = new Node(3); l2->next->next = new Node(4);
+	Node* l3 = new Node(2); l3->next = new Node(6);
+
+	std::vector<Node*> lists = {l1, l2, l3};
+	std::cout << "Merged K Lists: ";
+	Node* result = mergeKLists(lists);
+	printList(result);
+
+	return 0;
+
+
+}
+
+FUNCTION POINTER DEMO
+
+#include 
+
+int add(int a, int b) {
+	return a + b;
+}
+
+int multiply(int a, int b) {
+	return a * b;
+}
+
+int main() {
+	int (*operation)(int, int);
+
+	operation = add;
+	std::cout << "Add Result: " << operation(10, 20) << std::endl;
+
+	operation = multiply;
+	std::cout << "Multiply Result: " << operation(10, 20) << std::endl;
+
+	return 0;
+
+
+}
+
+DETECT DUPLICATE IN ARRAY
+
+#include 
+#include 
+#include <unordered_set>
+
+bool containsDuplicate(const std::vector& arr) {
+	std::unordered_set seen;
+	for (int num : arr) {
+		if (seen.find(num) != seen.end()) return true;
+		seen.insert(num);
+	}
+	return false;
+}
+
+int main() {
+	std::vector arr = {1, 2, 3, 4, 2};
+	std::cout << "Contains Duplicate: "
+		<< (containsDuplicate(arr) ? "Yes" : "No") << std::endl;
+	return 0;
+}
+
+TWO SUM
+
+#include 
+#include 
+#include <unordered_map>
+
+std::vector twoSum(const std::vector& nums, int target) {
+	std::unordered_map<int, int> mp;
+	for (size_t i = 0; i < nums.size(); i++) {
+		int required = target - nums[i];
+		if (mp.find(required) != mp.end()) {
+			return {mp[required], static_cast(i)};
+		}
+		mp[nums[i]] = i;
+	}
+	return {};
+}
+
+int main() {
+	std::vector nums = {2, 7, 11, 15};
+	int target = 9;
+	std::vector result = twoSum(nums, target);
+
+	if (!result.empty()) {
+		std::cout << "Indices found: [" << result[0] << ", " << result[1] << "]" << std::endl;
+	} else {
+		std::cout << "No solution found." << std::endl;
+	}
+	return 0;
+
+
+}
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+class Solution {
+public:
+    vector<vector<int>> merge(vector<vector<int>>& intervals) {
+        if (intervals.empty()) return {};
+
+        // 1. Sort intervals based on start times
+        sort(intervals.begin(), intervals.end());
+
+        vector<vector<int>> merged;
+        merged.push_back(intervals[0]);
+
+        // 2. Iterate and merge overlapping intervals
+        for (int i = 1; i < intervals.size(); i++) {
+            // Check if current interval overlaps with the last merged interval
+            if (intervals[i][0] <= merged.back()[1]) {
+                merged.back()[1] = max(merged.back()[1], intervals[i][1]);
+            } else {
+                merged.push_back(intervals[i]);
+            }
+        }
+
+        return merged;
+    }
+};
+
+int main() {
+    Solution sol;
+    vector<vector<int>> intervals = {{1, 3}, {2, 6}, {8, 10}, {15, 18}};
+    vector<vector<int>> result = sol.merge(intervals);
+
+    cout << "Merged Intervals: ";
+    for (const auto& interval : result) {
+        cout << "[" << interval[0] << ", " << interval[1] << "] ";
+    }
+    cout << endl;
+
+    return 0;
+}
 
 ================================================================
 END OF FILE — tell me if you want anything added (linked list
