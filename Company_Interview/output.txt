@@ -1,0 +1,3897 @@
+#include <iostream>
+#include <climits>
+#include <stack>
+#include <unordered_map>
+#include <unordered_set>
+using namespace std;
+struct Node {
+     int data;
+     Node* next;
+};
+
+//  ----- Basic Setup -----
+
+//Create Node
+Node* createNode(int val)
+{
+     Node* newNode = new Node();
+     newNode->data = val;
+     newNode->next = NULL;
+     return newNode;
+}
+
+//Insert at Start
+void insertAtStart(Node*& head, int val)
+{
+     Node* newNode = new Node();
+     newNode->data = val;
+     newNode->next = head;
+     head = newNode;
+}
+
+//Insert at End
+void insertAtEnd(Node*& head, int val)
+{
+     Node* newNode = new Node();
+     newNode->data = val;
+     newNode->next = NULL;
+     if(!head)
+     {
+          head = newNode;
+          return;
+     }
+     Node* temp = head;
+     while(temp->next != NULL)
+     {
+          temp = temp->next;
+     }
+     temp->next = newNode;
+}
+
+//Insert at given position
+void insertAtPosition(Node*& head, int val, int pos)
+{
+     if(pos == 1)
+     {
+          insertAtStart(head, val);
+          return;
+     }
+     Node* newNode = new Node();
+     newNode->data = val;
+     Node* temp = head;
+     for(int i=1;i<pos-1 && temp;i++)
+     {
+          temp = temp->next;
+     }
+     if(!temp)
+     {
+          cout << "Position out of Range.\n";
+          delete newNode;
+          return;
+     }
+     newNode->next = temp->next;
+     temp->next = newNode;
+}
+
+//Insert value after target value
+void insertNewValueAfterValue(Node*& head, int tar, int val)
+{
+     if(!head)
+     {
+          cout << "Linked List is Empty.\n";
+          return;
+     }
+     Node* newNode = new Node();
+     newNode->data = val;
+     Node* temp = head;
+     while(temp != NULL)
+     {
+          if(temp->data == tar)
+          {
+               newNode->next = temp->next;
+               temp->next = newNode;
+               return;
+          }
+          temp = temp->next;
+     }
+     cout << "Target Value not found.\n";
+}
+
+//Print Linked list
+void showLL(Node* head)
+{
+     if(head == NULL)
+     {
+          cout << "Linked List is empty.\n";
+          return;
+     }
+     Node* temp = head;
+     while(temp != NULL)
+     {
+          cout << temp->data << "->";
+          temp = temp->next;
+     }
+     cout << "NULL\n";
+}
+
+
+//  ----- Deletion -----
+
+//Delete From beginning
+void deleteFromBeg(Node*& head)
+{
+     if(!head)
+          return;
+     Node* temp = head;
+     head = head->next;
+     delete temp;
+}
+
+//Delete from end
+void deleteFromEnd(Node*& head)
+{
+     if(!head)
+          return;
+     if(!head->next)
+     {
+          delete head;
+          head = NULL;
+          return;
+     }
+     Node* temp = head;
+     while(temp->next->next)
+     {
+          temp = temp->next;
+     }
+     delete temp->next;
+     temp->next = NULL;
+}
+
+//Delete from position
+void deleteFromPos(Node*& head, int pos)
+{
+     if(!head)
+          return;
+     if(pos == 1)
+     {
+          deleteFromBeg(head);
+          return;
+     }
+     Node* temp = head;
+     for(int i=1;i<pos-1 && temp; i++)
+     {
+          temp = temp->next;
+     }
+     if(!temp || !temp->next)
+     {
+          cout << "Position out of range.\n";
+          return;
+     }
+     Node* delNode = temp->next;
+     temp->next = delNode->next;
+     delete delNode;
+}
+
+//Delete By Value
+void deleteByValue(Node*& head, int val)
+{
+     if(!head)
+     {
+          cout << "Linked List is Empty.\n";
+          return;
+     }
+     if(head->data == val)
+     {
+          Node* temp = head;
+          head = head->next;
+          delete temp;
+          return;
+     }
+
+     Node* curr = head;
+     while(curr->next != NULL && curr->next->data != val)
+     {
+          curr = curr->next;
+     }
+     if(curr->next == NULL)
+     {
+          cout << "Value not found in list.\n";
+          return;
+     }
+     Node* temp = curr->next;
+     curr->next = curr->next->next;
+     delete temp;
+     return;
+}
+
+//Delete All Occurance(Value)
+void deleteAllOccurance(Node*& head, int val)
+{
+     if(!head)
+     {
+          cout << "Linked List is Empty.\n";
+          return;
+     }
+     if(head != NULL && head->data == val)
+     {
+          Node* temp = head;
+          head = head->next;
+          delete temp;
+     }
+     Node* curr = head;
+     while(curr != NULL && curr->next != NULL)
+     {
+          if(curr->next->data == val)
+          {
+               Node* temp = curr->next;
+               curr->next = curr->next->next;
+               delete temp;
+          }
+          else
+          {
+               curr = curr->next;
+          }
+     }
+}
+
+
+//  ----- Utilities -----
+
+//Count Node
+int countNode(Node*& head)
+{
+     if(!head)
+     {
+          cout << "Linked List is Empty.\n";
+          return 0;
+     }
+     int cnt = 0;
+     Node* temp = head;
+     while(temp != NULL)
+     {
+          cnt++;
+          temp = temp->next;
+     }
+     return cnt;
+}
+
+//Search element
+int idxSearch(Node*& head, int val)
+{
+     if(head == NULL)
+     {
+          cout << "Linked List is Empty.\n";
+          return -1;
+     }
+     int idx = 1;
+     Node* temp = head;
+     while(temp != NULL)
+     {
+          if(temp->data == val)
+          {
+               return idx;
+          }
+          temp = temp->next;
+          idx++;
+     }
+     return -1;
+}
+
+//Find Max Node
+int maxNode(Node*& head)
+{
+     if(!head)
+          return INT_MIN;
+     int maxVal = head->data;
+     Node* temp = head->next;
+     while(temp)
+     {
+          if(temp->data > maxVal)
+               maxVal = temp->data;
+          temp = temp->next;
+     }
+     return maxVal;
+}
+
+//Find Min Node
+int minNode(Node*& head)
+{
+     if(!head)
+          return INT_MAX;
+     int minVal = head->data;
+     Node* temp = head->next;
+     while(temp)
+     {
+          if(temp->data < minVal)
+               minVal = temp->data;
+          temp = temp->next;
+     }
+     return minVal;
+}
+
+//Sum of all Nodes
+int sumNode(Node*& head)
+{
+     if(!head)
+     {
+          cout << "Linked List is Empty.\n";
+          return -1;
+     }
+     int sum = 0;
+     Node* temp = head;
+     while(temp)
+     {
+          sum += temp->data;
+          temp = temp->next;
+     }
+     return sum;
+}
+
+
+//  ----- Reversal & Display -----
+
+// Reverse Linked List
+void reverseList(Node*& head)
+{
+     Node* prev = NULL;
+     Node* curr = head;
+     Node* next = NULL;
+     while(curr)
+     {
+          next = curr->next;
+          curr->next = prev;
+          prev = curr;
+          curr = next;
+     }
+     head = prev;
+}
+
+//Print in reverse without modifying
+//1. Recursive Approach
+void reverse_recursive(Node* head)
+{
+     if(!head)
+     {
+          cout << "Linked List is Empty.\n";
+          return;
+     }
+     reverse_recursive(head->next);
+     cout << head->data << "->";
+}
+
+//2. Iterative Approach using a Stack
+void reverse_stack(Node* head)
+{
+     if(!head)
+     {
+          cout << "Linked List is Empty.\n";
+          return;
+     }
+     stack<int> s;
+     Node* temp = head;
+     while(temp)
+     {
+          s.push(temp->data);
+          temp = temp->next;
+     }
+     while(!s.empty())
+     {
+          cout << s.top();
+          s.pop();
+          if(!s.empty())
+               cout << "->";
+          else
+               cout << "->NULL\n";
+     }
+}
+
+// Reverse in Pair
+void reverseInPair(Node*& head)
+{
+     if(!head || !head->next)
+     {
+          cout << "Linked List is Empty or Single node.\n";
+          return;
+     }
+     Node* curr = head;
+     Node* prev = NULL;
+     head = head->next;
+     while(curr && curr->next)
+     {
+          Node* nextPair = curr->next->next;
+          Node* second = curr->next;
+
+          second->next = curr;
+          curr->next = nextPair;
+
+          if(prev)
+               prev->next = second;
+          prev = curr;
+          curr = nextPair;
+     }
+}
+
+// Reverse sublist (between m and n)
+void reverse_sublist(Node*& head, int m, int n)
+{
+     int len = countNode(head);
+     if(!head || n > len || n < m)
+     {
+          cout << "Linked List is Empty or last value is more then list length.\n";
+          return;
+     }
+     Node* temp = head;
+     for(int i=1;i<m;i++)
+     {
+          temp = temp->next;
+     }
+     cout << "temp->data(m): " << temp->data << endl;
+
+     temp = head;
+     for(int i=1;i<n;i++)
+     {
+          temp = temp->next;
+     }
+     cout << "temp->data(n): " << temp->data << endl;
+
+     Node* prev = NULL;
+     Node* curr = head;
+     Node* next = NULL;
+     int pos = 1;
+     while(pos < m)
+     {
+          prev = curr;
+          curr = curr->next;
+          pos++;
+     }
+     Node* sub = prev;
+     Node* tail = curr;
+     for(int i=0;i<=n-m;i++)
+     {
+          next = curr->next;
+          curr->next = prev;
+          prev = curr;
+          curr = next;
+     }
+     if(sub)
+          sub->next = prev;
+     else
+          head = prev;
+     tail->next = curr;
+     return;
+}
+
+
+//  ----- Analysis -----
+
+// Occurance Count
+void cntOccure(Node* head)
+{
+     if(!head)
+     {
+          cout << "Linked List is Empty.\n";
+          return;
+     }
+     unordered_map<int, int> freq;
+     Node* temp = head;
+     while(temp)
+     {
+          freq[temp->data]++;
+          temp = temp->next;
+     } 
+     for(auto& f : freq)
+          cout << f.first << "  " << f.second << endl;
+}
+
+//Remove Dublicates (Sorted or Unsorted)
+void removeDub(Node*& head)
+{
+     unordered_set<int> seen;
+     Node* curr = head;
+     Node* prev = NULL;
+     while(curr)
+     {
+          if(seen.find(curr->data) != seen.end())
+          {
+               prev->next = curr->next;
+               delete curr;
+               curr = prev->next;
+          }
+          else
+          {
+               seen.insert(curr->data);
+               prev = curr;
+               curr = curr->next;
+          }
+     }
+}
+
+// Find middle element
+//Using Length of linked list
+int midEle(Node* head)
+{
+     if(!head || !head->next)
+     {
+          cout << "Linked List is Empty or Single node.\n";
+          return -1;
+     }
+     int l = countNode(head);
+     if(l%2 == 0)
+          l = l-1;
+     Node* temp = head;
+     int i = 0;
+     for(i=0;i<l/2;i++)
+     {
+          temp = temp->next;
+     }
+     return temp->data;
+}
+
+//Using slow/fast of linked list
+int middleEle(Node* head)
+{
+     if(!head || !head->next)
+     {
+          cout << "Linked List is Empty or Single node.\n";
+          return -1;
+     }
+     Node* slow = head;
+     Node* fast = head->next;
+     while(fast && fast->next)
+     {
+          slow = slow->next;
+          fast = fast->next->next;
+     }
+     return slow->data;
+}
+
+// Find nth node from start or end
+pair<int, int> nthNode(Node* head, int pos)
+{
+     if(!head)
+     {
+          cout << "Linked List is Empty.\n";
+          return {-1, -1};
+     }
+     int len = countNode(head);
+     if(len < pos)
+     {
+          cout << "Position is Wrong.\n";
+          return {-1, -1};
+     }
+     int start = INT_MIN;
+     int end = INT_MIN;
+     int l = 1;
+     Node* temp = head;
+     while(temp != NULL && l < pos)
+     {
+          l++;
+          temp = temp->next;
+     }
+     start = temp->data;
+     int j = 0;
+     Node* temp1 = head;
+     while(j < (len-pos))
+     {
+          j++;
+          temp1 = temp1->next;
+     }
+     end = temp1->data;
+     return {start, end};
+}
+
+// Check palindrome – using stack
+bool checkPalindrome(Node* head)
+{
+     if(!head)
+          return false;
+     stack<int> s;
+     Node* temp = head;
+     while(temp != NULL)
+     {
+          s.push(temp->data);
+          temp = temp->next;
+     }
+     temp = head;
+     while(temp != NULL)
+     {
+          if(temp->data != s.top())
+               return false;
+          else
+               s.pop();
+          temp = temp->next;
+     }
+     return true;
+}
+
+// Check palindrome – using fast/slow pointer
+bool palindromeCheck(Node* head)
+{
+     if(!head) return false;
+     Node* slow = head;
+     Node* fast = head;
+     while(fast && fast->next)
+     {
+          slow = slow->next;
+          fast = fast->next->next;
+     }
+     //cout << "slow->data:- " << slow->data << endl;
+     Node* prev = NULL;
+     Node* curr = slow;
+     while(curr)
+     {
+          Node* next = curr->next;
+          curr->next = prev;
+          prev = curr;
+          curr = next;
+     }
+     Node* first = head;
+     Node* second = prev;
+     while(second)
+     {
+          if(first->data != second->data)
+               return false;
+          first = first->next;
+          second = second->next;
+     }
+     return true;
+}
+
+
+//  ----- Cycle / Loop -----
+
+// create cycle in linke list by position
+void createCycle(Node* head, int pos)
+{
+     if (pos < 0 || head == nullptr)
+          return; 
+     Node* temp = head;
+     Node* cycleStartNode = nullptr;
+     int index = 0;
+     while (temp->next != nullptr)
+     {
+          if (index == pos)
+          {
+               cycleStartNode = temp;
+          }
+          temp = temp->next;
+          index++;
+     }
+     if (index == pos) 
+          cycleStartNode = temp;
+     if (cycleStartNode != nullptr)
+     {
+          temp->next = cycleStartNode;
+     }
+}
+
+// create cycle in linked list by value
+void createloop(Node* head, int val)
+{
+     Node* temp = head;
+     while(temp->data != val)
+     {
+          temp = temp->next;
+     }
+     Node* last = head;
+     while(last->next != NULL)
+     {
+          last = last->next;
+     }
+     last->next = temp;
+}
+
+//Cycle / loop detection
+bool hasCycle(Node* head)
+{
+     if(!head)
+     {
+          cout << "Linked List is Empty.\n";
+          return false;
+     }
+     Node* slow = head;
+     Node* fast = head;
+     while(fast && fast->next)
+     {
+          slow = slow->next;
+          fast = fast->next->next;
+          if(slow == fast)
+          {
+               return true;
+          }
+     }
+     return false;
+}
+
+// Find start of loop
+int loopStart(Node* head)
+{
+     if(!head)
+     {
+          cout << "Linked List is Empty.\n";
+          return INT_MIN;
+     }
+     Node* slow = head;
+     Node* fast = head;
+     while(fast && fast->next)
+     {
+          slow = slow->next;
+          fast = fast->next->next;
+          if(slow == fast)
+          {
+               slow = head;
+               while(slow != fast)
+               {
+                    slow = slow->next;
+                    fast = fast->next;
+               }
+               return slow->data;
+          }
+     }
+     return INT_MIN;
+}
+
+// Find length of loop
+int loopLen(Node* head)
+{
+     if(!head)
+     {
+          cout << "Linked List is Empty.\n";
+          return 0;
+     }
+     Node* slow = head;
+     Node* fast = head;
+     while(fast && fast->next)
+     {
+          slow = slow->next;
+          fast = fast->next->next;
+          if(slow == fast)
+          {
+               int len = 1;
+               Node* temp = slow->next;
+               while(temp != slow)
+               {
+                    len++;
+                    temp = temp->next;
+               }
+               return len;
+          }
+     }
+     return 0;
+}
+
+// Detect loop and delete
+void delLoop(Node*& head)
+{
+     if(!head)
+     {
+          cout << "LInked List is Empty.\n";
+          return;
+     }
+     Node* slow = head;
+     Node* fast = head;
+     bool isloop = false;
+     while(fast && fast->next)
+     {
+          slow = slow->next;
+          fast = fast->next->next;
+          if(slow == fast)
+          {
+               cout << "Loop Detected in linked List.\n";
+               isloop = true;
+               break;
+          }
+     }
+     if(!isloop)
+          return;
+     slow = head;
+     if(slow == fast)
+     {
+          while(fast->next != slow)
+               fast = fast->next;
+          fast->next = NULL;
+          return;
+     }
+     while(slow->next != fast->next)
+     {
+          slow = slow->next;
+          fast = fast->next;
+     }
+     fast->next = NULL;
+     return;
+}
+
+
+//  ----- Advanced -----
+
+// Merge 2 Sorted Lists
+Node* mergeSort(Node* head, Node* head1)
+{
+     if(head == NULL)
+          return head1;
+     if(head1 == NULL)
+          return head;
+     if(head->data <= head1->data)
+     {
+          head->next = mergeSort(head->next, head1);
+          return head;
+     }
+     else
+     {
+          head1->next = mergeSort(head, head1->next);
+          return head1;
+     }
+}
+
+// Remove N-th node from end – two-pass method
+void removeFromEnd(Node* head, int pos)
+{
+     if(!head)
+          return;
+     Node* temp = head;
+     int len = 0;
+     while(temp != NULL)
+     {
+          len++;
+          temp = temp->next;
+     }
+     Node* r = head;
+     int cnt = len-pos-1;
+     while(cnt)
+     {
+          r = r->next;
+          cnt--;
+     }
+     Node *Del = r->next;
+     r->next = r->next->next;
+     delete Del;
+}
+
+// Remove N-th node from end – two-pointer method
+void removefromEnd(Node*& head, int pos)
+{
+     if(head == NULL)
+          return;
+     Node* dummy = new Node();
+     dummy->next = head;
+     Node* slow = dummy;
+     Node* fast = dummy;
+     for(int i=0; i<=pos; i++)
+     {
+          if(fast == NULL) return;
+          fast = fast->next;
+     }
+     while(fast)
+     {
+          fast = fast->next;
+          slow = slow->next;
+     }
+     Node* del = slow->next;
+     slow->next = slow->next->next;
+     delete del;
+     head = dummy->next;
+     delete dummy;
+}
+
+// Create intersection point
+void createIntersection(Node* head1, Node* head2, int position) 
+{
+     if(!head1 || !head2 || position <= 0) return;
+     Node* temp1 = head1;
+     int count = 1;
+     while(temp1 != NULL && count < position) 
+     {
+          temp1 = temp1->next;
+          count++;
+     }
+     if(temp1 == NULL) return; 
+     Node* temp2 = head2;
+     while(temp2->next != NULL) 
+     {
+          temp2 = temp2->next;
+     }
+     temp2->next = temp1; 
+}
+
+// Find intersection of two lists
+// 1. Using 2 Pointer
+bool checkIntersection(Node* head, Node* head1, int& value)
+{
+     if(!head || !head1) return false;
+
+     Node* p1 = head;
+     Node* p2 = head1;
+
+     while(p1 != p2)
+     {
+          p1 = (p1 == NULL) ? head1 : p1->next;
+          p2 = (p2 == NULL) ? head : p2->next;
+     }
+     if(p1 != NULL)
+     {
+          value = p1->data;
+          return true;          
+     }
+     return false;
+}
+
+// 2. Using Length
+bool CheckIntersection(Node* head, Node* head1, int& value)
+{
+     int head_len = countNode(head);
+     int head1_len = countNode(head1); 
+     int d = abs(head_len - head1_len);
+     Node* h1 = head;
+     Node* h2 = head1;
+     if(head_len > head1_len)
+     {
+          for(int i=0;i<d;i++)
+               h1 = h1->next;
+     }     
+     else
+     {
+          for(int i=0;i<d;i++)
+               h2 = h2->next;
+     }
+     while(h1 != NULL && h2 != NULL)
+     {
+          if(h1 == h2)
+          {
+               value = h1->data;
+               return true;
+          }
+          h1 = h1->next;
+          h2 = h2->next;
+     }
+     return false;
+}
+
+// Rotate list (by k positions) – right rotation
+void rightRotation(Node*& head, int pos)
+{
+     if(!head || !head->next || (pos == 0))  
+          return;
+     int len = countNode(head);
+     Node* temp = head;  
+     while(temp->next != NULL)
+          temp = temp->next;
+     if(pos % len == 0) 
+          return;
+     temp->next = head;
+     Node* newTail = head;
+     for(int i=0;i<len-pos-1;i++)
+          newTail = newTail->next;
+     Node* newHead = newTail->next;
+     newTail->next = nullptr;
+     head = newHead;
+}
+
+// Rotate list (by k positions) – left rotation
+void leftRotation(Node*& head, int pos)
+{
+     if(!head || !head->next || (pos == 0))
+          return;
+     int len = countNode(head);
+     Node* temp = head;  
+     while(temp->next != NULL)
+          temp = temp->next;
+     if(pos % len == 0)
+          return; 
+     temp->next = head;
+     Node* newTail = head;
+     for(int i=0;i<pos-1;i++)
+          newTail = newTail->next;
+     Node* newHead = newTail->next;
+     newTail->next = nullptr;
+     head = newHead;
+}
+
+// Split list using 2 pointer (By Half)
+void split_into_half(Node* head, Node*& first, Node*& second)
+{
+     if(!head)
+     {
+          first = second = nullptr;
+          return;
+     }
+     Node* slow = head;
+     Node* fast = head;
+     Node* prev = nullptr;
+     while(fast && fast->next)
+     {
+          prev = slow;
+          slow = slow->next;
+          fast = fast->next->next;
+     }
+     first = head;
+     second = slow;
+     if(prev)
+          prev->next = nullptr;
+     return;
+}
+
+//Split list using position
+void split_by_pos(Node* head, Node*& first, Node*& second, int pos)
+{
+     if(head == NULL)
+     {
+          first = second = nullptr;
+          return;
+     }
+     Node* temp = head;
+     Node* prev = NULL;
+     for(int i=0;i<pos && temp;i++)
+     {
+          prev = temp;
+          temp = temp->next;
+     }
+     first = head;
+     second = temp;
+     if(prev)
+          prev->next = nullptr;
+}
+
+//Split list using value
+void split_by_value(Node* head, Node*& first, Node*& second, int val)
+{
+     if(head == nullptr)
+     {
+          first = second = nullptr;
+          return;
+     }
+     Node* temp = head;
+     Node* prev = NULL;
+     while(temp != nullptr && temp->data != val)
+     {
+          prev = temp;
+          temp = temp->next;
+     }
+     if (!temp)
+     {
+          first = head;
+          second = nullptr;
+          return;
+     }
+     first = head;
+     second = temp;
+     if(prev)
+          prev->next = nullptr;
+}
+
+// Add 2 numbers
+void add2Nos(Node* head, Node* head1, Node*& out)
+{
+     out = NULL;
+     Node* tail = NULL;
+     int carry = 0;
+     while(head || head1 || carry)
+     {
+          int sum = carry;
+          if(head)
+          {    
+               sum+= head->data;
+               head = head->next;
+          }
+          if(head1)
+          {    
+               sum+=head1->data;
+               head1 = head1->next;
+          }
+          Node* newNode = new Node();
+          newNode->data = (sum%10);
+          newNode->next = nullptr;
+          carry = sum/10;
+          if(!out)
+          {    
+               out = tail = newNode;
+          }
+          else
+          {    
+               tail->next = newNode;
+               tail = tail->next;
+          }
+     }
+}
+
+// Odd-even reordering
+void odd_even_reordering(Node*& head)
+{
+     if(!head || !head->next) return;
+     Node* odd = head;
+     Node* even = head->next;
+     Node* evenhead = even;
+     while(even && even->next)
+     {
+          odd->next = even->next;
+          odd = odd->next;
+          even->next = odd->next;
+          even = even->next;
+     }
+     odd->next = evenhead;
+}
+
+// Skip M nodes and delete N nodes
+void skipMdeleteN(Node*& head, int M, int N)
+{    
+     Node* curr = head;
+     Node* temp;
+     while(curr)
+     {    
+          for(int i=1;i<M && curr;i++)
+          {    
+               curr = curr->next;
+          }
+          if(curr == NULL) break;
+          Node* toDelete = curr->next;
+          for(int i=0;i<N && toDelete;i++)
+          {
+               temp = toDelete;
+               toDelete = toDelete->next;
+               delete temp;
+          }
+          curr->next = toDelete;
+          curr = toDelete;
+     }
+}
+
+// Delete M nodes and skip N nodes
+void deleteMskipN(Node*& head, int M, int N)
+{
+     Node* curr = head;
+     Node* prev = NULL;
+     while(curr)
+     {
+          for(int i=0;i<M && curr;i++)
+          {
+               Node* temp = curr;
+               curr = curr->next;
+               delete temp;
+          }
+          if(prev == NULL)
+               head = curr;
+          else
+               prev->next = curr;
+          for(int i=0;i<N && curr;i++)
+          {
+               prev = curr;
+               curr = curr->next;
+          }
+     }
+}
+
+// Segregate 0s, 1s, 2s
+void segerate_0s_1s_2s(Node* head)
+{
+     int cnt0 = 0, cnt1 = 0,  cnt2 = 0;
+     Node* temp = head;
+     while(temp)
+     {
+          if(temp->data == 0) cnt0++;
+          else if(temp->data == 1) cnt1++;
+          else cnt2++;
+          temp = temp->next;
+     }
+     temp = head;
+     while(temp)
+     {
+          if(cnt0 > 0)
+          {
+               temp->data = 0;
+               cnt0--;
+          }
+          else if(cnt1 > 0)
+          {
+               temp->data = 1;
+               cnt1--;
+          }
+          else
+          {
+               temp->data = 2;
+               cnt2--;
+          }
+          temp = temp->next;
+     }
+}
+
+
+//  ----- Cleanup -----
+
+// Free List
+void freeList(Node*& head)
+{
+     while(head)
+     {
+          Node* temp = head;
+          head = head->next;
+          delete temp;
+     }
+}
+
+
+int main()
+{
+     Node* head = NULL;
+     int n, v;
+
+     cout << "Enter initial Linked List size: ";
+     cin >> n;
+     /*for(int i = 0; i < n; i++)
+     {
+          cin >> v;
+          insertAtEnd(head, v);
+     }*/
+     int i = 1;
+     while(i<=n)
+     {
+          insertAtEnd(head, i);
+          i++;
+     }
+     cout << "Initial list: ";
+     showLL(head);
+
+     int choice;
+     do {
+          cout << "\n========== LINKED LIST MENU ==========\n";
+          cout << "\t--- Basic Setup ---\n";
+          cout << " 1. createNode\n";
+          cout << " 2. insertAtStart\n";
+          cout << " 3. insertAtEnd\n";
+          cout << " 4. insertAtPosition\n";
+          cout << " 5. showLL\n";
+          cout << "\t--- Deletion ---\n";
+          cout << " 6. deleteFromBeg\n";
+          cout << " 7. deleteFromEnd\n";
+          cout << " 8. deleteFromPos\n";
+          cout << " 9. deleteByValue\n";
+          cout << "10. deleteAllOccurance\n";
+          cout << "\t--- Utilities ---\n";
+          cout << "11. countNode\n";
+          cout << "12. idxSearch\n";
+          cout << "13. maxNode\n";
+          cout << "14. minNode\n";
+          cout << "15. sumNode\n";
+          cout << "\t--- Reversal & Display ---\n";
+          cout << "16. reverseList\n";
+          cout << "17. reverse_recursive\n";
+          cout << "18. reverse_stack\n";
+          cout << "19. reverseInPair\n";
+          cout << "20. reverse_sublist\n";
+          cout << "\t--- Analysis ---\n";
+          cout << "21. cntOccure\n";
+          cout << "22. removeDub\n";
+          cout << "23. midEle (length method)\n";
+          cout << "24. middleEle (slow/fast method)\n";
+          cout << "25. nthNode\n";
+          cout << "26. checkPalindrome (stack)\n";
+          cout << "27. palindromeCheck (slow/fast)\n";
+          cout << "\t--- Cycle / Loop ---\n";
+          cout << "28. createCycle (by position)\n";
+          cout << "29. createloop (by value)\n";
+          cout << "30. hasCycle\n";
+          cout << "31. loopStart\n";
+          cout << "32. loopLen\n";
+          cout << "33. delLoop\n";
+          cout << "\t--- Advanced ---\n";
+          cout << "34. mergeSort (merge 2 sorted lists)\n";
+          cout << "35. removeFromEnd (2-pass)\n";
+          cout << "36. removefromEnd (2-pointer)\n";
+          cout << "37. insertNewValueAfterValue\n";
+          cout << "38. checkIntersection (2-pointer)\n";
+          cout << "39. CheckIntersection (length)\n";
+          cout << "40. rightRotation (By k position)\n";
+          cout << "41. leftRotation (By k position)\n";
+          cout << "42. split list (By 2-pointer into 2 parts)\n";
+          cout << "43. split list (By k position into 2 parts)\n";
+          cout << "44. split list (By k value into 2 parts)\n";
+          cout << "45. add 2 Numbers\n";
+          cout << "46. Odd-even reordering\n";
+          cout << "47. skip M delete N\n";
+          cout << "48. Delete M skip N\n";
+          cout << "49. segerate 0s 1s 2s\n";
+          cout << "\t--- Cleanup ---\n";
+          cout << "50. freeList\n";
+          cout << " 0. Exit\n";
+          cout << "======================================\n";
+          cout << "Enter choice: ";
+          cin >> choice;
+
+          switch(choice)
+          {
+               case 1:
+                    {
+                         int val;
+                         cout << "Enter value for new node: ";
+                         cin >> val;
+                         Node* node = createNode(val);
+                         cout << "Created node with value: " << node->data << endl;
+                         delete node;
+                         break;
+                    }
+               case 2:
+                    {
+                         int val;
+                         cout << "Enter value to insert at start: ";
+                         cin >> val;
+                         insertAtStart(head, val);
+                         cout << "After insertAtStart: ";
+                         showLL(head);
+                         break;
+                    }
+               case 3:
+                    {
+                         int val;
+                         cout << "Enter value to insert at end: ";
+                         cin >> val;
+                         insertAtEnd(head, val);
+                         cout << "After insertAtEnd: ";
+                         showLL(head);
+                         break;
+                    }
+               case 4:
+                    {
+                         int val, pos;
+                         cout << "Enter value and position: ";
+                         cin >> val >> pos;
+                         insertAtPosition(head, val, pos);
+                         cout << "After insertAtPosition: ";
+                         showLL(head);
+                         break;
+                    }
+               case 5:
+                    {
+                         cout << "Current list: ";
+                         showLL(head);
+                         break;
+                    }
+               case 6:
+                    {
+                         deleteFromBeg(head);
+                         cout << "After deleteFromBeg: ";
+                         showLL(head);
+                         break;
+                    }
+               case 7:
+                    {
+                         deleteFromEnd(head);
+                         cout << "After deleteFromEnd: ";
+                         showLL(head);
+                         break;
+                    }
+               case 8:
+                    {
+                         int pos;
+                         cout << "Enter position to delete: ";
+                         cin >> pos;
+                         deleteFromPos(head, pos);
+                         cout << "After deleteFromPos: ";
+                         showLL(head);
+                         break;
+                    }
+               case 9:
+                    {
+                         int val;
+                         cout << "Enter value to delete: ";
+                         cin >> val;
+                         deleteByValue(head, val);
+                         cout << "After deleteByValue: ";
+                         showLL(head);
+                         break;
+                    }
+               case 10:
+                    {
+                         int val;
+                         cout << "Enter value to delete all occurrences: ";
+                         cin >> val;
+                         deleteAllOccurance(head, val);
+                         cout << "After deleteAllOccurance: ";
+                         showLL(head);
+                         break;
+                    }
+               case 11:
+                    {
+                         cout << "Node count: " << countNode(head) << endl;
+                         break;
+                    }
+               case 12:
+                    {
+                         int val;
+                         cout << "Enter value to search: ";
+                         cin >> val;
+                         int idx = idxSearch(head, val);
+                         if(idx != -1)
+                              cout << "Found at index: " << idx << endl;
+                         else
+                              cout << "Value not found.\n";
+                         break;
+                    }
+               case 13:
+                    {
+                         cout << "Max value: " << maxNode(head) << endl;
+                         break;
+                    }
+               case 14:
+                    {
+                         cout << "Min value: " << minNode(head) << endl;
+                         break;
+                    }
+               case 15:
+                    {
+                         cout << "Sum of nodes: " << sumNode(head) << endl;
+                         break;
+                    }
+               case 16:
+                    {
+                         reverseList(head);
+                         cout << "After reverseList: ";
+                         showLL(head);
+                         break;
+                    }
+               case 17:
+                    {
+                         cout << "Reverse (recursive): ";
+                         reverse_recursive(head);
+                         cout << "NULL\n";
+                         break;
+                    }
+               case 18:
+                    {
+                         cout << "Reverse (stack): ";
+                         reverse_stack(head);
+                         break;
+                    }
+               case 19:
+                    {
+                         reverseInPair(head);
+                         cout << "After reverseInPair: ";
+                         showLL(head);
+                         break;
+                    }
+               case 20:
+                    {
+                         int m, n;
+                         cout << "Enter start (m) and end (n) positions: ";
+                         cin >> m >> n;
+                         reverse_sublist(head, m, n);
+                         cout << "After reverse_sublist: ";
+                         showLL(head);
+                         break;
+                    }
+               case 21:
+                    {
+                         cout << "Occurrence counts:\n";
+                         cntOccure(head);
+                         break;
+                    }
+               case 22:
+                    {
+                         removeDub(head);
+                         cout << "After removeDub: ";
+                         showLL(head);
+                         break;
+                    }
+               case 23:
+                    {
+                         cout << "Middle element (length): " << midEle(head) << endl;
+                         break;
+                    }
+               case 24:
+                    {
+                         cout << "Middle element (slow/fast): " << middleEle(head) << endl;
+                         break;
+                    }
+               case 25:
+                    {
+                         int pos;
+                         cout << "Enter position: ";
+                         cin >> pos;
+                         auto res = nthNode(head, pos);
+                         if(res.first != INT_MIN)
+                              cout << "From start: " << res.first << "  From end: " << res.second << endl;
+                         break;
+                    }
+               case 26:
+                    {
+                         cout << "Palindrome (stack): " << (checkPalindrome(head) ? "Yes" : "No") << endl;
+                         break;
+                    }
+               case 27:
+                    {
+                         cout << "Palindrome (slow/fast): " << (palindromeCheck(head) ? "Yes" : "No") << endl;
+                         break;
+                    }
+               case 28:
+                    {
+                         int pos;
+                         cout << "Enter position to create cycle: ";
+                         cin >> pos;
+                         createCycle(head, pos);
+                         cout << "Cycle created at position " << pos << ".\n";
+                         break;
+                    }
+               case 29:
+                    {
+                         int val;
+                         cout << "Enter value to start loop at: ";
+                         cin >> val;
+                         createloop(head, val);
+                         cout << "Loop created starting at value " << val << ".\n";
+                         break;
+                    }
+               case 30:
+                    {
+                         cout << "Has cycle: " << (hasCycle(head) ? "Yes" : "No") << endl;
+                         break;
+                    }
+               case 31:
+                    {
+                         int s = loopStart(head);
+                         if(s != INT_MIN)
+                              cout << "Loop starts at value: " << s << endl;
+                         else
+                              cout << "No loop detected.\n";
+                         break;
+                    }
+               case 32:
+                    {
+                         int len = loopLen(head);
+                         if(len)
+                              cout << "Loop length: " << len << endl;
+                         else
+                              cout << "No loop detected.\n";
+                         break;
+                    }
+               case 33:
+                    {
+                         delLoop(head);
+                         cout << "Has cycle after delLoop: " << (hasCycle(head) ? "Yes" : "No") << endl;
+                         showLL(head);
+                         break;
+                    }
+               case 34:
+                    {
+                         Node* head1 = NULL;
+                         int n2, v2;
+                         cout << "Enter second sorted list size: ";
+                         cin >> n2;
+                         for(int i = 0; i < n2; i++)
+                         {
+                              cin >> v2;
+                              insertAtEnd(head1, v2);
+                         }
+                         cout << "List 1: "; showLL(head);
+                         cout << "List 2: "; showLL(head1);
+                         Node* merged = mergeSort(head, head1);
+                         head = merged;
+                         cout << "Merged sorted list: ";
+                         showLL(head);
+                         break;
+                    }
+               case 35:
+                    {
+                         int pos;
+                         cout << "Enter position from end: ";
+                         cin >> pos;
+                         removeFromEnd(head, pos);
+                         cout << "After removeFromEnd (2-pass): ";
+                         showLL(head);
+                         break;
+                    }
+               case 36:
+                    {
+                         int pos;
+                         cout << "Enter position from end: ";
+                         cin >> pos;
+                         removefromEnd(head, pos);
+                         cout << "After removefromEnd (2-pointer): ";
+                         showLL(head);
+                         break;
+                    }
+               case 37:
+                    {
+                         int tar, val;
+                         cout << "Enter value to add after value: ";
+                         cin >> tar >> val;
+                         insertNewValueAfterValue(head, tar, val);
+                         cout << "After insertNewValueAfterValue: ";
+                         showLL(head);
+                         break;
+                    }
+               case 38:
+                    {
+                         Node* head1 = new Node();
+                         head1->data = 10;
+                         head1->next = nullptr;
+                         int pos, out;
+                         cout << "Enter position to create intersection: ";
+                         cin >> pos;
+                         createIntersection(head, head1, pos);
+                         showLL(head1);
+                         bool res = checkIntersection(head, head1, out);
+                         if(res)
+                         {
+                              cout << "Point of Intersection is Present.\n";
+                              cout << "    Point of Intersection is " << out << endl;
+                         }
+                         else
+                              cout << "No point of Intersection.\n";
+                         break;
+                    }
+               case 39: 
+                    {
+                         Node* head1 = new Node();
+                         head1->data = 1000;
+                         head1->next = nullptr;
+                         int pos, out;
+                         cout << "Enter position to create intersection: ";
+                         cin >> pos;
+                         createIntersection(head, head1, pos);
+                         showLL(head1);
+                         bool res = CheckIntersection(head, head1, out);
+                         if(res)
+                         {
+                              cout << "Point of Intersection is Present.\n";
+                              cout << "    Point of Intersection is " << out << endl;
+                         }
+                         else
+                              cout << "No point of Intersection.\n";
+                         break;
+                    }
+               case 40:
+                    {    
+                         int k;
+                         cout << "Enter value to right rotate: ";
+                         cin >> k;
+                         cout << "Linked List Before Right rotation: ";
+                         showLL(head);
+                         cout << "Linked List After Right rotation: ";
+                         rightRotation(head, k);
+                         showLL(head);
+                         break;
+                    }
+               case 41:
+                    {    
+                         int k;
+                         cout << "Enter value to leftate: ";
+                         cin >> k;
+                         cout << "Linked List Before Left rotation: ";
+                         showLL(head);
+                         cout << "Linked List After Left rotation: ";
+                         leftRotation(head, k);
+                         showLL(head);
+                         break;
+                    }     
+               case 42:
+                    {
+                         cout << "Linked list Before split: ";
+                         showLL(head);
+                         cout << "Linked list After split: \n";
+                         Node* first;
+                         Node* second;
+                         split_into_half(head, first, second);
+                         cout << "First part:- ";
+                         showLL(first);
+                         cout << "Second part:- ";
+                         showLL(second);
+                         break;
+                    }
+               case 43:
+                    {
+                         int pos;
+                         cout << "Enter position want to split: ";
+                         cin >> pos;
+                         cout << "Linked list Before split: ";
+                         showLL(head);
+                         cout << "Linked list After split: \n";
+                         Node* first;
+                         Node* second;
+                         split_by_pos(head, first, second, pos);
+                         cout << "First part:- ";
+                         showLL(first);
+                         cout << "Second part:- ";
+                         showLL(second); 
+                         break;
+                    }
+               case 44:
+                    {
+                         int val;
+                         cout << "Enter Value want to split: ";
+                         cin >> val;
+                         cout << "Linked list Before split: ";
+                         showLL(head);
+                         cout << "Linked list After split: \n";
+                         Node* first;
+                         Node* second;
+                         split_by_value(head, first, second, val);
+                         cout << "First part:- ";
+                         showLL(first);
+                         cout << "Second part:- ";
+                         showLL(second);
+                         break;
+                    }
+               case 45:
+                    {
+                         Node* head1 = NULL;
+                         Node* result = NULL;
+                         int n1, v1;
+                         cout << "Enter size of Linked List2: ";
+                         cin >> n1;
+                         for(int i=0;i<n1;i++)
+                         {
+                              cin >> v1;
+                              insertAtEnd(head1, v1);
+                         }
+                         cout << "List 1: ";
+                         showLL(head);
+                         cout << "List 2: ";
+                         showLL(head1);
+                         add2Nos(head, head1, result);
+                         showLL(result);
+                         break;
+                    }
+               case 46:
+                    {
+                         cout << "List before odd-even reordering: ";
+                         showLL(head);
+                         odd_even_reordering(head);
+                         cout << "List after odd-even reordering: ";
+                         showLL(head);
+                         break;
+                    }
+               case 47:
+                    {
+                         int x, y;
+                         cout << "Enter 2 Value for skip & delete: ";
+                         cin >> x >> y;
+                         cout << "List before skip M delete N: ";
+                         showLL(head);
+                         skipMdeleteN(head, x, y);
+                         cout << "List after skip M delete N: ";
+                         showLL(head);
+                         break;
+                    }
+               case 48:
+                    {
+                         int x, y;
+                         cout << "Enter 2 Value for delete & skip: ";
+                         cin >> x >> y;
+                         cout << "List before delete M skip N: ";
+                         showLL(head);
+                         deleteMskipN(head, x, y);
+                         cout << "List after delete M skip N: ";
+                         showLL(head);
+                         break;
+                    }
+               case 49:
+                    {
+                         cout << "List before segregate 0s 1s 2s: ";
+                         showLL(head);
+                         segerate_0s_1s_2s(head);
+                         cout << "List after segregate 0s 1s 2s: ";
+                         showLL(head);
+                         break;
+                    }
+               case 50:
+                    {
+                         freeList(head);
+                         cout << "After freeList: ";
+                         showLL(head);
+                         break;
+                    }
+               case 0:
+                    {
+                         cout << "Exiting...\n";
+                         freeList(head);
+                         break;
+                    }
+               default:
+                    {
+                         cout << "Invalid choice. Try again.\n";
+                    }
+          }
+
+     } while(choice != 0);
+
+     return 0;
+}
+
+
+#include <iostream>
+#include <vector>
+
+void mergeSortedArrays(const std::vector<int>& arr1, const std::vector<int>& arr2, std::vector<int>& result) {
+    int i = 0; // Pointer for arr1
+    int j = 0; // Pointer for arr2
+    int k = 0; // Pointer for result array
+    
+    int m = arr1.size();
+    int n = arr2.size();
+    
+    // Resize result array to hold all elements
+    result.resize(m + n);
+
+    // Traverse both arrays and copy the smaller element
+    while (i < m && j < n) {
+        if (arr1[i] <= arr2[j]) {
+            result[k] = arr1[i];
+            i++;
+        } else {
+            result[k] = arr2[j];
+            j++;
+        }
+        k++;
+    }
+
+    // Copy remaining elements of arr1, if any
+    while (i < m) {
+        result[k] = arr1[i];
+        i++;
+        k++;
+    }
+
+    // Copy remaining elements of arr2, if any
+    while (j < n) {
+        result[k] = arr2[j];
+        j++;
+        k++;
+    }
+}
+
+int main() {
+    std::vector<int> arr1 = {1, 3, 5, 7};
+    std::vector<int> arr2 = {2, 4, 6, 8, 10};
+    std::vector<int> result;
+
+    mergeSortedArrays(arr1, arr2, result);
+
+    std::cout << "Merged Array: ";
+    for (int num : result) {
+        std::cout << num << " ";
+    }
+    // Output: 1 2 3 4 5 6 7 8 10
+    std::cout << "\n";
+
+    return 0;
+}
+
+
+#include <iostream>
+#include <vector>
+
+// m is the actual number of elements in arr1, n is elements in arr2
+void mergeInPlace(std::vector<int>& arr1, int m, std::vector<int>& arr2, int n) {
+    int i = m - 1;     // Pointer for last valid element in arr1
+    int j = n - 1;     // Pointer for last element in arr2
+    int k = m + n - 1; // Pointer for the very last position in arr1
+
+    // Move from right to left, placing the larger element at the back
+    while (i >= 0 && j >= 0) {
+        if (arr1[i] > arr2[j]) {
+            arr1[k] = arr1[i];
+            i--;
+        } else {
+            arr1[k] = arr2[j];
+            j--;
+        }
+        k--;
+    }
+
+    // If there are remaining elements in arr2, copy them
+    // (Remaining elements in arr1 are already in their correct places)
+    while (j >= 0) {
+        arr1[k] = arr2[j];
+        j--;
+        k--;
+    }
+}
+
+int main() {
+    // arr1 has a total size of 6, but only 3 elements are initialized
+    std::vector<int> arr1 = {1, 3, 5, 0, 0, 0}; 
+    std::vector<int> arr2 = {2, 4, 6};
+    
+    mergeInPlace(arr1, 3, arr2, 3);
+
+    std::cout << "In-Place Merged Array: ";
+    for (int num : arr1) {
+        std::cout << num << " ";
+    }
+    // Output: 1 2 3 4 5 6
+    std::cout << "\n";
+
+    return 0;
+}
+
+
+#include <iostream>
+#include <vector>
+
+// Returns the index of the target if found, otherwise returns -1
+int binarySearch(const std::vector<int>& arr, int target) {
+    int left = 0;
+    int right = arr.size() - 1;
+
+    while (left <= right) {
+        // Safe way to find the midpoint to prevent integer overflow
+        int mid = left + (right - left) / 2;
+
+        // Check if target is present at mid
+        if (arr[mid] == target) {
+            return mid; 
+        }
+
+        // If target is greater, ignore the left half
+        if (arr[mid] < target) {
+            left = mid + 1;
+        } 
+        // If target is smaller, ignore the right half
+        else {
+            right = mid - 1;
+        }
+    }
+
+    // Element was not present in the array
+    return -1;
+}
+
+int main() {
+    // Array MUST be sorted
+    std::vector<int> arr = {2, 5, 8, 12, 16, 23, 38, 56, 72, 91};
+    int target = 23;
+
+    int result = binarySearch(arr, target);
+
+    if (result != -1) {
+        std::cout << "Element found at index: " << result << "\n";
+    } else {
+        std::cout << "Element not found in the array.\n";
+    }
+
+    return 0;
+}
+
+#include <iostream>
+#include <vector>
+
+// Helper function to print the vector elements
+void printVector(const std::vector<int>& arr) {
+    for (int num : arr) {
+        std::cout << num << " ";
+    }
+    std::cout << "\n";
+}
+
+// ==========================================
+// 1. O(N²) SIMPLER SORTING ALGORITHMS
+// ==========================================
+
+// Bubble Sort: Repeatedly steps through the list, compares adjacent elements and swaps them
+void bubbleSort(std::vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 0; i < n - 1; i++) {
+        bool swapped = false;
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                std::swap(arr[j], arr[j + 1]);
+                swapped = true;
+            }
+        }
+        // Optimization: If no elements were swapped in the inner loop, array is sorted
+        if (!swapped) break;
+    }
+}
+
+// Selection Sort: Repeatedly finds the minimum element and puts it at the beginning
+void selectionSort(std::vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 0; i < n - 1; i++) {
+        int minIdx = i;
+        for (int j = i + 1; j < n; j++) {
+            if (arr[j] < arr[minIdx]) {
+                minIdx = j;
+            }
+        }
+        std::swap(arr[i], arr[minIdx]);
+    }
+}
+
+// Insertion Sort: Builds the final sorted array one item at a time by shifting elements
+void insertionSort(std::vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 1; i < n; i++) {
+        int key = arr[i];
+        int j = i - 1;
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+}
+
+// ==========================================
+// 2. O(N log N) EFFICIENT SORTING ALGORITHMS
+// ==========================================
+
+// Merge Sort Helper Function to combine two sorted halves
+void merge(std::vector<int>& arr, int left, int mid, int right) {
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+
+    std::vector<int> L(n1), R(n2);
+    for (int i = 0; i < n1; i++) L[i] = arr[left + i];
+    for (int j = 0; j < n2; j++) R[j] = arr[mid + 1 + j];
+
+    int i = 0, j = 0, k = left;
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j]) {
+            arr[k] = L[i];
+            i++;
+        } else {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+    while (i < n1) { arr[k] = L[i]; i++; k++; }
+    while (j < n2) { arr[k] = R[j]; j++; k++; }
+}
+
+// Merge Sort: Divide-and-conquer algorithm that splits the array and merges them sorted
+void mergeSort(std::vector<int>& arr, int left, int right) {
+    if (left < right) {
+        int mid = left + (right - left) / 2;
+        mergeSort(arr, left, mid);
+        mergeSort(arr, mid + 1, right);
+        merge(arr, left, mid, right);
+    }
+}
+
+// Quick Sort Helper: Lomuto Partition Scheme
+int partition(std::vector<int>& arr, int low, int high) {
+    int pivot = arr[high]; 
+    int i = low - 1;       
+    for (int j = low; j < high; j++) {
+        if (arr[j] < pivot) {
+            i++;
+            std::swap(arr[i], arr[j]);
+        }
+    }
+    std::swap(arr[i + 1], arr[high]);
+    return i + 1;
+}
+
+// Quick Sort: Pick a pivot, partition the items around it, and recursively sort
+void quickSort(std::vector<int>& arr, int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+
+// Heap Sort Helper: Modifies subtree rooted at index 'i' into a max heap
+void heapify(std::vector<int>& arr, int n, int i) {
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < n && arr[left] > arr[largest]) largest = left;
+    if (right < n && arr[right] > arr[largest]) largest = right;
+
+    if (largest != i) {
+        std::swap(arr[i], arr[largest]);
+        heapify(arr, n, largest);
+    }
+}
+
+// Heap Sort: Visualizes the array as a binary tree, creates a Max Heap, and extracts max element
+void heapSort(std::vector<int>& arr) {
+    int n = arr.size();
+    for (int i = n / 2 - 1; i >= 0; i--) heapify(arr, n, i);
+    for (int i = n - 1; i > 0; i--) {
+        std::swap(arr[0], arr[i]);
+        heapify(arr, i, 0);
+    }
+}
+
+// ==========================================
+// MAIN FUNCTION CONTROLLER
+// ==========================================
+int main() {
+    std::vector<int> original = {64, 34, 25, 12, 22, 11, 90};
+    std::vector<int> testArr;
+
+    std::cout << "Original Array: ";
+    printVector(original);
+    std::cout << "-------------------------------------------\n";
+
+    // 1. Bubble Sort
+    testArr = original;
+    bubbleSort(testArr);
+    std::cout << "Bubble Sort Output:    ";
+    printVector(testArr);
+
+    // 2. Selection Sort
+    testArr = original;
+    selectionSort(testArr);
+    std::cout << "Selection Sort Output: ";
+    printVector(testArr);
+
+    // 3. Insertion Sort
+    testArr = original;
+    insertionSort(testArr);
+    std::cout << "Insertion Sort Output: ";
+    printVector(testArr);
+
+    // 4. Merge Sort
+    testArr = original;
+    mergeSort(testArr, 0, testArr.size() - 1);
+    std::cout << "Merge Sort Output:     ";
+    printVector(testArr);
+
+    // 5. Quick Sort
+    testArr = original;
+    quickSort(testArr, 0, testArr.size() - 1);
+    std::cout << "Quick Sort Output:     ";
+    printVector(testArr);
+
+    // 6. Heap Sort
+    testArr = original;
+    heapSort(testArr);
+    std::cout << "Heap Sort Output:      ";
+    printVector(testArr);
+
+    return 0;
+}
+
+#include <iostream>
+#include <string>
+
+// Function to sort a string's character digits manually using Insertion Sort
+void manualSortString(std::string &s, bool ascending = true) {
+    int n = s.length();
+    
+    for (int i = 1; i < n; i++) {
+        char key = s[i];
+        int j = i - 1;
+        
+        if (ascending) {
+            // Shift elements that are greater than the key to the right
+            while (j >= 0 && s[j] > key) {
+                s[j + 1] = s[j];
+                j--;
+            }
+        } else {
+            // Shift elements that are smaller than the key to the right (Descending)
+            while (j >= 0 && s[j] < key) {
+                s[j + 1] = s[j];
+                j--;
+            }
+        }
+        s[j + 1] = key;
+    }
+}
+
+int main() {
+    std::string numStr = "8419253";
+    std::cout << "Original String: " << numStr << "\n\n";
+
+    // 1. Manual Sort Ascending
+    std::string ascendingStr = numStr;
+    manualSortString(ascendingStr, true);
+    std::cout << "Manual Ascending:  " << ascendingStr << "\n";
+    // Output: "1234589"
+
+    // 2. Manual Sort Descending
+    std::string descendingStr = numStr;
+    manualSortString(descendingStr, false);
+    std::cout << "Manual Descending: " << descendingStr << "\n";
+    // Output: "9854321"
+
+    return 0;
+}
+
+
+Alternate Strategy: Counting Sort (Even Faster for Digits)
+Because a string of digits can only ever contain ten unique characters ('0' through '9'), you can also use Counting Sort. It avoids nested swapping loops entirely by keeping a tally of how many times each digit appears.
+
+void countingSortDigits(std::string &s) {
+    int count[10] = {0}; // Initialize count array for digits 0-9
+
+    // Step 1: Count occurrences of each character digit
+    for (int i = 0; i < s.length(); i++) {
+        int digitIndex = s[i] - '0'; // Convert char like '8' to int index 8
+        count[digitIndex]++;
+    }
+
+    // Step 2: Rebuild the string using the tallied counts
+    int stringIndex = 0;
+    for (int digit = 0; digit <= 9; digit++) {
+        while (count[digit] > 0) {
+            s[stringIndex] = digit + '0'; // Convert int back to char
+            stringIndex++;
+            count[digit]--;
+        }
+    }
+}
+
+
+C++ Important Concepts Explained with Examples
+Let's go through each topic with simple explanations, code examples, and practical guidance on when to use each concept.
+
+1. Pointer vs Reference in C++
+Both pointers and references let you access an existing variable indirectly, but they behave differently.
+
+Pointer vs reference
+Feature
+
+Pointer (*)
+
+Reference (&)
+
+Stores
+
+A memory address
+
+An alias for a variable
+
+Can be nullptr?
+
+Yes
+
+No, a valid reference must refer to an object
+
+Can change what it refers to?
+
+Yes
+
+No, once initialized
+
+Must be initialized?
+
+No, but should be
+
+Yes
+
+Access value
+
+Dereference with *
+
+Use directly
+
+Can represent no object?
+
+Yes
+
+Not as a valid reference
+
+Example: Pointer and reference
+
+cpp
+#include <iostream>
+using namespace std;
+
+int main() {
+    int x = 10;
+
+    // Pointer
+    int* ptr = &x;
+    cout << *ptr << endl;  // 10
+
+    *ptr = 20;
+    cout << x << endl;     // 20
+
+    // Reference
+    int& ref = x;
+    ref = 30;
+    cout << x << endl;     // 30
+
+    return 0;
+}
+Explanation:
+
+&x gets the address of x.
+
+int* ptr declares a pointer that stores that address.
+
+*ptr accesses or modifies the value at that address.
+
+int& ref = x creates a reference, which is another name for x.
+
+Changing ref changes x because they refer to the same object.
+
+When should you use a pointer or a reference?
+Use a reference when:
+
+A function needs to modify an existing variable.
+
+An object must be provided to a function.
+
+You want to avoid copying a large object.
+
+Use a pointer when:
+
+The object may be absent (nullptr).
+
+You need to change which object is being referenced.
+
+You work with dynamically allocated memory or certain low-level APIs.
+
+Example:
+
+
+cpp
+void update(int& value) {
+    value = 100;
+}
+
+void reset(int* value) {
+    if (value != nullptr) {
+        *value = 0;
+    }
+}
+
+int main() {
+    int n = 5;
+
+    update(n);  // n becomes 100
+    reset(&n);  // n becomes 0
+}
+Notice that the reference-based function assumes a valid argument, while the pointer-based function can handle a null pointer.
+
+What is a void* pointer?
+A void* is a generic pointer that can hold the address of an object of almost any object type. However, you cannot directly dereference it because it has no specific pointed-to type.
+
+
+cpp
+#include <iostream>
+using namespace std;
+
+int main() {
+    int n = 42;
+
+    void* ptr = &n;
+
+    // Convert back to int* before dereferencing
+    cout << *static_cast<int*>(ptr) << endl;  // 42
+}
+When is it useful?
+
+Working with C APIs that accept generic pointers.
+
+Implementing certain low-level data structures or memory-management utilities.
+
+Interfacing with legacy C code.
+
+In modern C++, prefer templates, std::variant, or other type-safe alternatives when appropriate.
+
+What is a constant pointer?
+The phrase can refer to two different things:
+
+1. Pointer to constant data
+
+
+cpp
+int x = 10;
+int y = 20;
+
+const int* ptr = &x;
+// *ptr = 15;  // Error
+ptr = &y;      // Allowed
+You cannot modify the value through ptr, but you can point it at another variable.
+
+2. Constant pointer
+
+
+cpp
+int x = 10;
+int y = 20;
+
+int* const ptr = &x;
+*ptr = 15;     // Allowed
+// ptr = &y;   // Error
+You can modify the value through the pointer, but you cannot change the address stored in ptr.
+
+3. Constant pointer to constant data
+
+
+cpp
+const int* const ptr = &x;
+// *ptr = 15;  // Error
+// ptr = &y;   // Error
+Neither the pointed-to value (through this pointer) nor the pointer itself can be changed.
+
+Quick rule: const before * protects the data through that pointer; const after * protects the pointer itself.
+
+2. Memory Management: new/delete vs malloc/free
+C++ programs use memory to store objects, variables, and dynamically created data.
+
+Difference between new/delete and malloc/free
+Feature
+
+new / delete
+
+malloc() / free()
+
+Language
+
+C++
+
+C standard library, also usable in C++
+
+Allocates memory
+
+Yes
+
+Yes
+
+Calls constructor
+
+Yes, for objects
+
+No
+
+Calls destructor
+
+Yes, with delete
+
+No
+
+Return type
+
+Correctly typed pointer
+
+void*
+
+Allocation failure
+
+Throws std::bad_alloc by default
+
+Returns nullptr
+
+Deallocation
+
+delete or delete[]
+
+free()
+
+Example: new and delete
+
+cpp
+#include <iostream>
+using namespace std;
+
+class Student {
+public:
+    Student() {
+        cout << "Constructor called\n";
+    }
+
+    ~Student() {
+        cout << "Destructor called\n";
+    }
+};
+
+int main() {
+    Student* s = new Student;
+    delete s;
+}
+Output:
+
+
+text
+Constructor called
+Destructor called
+new Student allocates memory and constructs a Student object.
+
+delete s destroys the object and releases its allocated memory.
+
+For arrays, match the allocation and deallocation forms:
+
+
+cpp
+int* arr = new int[5];
+
+delete[] arr;  // Correct for an array
+Example: malloc() and free()
+
+cpp
+#include <iostream>
+#include <cstdlib>
+using namespace std;
+
+int main() {
+    int* ptr = static_cast<int*>(malloc(5 * sizeof(int)));
+
+    if (ptr != nullptr) {
+        ptr[0] = 100;
+        cout << ptr[0] << endl;
+
+        free(ptr);
+    }
+}
+Output:
+
+
+text
+100
+malloc() allocates a block of raw memory but does not call C++ constructors. free() releases that memory without calling C++ destructors.
+
+Important: Never mix these pairs.
+
+Memory from new → release with delete.
+
+Memory from new[] → release with delete[].
+
+Memory from malloc() → release with free().
+
+In modern C++, prefer standard containers and smart pointers over manual memory management whenever possible.
+
+What is a memory leak?
+A memory leak happens when dynamically allocated memory is no longer needed but remains allocated because the program has lost the ability to release it.
+
+Example of a leak:
+
+
+cpp
+void example() {
+    int* ptr = new int(100);
+
+    ptr = nullptr;  // Original address is lost!
+}
+The allocated integer can no longer be reached through ptr, so the program cannot delete it using that pointer.
+
+Correct version:
+
+
+cpp
+void example() {
+    int* ptr = new int(100);
+
+    delete ptr;
+    ptr = nullptr;
+}
+Setting a pointer to nullptr after deletion is optional, but it can help prevent accidental reuse of that pointer. It does not fix other copies of a dangling pointer.
+
+How do you identify memory leaks?
+Common approaches include:
+
+AddressSanitizer (ASan): detects many memory errors, including use-after-free and out-of-bounds access.
+
+LeakSanitizer (LSan): detects many memory leaks.
+
+Valgrind: a popular memory-debugging tool on supported platforms.
+
+Code review: look for allocations that do not have matching cleanup, especially in exception paths.
+
+For example, with a compatible GCC or Clang compiler:
+
+
+bash
+g++ -g -fsanitize=address -fno-omit-frame-pointer main.cpp -o app
+./app
+Leak detection availability depends on the compiler, operating system, and sanitizer configuration.
+
+How do you prevent memory leaks?
+Use RAII (Resource Acquisition Is Initialization): tie resource lifetime to an object's lifetime.
+
+Instead of:
+
+
+cpp
+int* ptr = new int(100);
+// Easy to forget delete
+Prefer:
+
+
+cpp
+#include <memory>
+
+auto ptr = std::make_unique<int>(100);
+The std::unique_ptr automatically releases its owned object when it goes out of scope.
+
+Other useful options include:
+
+std::vector<int> instead of manually allocated arrays.
+
+std::string instead of manually managing character buffers.
+
+std::shared_ptr when shared ownership is genuinely needed.
+
+3. Storage and Qualifiers: volatile, mutable, and auto
+These three keywords serve very different purposes.
+
+A. volatile
+volatile tells the compiler that accesses to an object may have externally observable effects and should not be treated like ordinary accesses to a non-volatile object.
+
+Example:
+
+
+cpp
+volatile int status = 0;
+
+status = 1;
+cout << status << endl;
+A common use is accessing memory-mapped hardware registers in embedded systems.
+
+However, volatile does not make an operation atomic and does not provide thread synchronization. For communication between threads, use appropriate tools such as std::atomic.
+
+When to use it:
+
+Hardware register access.
+
+Certain platform-specific low-level programming situations.
+
+It is generally not needed for ordinary variables.
+
+B. mutable
+mutable allows a class data member to be modified even when the containing object is accessed through a const object or a const member function.
+
+Example:
+
+
+cpp
+#include <iostream>
+using namespace std;
+
+class Counter {
+private:
+    int value = 10;
+    mutable int readCount = 0;
+
+public:
+    int getValue() const {
+        readCount++;
+        return value;
+    }
+
+    int getReadCount() const {
+        return readCount;
+    }
+};
+
+int main() {
+    const Counter c;
+
+    cout << c.getValue() << endl;      // 10
+    cout << c.getReadCount() << endl;  // 1
+}
+The value member cannot be modified inside getValue() const, but readCount can be modified because it is declared mutable.
+
+Typical uses:
+
+Caching results.
+
+Counting calls for diagnostics.
+
+Updating a mutex used for synchronization in a const member function.
+
+C. auto
+auto asks the compiler to deduce a variable's type from its initializer.
+
+Example:
+
+
+cpp
+auto x = 10;       // int
+auto price = 99.5; // double
+auto name = "Tom"; // const char*
+This can reduce repetitive code, particularly with iterators and complex types.
+
+
+cpp
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+    vector<int> numbers = {10, 20, 30};
+
+    for (auto value : numbers) {
+        cout << value << " ";
+    }
+}
+Output:
+
+
+text
+10 20 30
+Here, auto deduces value as int.
+
+Important: auto normally deduces a type by value, so references and top-level const may be dropped.
+
+
+cpp
+int x = 10;
+const int& ref = x;
+
+auto a = ref;        // int
+auto& b = ref;       // const int&
+const auto& c = x;   // const int&
+Use auto& or const auto& when you need to preserve reference behavior instead of copying the value.
+
+4. Const Correctness in C++
+const means that something cannot be modified through a particular name or access path. Its exact meaning depends on where you place it.
+
+A. const applied to a variable
+
+cpp
+const int x = 10;
+
+// x = 20;  // Error
+Once initialized, x cannot be modified.
+
+B. const applied to a member function
+A const member function promises not to modify the object's ordinary, non-mutable data members.
+
+
+cpp
+#include <iostream>
+using namespace std;
+
+class Employee {
+private:
+    int salary = 50000;
+
+public:
+    int getSalary() const {
+        return salary;
+    }
+
+    void setSalary(int amount) {
+        salary = amount;
+    }
+};
+
+int main() {
+    const Employee e;
+
+    cout << e.getSalary() << endl; // Allowed
+    // e.setSalary(60000);         // Error
+}
+Why?
+
+getSalary() const can be called on a const object.
+
+setSalary() is non-const, so it cannot be called on a const object.
+
+A const member function can still modify mutable members, and it can affect external state through other mechanisms. It is not a guarantee that nothing anywhere changes.
+
+C. const applied to a pointer
+These three declarations have different meanings:
+
+
+cpp
+int x = 10;
+int y = 20;
+
+const int* p1 = &x;       // Pointer to const int
+int* const p2 = &x;       // Const pointer to int
+const int* const p3 = &x; // Const pointer to const int
+Declaration
+
+Change the pointed-to value?
+
+Point to another variable?
+
+const int* p1
+
+No, through p1
+
+Yes
+
+int* const p2
+
+Yes
+
+No
+
+const int* const p3
+
+No, through p3
+
+No
+
+Remember that const int* does not necessarily mean the underlying integer is immutable. It means you cannot modify it through that pointer.
+
+D. const applied to a return value
+The effect depends on whether the function returns a value, reference, or pointer.
+
+Example 1: Returning a const value
+
+
+cpp
+const int getValue() {
+    return 10;
+}
+
+int main() {
+    int x = getValue();  // Fine
+    x = 20;              // Fine
+}
+For a built-in type returned by value, top-level const generally offers little practical benefit because the caller receives its own copy.
+
+For class types, returning a top-level const value can also interfere with operations that would otherwise move from the returned temporary. It is usually best to omit it.
+
+Example 2: Returning a reference to const
+
+
+cpp
+int getNumber() {
+    static int number = 10;
+    return number;
+}
+
+const int& getConstNumber() {
+    static int number = 20;
+    return number;
+}
+
+int main() {
+    int x = getNumber();
+    x = 50;  // Fine: x is a copy
+
+    const int& ref = getConstNumber();
+    // ref = 50;  // Error
+}
+The second function returns a reference to a const-qualified integer, preventing modification through that reference. The example uses a static variable so the returned reference remains valid after the function returns.
+
+Example 3: Returning a pointer to const
+
+
+cpp
+const int* getPointer() {
+    static int value = 100;
+    return &value;
+}
+
+int main() {
+    const int* p = getPointer();
+
+    // *p = 200;  // Error
+}
+The pointer can provide read-only access to the integer, although the underlying integer could still be changed through another non-const access path.
+
+5. Quick revision sheet
+Concept
+
+Key point
+
+Typical use
+
+Pointer
+
+Can be null or reassigned
+
+Optional objects, low-level memory access
+
+Reference
+
+Alias that must be initialized
+
+Function parameters, aliases
+
+void*
+
+Generic object pointer; cast to a suitable type before dereferencing
+
+C APIs and low-level code
+
+Constant pointer
+
+Pointer address cannot change: int* const p
+
+Fixed address, changeable value
+
+new/delete
+
+Allocate and release C++ objects with constructor/destructor handling
+
+Manual dynamic allocation
+
+malloc/free
+
+Allocate and release raw memory without C++ object lifetime management
+
+C interoperability
+
+Memory leak
+
+Allocated memory is not properly released
+
+Prevent with RAII and smart pointers
+
+volatile
+
+Special treatment of accesses to an object
+
+Hardware and low-level programming
+
+mutable
+
+Allows a member to change in a const object
+
+Caching and bookkeeping
+
+auto
+
+Compiler deduces the type
+
+Cleaner declarations and loops
+
+const member function
+
+Cannot modify ordinary members directly
+
+Read-only accessors
+
+const pointer/data
+
+Restricts pointer reassignment or modification through an access path
+
+Safer interfaces
+
+
+
+Vector vs. List vs. Map: The Core Differences
+
+To choose the right container, you must understand how they store data in your computer's memory.
+
+Feature	std::vector	std::list	std::map
+Underlying Structure	Continuous Memory Array	Doubly Linked List	Balanced Binary Search Tree
+Element Access	\(\mathcal{O}(1)\) (Direct via Index)	\(\mathcal{O}(N)\) (Must step through nodes)	\(\mathcal{O}(\log N)\) (Search by Key)
+Insertion at End	\(\mathcal{O}(1)\) amortised	\(\mathcal{O}(1)\)	\(\mathcal{O}(\log N)\)
+Insertion at Middle	\(\mathcal{O}(N)\) (Shifts elements)	\(\mathcal{O}(1)\) (If pointer is ready)	\(\mathcal{O}(\log N)\)
+Memory Overhead	Minimal (Just the elements)	High (Stores pointers to next/prev)	High (Stores parent/child pointers)
+
+
+#include <iostream>
+#include <cstring>
+#include <utility>
+
+class User {
+private:
+    char* name;
+    int id;
+
+public:
+    // Standard Parameterized Constructor
+    User(const char* n, int i) : id(i) {
+        if (n) {
+            name = new char[std::strlen(n) + 1];
+            std::strcpy(name, n);
+        } else {
+            name = new char[1];
+            name[0] = '\0';
+        }
+    }
+
+    // ==========================================
+    // THE RULE OF 5 IMPLEMENTATION
+    // ==========================================
+
+    // 1. Destructor
+    ~User() {
+        delete[] name; 
+    }
+
+    // 2. Copy Constructor (Deep Copy)
+    User(const User& other) : id(other.id) {
+        name = new char[std::strlen(other.name) + 1];
+        std::strcpy(name, other.name);
+    }
+
+    // 3. Copy Assignment Operator (Deep Copy via Copy-and-Swap)
+    User& operator=(const User& other) {
+        if (this != &other) {
+            // Allocate new resource first to remain exception-safe
+            char* new_name = new char[std::strlen(other.name) + 1];
+            std::strcpy(new_name, other.name);
+            
+            // Clean up old memory and assign new state
+            delete[] name;
+            name = new_name;
+            id = other.id;
+        }
+        return *this;
+    }
+
+    // 4. Move Constructor (Shallow copy + Nullify the source)
+    User(User&& other) noexcept : name(other.name), id(other.id) {
+        other.name = nullptr; // Pilfer resource to prevent double-free
+        other.id = 0;
+    }
+
+    // 5. Move Assignment Operator
+    User& operator=(User&& other) noexcept {
+        if (this != &other) {
+            delete[] name; // Clean up our existing resource first
+            
+            name = other.name; // Steal the new resource pointers
+            id = other.id;
+            
+            other.name = nullptr; // Nullify source object
+            other.id = 0;
+        }
+        return *this;
+    }
+
+    // Debug print helper
+    void print() const {
+        std::cout << "ID: " << id << " | Name: " << (name ? name : "nullptr") << "\n";
+    }
+};
+
+int main() {
+    User u1("Alice", 101);
+    User u2 = u1;             // Invokes Copy Constructor
+    User u3("Bob", 102);
+    u3 = u2;                  // Invokes Copy Assignment
+    
+    User u4 = std::move(u1);  // Invokes Move Constructor
+    User u5("Charlie", 103);
+    u5 = std::move(u2);       // Invokes Move Assignment
+    
+    u4.print();
+    u5.print();
+    return 0;
+}
+
+
+#include <iostream>
+#include <utility>
+
+class DataArray {
+private:
+    int* arr;
+    int size;
+
+public:
+    // Standard Parameterized Constructor
+    DataArray(int s) : size(s) {
+        if (size > 0) {
+            arr = new int[size]{0}; // Initialize array with zeroes
+        } else {
+            arr = nullptr;
+            size = 0;
+        }
+    }
+
+    // ==========================================
+    // THE RULE OF 5 IMPLEMENTATION
+    // ==========================================
+
+    // 1. Destructor
+    ~DataArray() {
+        delete[] arr;
+    }
+
+    // 2. Copy Constructor (Deep Copy)
+    DataArray(const DataArray& other) : size(other.size) {
+        if (other.arr) {
+            arr = new int[size];
+            for (int i = 0; i < size; ++i) {
+                arr[i] = other.arr[i];
+            }
+        } else {
+            arr = nullptr;
+        }
+    }
+
+    // 3. Copy Assignment Operator (Deep Copy)
+    DataArray& operator=(const DataArray& other) {
+        if (this != &other) {
+            int* new_arr = nullptr;
+            if (other.size > 0) {
+                new_arr = new int[other.size];
+                for (int i = 0; i < other.size; ++i) {
+                    new_arr[i] = other.arr[i];
+                }
+            }
+            
+            delete[] arr; // Safe to release original data now
+            arr = new_arr;
+            size = other.size;
+        }
+        return *this;
+    }
+
+    // 4. Move Constructor (Shallow copy + Nullify the source)
+    DataArray(DataArray&& other) noexcept : arr(other.arr), size(other.size) {
+        other.arr = nullptr;
+        other.size = 0;
+    }
+
+    // 5. Move Assignment Operator
+    DataArray& operator=(DataArray&& other) noexcept {
+        if (this != &other) {
+            delete[] arr; // Purge current buffer
+            
+            arr = other.arr; // Transfer ownership
+            size = other.size;
+            
+            other.arr = nullptr; // Disarm source object
+            other.size = 0;
+        }
+        return *this;
+    }
+
+    void setValue(int index, int val) {
+        if (index >= 0 && index < size) arr[index] = val;
+    }
+
+    void print() const {
+        std::cout << "Size: " << size << " | Elements: ";
+        if (!arr) std::cout << "nullptr";
+        for (int i = 0; i < size; ++i) std::cout << arr[i] << " ";
+        std::cout << "\n";
+    }
+};
+
+int main() {
+    DataArray d1(3);
+    d1.setValue(0, 10);
+    d1.setValue(1, 20);
+    d1.setValue(2, 30);
+    
+    DataArray d2 = d1;             // Invokes Copy Constructor
+    DataArray d3(1);
+    d3 = d2;                       // Invokes Copy Assignment
+    
+    DataArray d4 = std::move(d1);  // Invokes Move Constructor
+    DataArray d5(1);
+    d5 = std::move(d2);            // Invokes Move Assignment
+    
+    d4.print();
+    d5.print();
+    return 0;
+}
+
+// Thread Safe and C++11+
+#include <iostream>
+#include <string.h>
+using namespace std;
+class SingletonClass 
+{
+	private:
+		SingletonClass() {};
+		~SingletonClass() {};
+	public:
+		SingletonClass(const SingletonClass& other) = delete;
+		SingletonClass& operator=(const SingletonClass& other) = delete;
+
+		SingletonClass(SingletonClass&& other) = delete;
+		SingletonClass& operator=(SingletonClass&& other) = delete;
+
+		static SingletonClass& getInstance()
+		{
+			static SingletonClass instance;
+			return instance;
+		}
+		void display()
+		{
+			cout << "Singleton class created.\n";
+		}
+};
+
+int main()
+{
+	SingletonClass& s1 = SingletonClass::getInstance();
+	cout << "address s1 = " << &s1 << endl;
+	SingletonClass& s2 = SingletonClass::getInstance();
+	cout << "address s2 = " << &s2 << endl;
+	s1.display();
+	s2.display();
+	return 0;
+}
+
+1. Shallow Copy
+Definition
+A shallow copy copies the exact bitwise values of an object's member variables into a new object. If a class contains a pointer, a shallow copy copies the memory address (the pointer itself), not the actual data it points to.
+
+Consequence: Both the original object and the copied object end up pointing to the exact same heap memory block. This leads to severe bugs, such as double-free errors (when both objects attempt to delete the same memory in their destructors) and unintended side effects (when modifying data through one object changes it for the other).
+
+#include <iostream>
+#include <cstring>
+
+class ShallowDemo {
+public:
+    int* data;
+
+    ShallowDemo(int val) {
+        data = new int(val); // Allocate memory on heap
+    }
+
+    // Default copy constructor performs a shallow copy
+    // ShallowDemo(const ShallowDemo& other) = default; 
+
+    ~ShallowDemo() {
+        delete data; // Cleanup
+    }
+};
+
+int main() {
+    ShallowDemo obj1(10);
+    {
+        ShallowDemo obj2 = obj1; // Shallow copy: obj2.data points to obj1.data's memory!
+        std::cout << *obj2.data << "\n";
+    } // obj2 goes out of scope and calls delete data. 
+      // The heap memory is now freed, and obj1.data becomes a DANGLING POINTER!
+
+    // std::cout << *obj1.data; // Undefined behavior / Crash!
+    return 0;
+}
+
+
+2. Deep Copy
+Definition
+A deep copy copies the member values and allocates brand-new memory for any pointer members, copying the actual data from the source memory into the newly allocated buffer.
+
+Consequence: The original object and the copied object are completely independent. Modifying or destroying one object has zero impact on the other. This is what you implement in the Copy Constructor and Copy Assignment Operator under the Rule of 5.
+
+#include <iostream>
+#include <cstring>
+#include <algorithm>
+
+class DeepDemo {
+public:
+    int* data;
+
+    // Parameterized Constructor
+    DeepDemo(int val) {
+        data = new int(val);
+    }
+
+    // Deep Copy Constructor
+    DeepDemo(const DeepDemo& other) {
+        // Allocate NEW memory and copy the value, not just the address
+        data = new int(*(other.data));
+    }
+
+    // Destructor
+    ~DeepDemo() {
+        delete data;
+        data = nullptr;
+    }
+};
+
+int main() {
+    DeepDemo obj1(10);
+    {
+        DeepDemo obj2 = obj1; // Deep copy: obj2 gets its own separate memory block
+        *(obj2.data) = 20;    // Modifying obj2 does not affect obj1
+        
+        std::cout << "Obj2 value: " << *obj2.data << "\n"; // Prints 20
+    } // obj2 safely deletes its own memory here.
+
+    std::cout << "Obj1 value: " << *obj1.data << "\n"; // Prints 10 (Safe and unaffected!)
+
+    return 0;
+}
+
+
+1. std::unique_ptr (Exclusive Ownership)
+Definition
+std::unique_ptr represents exclusive ownership. Exactly one unique_ptr can own and manage a resource at any given time.
+
+Key Characteristics:
+Cannot be copied: Copy constructor and copy assignment operator are explicitly deleted (= delete).
+Can be moved: Ownership can be transferred to another unique_ptr using std::move().
+Zero overhead: It has the exact same size and performance cost as a raw pointer (sizeof(T*)).
+
+#include <iostream>
+#include <memory>
+
+class Resource {
+public:
+    Resource() { std::cout << "Resource Acquired!\n"; }
+    ~Resource() { std::cout << "Resource Destroyed!\n"; }
+    void sayHello() { std::cout << "Hello from Resource!\n"; }
+};
+
+int main() {
+    // Create a unique pointer
+    std::unique_ptr<Resource> ptr1 = std::make_unique<Resource>();
+    
+    ptr1->sayHello();
+
+    // std::unique_ptr<Resource> ptr2 = ptr1; // Error: Copying is not allowed!
+
+    // Transfer ownership to ptr2 using move semantics
+    std::unique_ptr<Resource> ptr2 = std::move(ptr1);
+    
+    if (!ptr1) {
+        std::cout << "ptr1 is now empty (nullptr).\n";
+    }
+
+    ptr2->sayHello();
+    
+    // Memory is automatically freed here when ptr2 goes out of scope
+    return 0;
+}
+
+
+2. std::shared_ptr (Shared Ownership & Reference Counting)
+Definition
+std::shared_ptr allows multiple pointers to share ownership of the same dynamically allocated resource. The resource is kept alive as long as at least one shared_ptr pointing to it exists. When the last shared_ptr goes out of scope or is reset, the resource is automatically destroyed.
+
+Reference Counting Overhead
+Behind the scenes, std::shared_ptr maintains a Control Block on the heap, which tracks:
+Strong Reference Count: How many shared_ptr instances point to the resource.
+Weak Reference Count: How many weak_ptr instances point to the resource.
+
+The Performance Costs:
+Memory Overhead: A shared_ptr is twice the size of a raw pointer because it stores two pointers: one pointing to the object and one pointing to the control block.
+Thread Safety Overhead: Incrementing and decrementing the reference count must be thread-safe (using atomic operations like std::atomic), which introduces minor CPU synchronization overhead.
+Allocation Overhead: Using std::make_shared() optimizes this by allocating the object and control block in a single memory block, but multiple independent allocations can lead to memory fragmentation.
+
+#include <iostream>
+#include <memory>
+
+int main() {
+    // Shared pointer managing an integer
+    std::shared_ptr<int> ptr1 = std::make_shared<int>(100);
+    std::cout << "Reference count: " << ptr1.use_count() << "\n"; // Prints 1
+
+    {
+        std::shared_ptr<int> ptr2 = ptr1; // Shared ownership
+        std::cout << "Reference count after ptr2 scope enter: " << ptr1.use_count() << "\n"; // Prints 2
+    } // ptr2 goes out of scope here
+
+    std::cout << "Reference count after ptr2 scope exit: " << ptr1.use_count() << "\n"; // Prints 1
+
+    // Memory for int 100 is freed when ptr1 goes out of scope at the end of main
+    return 0;
+}
+
+
+3. std::weak_ptr (Non-Owning Observer & Breaking Circular Dependencies)
+Definition
+std::weak_ptr is a non-owning observer smart pointer. It points to a resource managed by a std::shared_ptr, but it does not increase the reference count.
+
+Breaking Circular Dependencies (Cyclic Reference Problem)
+If two objects hold shared_ptr references to each other, their reference counts will never drop to zero (even when they are no longer needed by the rest of the program), resulting in a memory leak. Using a weak_ptr on one side of the relationship breaks this cycle because weak_ptr allows observation without ownership.
+
+#include <iostream>
+#include <memory>
+
+struct NodeB;
+
+struct NodeA {
+    std::shared_ptr<NodeB> nodeB_ptr;
+    ~NodeA() { std::cout << "NodeA Destroyed\n"; }
+};
+
+struct NodeB {
+    // Using weak_ptr instead of shared_ptr breaks the circular reference
+    std::weak_ptr<NodeA> nodeA_ptr; 
+    ~NodeB() { std::cout << "NodeB Destroyed\n"; }
+};
+
+int main() {
+    auto a = std::make_shared<NodeA>();
+    auto b = std::make_shared<NodeB>();
+
+    a->nodeB_ptr = b;
+    b->nodeA_ptr = a; // If this was shared_ptr, neither A nor B would ever be destroyed!
+
+    std::cout << "Exiting main...\n";
+    return 0;
+} // Both NodeA and NodeB are cleanly destroyed here.
+
+
+1. How std::move Works (It's a Cast, Not a Data Move)
+Definition
+A common misconception is that std::move physically moves data from one memory location to another. In reality, std::move does not move any data at all.
+
+What it actually is: std::move is simply a compile-time cast. It takes an lvalue (an object with a persistent identity and name) and unconditionally casts it into an rvalue reference (T&&).
+
+What it achieves: By casting the object to an rvalue reference, it signals to the compiler: "This object's resources can be safely stolen because its lifecycle is ending or we no longer need its contents." This enables the compiler to select move semantics (move constructors or move assignment operators) instead of expensive copy semantics.
+
+#include <iostream>
+#include <utility>
+
+void process(int& x) {
+    std::cout << "Processed as Lvalue reference\n";
+}
+
+void process(int&& x) {
+    std::cout << "Processed as Rvalue reference (Move)\n";
+}
+
+int main() {
+    int a = 10;
+    process(a);          // Calls lvalue overload
+    process(std::move(a)); // std::move casts 'a' to int&&, calls rvalue overload
+    
+    // 'a' is still alive here, but its value is now in a "valid but unspecified state"
+    return 0;
+}
+
+
+2. Move Constructors, Move Assignment Operators, and noexcept
+Definitions
+Move Constructor: Constructs a new object by "stealing" the resources (pointers, file handles, etc.) of a temporary/rvalue object, avoiding deep copying. It sets the source object's pointers to nullptr so its destructor doesn't accidentally free the stolen memory.
+
+Move Assignment Operator: Cleans up the current object's resources and steals the resources from an existing rvalue object.
+
+The Importance of the noexcept Specifier
+When writing move constructors and move assignment operators, marking them as noexcept is a best practice and often mandatory for optimal performance with STL containers.
+
+Why is noexcept crucial?
+Container Reallocation Optimization:
+When a std::vector grows beyond its capacity, it allocates a larger memory block and moves existing elements to the new block.
+
+If the move constructor is marked noexcept, the vector will efficiently move the elements.
+
+If the move constructor is not marked noexcept, the vector will fall back to using the copy constructor (even if you std::move them). Why? To ensure the strong exception guarantee: if an exception is thrown halfway through copying elements, the vector can safely abort without mutating the original elements. If a move throws an exception mid-way, the original object is already modified/drained, leaving the program in an inconsistent state.
+
+Performance Impact: Standard algorithms (like std::move_if_noexcept) check if a type's move constructor is noexcept before deciding whether to move or copy.
+
+#include <iostream>
+#include <cstring>
+#include <algorithm>
+
+class BufferManager {
+private:
+    size_t size;
+    int* data;
+
+public:
+    // Parameterized Constructor
+    BufferManager(size_t s) : size(s), data(new int[s]) {
+        std::cout << "Constructor allocated memory.\n";
+    }
+
+    // Destructor
+    ~BufferManager() {
+        delete[] data;
+    }
+
+    // 1. Move Constructor (Must be marked noexcept for STL optimization)
+    BufferManager(BufferManager&& other) noexcept 
+        : size(other.size), data(other.data) {
+        
+        // Nullify the source object pointers so it doesn't free the memory
+        other.size = 0;
+        other.data = nullptr;
+        std::cout << "Move Constructor called (Resources stolen).\n";
+    }
+
+    // 2. Move Assignment Operator
+    BufferManager& operator=(BufferManager&& other) noexcept {
+        if (this != &other) {
+            delete[] data; // Free current resources
+
+            // Steal resources
+            size = other.size;
+            data = other.data;
+
+            // Nullify source
+            other.size = 0;
+            other.data = nullptr;
+            std::cout << "Move Assignment Operator called.\n";
+        }
+        return *this;
+    }
+
+    // Delete copy operations for clarity
+    BufferManager(const BufferManager&) = delete;
+    BufferManager& operator=(const BufferManager&) = delete;
+};
+
+int main() {
+    BufferManager buf1(1000);
+    
+    // Invokes the move constructor because std::move casts buf1 to an rvalue
+    BufferManager buf2 = std::move(buf1); 
+
+    return 0;
+}
+
+1. Virtual Table (vtable) and Virtual Pointer (vptr)
+Definitions & Implementation Mechanics
+C++ achieves runtime polymorphism (dynamic dispatch) using two core mechanisms hidden under the hood by the compiler:
+
+vptr (Virtual Pointer): A hidden pointer added by the compiler to every object of a class that has at least one virtual function. It points to the class's vtable. (This is why sizeof() an object increases by the size of a pointer, typically 4 or 8 bytes).
+
+vtable (Virtual Table): A static array/table created by the compiler per class (not per object). It contains the memory addresses of the virtual functions overridden or inherited by that class.
+
+How Dynamic Dispatch Works at Runtime:
+When you call a virtual function through a base class pointer or reference (e.g., basePtr->draw()), the compiler doesn't resolve the function call at compile-time.
+At runtime, the program accesses the object's hidden vptr.
+The vptr points to the vtable of the actual object type.
+The program looks up the correct function address in the vtable using an offset index and executes it.
+
+#include <iostream>
+
+class Base {
+public:
+    virtual void show() { std::cout << "Base::show\n"; }
+    virtual ~Base() {}
+};
+
+class Derived : public Base {
+public:
+    void show() override { std::cout << "Derived::show\n"; }
+};
+
+int main() {
+    Base* ptr = new Derived();
+    ptr->show(); // Resolves to Derived::show via vptr -> vtable look-up at runtime
+    delete ptr;
+    return 0;
+}
+
+2. Pure Virtual Functions and Abstract Classes
+Definitions
+Pure Virtual Function: A virtual function declared in a base class that has no implementation body in that class. It is designated by appending = 0.
+Abstract Class: Any class that contains at least one pure virtual function.
+Key Rule: You cannot instantiate an abstract class directly (e.g., Base b; will result in a compilation error).
+Purpose: It acts as an interface or contract. Any concrete derived class must override and implement all pure virtual functions, otherwise the derived class also remains abstract.
+
+#include <iostream>
+
+// Abstract Class
+class Shape {
+public:
+    // Pure virtual function
+    virtual double calculateArea() const = 0; 
+    virtual ~Shape() {}
+};
+
+class Circle : public Shape {
+private:
+    double radius;
+public:
+    Circle(double r) : radius(r) {}
+
+    // Must implement pure virtual function
+    double calculateArea() const override {
+        return 3.14159 * radius * radius;
+    }
+};
+
+int main() {
+    // Shape s; // Error: Cannot instantiate abstract class!
+    Shape* shape = new Circle(5.0);
+    std::cout << "Area: " << shape->calculateArea() << "\n";
+    delete shape;
+    return 0;
+}
+
+3. Virtual Destructors
+The Problem (Why They Are Necessary)
+When you delete a derived class object through a base class pointer, if the base class destructor is not virtual, only the base class destructor is called. The derived class destructor is skipped, leading to a memory leak or unreleased resources (like files, database connections, or arrays allocated in the derived class).
+
+The Solution
+Making the base class destructor virtual ensures that when a derived object is deleted via a base pointer, the destructor chain triggers correctly—starting with the derived class destructor and then proceeding up to the base class destructor.
+
+#include <iostream>
+
+class NonVirtualBase {
+public:
+    ~NonVirtualBase() { std::cout << "Base Destructor\n"; } // NOT virtual!
+};
+
+class DerivedWithLeak : public NonVirtualBase {
+private:
+    int* data;
+public:
+    DerivedWithLeak() : data(new int[100]) {}
+    ~DerivedWithLeak() { 
+        delete[] data; 
+        std::cout << "Derived Destructor (Will NOT be called if base ptr is deleted!)\n"; 
+    }
+};
+
+int main() {
+    NonVirtualBase* obj = new DerivedWithLeak();
+    delete obj; // UB / Memory leak: DerivedWithLeak's destructor is never called!
+    return 0;
+}
+
+4. The Diamond Problem in Multiple Inheritance & Virtual Inheritance Solution
+What is the Diamond Problem?
+The Diamond Problem occurs in multiple inheritance when a class inherits from two classes, and both of those classes inherit from a common base class. This forms a "diamond" shape in the inheritance hierarchy.
+
+Base
+      /    \
+  Derived1  Derived2
+      \    /\
+     (Ambiguity / Duplicate Subobjects)
+        Final
+
+The Problem: The Final class receives two separate copies of Base's member variables. This creates memory bloat and causes compilation ambiguity when trying to access Base members from Final.
+
+The Solution: Virtual Inheritance
+Using the virtual keyword during inheritance tells the compiler to share a single shared instance of the base class across the inheritance tree, resolving ambiguity and eliminating duplicate data.
+
+#include <iostream>
+
+class Base {
+public:
+    int value;
+    Base() : value(42) { std::cout << "Base Constructor called\n"; }
+};
+
+// Virtual inheritance ensures only ONE shared copy of Base exists
+class Derived1 : public virtual Base {};
+class Derived2 : public virtual Base {};
+
+class Final : public Derived1, public Derived2 {
+public:
+    void print() {
+        // Without 'virtual' inheritance above, this line causes:
+        // error: request for member 'value' is ambiguous
+        std::cout << "Value: " << value << "\n"; 
+    }
+};
+
+int main() {
+    Final obj;
+    obj.print(); // Accesses the single shared Base::value cleanly
+    return 0;
+}
+
+
+1. std::thread, std::async, std::future, and std::promise
+These components form the foundation of C++ concurrency and asynchronous programming.
+
+A. std::thread
+std::thread represents a low-level thread of execution.
+
+Key Rule: A thread must be either joined (t.join()) or detached (t.detached()) before its destructor is called. If a std::thread goes out of scope while still joinable, std::terminate() is called, crashing the program.
+
+B. std::async
+std::async is a high-level utility that runs a function asynchronously (either in a new thread or deferred) and automatically returns a std::future containing the result. It abstracts away manual thread management.
+
+C. std::future & std::promise
+std::promise: Used by a producer thread to set a value or an exception.
+
+std::future: Used by a consumer thread to retrieve that value or exception asynchronously, blocking until the data becomes available.
+
+Code Example (std::async, std::future, std::promise)
+#include <iostream>
+#include <future>
+#include <thread>
+
+int computeSquare(int x) {
+    return x * x;
+}
+
+int main() {
+    // 1. Using std::async
+    std::future<int> asyncResult = std::async(std::launch::async, computeSquare, 5);
+    std::cout << "Async result: " << asyncResult.get() << "\n"; // Blocks until ready
+
+    // 2. Using std::promise and std::future
+    std::promise<int> prom;
+    std::future<int> fut = prom.get_future();
+
+    std::thread worker([](std::promise<int> p) {
+        // Do some work...
+        p.set_value(42); // Send the result back
+    }, std::move(prom));
+
+    std::cout << "Promise result: " << fut.get() << "\n";
+    worker.join();
+
+    return 0;
+}
+
+2. Synchronization Primitives: std::mutex, std::lock_guard, std::unique_lock
+When multiple threads access shared resources concurrently, data corruption occurs unless synchronized.
+std::mutex: Mutual exclusion primitive used to protect shared data. Threads call .lock() and .unlock(), but manual locking is error-prone if exceptions occur.
+std::lock_guard: A lightweight, RAII-style wrapper for a mutex. It locks the mutex upon creation and automatically unlocks it when it goes out of scope. (Non-copyable, cannot be manually unlocked early).
+std::unique_lock: A more flexible RAII-style wrapper. It supports manual locking/unlocking, delayed locking, transferring ownership (moving), and works seamlessly with condition variables.
+Code Example (std::lock_guard)
+
+#include <iostream>
+#include <thread>
+#include <mutex>
+
+std::mutex mtx;
+int sharedCounter = 0;
+
+void increment() {
+    std::lock_guard<std::mutex> lock(mtx); // Mutex locked here, unlocked automatically out of scope
+    ++sharedCounter;
+}
+
+int main() {
+    std::thread t1(increment);
+    std::thread t2(increment);
+    t1.join();
+    t2.join();
+    std::cout << "Counter: " << sharedCounter << "\n"; // Safely prints 2
+    return 0;
+}
+
+3. Preventing Deadlocks and Race Conditions
+A. Race Conditions
+A race condition happens when two or more threads concurrently access a shared resource where at least one thread modifies it, leading to unpredictable behavior or data corruption.
+
+Prevention: Use synchronization primitives (std::mutex, atomic variables like std::atomic<int>).
+B. Deadlocks
+A deadlock occurs when two or more threads are blocked forever, each waiting for a mutex held by the other.
+
+Example of a Deadlock Scenario:
+Thread 1 locks Mutex A, then tries to lock Mutex B.
+Thread 2 locks Mutex B, then tries to lock Mutex A.
+
+How to Prevent Deadlocks:
+Lock Ordering: Always acquire multiple mutexes in the exact same global order across all threads.
+std::lock / std::scoped_lock (C++17): Use std::scoped_lock to acquire multiple mutexes simultaneously using a deadlock-avoidance algorithm (typically deadlock-free resource allocation via a try-lock loop).
+
+#include <mutex>
+
+std::mutex mtx1, mtx2;
+
+void safeOperation() {
+    // Locks both mutexes safely without risk of deadlock in C++17
+    std::scoped_lock lock(mtx1, mtx2); 
+    // Critical section...
+}
+
+4. Condition Variables (std::condition_variable)
+Definition
+A std::condition_variable allows one or more threads to sleep and wait until another thread notifies them that a specific condition has been met. This eliminates busy-waiting (spinning loops that burn CPU cycles checking a flag).
+
+Requirement: A condition variable must always be used alongside a std::unique_lock and a boolean predicate to guard against spurious wakeups (where a thread wakes up without an explicit notification).
+
+Code Example (Producer-Consumer Pattern)
+#include <iostream>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+
+std::mutex mtx;
+std::condition_variable cv;
+bool ready = false;
+int data = 0;
+
+void workerThread() {
+    std::unique_lock<std::mutex> lock(mtx);
+    
+    // Wait until 'ready' is true (handles spurious wakeups automatically)
+    cv.wait(lock, [] { return ready; }); 
+    
+    std::cout << "Worker processed data: " << data << "\n";
+}
+
+int main() {
+    std::thread t(workerThread);
+
+    {
+        std::lock_guard<std::mutex> lock(mtx);
+        data = 99;
+        ready = true;
+    } // Mutex unlocked here
+
+    cv.notify_one(); // Wake up the waiting worker thread
+
+    t.join();
+    return 0;
+}
+
+A deadlock occurs when two or more threads are permanently blocked, each waiting for resources held by the other, resulting in a standstill where no thread can proceed.
+
+For a deadlock to occur, all four of the following conditions (known as the Coffman Conditions) must be met simultaneously:
+
+The 4 Necessary Conditions for a Deadlock
+1. Mutual Exclusion
+What it means: At least one resource must be held in a non-shareable mode. This means only one thread can use the resource at any given time (e.g., a standard std::mutex). If another thread requests that resource, it must wait until the current thread releases it.
+2. Hold and Wait
+What it means: A thread currently holding at least one resource is simultaneously waiting to acquire additional resources that are currently being held by other threads. It refuses to let go of what it already has while waiting for the rest.
+3. No Preemption
+What it means: Resources cannot be forcibly taken away from a thread. A resource can only be released voluntarily by the thread holding it after that thread has finished using it. The operating system or other threads cannot step in and snatch the mutex back.
+4. Circular Wait
+What it means: A closed loop or chain of threads exists where each thread waits for a resource held by the next thread in the chain.
+
+Example: Thread A holds Mutex 1 and waits for Mutex 2. Thread B holds Mutex 2 and waits for Mutex 1.
+
+Real-World Code Analogy of When It Occurs
+#include <mutex>
+#include <thread>
+
+std::mutex mutexA;
+std::mutex mutexB;
+
+// Thread 1 function
+void thread1Task() {
+    mutexA.lock(); // Holds Mutex A
+    // ... some work ...
+    mutexB.lock(); // Waits for Mutex B (held by Thread 2) -> DEADLOCK OCCURS HERE
+    
+    mutexB.unlock();
+    mutexA.unlock();
+}
+
+// Thread 2 function
+void thread2Task() {
+    mutexB.lock(); // Holds Mutex B
+    // ... some work ...
+    mutexA.lock(); // Waits for Mutex A (held by Thread 1) -> DEADLOCK OCCURS HERE
+    
+    mutexA.unlock();
+    mutexB.unlock();
+}
+
+
+Using std::unique_lock along with std::condition_variable is the standard way to synchronize threads when they need to take turns performing an action (such as printing alternating even and odd numbers).
+std::unique_lock is required here because std::condition_variable::wait() needs to temporarily unlock the mutex while the thread goes to sleep, and then re-lock it when it wakes up—something std::lock_guard cannot do.
+
+Complete C++ Implementation: Even and Odd Printer
+
+#include <iostream>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+
+std::mutex mtx;
+std::condition_variable cv;
+int currentNumber = 1;
+const int maxLimit = 10;
+
+// Thread function to print odd numbers
+void printOdd() {
+    while (currentNumber <= maxLimit) {
+        std::unique_lock<std::mutex> lock(mtx);
+
+        // Wait until currentNumber is odd, OR we have exceeded the limit
+        cv.wait(lock, [] { return (currentNumber % 2 != 0) || (currentNumber > maxLimit); });
+
+        // Check if we passed the limit while waiting
+        if (currentNumber > maxLimit) {
+            break;
+        }
+
+        std::cout << "Odd Thread: " << currentNumber << "\n";
+        currentNumber++;
+
+        // Notify the other thread that it's their turn
+        cv.notify_one();
+    }
+}
+
+// Thread function to print even numbers
+void printEven() {
+    while (currentNumber <= maxLimit) {
+        std::unique_lock<std::mutex> lock(mtx);
+
+        // Wait until currentNumber is even, OR we have exceeded the limit
+        cv.wait(lock, [] { return (currentNumber % 2 == 0) || (currentNumber > maxLimit); });
+
+        // Check if we passed the limit while waiting
+        if (currentNumber > maxLimit) {
+            break;
+        }
+
+        std::cout << "Even Thread: " << currentNumber << "\n";
+        currentNumber++;
+
+        // Notify the other thread that it's their turn
+        cv.notify_one();
+    }
+}
+
+int main() {
+    // Start both threads
+    std::thread t1(printOdd);
+    std::thread t2(printEven);
+
+    // Wait for both threads to finish execution
+    t1.join();
+    t2.join();
+
+    std::cout << "Printing completed successfully.\n";
+    return 0;
+}
+
+How It Works
+Mutex Protection (std::unique_lock): Both threads acquire the mutex lock safely using std::unique_lock. This ensures only one thread modifies currentNumber at a time.
+Condition Checking (cv.wait):
+The Odd Thread checks if currentNumber is odd. If it's even, cv.wait() automatically unlocks the mutex and puts the thread to sleep.
+The Even Thread checks if currentNumber is even. If it's odd, it goes to sleep in the same manner.
+Signaling (cv.notify_one): Once a thread finishes printing its number, it increments currentNumber and calls cv.notify_one(). This wakes up the waiting thread to take its turn.
