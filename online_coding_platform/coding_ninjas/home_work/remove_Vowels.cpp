@@ -1,12 +1,12 @@
 /*
 
-Remove Vowels
+   Remove Vowels
 
- Problem statement
+   Problem statement
 
-You are given a string STR of length N. Your task is to remove all the vowels present in that string and print the modified string.
+   You are given a string STR of length N. Your task is to remove all the vowels present in that string and print the modified string.
 
-English alphabets ‘a’, ‘e’, ‘i’, ‘o’, ‘u’ are termed as vowels. All other alphabets are called consonants.
+   English alphabets ‘a’, ‘e’, ‘i’, ‘o’, ‘u’ are termed as vowels. All other alphabets are called consonants.
 
 Note: You have to only remove vowels from the string. There will be no change in the relative position of all other alphabets.
 For example:
@@ -63,21 +63,36 @@ Bc
 
 using namespace std;
 
-string removeVowels(string inputString) {
-    // Write your code here.
+bool isVowel(char ch)
+{
+	if(ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u' || ch == 'A' || ch == 'E' || ch == 'I' || ch == 'O' || ch == 'U')
+		return true;
 
-    return "";
+	return false;
+}
+
+string removeVowels(string inputString) 
+{
+	// Write your code here.
+	string res = "";
+	for(char ch : inputString)
+	{
+		if(!isVowel(ch))
+			res += ch;
+	}
+	return res;
 }
 
 int main() {
-    string inputString;
+	string inputString;
 
-    cout << "Enter input string: ";
-    cin >> inputString;
+	cout << "Enter input string: ";
+	//cin >> inputString;
+	getline(cin, inputString);
 
-    string result = removeVowels(inputString);
+	string result = removeVowels(inputString);
 
-    cout << "Result: " << result << endl;
+	cout << "Result: " << result << endl;
 
-    return 0;
+	return 0;
 }

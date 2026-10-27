@@ -74,23 +74,87 @@ Sample Output 2:
 
 #include <iostream>
 #include <vector>
+using namespace std;
 
 vector<vector<int>> rotateMatrix(vector<vector<int>> &matrix)
 {
-    // Write your code here.
+	// Write your code here.
+	int m = matrix.size();
+	int n = matrix[0].size();
+	for(int i=0;i<m;i++)
+	{
+		for(int j=i+1;j<n;j++)
+		{
+			/*int temp = matrix[i][j];
+			  matrix[i][j] = matrix[j][i];
+			  matrix[j][i] = temp;*/
+			swap(matrix[i][j], matrix[j][i]);
+		}
+	}
+
+	/* // Anticlock Wise
+	   int low = 0, high = n-1;
+	   while(low < high)
+	   {
+	   swap(matrix[low], matrix[high]);
+	   low++;
+	   high--;
+	   }
+	   */
+
+
+	int left = 0, right = n-1;
+	while(left < right)
+	{
+		for(int i=0;i<m;i++)
+		{
+			swap(matrix[i][left], matrix[i][right]);
+		}
+		left++;
+		right--;
+	}
+
+	return matrix;
 }
 
 int main()
 {
-     int n;
-     cout << "Enter Vector Size: ";
-     cin >> n;
+	int m, n;
+	cout << "Enter Matrix Size (m * n): ";
+	cin >> m >> n;
 
-     vector<int> v(n);
-     for(int i=0;i<n;i++)
-          cin >> v[i];
+	vector<vector<int>> v(m, vector<int>(n));
+	for(int i=0;i<m;i++)
+	{
+		for(int j=0;j<n;j++)
+		{
+			cin >> v[i][j];
+		}
+	}
 
-     
+	cout << "Input:- \n" ;
+	for(int i=0;i<m;i++)
+	{
+		for(int j=0;j<n;j++)
+		{
+			cout << v[i][j] << " ";
+		}
+		cout << endl;
+	}
 
-     return 0;
+
+	vector<vector<int>> res = rotateMatrix(v);
+
+	cout << "Output:- \n" ;
+	for(int i=0;i<m;i++)
+	{
+		for(int j=0;j<n;j++)
+		{
+			cout << res[i][j] << " ";
+		}
+		cout << endl;
+	}
+
+
+	return 0;
 }

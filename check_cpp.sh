@@ -1,7 +1,8 @@
 #!/bin/bash
 
 DIR="$1"
-OUTPUT="/home/shubham/Desktop/samaranjan/work_prac/prep/c_cpp_dsa/home_work.txt"
+#OUTPUT="/home/shubham/Desktop/samaranjan/work_prac/prep/c_cpp_dsa/home_work.txt"
+OUTPUT="/mnt/sda2/home/shubham/Desktop/samaranjan/work_prac/prep/c_cpp_dsa/home_work.txt"
 
 if [ -z "$DIR" ]; then
     echo "Usage: $0 <directory_path>"

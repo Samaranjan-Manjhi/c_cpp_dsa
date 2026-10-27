@@ -1,4 +1,4 @@
-[2026-07-22 17:06:37]
+[2026-10-27 17:24:41]
 01] online_coding_platform/gfg/home_work/numbers_with_Given_Digit.cpp
 02] online_coding_platform/gfg/home_work/make_Anagram_with_Removals.cpp
 03] online_coding_platform/gfg/home_work/carry_counter.cpp
@@ -28,9 +28,6 @@
 27] online_coding_platform/coding_ninjas/home_work/reverse_Stack_Using_Recursion.cpp
 28] online_coding_platform/coding_ninjas/home_work/string_Mania.cpp
 29] online_coding_platform/coding_ninjas/home_work/inplace_rotate_matrix_90_degree.cpp
-30] online_coding_platform/coding_ninjas/home_work/add_One_To_Number.cpp
-31] online_coding_platform/coding_ninjas/home_work/1-3_Palindrome.cpp
-32] online_coding_platform/coding_ninjas/home_work/minimum_Number_Of_Lamps.cpp
-33] online_coding_platform/coding_ninjas/home_work/rotate_matrix_by_90_degrees.cpp
-34] online_coding_platform/coding_ninjas/home_work/remove_Vowels.cpp
+30] online_coding_platform/coding_ninjas/home_work/1-3_Palindrome.cpp
+31] online_coding_platform/coding_ninjas/home_work/minimum_Number_Of_Lamps.cpp
 
