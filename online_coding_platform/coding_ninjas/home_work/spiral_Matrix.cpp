@@ -53,22 +53,74 @@ In the second test case, there is only one row or 1-D matrix, so the spiral path
 #include <iostream>
 #include <vector>
 
-vector<int> spiralPathMatrix(vector<vector<int>> matrix, int n, int m) 
+using namespace std;
+
+vector<int> spiralPathMatrix(vector<vector<int>> matrix, int m, int n) 
 {
-    // Write your code here.
+	// Write your code here.
+	vector<int> res;
+	if (m == 0 || n == 0) 
+		return res;
+	int left = 0, right = n-1;
+	int top = 0, bottom = m-1;
+
+	while(left <= right && top <= bottom)
+	{
+		for(int i=left;i<=right;i++)
+		{
+			res.emplace_back(matrix[top][i]);
+		}
+		top++;
+
+		for(int i=top;i<=bottom;i++)
+		{
+			res.emplace_back(matrix[i][right]);
+		}
+		right--;
+
+		if(top <= bottom)
+		{
+			for(int i=right;i>=left;i--)
+			{
+				res.emplace_back(matrix[bottom][i]);
+			}
+			bottom--;
+		}
+
+		if(left <= right)
+		{
+			for(int i=bottom;i>=top;i--)
+			{
+				res.emplace_back(matrix[i][left]);
+			}
+			left++;
+		}
+	}
+
+	return res;
 }
 
 int main()
 {
-     int n;
-     cout << "Enter Vector Size: ";
-     cin >> n;
+	int m, n;
+	cout << "Enter Matrix Size (m*n): ";
+	cin >> m >> n;
 
-     vector<int> v(n);
-     for(int i=0;i<n;i++)
-          cin >> v[i];
+	vector<vector<int>> v(m, vector<int>(n));
+	for(int i=0;i<m;i++)
+	{
+		for(int j=0;j<n;j++)
+		{
+			cin >> v[i][j];
+		}
+	}
 
-     
+	vector<int> res = spiralPathMatrix(v, m, n);
+	for(int i=0;i<res.size();i++)
+	{
+		cout << res[i] << " ";
+	}
+	cout << endl;
 
-     return 0;
+	return 0;
 }

@@ -76,48 +76,48 @@ using namespace std;
 // Return a vector RES where RES[0] denotes P and RES[1] denotes Q.
 vector<long long> mean(vector<int> &arr)
 {
-    // Write your code here.
+	// Write your code here.
 
-    vector<long long> res(2);
-    
-    return res;
+	vector<long long> res(2);
+
+	return res;
 }
 
 // Return a vector RES where RES[0] denotes P and RES[1] denotes Q.
 vector<int> median(vector<int> &arr)
 {
-    // Write your code here.
+	// Write your code here.
 
-    vector<int> res(2);
+	vector<int> res(2);
 
-    return res;
+	return res;
 }
 
 // Return Mode of the array.
 int mode(vector<int> &arr)
 {
-    // Write your code here.
+	// Write your code here.
 
-    return 0;
+	return 0;
 }
 
 int main() {
-    int n;
-    cin >> n;
+	int n;
+	cin >> n;
 
-    vector<int> arr(n);
+	vector<int> arr(n);
 
-    for (int i = 0; i < n; i++) {
-        cin >> arr[i];
-    }
+	for (int i = 0; i < n; i++) {
+		cin >> arr[i];
+	}
 
-    vector<long long> meanResult = mean(arr);
-    vector<int> medianResult = median(arr);
-    int modeResult = mode(arr);
+	vector<long long> meanResult = mean(arr);
+	vector<int> medianResult = median(arr);
+	int modeResult = mode(arr);
 
-    cout << meanResult[0] << " " << meanResult[1] << endl;
-    cout << medianResult[0] << " " << medianResult[1] << endl;
-    cout << modeResult << endl;
+	cout << meanResult[0] << " " << meanResult[1] << endl;
+	cout << medianResult[0] << " " << medianResult[1] << endl;
+	cout << modeResult << endl;
 
-    return 0;
+	return 0;
 }

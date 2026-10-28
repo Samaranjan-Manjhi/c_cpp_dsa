@@ -56,30 +56,68 @@ Sample Output 2:
 
 using namespace std;
 
+bool solveLandFord(vector<int>& vec, int k, int n)
+{
+	if(k == 0)
+	{
+		return true;
+	}
+
+	int total = 2*n;
+	for(int i=0;i<total-k-1;i++)
+	{
+		int next = i+k+1;
+		if(vec[i] == 0 && vec[next] == 0)
+		{
+			vec[i] = k;
+			vec[next] = k;
+
+			if(solveLandFord(vec, k-1, n))
+			{
+				return true;
+			}
+
+			vec[i] = 0;
+			vec[next] = 0;
+		}
+	}
+
+	return false;
+}
+
 vector<int> findLangford(int n) 
 {
-    // Write your code here.
+	// Write your code here.
 
-    vector<int> result;
+	vector<int> result(2*n, 0);
+	if(n%4 != 0 && n%4 != 3)
+	{
+		return {-1};
+	}
 
-    return result;
+	if(solveLandFord(result, n, n))
+	{
+		return result;
+	}
+
+	return result;
 }
 
 int main() {
-    int n;
+	int n;
 
-    cout << "Enter value of n: ";
-    cin >> n;
+	cout << "Enter value of n: ";
+	cin >> n;
 
-    vector<int> result = findLangford(n);
+	vector<int> result = findLangford(n);
 
-    cout << "Result: ";
+	cout << "Result: ";
 
-    for (int i = 0; i < result.size(); i++) {
-        cout << result[i] << " ";
-    }
+	for (int i = 0; i < result.size(); i++) {
+		cout << result[i] << " ";
+	}
 
-    cout << endl;
+	cout << endl;
 
-    return 0;
+	return 0;
 }

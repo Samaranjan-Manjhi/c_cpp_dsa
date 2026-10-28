@@ -71,24 +71,24 @@ Sample Output 2:-
 using namespace std;
 
 int minimumCoins(vector<int> a) {
-    // Write your code here
+	// Write your code here
 
-    return 0;
+	return 0;
 }
 
 int main() {
-    int n;
-    cin >> n;
+	int n;
+	cin >> n;
 
-    vector<int> a(n);
+	vector<int> a(n);
 
-    for (int i = 0; i < n; i++) {
-        cin >> a[i];
-    }
+	for (int i = 0; i < n; i++) {
+		cin >> a[i];
+	}
 
-    int result = minimumCoins(a);
+	int result = minimumCoins(a);
 
-    cout << result;
+	cout << result;
 
-    return 0;
+	return 0;
 }
