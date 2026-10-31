@@ -1,4 +1,4 @@
-[2026-10-27 17:24:41]
+[2026-10-29 11:07:11]
 01] online_coding_platform/gfg/home_work/numbers_with_Given_Digit.cpp
 02] online_coding_platform/gfg/home_work/make_Anagram_with_Removals.cpp
 03] online_coding_platform/gfg/home_work/carry_counter.cpp
@@ -16,18 +16,16 @@
 15] online_coding_platform/gfg/home_work/remove_Common_and_Concat.cpp
 16] online_coding_platform/gfg/home_work/longest_Substring_with_All_1s.cpp
 17] online_coding_platform/gfg/home_work/successful_Penalty_Conversions.cpp
-18] online_coding_platform/coding_ninjas/home_work/spiral_Matrix.cpp
-19] online_coding_platform/coding_ninjas/home_work/day_7_Langford_Pairing.cpp
-20] online_coding_platform/coding_ninjas/home_work/mean_Median_Mode.cpp
-21] online_coding_platform/coding_ninjas/home_work/minimum_coins.cpp
-22] online_coding_platform/coding_ninjas/home_work/k-Replacement.cpp
-23] online_coding_platform/coding_ninjas/home_work/sort_Elements_By_Frequency.cpp
-24] online_coding_platform/coding_ninjas/home_work/maximum_of_All_Subarrays_of_Size_K.cpp
-25] online_coding_platform/coding_ninjas/home_work/search_In_Infinite_Sorted_0-1_Array.cpp
-26] online_coding_platform/coding_ninjas/home_work/container_with_Maximum_Water.cpp
-27] online_coding_platform/coding_ninjas/home_work/reverse_Stack_Using_Recursion.cpp
-28] online_coding_platform/coding_ninjas/home_work/string_Mania.cpp
-29] online_coding_platform/coding_ninjas/home_work/inplace_rotate_matrix_90_degree.cpp
-30] online_coding_platform/coding_ninjas/home_work/1-3_Palindrome.cpp
-31] online_coding_platform/coding_ninjas/home_work/minimum_Number_Of_Lamps.cpp
+18] online_coding_platform/coding_ninjas/home_work/mean_Median_Mode.cpp
+19] online_coding_platform/coding_ninjas/home_work/minimum_coins.cpp
+20] online_coding_platform/coding_ninjas/home_work/k-Replacement.cpp
+21] online_coding_platform/coding_ninjas/home_work/sort_Elements_By_Frequency.cpp
+22] online_coding_platform/coding_ninjas/home_work/maximum_of_All_Subarrays_of_Size_K.cpp
+23] online_coding_platform/coding_ninjas/home_work/search_In_Infinite_Sorted_0-1_Array.cpp
+24] online_coding_platform/coding_ninjas/home_work/container_with_Maximum_Water.cpp
+25] online_coding_platform/coding_ninjas/home_work/reverse_Stack_Using_Recursion.cpp
+26] online_coding_platform/coding_ninjas/home_work/string_Mania.cpp
+27] online_coding_platform/coding_ninjas/home_work/inplace_rotate_matrix_90_degree.cpp
+28] online_coding_platform/coding_ninjas/home_work/1-3_Palindrome.cpp
+29] online_coding_platform/coding_ninjas/home_work/minimum_Number_Of_Lamps.cpp
 
